@@ -1,0 +1,9 @@
+// Worker que sirve arnoldwork.com y www.arnoldwork.com (dominios asignados en el panel).
+{
+  "name": "arnoldwork-v11",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "compatibility_date": "2026-09-22",
+  "assets": { "directory": "./web" },
+  "workers_dev": true,
+  "preview_urls": true
+}

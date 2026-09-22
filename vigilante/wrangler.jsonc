@@ -1,0 +1,12 @@
+// Worker "vigilante": revisa las webs y avisa por Telegram.
+// Secretos (se ponen una vez en el panel o con `wrangler secret put`): TELEGRAM_TOKEN, PRUEBA_CLAVE.
+{
+  "name": "vigilante",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "main": "vigilante.js",
+  "compatibility_date": "2026-09-22",
+  // Sin esto, un Worker no puede comprobar otros *.workers.dev de la misma cuenta.
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "workers_dev": true,
+  "triggers": { "crons": ["*/30 * * * *", "0 7 * * *"] }
+}

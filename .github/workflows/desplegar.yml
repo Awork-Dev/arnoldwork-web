@@ -1,11 +1,9 @@
-# Publica la carpeta web/ en Cloudflare Pages.
-# - Push a main: publica en arnoldwork.com (producción).
-# - Push a cualquier otra rama: crea una vista previa en <rama>.<proyecto>.pages.dev
+# Publica la carpeta web/ en el Worker "arnoldwork-v11" (arnoldwork.com).
+# - Push a main: publica en arnoldwork.com.
+# - Push a cualquier otra rama: sube una versión de prueba (sin tocar la web real)
+#   y la deja en https://<rama>-arnoldwork-v11.arnoldwork.workers.dev
 #
-# Necesita en GitHub (Settings → Secrets and variables → Actions):
-#   Secretos:  CLOUDFLARE_API_TOKEN  (permiso "Cloudflare Pages: Edit")
-#              CLOUDFLARE_ACCOUNT_ID
-#   Variable:  CLOUDFLARE_PROJECT    (nombre del proyecto de Pages)
+# Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
 
 name: Desplegar web
 
@@ -13,6 +11,7 @@ on:
   push:
     paths:
       - "web/**"
+      - "wrangler.jsonc"
       - ".github/workflows/desplegar.yml"
   workflow_dispatch:
 
@@ -25,14 +24,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      deployments: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Publicar en Cloudflare Pages
+      - name: Nombre de la vista previa
+        id: alias
+        run: echo "alias=$(echo '${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-30 | sed 's/-*$//')" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar en arnoldwork.com
+        if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy web --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=${{ github.ref_name }} --commit-dirty=true
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: "4"
+          command: deploy
+
+      - name: Subir vista previa
+        if: github.ref != 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          command: versions upload --preview-alias ${{ steps.alias.outputs.alias }}
