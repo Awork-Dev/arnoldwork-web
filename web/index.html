@@ -397,7 +397,7 @@
   .board::before{content:"";position:absolute;top:-11px;left:50%;width:74px;height:22px;margin-left:-37px;
     background:rgba(244,242,239,.16);transform:rotate(-3deg)}
   .board-k{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
-  .board-t{font-family:'Archivo Black';font-size:clamp(1.25rem,2.6vw,1.6rem);line-height:1.18;margin:14px 0 20px;min-height:3.6em}
+  .board-t{font-family:'Archivo Black';font-size:clamp(1.25rem,2.6vw,1.6rem);line-height:1.18;margin:14px 0 20px;min-height:4.72em}
   .board-f{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
     border-top:1px solid var(--rule);padding-top:14px;font-size:.84rem;color:var(--chalk-dim)}
   .board-f button{background:none;border:1px solid var(--rule-strong);color:var(--chalk);padding:8px 14px;
@@ -555,7 +555,7 @@
       <div class="board-k">La pizarra del gimnasio</div>
       <p class="board-t" id="tip" aria-live="polite">Apunta tus pesos. Lo que no se mide, no sube.</p>
       <div class="board-f">
-        <span id="tipN">Consejo 1 de 12</span>
+        <span id="tipN">1 de 37</span>
         <button type="button" id="tipOtro">Otro consejo ↻</button>
       </div>
     </aside>
@@ -1037,6 +1037,7 @@
 document.getElementById('yr').textContent = new Date().getFullYear();
 
 /* ---------- la pizarra ---------- */
+// Consejos de verdad y normas no escritas de la sala. Se barajan y no se repiten hasta que salen todos.
 const TIPS = [
   'Apunta tus pesos. Lo que no se mide, no sube.',
   'El mejor programa es el que vas a seguir en febrero, no el que suena mejor en enero.',
@@ -1051,14 +1052,45 @@ const TIPS = [
   'Nadie te mira tanto como crees. Están todos mirándose al espejo.',
   'La constancia gana a la intensidad. La intensidad constante gana a todo.'
 ];
-let tipI = Math.floor(Math.random() * TIPS.length);
+const BIZARROS = [
+  'Recoge las pesas de las máquinas. Las mancuernas no vuelven solas al rack: lo hemos comprobado.',
+  'Pon makina en los cascos. No está demostrado, pero el press banca sube.',
+  'La jaula de sentadillas es para sentadillas. El curl de bíceps tiene su propio hábitat.',
+  'Si te preguntan «¿te queda mucho?», la respuesta nunca es «seis series más».',
+  'Pasa la toalla por el banco. El sudor ajeno no cuenta como suplemento.',
+  'El día de pierna existe. No es una leyenda del vestuario.',
+  'Gritar en el peso muerto suma 2 kg. Gritar en el curl de muñeca, no.',
+  'Las máquinas no son sofás. Si vas a contestar un wasap, levántate, que hay cola.',
+  'Un selfie entre series, vale. Un reportaje de moda, ya te lo piensas.',
+  'El espejo es para mirar la técnica. Guiñarte a ti mismo, mejor en casa.',
+  'Si el batido huele raro, es que lleva en la taquilla desde el martes.',
+  'La camiseta de tirantes no hace crecer los hombros. Pero ayuda a enseñarlos.',
+  'Descarga la barra al acabar. Encontrarse 140 kg a las 7 de la mañana no es el desayuno de nadie.',
+  'Nunca te fíes de quien dice que hoy «solo viene a estirar».',
+  'El que más sabe de la sala suele ser el señor de 70 años del fondo. Pregúntale.',
+  'Chocar los puños tras una serie buena: obligatorio. Chocar las mancuernas contra el espejo: no.',
+  'La música del gimnasio siempre es peor que la tuya. Para eso existen los cascos.',
+  'Las mancuernas de 10 kg desaparecen a las siete de la tarde. Nadie sabe adónde van.',
+  'Enero trae a mucha gente nueva. En marzo quedan los de siempre. Sé de los de marzo.',
+  'El cardio no te roba las ganancias. El sofá, a veces, sí.',
+  'La báscula del vestuario siempre marca dos kilos de más. Lo sabe todo el mundo.',
+  'Las chanclas en la ducha no son opcionales. Esto no es un consejo, es una advertencia.',
+  'Quien usa tres máquinas a la vez está haciendo una superserie o conquistando territorio.',
+  'El pre-entreno no sustituye a dormir. Ni a cenar. Ni a tener ganas.',
+  'Los discos de 20 van con los de 20. El de 1,25 no se va a sentir solo.'
+];
+const PIZARRA = TIPS.map(t => ({ t, k: 'La pizarra del gimnasio' }))
+  .concat(BIZARROS.map(t => ({ t, k: 'Normas no escritas de la sala' })));
+for (let i = PIZARRA.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [PIZARRA[i], PIZARRA[j]] = [PIZARRA[j], PIZARRA[i]]; }
+let tipI = 0;
 function pintaTip(){
-  const t = document.getElementById('tip');
+  const t = document.getElementById('tip'), c = PIZARRA[tipI];
   t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop');
-  t.textContent = TIPS[tipI];
-  document.getElementById('tipN').textContent = 'Consejo ' + (tipI + 1) + ' de ' + TIPS.length;
+  t.textContent = c.t;
+  document.querySelector('.hero .board-k').textContent = c.k;
+  document.getElementById('tipN').textContent = (tipI + 1) + ' de ' + PIZARRA.length;
 }
-document.getElementById('tipOtro').addEventListener('click', () => { tipI = (tipI + 1) % TIPS.length; pintaTip(); });
+document.getElementById('tipOtro').addEventListener('click', () => { tipI = (tipI + 1) % PIZARRA.length; pintaTip(); });
 pintaTip();
 
 /* ---------- confeti al invitar a un batido ---------- */
