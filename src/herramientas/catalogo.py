@@ -428,3 +428,24 @@ _ORDEN = ["rm", "rpe", "subir", "nivel", "puntos", "discos", "calentamiento",
           "rutina", "cuaderno", "sustituto", "volumen", "recuperacion", "descansos", "tempo"]
 assert sorted(_ORDEN) == sorted(h["pieza"] for h in HERRAMIENTAS)
 HERRAMIENTAS.sort(key=lambda h: _ORDEN.index(h["pieza"]))
+
+# Nombre corto para la lista de la portada.
+_CORTOS = {'rm': '1RM',
+            'rpe': 'RIR y RPE',
+            'subir': '¿Subo peso?',
+            'nivel': '¿Cómo de fuerte soy?',
+            'puntos': 'DOTS y Wilks',
+            'discos': 'Discos en la barra',
+            'calentamiento': 'Aproximaciones',
+            'macros': 'Calorías y macros',
+            'grasa': 'Grasa corporal',
+            'musculo': '¿Cuánto músculo?',
+            'rutina': 'Generador de rutina',
+            'cuaderno': 'Cuaderno',
+            'sustituto': 'Sustitutos',
+            'volumen': 'Volumen semanal',
+            'recuperacion': 'Recuperación HD',
+            'descansos': 'Descansos',
+            'tempo': 'Tempo'}
+for _h in HERRAMIENTAS:
+    _h["corto"] = _CORTOS.get(_h["pieza"], _h["nombre"])

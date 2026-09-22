@@ -209,12 +209,29 @@ def individual(h, v_css, v_js):
                   f"ArnoldWork · {h['h1']}", contenido, jsonld, v_css, v_js)
 
 
+def portada_web():
+    """La portada (web/index.html) se edita a mano, pero la lista de herramientas y su número los pone build.py."""
+    import re
+    s = lee(WEB, "index.html")
+    n = len(HERRAMIENTAS)
+    enlaces = "\n".join(f'      <a href="/herramientas/{h["slug"]}/">{h["corto"]}</a>' for h in HERRAMIENTAS)
+    s, k = re.subn(r'(<div class="toolnames"[^>]*>\n).*?(\n    </div>)', lambda m: m.group(1) + enlaces + m.group(2), s, flags=re.S)
+    assert k == 1, "No encuentro la lista de herramientas de la portada"
+    s = re.sub(r"\b\d+ herramientas\b", f"{n} herramientas", s)
+    s = re.sub(r"\b\d+ HERRAMIENTAS\b", f"{n} HERRAMIENTAS", s)
+    s = re.sub(r'(<div class="stat"><b>)\d+(</b><span>herramientas)', rf"\g<1>{n}\2", s)
+    palabra = NUMEROS.get(n, str(n)).capitalize()
+    s = re.sub(r"\b(Once|Doce|Trece|Catorce|Quince|Dieciséis|Diecisiete|Dieciocho|Diecinueve|Veinte) herramientas\b", palabra + " herramientas", s)
+    return s
+
+
 def generar():
     """Devuelve {ruta relativa dentro de web/: contenido}."""
     css = lee(SRC, "herramientas", "estilos.css")
     js = lee(SRC, "herramientas", "app.js")
     v_css, v_js = corto(css), corto(js)
     salida = {
+        "index.html": portada_web(),
         "herramientas/estilos.css": css,
         "herramientas/app.js": js,
         "herramientas/index.html": portada(v_css, v_js),
@@ -227,7 +244,7 @@ def generar():
     paginas = ["/", "/herramientas/"] + [f"/herramientas/{s}/" for s in slugs]
     precache = paginas + ["/404.html", f"/herramientas/estilos.css?v={v_css}", f"/herramientas/app.js?v={v_js}",
                           "/img/logo.svg", "/favicon.svg", "/manifest.webmanifest"]
-    version = corto("".join(salida.values()) + lee(WEB, "index.html") + lee(WEB, "404.html"))
+    version = corto("".join(salida.values()) + lee(WEB, "404.html"))
     salida["sw.js"] = (lee(SRC, "sw.js").replace("{{VERSION}}", version)
                        .replace("{{PRECACHE}}", json.dumps(precache, ensure_ascii=False)))
 
