@@ -1,0 +1,25 @@
+<div class="tool" id="puntos">
+  <h2>Puntos DOTS y Wilks</h2>
+  <p class="hint">Para comparar la fuerza de gente con distinto peso corporal, como se hace en powerlifting. Mete tu peso y tu total: la suma de tu mejor sentadilla, press banca y peso muerto.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="dtSexo">Sexo</label>
+      <select id="dtSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+    </div>
+    <div class="field">
+      <label for="dtPeso">Peso corporal (kg)</label>
+      <input id="dtPeso" type="number" inputmode="decimal" min="35" max="220" step="0.1" value="80" data-sync="peso">
+    </div>
+    <div class="field">
+      <label for="dtTotal">Total (kg)</label>
+      <input id="dtTotal" type="number" inputmode="decimal" min="1" max="1500" step="0.5" value="400" data-keep>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="dtOut">—<small id="dtSub"></small></div>
+    <table class="pct" id="dtTabla" hidden><tbody></tbody></table>
+    <p class="vtxt" id="dtTxt"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="dtShare">Compartir como imagen</button></div>
+    <p class="cta-line">¿No sabes tu máximo? Estímalo con <a href="/herramientas/calculadora-1rm/">la calculadora de 1RM</a>.</p>
+  </div>
+</div>

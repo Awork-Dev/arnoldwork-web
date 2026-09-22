@@ -716,6 +716,429 @@
   function prepTempo(){ if(tp) return; var C = leeTempo(); $('pRep').textContent = '0 / ' + C.reps; faseTxt('Preparado'); barra(1); }
   reg(prepTempo, ['pBaja', 'pAbajo', 'pSube', 'pArriba', 'pReps']);
 
+  /* ---------- RIR y RPE ---------- */
+  // Tabla de RPE de Mike Tuchscherer: % del máximo según repeticiones + repeticiones que sobraban (en medios).
+  var RPE_T = [100, 97.8, 95.5, 93.9, 92.2, 90.7, 89.2, 87.8, 86.3, 85.0, 83.7, 82.4, 81.1, 79.9, 78.6, 77.4,
+               76.2, 75.1, 73.9, 72.3, 70.7, 69.4, 68.0, 66.7, 65.3, 64.0, 62.6, 61.3, 59.9, 58.6, 57.2];
+  var rpePct = function(reps, rpe){
+    var i = Math.round((reps - 1 + (10 - rpe)) * 2);
+    return RPE_T[Math.max(0, Math.min(RPE_T.length - 1, i))] / 100;
+  };
+  var rpeTxt = function(v){ return String(v).replace('.', ','); };
+  function calcRpe(){
+    var w = num('rpPeso'), r = ent('rpReps'), e = parseFloat($('rpRpe').value);
+    var r2 = ent('rpReps2'), e2 = parseFloat($('rpRpe2').value);
+    var out = $('rpOut'), sub = $('rpSub'), warn = $('rpWarn'), tabla = $('rpTabla');
+    warn.hidden = true; tabla.hidden = true;
+    if(!(w > 0) || !(r >= 1) || !(r2 >= 1)){
+      out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Rellena las dos series'; return;
+    }
+    r = Math.min(r, 12); r2 = Math.min(r2, 12);
+    var e1 = w / rpePct(r, e);
+    var obj = e1 * rpePct(r2, e2);
+    out.textContent = kg(r05(obj)); out.appendChild(sub);
+    var sobran = 10 - e2;
+    sub.textContent = r2 + (r2 === 1 ? ' repetición' : ' repeticiones') + ' a RPE ' + rpeTxt(e2) +
+      (sobran > 0 ? ' (que te sobren ' + rpeTxt(sobran) + ')' : ' (al fallo)') + ' · tu máximo estimado: ' + kg(r05(e1));
+    if(r + 10 - e > 10){ warn.hidden = false; warn.textContent = 'Con tantas repeticiones y tanto margen la estimación pierde precisión. Para calcular bien, usa una serie de 3 a 8 repeticiones a RPE 8 o más.'; }
+    var tb = tabla.querySelector('tbody'); tb.innerHTML = '';
+    [1, 2, 3, 4, 5, 6, 8, 10, 12].forEach(function(n){
+      var tr = document.createElement('tr');
+      var c = document.createElement('td'); c.textContent = n; tr.appendChild(c);
+      [10, 9, 8, 7].forEach(function(p){ var td = document.createElement('td'); td.textContent = kg(r05(e1 * rpePct(n, p))); tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+    tabla.hidden = false;
+  }
+  reg(calcRpe, ['rpPeso', 'rpReps', 'rpRpe', 'rpReps2', 'rpRpe2']);
+
+  /* ---------- puntos DOTS y Wilks ---------- */
+  var poli = function(c, x){ var s = 0; for(var i = c.length - 1; i >= 0; i--) s = s * x + c[i]; return s; };
+  var DOTS = {
+    h: { c: [-307.75076, 24.0900756, -0.1918759221, 0.0007391293, -0.000001093], lo: 40, hi: 210 },
+    m: { c: [-57.96288, 13.6175032, -0.1126655495, 0.0005158568, -0.0000010706], lo: 40, hi: 150 }
+  };
+  var WILKS = {
+    h: { c: [-216.0475144, 16.2606339, -0.002388645, -0.00113732, 7.01863e-06, -1.291e-08], lo: 40, hi: 201.9 },
+    m: { c: [594.31747775582, -27.23842536447, 0.82112226871, -0.00930733913, 4.731582e-05, -9.054e-08], lo: 26.51, hi: 154.53 }
+  };
+  var coef = function(t, bw){ return 500 / poli(t.c, Math.max(t.lo, Math.min(t.hi, bw))); };
+  var ultPts = null;
+  function calcPuntos(){
+    var sx = $('dtSexo').value, bw = num('dtPeso'), tot = num('dtTotal');
+    var out = $('dtOut'), sub = $('dtSub'), tabla = $('dtTabla'), txt = $('dtTxt');
+    tabla.hidden = true; txt.textContent = ''; ultPts = null;
+    if(!(bw > 0) || !(tot > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Mete tu peso y tu total'; return; }
+    var d = tot * coef(DOTS[sx], bw), w = tot * coef(WILKS[sx], bw);
+    out.textContent = dec(d, 1); out.appendChild(sub);
+    sub.textContent = 'Puntos DOTS con ' + kg(tot) + ' de total pesando ' + kg(bw);
+    var tb = tabla.querySelector('tbody'); tb.innerHTML = '';
+    [['DOTS', dec(d, 1)], ['Wilks', dec(w, 1)], ['Total / peso corporal', dec(tot / bw, 2) + ' ×']].forEach(function(r){
+      var tr = document.createElement('tr');
+      r.forEach(function(v){ var td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+    tabla.hidden = false;
+    var ref = d < 250 ? 'Estás construyendo la base: aquí se sube rápido.'
+      : d < 325 ? 'Buen nivel de gimnasio: ya se nota que entrenas en serio.'
+      : d < 400 ? 'Muy fuerte para alguien que no compite.'
+      : d < 475 ? 'Nivel de competición regional o nacional.'
+      : 'Nivel de campeonatos. Poquísima gente llega aquí.';
+    txt.innerHTML = '<strong>' + ref + '</strong> DOTS es la fórmula que usa hoy la mayoría de federaciones; Wilks es la clásica. Sirven para comparar a gente de distinto peso: a igual total, quien pesa menos puntúa más.';
+    ultPts = { d: d, w: w, tot: tot, bw: bw };
+  }
+  reg(calcPuntos, ['dtSexo', 'dtPeso', 'dtTotal']);
+  on('dtShare', 'click', function(){
+    if(!ultPts) return;
+    tarjeta({ titulo: 'Mis puntos de fuerza', grande: dec(ultPts.d, 1) + ' DOTS', sub: 'Total ' + kg(ultPts.tot) + ' pesando ' + kg(ultPts.bw),
+      lineas: ['Wilks: ' + dec(ultPts.w, 1), 'Total / peso: ' + dec(ultPts.tot / ultPts.bw, 2) + ' ×'], archivo: 'mis-puntos-arnoldwork.png' });
+  });
+
+  /* ---------- ¿cuánto músculo puedo ganar? ---------- */
+  // Medias de Lyle McDonald para hombres (kg de músculo por año); en mujeres, la mitad.
+  var MUS_ANO = [[9, 11], [4.5, 5.5], [2.25, 2.75], [1, 1.5], [0.5, 1]];
+  var ultMus = null;
+  function calcMusculo(){
+    var sx = $('muSexo').value, h = num('muAltura'), a = parseInt($('muAnos').value, 10);
+    var out = $('muOut'), sub = $('muSub'), tabla = $('muTabla'), txt = $('muTxt');
+    tabla.hidden = true; txt.textContent = ''; ultMus = null;
+    if(!(h > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Mete tu altura'; return; }
+    var f = sx === 'm' ? 0.5 : 1;
+    var rango = function(i){ var r = MUS_ANO[Math.min(i, MUS_ANO.length - 1)]; return [r[0] * f, r[1] * f]; };
+    var fmt = function(r){ return dec(r[0], 1).replace(',0', '') + ' a ' + dec(r[1], 1).replace(',0', '') + ' kg'; };
+    var este = rango(a);
+    out.textContent = fmt(este); out.appendChild(sub);
+    sub.textContent = 'de músculo en los próximos 12 meses · unos ' + dec(este[0] / 12, 2).replace(/0$/, '') + ' a ' + dec(este[1] / 12, 2).replace(/0$/, '') + ' kg al mes';
+    var tb = tabla.querySelector('tbody'); tb.innerHTML = '';
+    var acu = [0, 0];
+    for(var i = 0; i < 5; i++){
+      var r = rango(a + i); acu = [acu[0] + r[0], acu[1] + r[1]];
+      var tr = document.createElement('tr');
+      [(i === 0 ? 'Este año' : 'Dentro de ' + i + (i === 1 ? ' año' : ' años')), fmt(r), fmt(acu)].forEach(function(v){
+        var td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    }
+    tabla.hidden = false;
+    var hm = h / 100, ffmiMax = sx === 'm' ? 20 : 24, grasa = sx === 'm' ? 0.18 : 0.10;
+    var magra = ffmiMax * hm * hm, total = magra / (1 - grasa);
+    txt.innerHTML = 'El techo a largo plazo para tu altura ronda los <strong>' + Math.round(magra) + ' kg de masa magra</strong>: con un ' +
+      Math.round(grasa * 100) + ' % de grasa pesarías unos <strong>' + Math.round(total) + ' kg</strong> y se te vería muy musculad' + (sx === 'm' ? 'a' : 'o') +
+      '. Llegar ahí lleva muchos años y la mayoría de la gente se queda por debajo. Si la báscula sube mucho más rápido que esto, lo que sobra es grasa, no músculo.';
+    ultMus = { r: este, sx: sx };
+  }
+  reg(calcMusculo, ['muSexo', 'muAltura', 'muAnos']);
+  on('muShare', 'click', function(){
+    if(!ultMus) return;
+    tarjeta({ titulo: 'Músculo que puedo ganar este año', grande: dec(ultMus.r[0], 1).replace(',0', '') + '-' + dec(ultMus.r[1], 1).replace(',0', '') + ' kg',
+      sub: 'Sin ayudas, entrenando y comiendo bien', lineas: ['Lo demás es grasa o promesas.'], archivo: 'mi-musculo-arnoldwork.png' });
+  });
+
+  /* ---------- generador de rutina ---------- */
+  var EJ = {
+    sq:  { gym: 'Sentadilla con barra', casa: 'Sentadilla goblet con mancuerna', t: 'b' },
+    rdl: { gym: 'Peso muerto rumano con barra', casa: 'Peso muerto rumano con mancuernas', t: 'b' },
+    bp:  { gym: 'Press banca con barra', casa: 'Press banca con mancuernas', t: 'b' },
+    inc: { gym: 'Press inclinado con mancuernas', casa: 'Press inclinado con mancuernas', t: 'b' },
+    ohp: { gym: 'Press militar con barra', casa: 'Press militar con mancuernas, sentado', t: 'b' },
+    row: { gym: 'Remo con barra', casa: 'Remo con mancuerna a una mano', t: 'b' },
+    lat: { gym: 'Jalón al pecho', casa: 'Dominadas (o pullover con mancuerna si no tienes barra)', t: 'b' },
+    cab: { gym: 'Remo en polea baja', casa: 'Remo con dos mancuernas en banco inclinado', t: 'a' },
+    leg: { gym: 'Prensa de piernas', casa: 'Sentadilla búlgara con mancuernas', t: 'u' },
+    lun: { gym: 'Zancadas con mancuernas', casa: 'Zancadas con mancuernas', t: 'u' },
+    ht:  { gym: 'Hip thrust con barra', casa: 'Hip thrust con mancuerna apoyado en el banco', t: 'b' },
+    lc:  { gym: 'Curl femoral en máquina', casa: 'Puente de isquios con los talones en el banco', t: 'a' },
+    lr:  { gym: 'Elevaciones laterales con mancuernas', casa: 'Elevaciones laterales con mancuernas', t: 'a' },
+    bi:  { gym: 'Curl de bíceps con barra', casa: 'Curl de bíceps con mancuernas', t: 'a' },
+    tri: { gym: 'Extensión de tríceps en polea', casa: 'Press francés con mancuernas', t: 'a' },
+    calf:{ gym: 'Elevación de gemelos de pie', casa: 'Gemelos a una pierna con mancuerna', t: 'a' },
+    core:{ gym: 'Plancha abdominal', casa: 'Plancha abdominal', t: 'c' }
+  };
+  var DIAS = {
+    fa: ['Cuerpo completo A', ['sq', 'bp', 'row', 'lr', 'lc', 'core']],
+    fb: ['Cuerpo completo B', ['rdl', 'ohp', 'lat', 'lun', 'bi', 'tri']],
+    ta: ['Torso A', ['bp', 'row', 'ohp', 'lat', 'bi', 'tri']],
+    pa: ['Pierna A', ['sq', 'rdl', 'leg', 'lc', 'calf', 'core']],
+    tb: ['Torso B', ['inc', 'lat', 'cab', 'lr', 'bi', 'tri']],
+    pb: ['Pierna B', ['rdl', 'lun', 'ht', 'lc', 'calf', 'core']],
+    em: ['Empuje', ['bp', 'ohp', 'inc', 'lr', 'tri']],
+    ti: ['Tirón', ['rdl', 'lat', 'row', 'cab', 'bi']],
+    pi: ['Pierna', ['sq', 'leg', 'lc', 'ht', 'calf', 'core']]
+  };
+  var SEMANA = {
+    2: [['fa', 'fb'], 'Cuerpo completo dos veces: lunes y jueves, por ejemplo. Deja al menos dos días entre sesiones.'],
+    3: [['fa', 'fb', 'fa'], 'Cuerpo completo en días alternos (lunes, miércoles y viernes). Una semana haces A-B-A y la siguiente B-A-B.'],
+    4: [['ta', 'pa', 'tb', 'pb'], 'Torso y pierna, dos veces cada uno: por ejemplo lunes, martes, jueves y viernes.'],
+    5: [['ta', 'pa', 'em', 'ti', 'pb'], 'Torso y pierna al principio de la semana, y empuje, tirón y pierna al final.'],
+    6: [['em', 'ti', 'pi', 'em', 'ti', 'pi'], 'Empuje, tirón y pierna, dos vueltas por semana, con un día de descanso.']
+  };
+  var ultRut = '';
+  function seriesDe(k, i, avanz, nom){
+    var t = EJ[k].t;
+    if(t === 'c') return '3 × 30-45 s';
+    var s = avanz && i < 2 ? 4 : 3;
+    if(t === 'b') return s + ' × ' + (i < 2 ? '6-10' : '8-12');
+    if(t === 'u') return s + ' × 8-12' + (/zancada|búlgara/i.test(nom) ? ' por pierna' : '');
+    return s + ' × 10-15';
+  }
+  function calcRutina(){
+    var d = parseInt($('ruDias').value, 10), donde = $('ruDonde').value, avanz = $('ruNivel').value === '1';
+    var sem = SEMANA[d], plan = $('ruPlan'), warn = $('ruWarn');
+    plan.innerHTML = ''; warn.hidden = true;
+    var out = $('ruOut'), sub = $('ruSub');
+    out.textContent = d + ' días'; out.appendChild(sub);
+    sub.textContent = { 2: 'Cuerpo completo', 3: 'Cuerpo completo', 4: 'Torso y pierna', 5: 'Torso, pierna, empuje y tirón', 6: 'Empuje, tirón y pierna' }[d] +
+      ' · ' + (donde === 'gym' ? 'en el gimnasio' : 'en casa');
+    if(!avanz && d >= 5){ warn.hidden = false; warn.textContent = 'Si empiezas, con 3 días a la semana progresas igual y te recuperas mejor. Usa 5 o 6 solo si te sobra tiempo y duermes bien.'; }
+    var texto = ['Rutina de ' + d + ' días · ArnoldWork', ''];
+    var vistos = {};
+    sem[0].forEach(function(k, n){
+      var dia = DIAS[k], box = document.createElement('div'); box.className = 'dia';
+      var rep = vistos[k] ? ' (repite)' : ''; vistos[k] = true;
+      var h = document.createElement('h3'); h.textContent = 'Día ' + (n + 1) + ' · ' + dia[0] + rep; box.appendChild(h);
+      var ul = document.createElement('ul');
+      texto.push('Día ' + (n + 1) + ' · ' + dia[0]);
+      dia[1].forEach(function(e, i){
+        var li = document.createElement('li'), nom = EJ[e][donde], sr = seriesDe(e, i, avanz, nom);
+        var b = document.createElement('span'); b.textContent = nom;
+        var s = document.createElement('b'); s.textContent = sr;
+        li.appendChild(b); li.appendChild(s); ul.appendChild(li);
+        texto.push('  ' + nom + ': ' + sr);
+      });
+      box.appendChild(ul); plan.appendChild(box); texto.push('');
+    });
+    var rir = avanz ? 'Acaba cada serie dejando <strong>1 o 2 repeticiones en la recámara</strong>; en los ejercicios pequeños puedes llegar al fallo.'
+                    : 'Acaba cada serie dejando <strong>2 o 3 repeticiones en la recámara</strong>: suficiente para crecer y aprender la técnica sin lesionarte.';
+    $('ruTxt').innerHTML = sem[1] + ' ' + rir + ' Cuando llegues al máximo de repeticiones en todas las series, sube el peso (<a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>). Descansa 2-3 minutos en los básicos y 1-2 en el resto, y calienta antes con <a href="/herramientas/series-de-aproximacion/">series de aproximación</a>.';
+    texto.push('Deja ' + (avanz ? '1-2' : '2-3') + ' repeticiones en la recámara. Sube el peso cuando llegues al máximo del rango.', 'arnoldwork.com/herramientas/generador-de-rutina/');
+    ultRut = texto.join('\n');
+  }
+  reg(calcRutina, ['ruDias', 'ruDonde', 'ruNivel']);
+  on('ruCopy', 'click', function(){
+    var b = $('ruCopy');
+    var hecho = function(){ b.textContent = 'Copiada ✓'; setTimeout(function(){ b.textContent = 'Copiar la rutina'; }, 2000); };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ultRut).then(hecho, function(){ window.prompt('Copia la rutina:', ultRut); });
+    else window.prompt('Copia la rutina:', ultRut);
+  });
+
+  /* ---------- cuaderno de entreno ---------- */
+  var BASE_EJ = ['Press banca', 'Sentadilla', 'Peso muerto', 'Press militar', 'Dominadas', 'Remo con barra', 'Jalón al pecho',
+    'Press inclinado con mancuernas', 'Hip thrust', 'Prensa de piernas', 'Peso muerto rumano', 'Curl de bíceps', 'Fondos'];
+  var cuad = (function(){ try{ var a = JSON.parse(sget('cuaderno') || '[]'); return Array.isArray(a) ? a : []; }catch(e){ return []; } })();
+  var fechaTxt = function(s){ var p = partes(s); return p[2] + '/' + (p[1] + 1) + '/' + String(p[0]).slice(2); };
+  var normal = function(s){ return s.trim().replace(/\s+/g, ' '); };
+  var clave = function(s){ return normal(s).toLowerCase(); };
+  function ejercicios(){
+    var vistos = {}, lista = [];
+    cuad.slice().reverse().forEach(function(x){ var k = clave(x.e); if(!vistos[k]){ vistos[k] = 1; lista.push(x.e); } });
+    return lista;
+  }
+  function guardaCuad(){ sset('cuaderno', JSON.stringify(cuad)); }
+  function pintaGraf(regs){
+    var c = $('cuGraf'), x = c.getContext('2d');
+    var dias = {}, orden = [];
+    regs.forEach(function(r){ var v = est(r.w, Math.min(r.r, 12)); if(!(r.d in dias)){ dias[r.d] = v; orden.push(r.d); } else dias[r.d] = Math.max(dias[r.d], v); });
+    orden.sort();
+    c.hidden = orden.length < 2;
+    if(orden.length < 2) return;
+    var W = c.width, H = c.height, pad = 48;
+    var vals = orden.map(function(d){ return dias[d]; });
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    if(hi - lo < 1){ hi += 1; lo -= 1; }
+    var t0 = dias0(orden[0]), t1 = dias0(orden[orden.length - 1]) || 1;
+    var px = function(d){ return pad + (dias0(d) - t0) / Math.max(1, t1 - t0) * (W - pad * 2); };
+    var py = function(v){ return H - pad - (v - lo) / (hi - lo) * (H - pad * 2); };
+    x.clearRect(0, 0, W, H);
+    x.strokeStyle = 'rgba(244,242,239,0.12)'; x.lineWidth = 1;
+    [lo, (lo + hi) / 2, hi].forEach(function(v){ x.beginPath(); x.moveTo(pad, py(v)); x.lineTo(W - pad, py(v)); x.stroke(); });
+    x.fillStyle = '#A9A9A9'; x.font = '600 30px Archivo, sans-serif';
+    x.fillText(kg(r05(hi)), pad, py(hi) - 12); x.fillText(kg(r05(lo)), pad, py(lo) + 36);
+    x.strokeStyle = '#DE3A3A'; x.lineWidth = 6; x.beginPath();
+    orden.forEach(function(d, i){ var X = px(d), Y = py(dias[d]); if(i) x.lineTo(X, Y); else x.moveTo(X, Y); });
+    x.stroke();
+    x.fillStyle = '#F4F2EF';
+    orden.forEach(function(d){ x.beginPath(); x.arc(px(d), py(dias[d]), 8, 0, Math.PI * 2); x.fill(); });
+  }
+  function dias0(s){ var p = partes(s); return Date.UTC(p[0], p[1], p[2]) / 864e5; }
+  function pintaCuad(){
+    var lista = ejercicios(), ver = $('cuVer'), dl = $('cuLista');
+    var sel = ver.value || sget('cuVer') || lista[0] || '';
+    ver.innerHTML = ''; dl.innerHTML = '';
+    lista.concat(BASE_EJ.filter(function(b){ return lista.map(clave).indexOf(clave(b)) < 0; })).forEach(function(e){
+      var o = document.createElement('option'); o.value = e; dl.appendChild(o);
+    });
+    if(!lista.length){
+      var o0 = document.createElement('option'); o0.textContent = 'Sin ejercicios todavía'; o0.value = ''; ver.appendChild(o0);
+    }
+    lista.forEach(function(e){ var o = document.createElement('option'); o.value = e; o.textContent = e; ver.appendChild(o); });
+    if(lista.map(clave).indexOf(clave(sel)) >= 0) ver.value = lista.filter(function(e){ return clave(e) === clave(sel); })[0];
+    var out = $('cuOut'), sub = $('cuSub'), tabla = $('cuTabla'), tb = tabla.querySelector('tbody');
+    var regs = cuad.filter(function(x){ return clave(x.e) === clave(ver.value); });
+    tb.innerHTML = '';
+    if(!regs.length){
+      out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Todavía no has apuntado nada'; tabla.hidden = true; $('cuGraf').hidden = true; return;
+    }
+    var ordenados = regs.slice().sort(function(a, b){ return a.d < b.d ? 1 : a.d > b.d ? -1 : b.id - a.id; });
+    var mejor = regs.reduce(function(m, x){ return est(x.w, Math.min(x.r, 12)) > est(m.w, Math.min(m.r, 12)) ? x : m; });
+    var primero = regs.slice().sort(function(a, b){ return a.d < b.d ? -1 : a.d > b.d ? 1 : a.id - b.id; })[0];
+    var eM = est(mejor.w, Math.min(mejor.r, 12)), eP = est(primero.w, Math.min(primero.r, 12));
+    out.textContent = kg(r05(eM)); out.appendChild(sub);
+    var sube = eP > 0 ? Math.round((eM / eP - 1) * 100) : 0;
+    sub.textContent = 'Tu mejor marca: ' + kg(mejor.w) + ' × ' + mejor.r + ' (1RM estimado)' + (sube > 0 ? ' · +' + sube + ' % desde el ' + fechaTxt(primero.d) : '');
+    ordenados.slice(0, 40).forEach(function(x){
+      var tr = document.createElement('tr');
+      [fechaTxt(x.d), kg(x.w) + ' × ' + x.r + (x.s > 1 ? ' · ' + x.s + ' series' : ''), kg(r05(est(x.w, Math.min(x.r, 12))))].forEach(function(v){
+        var td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
+      });
+      var td = document.createElement('td'), b = document.createElement('button');
+      b.type = 'button'; b.className = 'linkbtn'; b.textContent = 'Borrar'; b.setAttribute('aria-label', 'Borrar la serie del ' + fechaTxt(x.d));
+      b.addEventListener('click', function(){
+        if(!window.confirm('¿Borrar esta serie?')) return;
+        cuad = cuad.filter(function(y){ return y.id !== x.id; }); guardaCuad(); pintaCuad();
+      });
+      td.appendChild(b); tr.appendChild(td); tb.appendChild(tr);
+    });
+    tabla.hidden = false;
+    pintaGraf(regs);
+  }
+  if($('cuaderno')){
+    $('cuFecha').value = hoyISO();
+    on('cuVer', 'change', function(){ sset('cuVer', $('cuVer').value); pintaCuad(); });
+    on('cuAdd', 'click', function(){
+      var e = normal($('cuEj').value), w = num('cuPeso'), r = ent('cuReps'), s = ent('cuSeries') || 1, d = $('cuFecha').value || hoyISO();
+      var warn = $('cuWarn'); warn.hidden = true;
+      if(!e || !(w >= 0) || isNaN(w) || !(r >= 1)){ warn.hidden = false; warn.textContent = 'Escribe el ejercicio, el peso y las repeticiones.'; return; }
+      var igual = ejercicios().filter(function(x){ return clave(x) === clave(e); })[0];
+      cuad.push({ id: Date.now(), e: igual || e, d: d, w: w, r: r, s: Math.max(1, Math.min(20, s)) });
+      if(cuad.length > 3000) cuad = cuad.slice(-3000);
+      guardaCuad();
+      $('cuVer').value = igual || e; sset('cuVer', igual || e);
+      $('cuReps').value = '';
+      pintaCuad();
+      var b = $('cuAdd'); b.textContent = 'Apuntado ✓'; setTimeout(function(){ b.textContent = 'Apuntar'; }, 1500);
+    });
+    on('cuCsv', 'click', function(){
+      if(!cuad.length) return;
+      var esc = function(v){ v = String(v); return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+      var filas = [['Fecha', 'Ejercicio', 'Peso (kg)', 'Repeticiones', 'Series', '1RM estimado (kg)']].concat(
+        cuad.slice().sort(function(a, b){ return a.d < b.d ? -1 : a.d > b.d ? 1 : a.id - b.id; }).map(function(x){
+          return [x.d, x.e, String(x.w).replace('.', ','), x.r, x.s, String(r05(est(x.w, Math.min(x.r, 12)))).replace('.', ',')];
+        }));
+      descargar(new Blob(['﻿' + filas.map(function(f){ return f.map(esc).join(';'); }).join('\n')], { type: 'text/csv;charset=utf-8' }), 'cuaderno-arnoldwork.csv');
+    });
+    pintaCuad();
+  }
+
+  /* ---------- sustituto de ejercicio ---------- */
+  var SUST = [
+    ['Press banca', 'Pecho, tríceps y hombro delantero', {
+      gym: ['Press banca con mancuernas', 'Press de pecho en máquina', 'Fondos en paralelas inclinándote hacia delante'],
+      manc: ['Press banca con mancuernas', 'Press en el suelo con mancuernas si no tienes banco'],
+      gomas: ['Press de pecho con goma anclada a la espalda', 'Flexiones con goma por la espalda para añadir resistencia'],
+      nada: ['Flexiones (sube los pies a una silla para hacerlas más duras)', 'Flexiones con pausa de 2 segundos abajo'] }],
+    ['Press inclinado', 'Parte alta del pecho y hombro delantero', {
+      gym: ['Press inclinado en máquina o multipower', 'Press inclinado con barra'],
+      manc: ['Press inclinado con mancuernas', 'Press con mancuernas en el suelo con agarre neutro'],
+      gomas: ['Press con goma desde abajo, empujando hacia arriba y delante'],
+      nada: ['Flexiones con los pies elevados en una silla', 'Flexiones pica (cadera alta)'] }],
+    ['Press militar', 'Hombros y tríceps', {
+      gym: ['Press de hombro con mancuernas', 'Press de hombro en máquina', 'Press Arnold'],
+      manc: ['Press militar con mancuernas sentado', 'Press Arnold'],
+      gomas: ['Press de hombro de pie pisando la goma'],
+      nada: ['Flexiones pica', 'Flexiones en pino con apoyo en la pared (avanzado)'] }],
+    ['Elevaciones laterales', 'Hombro lateral', {
+      gym: ['Elevación lateral en polea', 'Elevación lateral en máquina'],
+      manc: ['Elevaciones laterales tumbado de lado en el banco inclinado'],
+      gomas: ['Elevaciones laterales pisando la goma'],
+      nada: ['Elevaciones laterales con botellas o garrafas de agua'] }],
+    ['Dominadas', 'Dorsal y bíceps', {
+      gym: ['Jalón al pecho', 'Dominadas asistidas en máquina o con goma'],
+      manc: ['Pullover con mancuerna', 'Remo con mancuerna a una mano'],
+      gomas: ['Jalón con goma anclada arriba (en una puerta)'],
+      nada: ['Remo invertido bajo una mesa firme', 'Dominadas negativas: sube saltando y baja en 5 segundos'] }],
+    ['Jalón al pecho', 'Dorsal y bíceps', {
+      gym: ['Dominadas o dominadas asistidas', 'Jalón a una mano en polea'],
+      manc: ['Pullover con mancuerna', 'Remo con mancuerna a una mano'],
+      gomas: ['Jalón con goma anclada arriba'],
+      nada: ['Remo invertido bajo una mesa firme', 'Dominadas negativas'] }],
+    ['Remo con barra', 'Espalda media, dorsal y bíceps', {
+      gym: ['Remo en polea baja', 'Remo en máquina con apoyo en el pecho', 'Remo con mancuerna a una mano'],
+      manc: ['Remo con mancuerna a una mano', 'Remo con dos mancuernas en banco inclinado'],
+      gomas: ['Remo sentado con goma alrededor de los pies'],
+      nada: ['Remo invertido bajo una mesa firme', 'Remo con una mochila cargada'] }],
+    ['Sentadilla', 'Cuádriceps y glúteo', {
+      gym: ['Sentadilla en multipower', 'Prensa de piernas', 'Sentadilla hack'],
+      manc: ['Sentadilla goblet', 'Sentadilla búlgara con mancuernas'],
+      gomas: ['Sentadilla pisando la goma con los extremos en los hombros'],
+      nada: ['Sentadilla búlgara con el pie de atrás en una silla', 'Sentadilla con pausa de 3 segundos abajo'] }],
+    ['Prensa de piernas', 'Cuádriceps y glúteo', {
+      gym: ['Sentadilla hack', 'Sentadilla con barra', 'Sentadilla búlgara'],
+      manc: ['Sentadilla búlgara con mancuernas', 'Sentadilla goblet'],
+      gomas: ['Sentadilla con goma'],
+      nada: ['Sentadilla búlgara', 'Step-up a una silla firme'] }],
+    ['Peso muerto', 'Glúteo, isquios y toda la espalda', {
+      gym: ['Peso muerto con barra hexagonal', 'Peso muerto rumano con barra', 'Rack pull (desde las rodillas)'],
+      manc: ['Peso muerto rumano con mancuernas', 'Peso muerto a una pierna con mancuerna'],
+      gomas: ['Peso muerto pisando la goma', 'Pull-through con goma anclada abajo'],
+      nada: ['Peso muerto a una pierna', 'Puente de glúteo a una pierna'] }],
+    ['Peso muerto rumano', 'Isquios y glúteo', {
+      gym: ['Curl femoral en máquina', 'Hiperextensiones', 'Buenos días con barra'],
+      manc: ['Peso muerto rumano con mancuernas', 'Peso muerto a una pierna con mancuerna'],
+      gomas: ['Pull-through con goma', 'Peso muerto rumano pisando la goma'],
+      nada: ['Peso muerto a una pierna', 'Curl nórdico asistido (pies sujetos bajo un sofá)'] }],
+    ['Hip thrust', 'Glúteo', {
+      gym: ['Hip thrust en máquina', 'Puente de glúteo con barra en el suelo', 'Patada de glúteo en polea'],
+      manc: ['Hip thrust con mancuerna apoyado en el banco', 'Hip thrust a una pierna'],
+      gomas: ['Hip thrust con goma sobre la cadera'],
+      nada: ['Hip thrust a una pierna con la espalda en el sofá', 'Puente de glúteo con pausa arriba'] }],
+    ['Zancadas', 'Cuádriceps y glúteo, una pierna cada vez', {
+      gym: ['Sentadilla búlgara', 'Step-up al cajón', 'Prensa a una pierna'],
+      manc: ['Sentadilla búlgara con mancuernas', 'Step-up al banco con mancuernas'],
+      gomas: ['Zancada atrás pisando la goma'],
+      nada: ['Sentadilla búlgara', 'Zancadas caminando'] }],
+    ['Curl femoral', 'Isquios', {
+      gym: ['Peso muerto rumano', 'Curl femoral sentado o tumbado (la otra máquina)', 'Curl nórdico'],
+      manc: ['Curl femoral tumbado con mancuerna entre los pies', 'Puente de isquios con los talones en el banco'],
+      gomas: ['Curl femoral tumbado con goma anclada'],
+      nada: ['Curl nórdico asistido', 'Curl femoral deslizando los talones con una toalla en el suelo'] }],
+    ['Extensión de cuádriceps', 'Cuádriceps', {
+      gym: ['Sentadilla hack', 'Prensa con los pies bajos', 'Sentadilla sissy'],
+      manc: ['Sentadilla goblet con talones elevados', 'Sentadilla búlgara'],
+      gomas: ['Extensión de rodilla sentado con goma anclada'],
+      nada: ['Sentadilla sissy agarrado a una puerta', 'Sentadilla con talones elevados'] }],
+    ['Curl de bíceps', 'Bíceps', {
+      gym: ['Curl en polea', 'Curl con mancuernas', 'Curl en banco Scott'],
+      manc: ['Curl con mancuernas', 'Curl martillo', 'Curl inclinado en el banco'],
+      gomas: ['Curl pisando la goma'],
+      nada: ['Remo invertido con agarre supino (palmas hacia ti)', 'Curl con una mochila cargada'] }],
+    ['Extensión de tríceps en polea', 'Tríceps', {
+      gym: ['Press francés con barra Z', 'Fondos en banco', 'Extensión por encima de la cabeza en polea'],
+      manc: ['Press francés con mancuernas', 'Extensión por encima de la cabeza con una mancuerna'],
+      gomas: ['Extensión de tríceps con goma anclada arriba'],
+      nada: ['Fondos entre dos sillas', 'Flexiones con las manos juntas'] }],
+    ['Fondos', 'Pecho bajo y tríceps', {
+      gym: ['Fondos asistidos en máquina', 'Press banca con agarre cerrado', 'Press declinado'],
+      manc: ['Press banca con mancuernas y agarre neutro', 'Press francés con mancuernas'],
+      gomas: ['Press de pecho con goma hacia abajo'],
+      nada: ['Fondos entre dos sillas', 'Flexiones con las manos juntas'] }],
+    ['Elevación de gemelos', 'Gemelos', {
+      gym: ['Gemelos en prensa', 'Gemelos sentado en máquina'],
+      manc: ['Gemelos a una pierna con mancuerna en un escalón'],
+      gomas: ['Gemelos en el suelo empujando la goma con la punta del pie'],
+      nada: ['Gemelos a una pierna en un escalón, con pausa arriba'] }]
+  ];
+  if($('sustituto')){
+    SUST.forEach(function(s, i){ var o = document.createElement('option'); o.value = String(i); o.textContent = s[0]; $('suEj').appendChild(o); });
+    var vs = sget('f.suEj'); if(vs !== null && SUST[+vs]) $('suEj').value = vs;
+  }
+  function calcSust(){
+    var s = SUST[+$('suEj').value] || SUST[0], m = $('suMat').value, ul = $('suList');
+    $('suMus').innerHTML = 'Trabaja: <strong>' + s[1] + '</strong>';
+    ul.innerHTML = '';
+    s[2][m].forEach(function(a){ var li = document.createElement('li'); li.textContent = a; ul.appendChild(li); });
+  }
+  reg(calcSust, ['suEj', 'suMat']);
+
   /* ---------- borrar datos ---------- */
   on('clearAll', 'click', function(){
     if(!window.confirm('¿Borrar todo lo que esta página ha guardado en tu móvil?')) return;

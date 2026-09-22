@@ -272,3 +272,159 @@ HERRAMIENTAS = [
         ],
     },
 ]
+
+HERRAMIENTAS += [
+    {
+        "pieza": "rpe",
+        "slug": "calculadora-rpe-rir",
+        "grupo": "fuerza",
+        "nombre": "RIR y RPE",
+        "titulo": "Calculadora de RPE y RIR: qué peso usar en cada serie",
+        "descripcion": "Convierte una serie hecha a RPE o RIR en el peso para otra serie: otras repeticiones u otro esfuerzo. Con la tabla de RPE completa.",
+        "h1": "Calculadora de RIR y RPE",
+        "intro": "¿Tu programa dice «3×8 a RPE 8» y no sabes qué peso poner? Mete una serie que hayas hecho y cómo de dura fue, y te digo el peso para la que quieres hacer.",
+        "articulo": """
+<h2>RIR y RPE, en cristiano</h2>
+<p><strong>RIR</strong> son las repeticiones que te quedaban en la recámara al acabar la serie. <strong>RPE</strong> es lo mismo contado sobre 10: RPE 10 es el fallo, RPE 9 es que te sobraba una, RPE 8 que te sobraban dos.</p>
+<p>Usar el esfuerzo en vez de un peso fijo tiene una ventaja: se adapta a tu día. Si has dormido mal, el mismo RPE 8 será con algo menos de peso, y está bien que así sea.</p>
+<h2>Cómo se calcula</h2>
+<p>La herramienta usa la tabla de RPE de Mike Tuchscherer, la más extendida en powerlifting. De tu serie saca tu máximo estimado y, con él, el peso que corresponde a las repeticiones y el esfuerzo que buscas.</p>
+<p>Al principio cuesta saber cuántas repeticiones te sobraban. Un truco: graba alguna serie y fíjate cuándo empieza a frenarse la barra. Con unas semanas de práctica se afina mucho.</p>
+""",
+        "faq": [
+            ("¿Qué RPE usar para ganar músculo?", "La mayoría de las series entre RPE 7 y 9, es decir, dejando de 1 a 3 repeticiones en la recámara. Llegar al fallo en todas las series cansa mucho más y aporta poco extra."),
+            ("¿RIR 2 es lo mismo que RPE 8?", "Sí. RPE = 10 − RIR. RIR 2 (te sobraban dos) es RPE 8; RIR 0 es RPE 10, el fallo."),
+        ],
+    },
+    {
+        "pieza": "puntos",
+        "slug": "calculadora-dots-wilks",
+        "grupo": "fuerza",
+        "nombre": "Puntos DOTS y Wilks",
+        "titulo": "Calculadora DOTS y Wilks para powerlifting",
+        "descripcion": "Calcula tus puntos DOTS y Wilks a partir de tu total y tu peso corporal, para comparar tu fuerza con gente de cualquier peso.",
+        "h1": "Calculadora de puntos DOTS y Wilks",
+        "intro": "Tu total en sentadilla, banca y peso muerto, puesto en puntos para poder compararte con gente de cualquier peso, como en las competiciones de powerlifting.",
+        "articulo": """
+<h2>Para qué sirven los puntos</h2>
+<p>Un total de 500 kg no vale lo mismo pesando 70 kg que pesando 120. Las fórmulas de puntos corrigen el peso corporal para que se pueda comparar a todo el mundo en la misma tabla.</p>
+<ul>
+<li><strong>DOTS:</strong> la fórmula que usan hoy la mayoría de federaciones. Es la que sale en grande.</li>
+<li><strong>Wilks:</strong> la clásica, usada durante décadas. La dejo para que puedas comparar con marcas antiguas.</li>
+</ul>
+<h2>Qué es el total</h2>
+<p>La suma de tu mejor repetición en sentadilla, press banca y peso muerto. Si no has probado tu máximo, puedes estimarlo con la <a href="/herramientas/calculadora-1rm/">calculadora de 1RM</a>, aunque en competición solo cuenta el real.</p>
+""",
+        "faq": [
+            ("¿Qué es un buen DOTS?", "Como orientación: por encima de 300 es un buen nivel de gimnasio, por encima de 400 es nivel de competición y por encima de 500 hablamos de campeonatos."),
+            ("¿Qué diferencia hay entre DOTS y Wilks?", "Las dos corrigen el peso corporal. DOTS es más reciente y trata de forma más justa a los pesos muy ligeros y muy pesados; por eso la han adoptado muchas federaciones."),
+        ],
+    },
+    {
+        "pieza": "musculo",
+        "slug": "cuanto-musculo-puedo-ganar",
+        "grupo": "cuerpo",
+        "nombre": "¿Cuánto músculo puedo ganar?",
+        "titulo": "¿Cuánto músculo puedo ganar al año de forma natural?",
+        "descripcion": "Calcula cuánto músculo puedes ganar este año y en los siguientes sin ayudas, según tu experiencia, y tu techo aproximado para tu altura.",
+        "h1": "¿Cuánto músculo puedo ganar?",
+        "intro": "Expectativas reales, sin humo. Cuánto músculo puedes ganar este año y los siguientes entrenando y comiendo bien, y hasta dónde puede llegar alguien de tu altura.",
+        "articulo": """
+<h2>Lo que dicen los números</h2>
+<p>La referencia más usada es la de Lyle McDonald. Para un hombre que entrena y come bien, más o menos:</p>
+<ul>
+<li><strong>Primer año:</strong> 9 a 11 kg de músculo.</li>
+<li><strong>Segundo año:</strong> la mitad, unos 4,5 a 5,5 kg.</li>
+<li><strong>Tercer año:</strong> la mitad otra vez, unos 2 a 3 kg.</li>
+<li><strong>A partir del cuarto:</strong> alrededor de 1 kg al año.</li>
+</ul>
+<p>En mujeres, aproximadamente la mitad. Son medias: la genética, el sueño y la constancia mueven estos números arriba o abajo, pero no los multiplican.</p>
+<h2>Por qué importa saberlo</h2>
+<p>Porque te protege del humo. Si alguien te promete 10 kilos de músculo en tres meses, miente o vende algo. Y porque te ayuda a comer bien: si la báscula sube mucho más rápido que esto, lo que ganas de más es grasa. Ajusta con la <a href="/herramientas/calculadora-calorias-macros/">calculadora de calorías</a>.</p>
+<h2>El techo</h2>
+<p>El techo lo estimo con el FFMI, el índice de masa libre de grasa: en hombres, un FFMI de 24 es un físico muy musculado sin ayudas; en mujeres, alrededor de 20. Muy poca gente llega ahí, y hacerlo lleva muchos años.</p>
+""",
+        "faq": [
+            ("¿Cuánto músculo se gana en un mes?", "El primer año, un hombre gana de media algo menos de 1 kg de músculo al mes; una mujer, alrededor de medio kilo. A partir del segundo año, bastante menos."),
+            ("¿Por qué gano menos músculo que antes?", "Es normal: cuanto más cerca estás de tu techo, más despacio se avanza. No significa que lo estés haciendo mal."),
+        ],
+    },
+    {
+        "pieza": "rutina",
+        "slug": "generador-de-rutina",
+        "grupo": "entreno",
+        "nombre": "Generador de rutina",
+        "titulo": "Generador de rutina de gimnasio gratis: de 2 a 6 días",
+        "descripcion": "Crea tu rutina de gimnasio o de casa según los días que puedes entrenar: ejercicios, series y repeticiones de cada día. Gratis y sin registro.",
+        "h1": "Generador de rutina",
+        "intro": "Elige cuántos días puedes entrenar, dónde y cuánto llevas, y te monto la rutina con los ejercicios, series y repeticiones de cada día. Sin registros ni suscripciones.",
+        "articulo": """
+<h2>Cómo están montadas</h2>
+<p>Todas las rutinas se basan en lo mismo: los <strong>movimientos básicos</strong> (sentadilla, bisagra de cadera, empujes y tirones) primero, cuando estás fresco, y los ejercicios pequeños al final. Cada músculo se entrena al menos dos veces por semana.</p>
+<ul>
+<li><strong>2 o 3 días:</strong> cuerpo completo. Lo mejor si empiezas.</li>
+<li><strong>4 días:</strong> torso y pierna, dos veces cada uno.</li>
+<li><strong>5 días:</strong> torso y pierna más empuje, tirón y pierna.</li>
+<li><strong>6 días:</strong> empuje, tirón y pierna, dos vueltas.</li>
+</ul>
+<p>Más días no es mejor por sí solo: la mejor rutina es la que puedes cumplir semana tras semana.</p>
+<h2>Cómo progresar</h2>
+<p>Trabaja en el rango de repeticiones de cada ejercicio. Cuando llegues arriba en todas las series, sube el peso: la herramienta <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a> te lo dice. Y apunta lo que haces en el <a href="/herramientas/cuaderno-de-entreno/">cuaderno de entreno</a>.</p>
+""",
+        "faq": [
+            ("¿Cuántos días a la semana hay que entrenar para ganar músculo?", "Con tres días de cuerpo completo bien hechos se gana músculo de sobra, sobre todo al empezar. Cuatro o más días permiten repartir mejor el volumen, no son obligatorios."),
+            ("¿Sirve la rutina para entrenar en casa?", "Sí. Elige «Casa: mancuernas y banco» y te cambio cada ejercicio por su versión con mancuernas."),
+        ],
+    },
+    {
+        "pieza": "cuaderno",
+        "slug": "cuaderno-de-entreno",
+        "grupo": "entreno",
+        "nombre": "Cuaderno de entreno",
+        "titulo": "Cuaderno de entreno online gratis: apunta tus pesos",
+        "descripcion": "Apunta tus series, mira tu progreso en una gráfica por ejercicio y descárgalo en Excel. Se guarda en tu móvil, sin registro.",
+        "h1": "Cuaderno de entreno",
+        "intro": "Lo que no se mide, no sube. Apunta cada serie y mira cómo progresa cada ejercicio en una gráfica. Todo se queda en tu móvil: sin cuentas, sin anuncios.",
+        "articulo": """
+<h2>Por qué apuntar</h2>
+<p>Es la diferencia entre entrenar y hacer ejercicio. Si no sabes lo que hiciste la semana pasada, no puedes saber si hoy toca subir. Apuntar es también la forma más rápida de detectar un estancamiento.</p>
+<h2>Cómo usarlo</h2>
+<ul>
+<li>Apunta tu <strong>serie más dura</strong> de cada ejercicio, o todas si te gusta el detalle.</li>
+<li>La gráfica muestra el <strong>1RM estimado</strong> de cada día. Así puedes comparar una serie de 5 con una de 10.</li>
+<li>Descarga el historial en CSV para abrirlo en Excel o Google Sheets.</li>
+</ul>
+<p>Los datos se guardan en el navegador de tu móvil. Si borras los datos del navegador o cambias de teléfono, se pierden: descárgalos de vez en cuando como copia.</p>
+""",
+        "faq": [
+            ("¿Dónde se guardan mis datos?", "Solo en tu móvil o tu ordenador, en el navegador. No se envían a ningún sitio y nadie más puede verlos."),
+            ("¿Puedo pasar mis datos a Excel?", "Sí, con el botón «Descargar en Excel (CSV)» tienes todo el historial en una hoja."),
+        ],
+    },
+    {
+        "pieza": "sustituto",
+        "slug": "sustituto-de-ejercicio",
+        "grupo": "entreno",
+        "nombre": "Sustituto de ejercicio",
+        "titulo": "Sustituto de ejercicio: alternativas para el gimnasio y para casa",
+        "descripcion": "¿Máquina ocupada o entrenas en casa? Elige el ejercicio y lo que tienes (máquinas, mancuernas, gomas o nada) y te doy alternativas equivalentes.",
+        "h1": "Sustituto de ejercicio",
+        "intro": "¿La máquina está ocupada, entrenas en casa o te molesta algo? Elige el ejercicio y lo que tienes a mano y te doy alternativas que trabajan lo mismo.",
+        "articulo": """
+<h2>Cómo elegir un buen sustituto</h2>
+<p>Un ejercicio se puede cambiar por otro que haga el <strong>mismo movimiento</strong> y cargue los <strong>mismos músculos</strong>. Un press se cambia por otro press, un tirón por otro tirón. Por eso las alternativas están agrupadas por patrón de movimiento, no por máquina.</p>
+<p>Si cambias a una versión más fácil, compénsalo con más repeticiones o con pausas y bajadas lentas, para que la serie siga acabando cerca del fallo.</p>
+<h2>Si te duele algo</h2>
+<p>Cambiar de ejercicio puede ayudar cuando un movimiento concreto te molesta, pero no es un tratamiento. Si el dolor sigue o va a más, consúltalo con un profesional sanitario.</p>
+""",
+        "faq": [
+            ("¿Se puede ganar músculo solo con mancuernas?", "Sí. Con mancuernas y un banco se pueden trabajar todos los músculos. Lo importante es que las series sean duras y que vayas subiendo el peso o las repeticiones."),
+        ],
+    },
+]
+
+_ORDEN = ["rm", "rpe", "subir", "nivel", "puntos", "discos", "calentamiento",
+          "macros", "grasa", "musculo",
+          "rutina", "cuaderno", "sustituto", "volumen", "recuperacion", "descansos", "tempo"]
+assert sorted(_ORDEN) == sorted(h["pieza"] for h in HERRAMIENTAS)
+HERRAMIENTAS.sort(key=lambda h: _ORDEN.index(h["pieza"]))

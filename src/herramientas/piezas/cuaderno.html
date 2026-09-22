@@ -1,0 +1,49 @@
+<div class="tool" id="cuaderno">
+  <h2>Cuaderno de entreno</h2>
+  <p class="hint">Apunta tus series y mira cómo sube cada ejercicio. Se guarda solo en tu móvil: nadie más lo ve y no hace falta registrarse.</p>
+  <div class="fields">
+    <div class="field wide">
+      <label for="cuEj">Ejercicio</label>
+      <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Press banca" maxlength="60">
+      <datalist id="cuLista"></datalist>
+    </div>
+    <div class="field">
+      <label for="cuFecha">Fecha</label>
+      <input id="cuFecha" type="date">
+    </div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="field">
+      <label for="cuPeso">Peso (kg)</label>
+      <input id="cuPeso" type="number" inputmode="decimal" min="0" max="500" step="0.5" placeholder="60">
+    </div>
+    <div class="field">
+      <label for="cuReps">Repeticiones</label>
+      <input id="cuReps" type="number" inputmode="numeric" min="1" max="50" step="1" placeholder="10">
+    </div>
+    <div class="field">
+      <label for="cuSeries">Series</label>
+      <input id="cuSeries" type="number" inputmode="numeric" min="1" max="20" step="1" value="1">
+    </div>
+    <button type="button" class="btn" id="cuAdd">Apuntar</button>
+  </div>
+  <p class="warn" id="cuWarn" hidden></p>
+  <div class="out">
+    <div class="fields">
+      <div class="field wide">
+        <label for="cuVer">Ver ejercicio</label>
+        <select id="cuVer"></select>
+      </div>
+    </div>
+    <div class="big" id="cuOut" style="margin-top:18px">—<small id="cuSub">Todavía no has apuntado nada</small></div>
+    <canvas class="graf" id="cuGraf" width="800" height="260" hidden aria-label="Gráfica de tu progreso"></canvas>
+    <table class="pct hist" id="cuTabla" hidden>
+      <thead><tr><th scope="col">Fecha</th><th scope="col">Serie</th><th scope="col">1RM est.</th><th scope="col"><span class="sr">Borrar</span></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="acts">
+      <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Descargar en Excel (CSV)</button>
+    </div>
+    <p class="cta-line">¿No sabes si toca subir? Mételo en <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a></p>
+  </div>
+</div>

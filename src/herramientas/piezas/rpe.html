@@ -1,0 +1,57 @@
+<div class="tool" id="rpe">
+  <h2>RIR y RPE: qué peso usar</h2>
+  <p class="hint">Mete una serie que hayas hecho y lo dura que fue, y te digo con qué peso hacer otra serie con otras repeticiones o a otro esfuerzo. RIR son las repeticiones que te sobraban; RPE es lo mismo contado al revés: RPE 8 = te sobraban 2.</p>
+  <p class="k-lbl">Una serie que has hecho</p>
+  <div class="fields">
+    <div class="field">
+      <label for="rpPeso">Peso (kg)</label>
+      <input id="rpPeso" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="100" data-keep>
+    </div>
+    <div class="field">
+      <label for="rpReps">Repeticiones</label>
+      <input id="rpReps" type="number" inputmode="numeric" min="1" max="12" step="1" value="5" data-keep>
+    </div>
+    <div class="field">
+      <label for="rpRpe">Esfuerzo</label>
+      <select id="rpRpe" data-keep>
+        <option value="10">RPE 10 · al fallo, no sobraba ninguna</option>
+        <option value="9.5">RPE 9,5 · quizá una más</option>
+        <option value="9">RPE 9 · sobraba 1</option>
+        <option value="8.5">RPE 8,5 · sobraban 1 o 2</option>
+        <option value="8" selected>RPE 8 · sobraban 2</option>
+        <option value="7.5">RPE 7,5 · sobraban 2 o 3</option>
+        <option value="7">RPE 7 · sobraban 3</option>
+        <option value="6">RPE 6 · sobraban 4 o más</option>
+      </select>
+    </div>
+  </div>
+  <p class="k-lbl">La serie que quieres hacer</p>
+  <div class="fields">
+    <div class="field">
+      <label for="rpReps2">Repeticiones</label>
+      <input id="rpReps2" type="number" inputmode="numeric" min="1" max="12" step="1" value="8" data-keep>
+    </div>
+    <div class="field">
+      <label for="rpRpe2">Esfuerzo</label>
+      <select id="rpRpe2" data-keep>
+        <option value="10">RPE 10 · al fallo</option>
+        <option value="9.5">RPE 9,5</option>
+        <option value="9">RPE 9 · que sobre 1</option>
+        <option value="8.5">RPE 8,5</option>
+        <option value="8" selected>RPE 8 · que sobren 2</option>
+        <option value="7.5">RPE 7,5</option>
+        <option value="7">RPE 7 · que sobren 3</option>
+        <option value="6">RPE 6 · que sobren 4</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="rpOut">—<small id="rpSub"></small></div>
+    <p class="warn" id="rpWarn" hidden></p>
+    <table class="pct" id="rpTabla" hidden>
+      <thead><tr><th scope="col">Reps</th><th scope="col">RPE 10</th><th scope="col">RPE 9</th><th scope="col">RPE 8</th><th scope="col">RPE 7</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="cta-line">¿Te ha servido? <a href="/#batido">Invita a un batido 🥤</a></p>
+  </div>
+</div>

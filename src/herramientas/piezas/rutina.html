@@ -1,0 +1,38 @@
+<div class="tool" id="rutina">
+  <h2>Generador de rutina</h2>
+  <p class="hint">Dime cuántos días puedes entrenar, dónde y cuánto llevas, y te monto una rutina con los ejercicios, las series y las repeticiones de cada día. Sencilla, de las que funcionan.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="ruDias">Días por semana</label>
+      <select id="ruDias" data-keep>
+        <option value="2">2 días</option>
+        <option value="3" selected>3 días</option>
+        <option value="4">4 días</option>
+        <option value="5">5 días</option>
+        <option value="6">6 días</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="ruDonde">Dónde entrenas</label>
+      <select id="ruDonde" data-keep>
+        <option value="gym" selected>Gimnasio</option>
+        <option value="casa">Casa: mancuernas y banco</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="ruNivel">Experiencia</label>
+      <select id="ruNivel" data-keep>
+        <option value="0" selected>Empiezo o menos de 6 meses</option>
+        <option value="1">Más de 6 meses</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="ruOut">—<small id="ruSub"></small></div>
+    <p class="warn" id="ruWarn" hidden></p>
+    <div class="dias" id="ruPlan"></div>
+    <p class="vtxt" id="ruTxt"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="ruCopy">Copiar la rutina</button></div>
+    <p class="cta-line">¿Quieres el plan cerrado de 8 semanas, con la progresión semana a semana? <a href="https://ko-fi.com/s/5bf99e632d" target="_blank" rel="noopener">Ficha «Hipertrofia para empezar bien» →</a></p>
+  </div>
+</div>

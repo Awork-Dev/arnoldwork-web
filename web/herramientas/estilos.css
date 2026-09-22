@@ -496,3 +496,24 @@
   .otras{margin-top:56px;padding-top:34px;border-top:1px solid var(--rule)}
   .otras h2{font-size:clamp(1.4rem,3.6vw,1.9rem);margin-bottom:6px}
   .otras .idx{margin-top:20px}
+
+  /* ---------- herramientas nuevas ---------- */
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .k-lbl{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:22px 0 10px}
+  .k-lbl:first-of-type{margin-top:4px}
+  .field.wide input{width:320px;max-width:100%}
+  .fields>.btn{align-self:flex-end}
+  .dias{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:20px}
+  .dia{border:1px solid var(--rule-strong);background:var(--ink);padding:16px}
+  .dia h3{font-size:1rem;margin-bottom:10px;line-height:1.2}
+  .dia ul{list-style:none;margin:0;padding:0}
+  .dia li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:.9rem}
+  .dia li:last-child{border-bottom:0}
+  .dia li b{white-space:nowrap;color:var(--amber);font-variant-numeric:tabular-nums}
+  .graf{display:block;width:100%;height:auto;margin-top:20px;background:var(--ink);border:1px solid var(--rule)}
+  .graf[hidden]{display:none}
+  .hist td:last-child{text-align:right}
+  .alts{margin:16px 0 0;padding-left:22px}
+  .alts li{padding:8px 0;border-bottom:1px solid var(--rule);font-weight:600}
+  .alts li::marker{color:var(--amber);font-family:'Archivo Black'}
+  @media(max-width:560px){.field.wide input{width:100%}.fields>.btn{width:100%}}

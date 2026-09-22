@@ -1,0 +1,34 @@
+<div class="tool" id="musculo">
+  <h2>¿Cuánto músculo puedo ganar?</h2>
+  <p class="hint">Lo que se puede esperar de verdad, sin ayudas y entrenando y comiendo bien. Son medias: hay quien gana algo más y quien algo menos, pero nadie gana 10 kilos de músculo en tres meses.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="muSexo">Sexo</label>
+      <select id="muSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+    </div>
+    <div class="field">
+      <label for="muAltura">Altura (cm)</label>
+      <input id="muAltura" type="number" inputmode="numeric" min="130" max="220" step="1" value="178" data-sync="altura">
+    </div>
+    <div class="field">
+      <label for="muAnos">Tiempo entrenando bien</label>
+      <select id="muAnos" data-keep>
+        <option value="0" selected>Empiezo o menos de 1 año</option>
+        <option value="1">1 a 2 años</option>
+        <option value="2">2 a 3 años</option>
+        <option value="3">3 a 4 años</option>
+        <option value="4">Más de 4 años</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="muOut">—<small id="muSub"></small></div>
+    <table class="pct" id="muTabla" hidden>
+      <thead><tr><th scope="col">Año</th><th scope="col">Músculo ese año</th><th scope="col">Acumulado</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="vtxt" id="muTxt"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="muShare">Compartir como imagen</button></div>
+    <p class="cta-line">Para seguir tu progreso de verdad, mídete con <a href="/herramientas/grasa-corporal-ffmi/">grasa corporal y FFMI</a> una vez al mes.</p>
+  </div>
+</div>

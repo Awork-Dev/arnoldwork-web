@@ -1,0 +1,24 @@
+<div class="tool" id="sustituto">
+  <h2>Sustituto de ejercicio</h2>
+  <p class="hint">¿Máquina ocupada, entrenas en casa o te molesta algo? Elige el ejercicio y lo que tienes a mano y te doy alternativas que trabajan lo mismo.</p>
+  <div class="fields">
+    <div class="field wide">
+      <label for="suEj">Ejercicio</label>
+      <select id="suEj" data-keep></select>
+    </div>
+    <div class="field wide">
+      <label for="suMat">Qué tienes</label>
+      <select id="suMat" data-keep>
+        <option value="gym" selected>Gimnasio (la máquina está ocupada)</option>
+        <option value="manc">Mancuernas y banco</option>
+        <option value="gomas">Gomas elásticas</option>
+        <option value="nada">Nada: solo mi cuerpo</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <p class="vtxt" id="suMus" style="margin-top:0"></p>
+    <ol class="alts" id="suList"></ol>
+    <p class="vtxt">Cambia el ejercicio, pero no el esfuerzo: la alternativa también tiene que acabar cerca del fallo.</p>
+  </div>
+</div>
