@@ -895,7 +895,7 @@
     sem[0].forEach(function(k, n){
       var dia = DIAS[k], box = document.createElement('div'); box.className = 'dia';
       var rep = vistos[k] ? ' (repite)' : ''; vistos[k] = true;
-      var h = document.createElement('h3'); h.textContent = 'Día ' + (n + 1) + ' · ' + dia[0] + rep; box.appendChild(h);
+      var h = document.createElement('p'); h.className = 'dia-h'; h.textContent = 'Día ' + (n + 1) + ' · ' + dia[0] + rep; box.appendChild(h);
       var ul = document.createElement('ul');
       texto.push('Día ' + (n + 1) + ' · ' + dia[0]);
       dia[1].forEach(function(e, i){

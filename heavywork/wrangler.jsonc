@@ -3,7 +3,7 @@
   "name": "heavywork",
   "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
   "compatibility_date": "2026-09-17",
-  "assets": { "directory": "./web" },
+  "assets": { "directory": "./web", "not_found_handling": "404-page" },
   "workers_dev": true,
   "preview_urls": true
 }

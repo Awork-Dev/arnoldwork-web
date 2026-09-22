@@ -9,6 +9,14 @@
 <meta property="og:title" content="CaveWork · Aplasta dinos. Come proteína. Levanta más peso.">
 <meta property="og:description" content="Un juego retro gratis de ArnoldWork. ¿Hasta dónde llegas?">
 <meta property="og:url" content="https://heavywork.arnoldwork.com/game/">
+<link rel="canonical" href="https://heavywork.arnoldwork.com/game/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://heavywork.arnoldwork.com/game/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://heavywork.arnoldwork.com/game/og.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-137 -40 926 926'%3E%3Crect x='-137' y='-40' width='926' height='926' fill='%23000'/%3E%3Cg transform='translate(65,84) scale(.8)'%3E%3Cpolygon points='319,0 0,845 649,341 198,579 319,238' fill='%23fff'/%3E%3Cpolygon points='333,0 333,231 441,439 489,415' fill='%23DE3A3A'/%3E%3Cpolygon points='507,462 469,492 650,839' fill='%23DE3A3A'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,7 +100,7 @@ button,input,a{font:inherit;color:inherit}
 .fila{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:8px 12px;border:3px solid var(--tiza);background:#231915;color:var(--tiza);text-decoration:none;cursor:pointer;text-align:center;box-shadow:0 4px 0 #000}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
-.btn-rojo{background:var(--rojo);border-color:var(--rojo);color:#fff}
+.btn-rojo{background:#D33030;border-color:#D33030;color:#fff}
 .btn-oro{background:var(--oro);border-color:var(--oro);color:#111}
 .btn-grande{min-height:64px;font-size:16px}
 .btn[aria-pressed="false"]{color:var(--gris);border-color:var(--borde)}
@@ -145,7 +153,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 </style>
 </head>
 <body>
-<div id="app">
+<main id="app">
   <div id="stage">
     <canvas id="lienzo" width="320" height="180" data-t-aria="aCanvas" aria-label="CaveWork"></canvas>
     <div id="hud" hidden>
@@ -171,7 +179,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <button type="button" id="btnSalto"><span data-t="saltar">SALTAR</span><small>ESPACIO / ↑</small></button>
     <button type="button" id="btnGolpe"><span data-t="golpear">GOLPE</span><small>X / J</small></button>
   </div>
-</div>
+</main>
 
 <!-- Menú principal -->
 <section class="panel" id="pMenu" aria-labelledby="tituloJuego">
@@ -377,7 +385,7 @@ const TXT = {
     tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
     partidas:n => `${n.toLocaleString('es-ES')} partidas jugadas`, sinConexion:'Sin conexión: contando solo en este dispositivo',
     rankMundial:'Ranking mundial', rankLocal:'Sin conexión: ranking de este dispositivo', sinPuntos:'Todavía no hay puntuaciones. ¡Sé el primero!',
-    detalle:(kg, d, p, b) => `Levantaste ${kg} KG. ${d} dinos aplastados. ${p} discos recogidos.` + (b ? ` T-Rex derrotados: ${b}.` : ''),
+    detalle:(kg, d, p, b) => `Levantaste ${kg} KG. ${d} ${d === 1 ? 'dino aplastado' : 'dinos aplastados'}. ${p} ${p === 1 ? 'disco recogido' : 'discos recogidos'}.` + (b ? ` T-Rex derrotados: ${b}.` : ''),
     mejor:n => `Tu récord: ${n.toLocaleString('es-ES')}`, record:n => ` Récord: ${n.toLocaleString('es-ES')}`,
     err3:'Usa exactamente 3 letras (A-Z).', errNombre:'Elige otras iniciales.', guardando:'Guardando...',
     errNoAcept:'Puntuación no aceptada. Prueba en la próxima partida.', errConexion:'No se ha podido guardar. Revisa la conexión.',
@@ -412,7 +420,7 @@ const TXT = {
     tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',
     partidas:n => `${n.toLocaleString('en-US')} games played`, sinConexion:'Offline: counting on this device only',
     rankMundial:'Worldwide ranking', rankLocal:'Offline: ranking on this device', sinPuntos:'No scores yet. Be the first!',
-    detalle:(kg, d, p, b) => `Lifted ${kg} KG. ${d} dinos smashed. ${p} plates racked.` + (b ? ` T-Rex beaten: ${b}.` : ''),
+    detalle:(kg, d, p, b) => `Lifted ${kg} KG. ${d} ${d === 1 ? 'dino' : 'dinos'} smashed. ${p} ${p === 1 ? 'plate' : 'plates'} racked.` + (b ? ` T-Rex beaten: ${b}.` : ''),
     mejor:n => `Your best: ${n.toLocaleString('en-US')}`, record:n => ` Best: ${n.toLocaleString('en-US')}`,
     err3:'Use exactly 3 letters (A-Z).', errNombre:'Please choose other initials.', guardando:'Saving...',
     errNoAcept:'Score not accepted. Try again next game.', errConexion:'Could not save. Check your connection.',
