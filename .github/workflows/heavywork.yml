@@ -1,0 +1,47 @@
+# Publica heavywork/web en el Worker "heavywork" (heavywork.arnoldwork.com).
+# - Push a main: publica en heavywork.arnoldwork.com.
+# - Push a otra rama: vista previa en https://<rama>-heavywork.arnoldwork.workers.dev
+# Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
+
+name: Desplegar HeavyWork
+
+on:
+  push:
+    paths:
+      - "heavywork/**"
+      - ".github/workflows/heavywork.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: heavywork-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nombre de la vista previa
+        id: alias
+        run: echo "alias=$(echo '${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-30 | sed 's/-*$//')" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar en heavywork.arnoldwork.com
+        if: github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: heavywork
+          command: deploy
+
+      - name: Subir vista previa
+        if: github.ref != 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: heavywork
+          command: versions upload --preview-alias ${{ steps.alias.outputs.alias }}
