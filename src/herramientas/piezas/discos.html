@@ -1,0 +1,25 @@
+<div class="tool" id="discos">
+  <h2>Qué discos pongo en la barra</h2>
+  <p class="hint">Escribe el peso total que quieres levantar y te digo los discos de cada lado, del más grande al más pequeño. Si el peso no se puede montar con discos normales, te doy el más cercano.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="dTotal">Peso total (kg)</label>
+      <input id="dTotal" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="82.5" data-keep>
+    </div>
+    <div class="field">
+      <label for="dBarra">Barra</label>
+      <select id="dBarra" data-sync="barra">
+        <option value="20">Olímpica · 20 kg</option>
+        <option value="15">Olímpica mujer · 15 kg</option>
+        <option value="10">Corta / Z · 10 kg</option>
+        <option value="7">Barra ligera · 7 kg</option>
+        <option value="0">Sin barra (por lado)</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="dOut">—<small id="dSub">Por lado</small></div>
+    <div class="plates" id="dPlates" aria-live="polite"></div>
+    <p class="warn" id="dWarn" hidden></p>
+  </div>
+</div>

@@ -11,6 +11,8 @@ on:
   push:
     paths:
       - "web/**"
+      - "src/**"
+      - "build.py"
       - "wrangler.jsonc"
       - ".github/workflows/desplegar.yml"
   workflow_dispatch:
@@ -26,6 +28,9 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
+      - name: Comprobar que web/ está al día con src/
+        run: python3 build.py --check
 
       - name: Nombre de la vista previa
         id: alias

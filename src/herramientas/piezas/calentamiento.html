@@ -1,0 +1,33 @@
+<div class="tool" id="calentamiento">
+  <h2>Series de aproximación</h2>
+  <p class="hint">Dime el peso de tu serie efectiva y te preparo el calentamiento, con los discos de cada serie. Si entrenas Heavy Duty, esto importa el doble: con una sola serie buena, llegar frío es perder la sesión.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="cPeso">Serie efectiva (kg)</label>
+      <input id="cPeso" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="100" data-keep>
+    </div>
+    <div class="field">
+      <label for="cBarra">Barra</label>
+      <select id="cBarra" data-sync="barra">
+        <option value="20">Olímpica · 20 kg</option>
+        <option value="15">Olímpica mujer · 15 kg</option>
+        <option value="10">Corta / Z · 10 kg</option>
+        <option value="7">Barra ligera · 7 kg</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="cTipo">Cómo entrenas</label>
+      <select id="cTipo" data-keep>
+        <option value="hip">Hipertrofia · 8 a 12 reps</option>
+        <option value="hd">Fuerza o Heavy Duty · serie muy pesada</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <table class="pct wu" id="cTabla">
+      <thead><tr><th scope="col">Serie</th><th scope="col">Peso</th><th scope="col">Reps</th><th scope="col">Discos por lado</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="vtxt" id="cTxt">Entre aproximaciones, 1 minuto como mucho. Antes de la serie efectiva, 2 o 3 minutos. Ninguna aproximación se acerca al fallo: son para calentar, no para cansar.</p>
+  </div>
+</div>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Cuándo subir peso en el gimnasio? Calculadora de doble progresión — ArnoldWork</title>
+<meta name="description" content="Mete las repeticiones de tus últimas sesiones y te digo si toca subir, mantener o bajar el peso, con el método de doble progresión.">
+<link rel="canonical" href="https://arnoldwork.com/herramientas/cuando-subir-peso/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="¿Cuándo subir peso en el gimnasio? Calculadora de doble progresión — ArnoldWork">
+<meta property="og:description" content="Mete las repeticiones de tus últimas sesiones y te digo si toca subir, mantener o bajar el peso, con el método de doble progresión.">
+<meta property="og:url" content="https://arnoldwork.com/herramientas/cuando-subir-peso/">
+<meta property="og:site_name" content="ArnoldWork">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ArnoldWork · ¿Cuándo subir peso?">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta name="author" content="ArnoldWork">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=f18b864ee5">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"¿Cuándo subir peso?","url":"https://arnoldwork.com/herramientas/cuando-subir-peso/","description":"Mete las repeticiones de tus últimas sesiones y te digo si toca subir, mantener o bajar el peso, con el método de doble progresión.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"¿Subo peso?","item":"https://arnoldwork.com/herramientas/cuando-subir-peso/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cada cuánto se sube de peso en el gimnasio?","acceptedAnswer":{"@type":"Answer","text":"Cuando llegas al techo de tu rango de repeticiones con buena técnica. Al empezar puede ser cada semana; con años de entrenamiento, cada varias semanas."}},{"@type":"Question","name":"¿Es malo bajar de peso?","acceptedAnswer":{"@type":"Answer","text":"No. Bajar un 10 % cuando llevas dos sesiones por debajo del rango es tomar carrerilla, no retroceder."}}]}]</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span></a>
+    <nav class="nav-links">
+      <a href="/#porque">Por qué</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#heavywork">HeavyWork</a>
+      <a href="/#libro">Libro</a>
+      <a href="/#material">Fichas</a>
+      <a href="/#regalo">Guía gratis</a>
+      <a href="/#quien">Quién soy</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-sm" href="/#batido">🥤 Invita a un batido</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="tools-hero">
+  <div class="wrap">
+    <nav class="migas" aria-label="Estás en"><a href="/herramientas/">Herramientas</a><span>/</span>¿Subo peso?</nav>
+    <h1>¿Cuándo subir peso?</h1>
+    <p class="lede" style="margin-top:20px">La duda número uno de la sala. Mete lo que hiciste las últimas sesiones con el mismo peso y te digo si toca subir, mantener o bajar, y cuánto.</p>
+  </div>
+</section>
+
+<section class="solo">
+  <div class="wrap">
+
+    <div class="tool" id="subir">
+      <p class="hint">Doble progresión: trabajas en un rango de repeticiones y, cuando llegas arriba del todo, subes el peso. Mete lo que hiciste en tu serie más dura de las últimas sesiones, siempre con el mismo peso, y te digo si toca subir, mantener o bajar.</p>
+      <div class="fields">
+        <div class="field">
+          <label for="sPeso">Peso de trabajo (kg)</label>
+          <input id="sPeso" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="60" data-keep>
+        </div>
+        <div class="field">
+          <label for="sRango">Tu rango</label>
+          <select id="sRango" data-keep>
+            <option value="4-6">4 a 6 · fuerza</option>
+            <option value="6-8">6 a 8</option>
+            <option value="8-12" selected>8 a 12 · hipertrofia</option>
+            <option value="12-15">12 a 15</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sTipo">Ejercicio</label>
+          <select id="sTipo" data-keep>
+            <option value="5">Pierna o peso muerto · +5 kg</option>
+            <option value="2.5" selected>Tren superior con barra · +2,5 kg</option>
+            <option value="2">Mancuernas · +2 kg por mancuerna</option>
+            <option value="1">Máquina o polea · el salto más pequeño</option>
+          </select>
+        </div>
+      </div>
+      <div class="fields" style="margin-top:14px">
+        <div class="field">
+          <label for="sR1">Hace dos sesiones</label>
+          <input id="sR1" type="number" inputmode="numeric" min="0" max="50" step="1" placeholder="reps" data-keep>
+        </div>
+        <div class="field">
+          <label for="sR2">Sesión anterior</label>
+          <input id="sR2" type="number" inputmode="numeric" min="0" max="50" step="1" placeholder="reps" data-keep>
+        </div>
+        <div class="field">
+          <label for="sR3">Última sesión</label>
+          <input id="sR3" type="number" inputmode="numeric" min="0" max="50" step="1" value="10" data-keep>
+        </div>
+      </div>
+      <div class="out">
+        <div class="verdict" id="sOut"><span class="vtag" id="sTag">—</span><div class="big" id="sBig">—</div></div>
+        <p class="vtxt" id="sTxt"></p>
+        <p class="cta-line">Si quieres las reglas completas, <a href="/#regalo">la guía «Cuándo subir peso» es gratis</a>. ¿Te ha servido? <a href="/#batido">Invita a un batido 🥤</a></p>
+      </div>
+    </div>
+
+    <div class="articulo">
+<h2>La regla: doble progresión</h2>
+<p>Eliges un rango de repeticiones, por ejemplo de 8 a 12. Con el mismo peso intentas sumar repeticiones sesión a sesión. <strong>Cuando llegas al techo del rango en tu serie más dura, subes el peso</strong> y vuelves a empezar desde abajo.</p>
+<p>Es el método más sencillo que funciona: no necesitas porcentajes ni calcular nada, solo apuntar lo que haces.</p>
+<h2>Cuánto subir</h2>
+<ul>
+<li><strong>Pierna y peso muerto:</strong> 5 kg (2,5 por lado).</li>
+<li><strong>Tren superior con barra:</strong> 2,5 kg.</li>
+<li><strong>Mancuernas:</strong> el siguiente par, normalmente 2 kg por mancuerna.</li>
+<li><strong>Máquinas y poleas:</strong> la placa más pequeña.</li>
+</ul>
+<p>Después de subir es normal perder dos o tres repeticiones. No es un paso atrás: estás al principio del rango otra vez.</p>
+<h2>Cuándo bajar</h2>
+<p>Si dos sesiones seguidas no llegas al mínimo del rango, el peso te queda grande. Baja un 10 % y vuelve a construir. Si llevas tres sesiones sin sumar ni una repetición, antes de tocar el peso revisa el sueño, la proteína y el descanso.</p>
+    </div>
+
+    <div class="faq">
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Cada cuánto se sube de peso en el gimnasio?</summary>
+        <p>Cuando llegas al techo de tu rango de repeticiones con buena técnica. Al empezar puede ser cada semana; con años de entrenamiento, cada varias semanas.</p>
+      </details>
+      <details>
+        <summary>¿Es malo bajar de peso?</summary>
+        <p>No. Bajar un 10 % cuando llevas dos sesiones por debajo del rango es tomar carrerilla, no retroceder.</p>
+      </details>
+    </div>
+
+    <div class="otras">
+      <h2>Más herramientas gratis</h2>
+      <nav class="idx" aria-label="Otras herramientas">
+      <div class="idx-g">
+        <span class="idx-t">Fuerza</span>
+        <a href="/herramientas/calculadora-1rm/">Tu máximo (1RM)</a>
+        <a href="/herramientas/nivel-de-fuerza/">¿Cómo de fuerte soy?</a>
+        <a href="/herramientas/calculadora-discos/">Discos en la barra</a>
+        <a href="/herramientas/series-de-aproximacion/">Series de aproximación</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Nutrición y cuerpo</span>
+        <a href="/herramientas/calculadora-calorias-macros/">Calorías y macros</a>
+        <a href="/herramientas/grasa-corporal-ffmi/">Grasa corporal y FFMI</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Organiza el entreno</span>
+        <a href="/herramientas/volumen-semanal/">Volumen semanal</a>
+        <a href="/herramientas/recuperacion-heavy-duty/">Recuperación Heavy Duty</a>
+        <a href="/herramientas/cronometro-descansos/">Cronómetro de descansos</a>
+        <a href="/herramientas/tempo-repeticiones/">Tempo</a>
+      </div>
+      </nav>
+    </div>
+
+    <p class="tools-foot">Estas herramientas son material de entrenamiento, no consejo médico. Las estimaciones son eso, estimaciones: si tienes una lesión o una condición de salud, consúltalo antes con tu profesional sanitario. ¿Se te ocurre una herramienta que falta aquí? <a href="/#contacto" style="color:var(--amber)">Pídemela</a>. Y si todo esto te ayuda, <a href="/#batido" style="color:var(--amber)">invítame a un batido</a> 🥤.<br><br>Lo que escribes se guarda solo en este móvil o este ordenador, nunca nos llega a nosotros. <button type="button" class="linkbtn" id="clearAll">Borrar mis datos</button></p>
+
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>
+      <a href="https://heavywork.arnoldwork.com/game/">CaveWork</a>
+      <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
+      <a href="/#batido">Invita a un batido</a>
+      <a href="/#aviso">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/herramientas/app.js?v=26fc9a2ce2"></script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

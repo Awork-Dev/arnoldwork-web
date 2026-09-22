@@ -1,0 +1,51 @@
+<div class="tool" id="macros">
+  <h2>Calorías y macros</h2>
+  <p class="hint">Te calculo cuánto comer al día según tu objetivo y cómo repartirlo en proteína, hidratos y grasa. Usa la fórmula de Mifflin-St Jeor, la más fiable de las sencillas. Es un punto de partida: pésate dos semanas y ajusta según lo que pase.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="mSexo">Sexo</label>
+      <select id="mSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+    </div>
+    <div class="field">
+      <label for="mEdad">Edad</label>
+      <input id="mEdad" type="number" inputmode="numeric" min="15" max="90" step="1" value="30" data-sync="edad">
+    </div>
+    <div class="field">
+      <label for="mPeso">Peso (kg)</label>
+      <input id="mPeso" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="80" data-sync="peso">
+    </div>
+    <div class="field">
+      <label for="mAltura">Altura (cm)</label>
+      <input id="mAltura" type="number" inputmode="numeric" min="120" max="230" step="1" value="178" data-sync="altura">
+    </div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="field wide">
+      <label for="mAct">Actividad</label>
+      <select id="mAct" data-keep>
+        <option value="1.2">Sedentario · trabajo sentado, sin entrenar</option>
+        <option value="1.375">Ligera · entrenas 1 a 3 días</option>
+        <option value="1.55" selected>Moderada · entrenas 3 a 5 días</option>
+        <option value="1.725">Alta · entrenas 6 o 7 días</option>
+        <option value="1.9">Muy alta · trabajo físico duro y entreno</option>
+      </select>
+    </div>
+    <div class="field wide">
+      <label for="mObj">Objetivo</label>
+      <select id="mObj" data-keep>
+        <option value="def">Perder grasa (definición)</option>
+        <option value="rec">Recomposición · perder grasa y ganar músculo</option>
+        <option value="man">Mantener</option>
+        <option value="vol" selected>Ganar músculo (volumen)</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="mOut">—<small id="mSub"></small></div>
+    <p class="warn" id="mWarn" hidden></p>
+    <div class="macros" id="mTiles"></div>
+    <p class="vtxt" id="mDia"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="mShare">Compartir como imagen</button></div>
+    <p class="cta-line">¿Te ha ahorrado una calculadora de pago? <a href="/#batido">Invita a un batido 🥤</a></p>
+  </div>
+</div>

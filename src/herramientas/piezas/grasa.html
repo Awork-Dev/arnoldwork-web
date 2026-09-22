@@ -1,0 +1,39 @@
+<div class="tool" id="grasa">
+  <h2>Grasa corporal y FFMI</h2>
+  <p class="hint">Con una cinta métrica y el método de la Marina de EE. UU. Mide siempre igual, por la mañana y en ayunas: el número exacto importa menos que cómo cambia de un mes a otro. El FFMI te dice cuánto músculo tienes para tu altura.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="gSexo">Sexo</label>
+      <select id="gSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+    </div>
+    <div class="field">
+      <label for="gPeso">Peso (kg)</label>
+      <input id="gPeso" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="80" data-sync="peso">
+    </div>
+    <div class="field">
+      <label for="gAltura">Altura (cm)</label>
+      <input id="gAltura" type="number" inputmode="numeric" min="120" max="230" step="1" value="178" data-sync="altura">
+    </div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="field">
+      <label for="gCuello">Cuello (cm)</label>
+      <input id="gCuello" type="number" inputmode="decimal" min="20" max="70" step="0.5" value="38" data-keep>
+    </div>
+    <div class="field">
+      <label for="gCintura" id="gCinturaL">Cintura, a la altura del ombligo (cm)</label>
+      <input id="gCintura" type="number" inputmode="decimal" min="40" max="200" step="0.5" value="86" data-keep>
+    </div>
+    <div class="field" id="gCaderaF" hidden>
+      <label for="gCadera">Cadera, en la parte más ancha (cm)</label>
+      <input id="gCadera" type="number" inputmode="decimal" min="50" max="200" step="0.5" value="98" data-keep>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="gOut">—<small id="gSub"></small></div>
+    <p class="warn" id="gWarn" hidden></p>
+    <table class="pct" id="gTabla" hidden><tbody></tbody></table>
+    <p class="vtxt">Este método tiene un margen de error de unos 3 o 4 puntos. Úsalo para ver la tendencia, no como una sentencia.</p>
+    <p class="cta-line">Mídete una vez al mes, siempre igual, y mira cómo cambia. ¿Te ha servido? <a href="/#batido">Invita a un batido 🥤</a></p>
+  </div>
+</div>

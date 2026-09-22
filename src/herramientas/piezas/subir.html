@@ -1,0 +1,47 @@
+<div class="tool" id="subir">
+  <h2>¿Subo peso?</h2>
+  <p class="hint">Doble progresión: trabajas en un rango de repeticiones y, cuando llegas arriba del todo, subes el peso. Mete lo que hiciste en tu serie más dura de las últimas sesiones, siempre con el mismo peso, y te digo si toca subir, mantener o bajar.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="sPeso">Peso de trabajo (kg)</label>
+      <input id="sPeso" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="60" data-keep>
+    </div>
+    <div class="field">
+      <label for="sRango">Tu rango</label>
+      <select id="sRango" data-keep>
+        <option value="4-6">4 a 6 · fuerza</option>
+        <option value="6-8">6 a 8</option>
+        <option value="8-12" selected>8 a 12 · hipertrofia</option>
+        <option value="12-15">12 a 15</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="sTipo">Ejercicio</label>
+      <select id="sTipo" data-keep>
+        <option value="5">Pierna o peso muerto · +5 kg</option>
+        <option value="2.5" selected>Tren superior con barra · +2,5 kg</option>
+        <option value="2">Mancuernas · +2 kg por mancuerna</option>
+        <option value="1">Máquina o polea · el salto más pequeño</option>
+      </select>
+    </div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="field">
+      <label for="sR1">Hace dos sesiones</label>
+      <input id="sR1" type="number" inputmode="numeric" min="0" max="50" step="1" placeholder="reps" data-keep>
+    </div>
+    <div class="field">
+      <label for="sR2">Sesión anterior</label>
+      <input id="sR2" type="number" inputmode="numeric" min="0" max="50" step="1" placeholder="reps" data-keep>
+    </div>
+    <div class="field">
+      <label for="sR3">Última sesión</label>
+      <input id="sR3" type="number" inputmode="numeric" min="0" max="50" step="1" value="10" data-keep>
+    </div>
+  </div>
+  <div class="out">
+    <div class="verdict" id="sOut"><span class="vtag" id="sTag">—</span><div class="big" id="sBig">—</div></div>
+    <p class="vtxt" id="sTxt"></p>
+    <p class="cta-line">Si quieres las reglas completas, <a href="/#regalo">la guía «Cuándo subir peso» es gratis</a>. ¿Te ha servido? <a href="/#batido">Invita a un batido 🥤</a></p>
+  </div>
+</div>

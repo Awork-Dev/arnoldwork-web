@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de calorías y macros para ganar músculo o perder grasa — ArnoldWork</title>
+<meta name="description" content="Calcula cuántas calorías comer al día y cómo repartir proteína, hidratos y grasa según tu objetivo. Fórmula de Mifflin-St Jeor. Gratis.">
+<link rel="canonical" href="https://arnoldwork.com/herramientas/calculadora-calorias-macros/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de calorías y macros para ganar músculo o perder grasa — ArnoldWork">
+<meta property="og:description" content="Calcula cuántas calorías comer al día y cómo repartir proteína, hidratos y grasa según tu objetivo. Fórmula de Mifflin-St Jeor. Gratis.">
+<meta property="og:url" content="https://arnoldwork.com/herramientas/calculadora-calorias-macros/">
+<meta property="og:site_name" content="ArnoldWork">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ArnoldWork · Calculadora de calorías y macros">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta name="author" content="ArnoldWork">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=f18b864ee5">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Calculadora de calorías y macros","url":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/","description":"Calcula cuántas calorías comer al día y cómo repartir proteína, hidratos y grasa según tu objetivo. Fórmula de Mifflin-St Jeor. Gratis.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Calorías y macros","item":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cuánta proteína necesito para ganar músculo?","acceptedAnswer":{"@type":"Answer","text":"Entre 1,6 y 2,2 g por kilo de peso al día cubre a casi todo el mundo. La herramienta usa 1,8 g para ganar músculo y más en déficit, para proteger el músculo."}},{"@type":"Question","name":"¿Cuántas calorías para perder grasa sin perder músculo?","acceptedAnswer":{"@type":"Answer","text":"Un déficit moderado, alrededor del 20 % de lo que gastas, con proteína alta y entrenamiento de fuerza. Perder más de un 1 % del peso a la semana suele costar músculo."}}]}]</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span></a>
+    <nav class="nav-links">
+      <a href="/#porque">Por qué</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#heavywork">HeavyWork</a>
+      <a href="/#libro">Libro</a>
+      <a href="/#material">Fichas</a>
+      <a href="/#regalo">Guía gratis</a>
+      <a href="/#quien">Quién soy</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-sm" href="/#batido">🥤 Invita a un batido</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="tools-hero">
+  <div class="wrap">
+    <nav class="migas" aria-label="Estás en"><a href="/herramientas/">Herramientas</a><span>/</span>Calorías y macros</nav>
+    <h1>Calculadora de calorías y macros</h1>
+    <p class="lede" style="margin-top:20px">Cuánto comer al día según tu objetivo y cómo repartirlo en proteína, hidratos y grasa. Es un punto de partida: pésate dos semanas y ajusta según lo que pase.</p>
+  </div>
+</section>
+
+<section class="solo">
+  <div class="wrap">
+
+    <div class="tool" id="macros">
+      <p class="hint">Te calculo cuánto comer al día según tu objetivo y cómo repartirlo en proteína, hidratos y grasa. Usa la fórmula de Mifflin-St Jeor, la más fiable de las sencillas. Es un punto de partida: pésate dos semanas y ajusta según lo que pase.</p>
+      <div class="fields">
+        <div class="field">
+          <label for="mSexo">Sexo</label>
+          <select id="mSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+        </div>
+        <div class="field">
+          <label for="mEdad">Edad</label>
+          <input id="mEdad" type="number" inputmode="numeric" min="15" max="90" step="1" value="30" data-sync="edad">
+        </div>
+        <div class="field">
+          <label for="mPeso">Peso (kg)</label>
+          <input id="mPeso" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="80" data-sync="peso">
+        </div>
+        <div class="field">
+          <label for="mAltura">Altura (cm)</label>
+          <input id="mAltura" type="number" inputmode="numeric" min="120" max="230" step="1" value="178" data-sync="altura">
+        </div>
+      </div>
+      <div class="fields" style="margin-top:14px">
+        <div class="field wide">
+          <label for="mAct">Actividad</label>
+          <select id="mAct" data-keep>
+            <option value="1.2">Sedentario · trabajo sentado, sin entrenar</option>
+            <option value="1.375">Ligera · entrenas 1 a 3 días</option>
+            <option value="1.55" selected>Moderada · entrenas 3 a 5 días</option>
+            <option value="1.725">Alta · entrenas 6 o 7 días</option>
+            <option value="1.9">Muy alta · trabajo físico duro y entreno</option>
+          </select>
+        </div>
+        <div class="field wide">
+          <label for="mObj">Objetivo</label>
+          <select id="mObj" data-keep>
+            <option value="def">Perder grasa (definición)</option>
+            <option value="rec">Recomposición · perder grasa y ganar músculo</option>
+            <option value="man">Mantener</option>
+            <option value="vol" selected>Ganar músculo (volumen)</option>
+          </select>
+        </div>
+      </div>
+      <div class="out">
+        <div class="big" id="mOut">—<small id="mSub"></small></div>
+        <p class="warn" id="mWarn" hidden></p>
+        <div class="macros" id="mTiles"></div>
+        <p class="vtxt" id="mDia"></p>
+        <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="mShare">Compartir como imagen</button></div>
+        <p class="cta-line">¿Te ha ahorrado una calculadora de pago? <a href="/#batido">Invita a un batido 🥤</a></p>
+      </div>
+    </div>
+
+    <div class="articulo">
+<h2>Cómo se calcula</h2>
+<p>Primero estimo lo que gastas en reposo con la fórmula de <strong>Mifflin-St Jeor</strong>, la más fiable de las sencillas. Luego lo multiplico por tu nivel de actividad y ajusto según el objetivo:</p>
+<ul>
+<li><strong>Perder grasa:</strong> un 20 % por debajo de lo que gastas.</li>
+<li><strong>Recomposición:</strong> un 10 % por debajo.</li>
+<li><strong>Ganar músculo:</strong> un 10 % por encima. Más no hace crecer más rápido, solo engorda más.</li>
+</ul>
+<h2>El reparto</h2>
+<p>La proteína va primero: entre <strong>1,8 y 2,2 g por kilo</strong> según el objetivo. La grasa, al menos 0,8 g por kilo. El resto, hidratos, que son la gasolina del entrenamiento.</p>
+<h2>Ajusta con la báscula</h2>
+<p>Ninguna fórmula conoce tu cuerpo. Pésate varias mañanas por semana y mira la media: si en dos semanas no se mueve en la dirección que buscas, sube o baja unas 150-200 kcal.</p>
+    </div>
+
+    <div class="faq">
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Cuánta proteína necesito para ganar músculo?</summary>
+        <p>Entre 1,6 y 2,2 g por kilo de peso al día cubre a casi todo el mundo. La herramienta usa 1,8 g para ganar músculo y más en déficit, para proteger el músculo.</p>
+      </details>
+      <details>
+        <summary>¿Cuántas calorías para perder grasa sin perder músculo?</summary>
+        <p>Un déficit moderado, alrededor del 20 % de lo que gastas, con proteína alta y entrenamiento de fuerza. Perder más de un 1 % del peso a la semana suele costar músculo.</p>
+      </details>
+    </div>
+
+    <div class="otras">
+      <h2>Más herramientas gratis</h2>
+      <nav class="idx" aria-label="Otras herramientas">
+      <div class="idx-g">
+        <span class="idx-t">Fuerza</span>
+        <a href="/herramientas/calculadora-1rm/">Tu máximo (1RM)</a>
+        <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>
+        <a href="/herramientas/nivel-de-fuerza/">¿Cómo de fuerte soy?</a>
+        <a href="/herramientas/calculadora-discos/">Discos en la barra</a>
+        <a href="/herramientas/series-de-aproximacion/">Series de aproximación</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Nutrición y cuerpo</span>
+        <a href="/herramientas/grasa-corporal-ffmi/">Grasa corporal y FFMI</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Organiza el entreno</span>
+        <a href="/herramientas/volumen-semanal/">Volumen semanal</a>
+        <a href="/herramientas/recuperacion-heavy-duty/">Recuperación Heavy Duty</a>
+        <a href="/herramientas/cronometro-descansos/">Cronómetro de descansos</a>
+        <a href="/herramientas/tempo-repeticiones/">Tempo</a>
+      </div>
+      </nav>
+    </div>
+
+    <p class="tools-foot">Estas herramientas son material de entrenamiento, no consejo médico. Las estimaciones son eso, estimaciones: si tienes una lesión o una condición de salud, consúltalo antes con tu profesional sanitario. ¿Se te ocurre una herramienta que falta aquí? <a href="/#contacto" style="color:var(--amber)">Pídemela</a>. Y si todo esto te ayuda, <a href="/#batido" style="color:var(--amber)">invítame a un batido</a> 🥤.<br><br>Lo que escribes se guarda solo en este móvil o este ordenador, nunca nos llega a nosotros. <button type="button" class="linkbtn" id="clearAll">Borrar mis datos</button></p>
+
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>
+      <a href="https://heavywork.arnoldwork.com/game/">CaveWork</a>
+      <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
+      <a href="/#batido">Invita a un batido</a>
+      <a href="/#aviso">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/herramientas/app.js?v=26fc9a2ce2"></script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

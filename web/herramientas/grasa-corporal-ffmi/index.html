@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de grasa corporal y FFMI con cinta métrica — ArnoldWork</title>
+<meta name="description" content="Calcula tu porcentaje de grasa corporal con el método de la Marina de EE. UU. y tu FFMI (índice de masa libre de grasa) con una cinta métrica.">
+<link rel="canonical" href="https://arnoldwork.com/herramientas/grasa-corporal-ffmi/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de grasa corporal y FFMI con cinta métrica — ArnoldWork">
+<meta property="og:description" content="Calcula tu porcentaje de grasa corporal con el método de la Marina de EE. UU. y tu FFMI (índice de masa libre de grasa) con una cinta métrica.">
+<meta property="og:url" content="https://arnoldwork.com/herramientas/grasa-corporal-ffmi/">
+<meta property="og:site_name" content="ArnoldWork">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ArnoldWork · Grasa corporal y FFMI">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta name="author" content="ArnoldWork">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=f18b864ee5">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Grasa corporal y FFMI","url":"https://arnoldwork.com/herramientas/grasa-corporal-ffmi/","description":"Calcula tu porcentaje de grasa corporal con el método de la Marina de EE. UU. y tu FFMI (índice de masa libre de grasa) con una cinta métrica.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Grasa corporal y FFMI","item":"https://arnoldwork.com/herramientas/grasa-corporal-ffmi/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Es fiable el método de la Marina?","acceptedAnswer":{"@type":"Answer","text":"Para seguir tu evolución, sí: el error es de unos 3-4 puntos, pero si mides siempre igual, los cambios de un mes a otro son reales."}},{"@type":"Question","name":"¿Qué FFMI es normal?","acceptedAnswer":{"@type":"Answer","text":"En hombres sin entrenar suele estar entre 18 y 20; entrenando varios años, entre 21 y 23. En mujeres, unos 3 puntos menos."}}]}]</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span></a>
+    <nav class="nav-links">
+      <a href="/#porque">Por qué</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#heavywork">HeavyWork</a>
+      <a href="/#libro">Libro</a>
+      <a href="/#material">Fichas</a>
+      <a href="/#regalo">Guía gratis</a>
+      <a href="/#quien">Quién soy</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-sm" href="/#batido">🥤 Invita a un batido</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="tools-hero">
+  <div class="wrap">
+    <nav class="migas" aria-label="Estás en"><a href="/herramientas/">Herramientas</a><span>/</span>Grasa corporal y FFMI</nav>
+    <h1>Grasa corporal y FFMI</h1>
+    <p class="lede" style="margin-top:20px">Con una cinta métrica y el método de la Marina de EE. UU. Además te calculo el FFMI, que dice cuánto músculo tienes para tu altura.</p>
+  </div>
+</section>
+
+<section class="solo">
+  <div class="wrap">
+
+    <div class="tool" id="grasa">
+      <p class="hint">Con una cinta métrica y el método de la Marina de EE. UU. Mide siempre igual, por la mañana y en ayunas: el número exacto importa menos que cómo cambia de un mes a otro. El FFMI te dice cuánto músculo tienes para tu altura.</p>
+      <div class="fields">
+        <div class="field">
+          <label for="gSexo">Sexo</label>
+          <select id="gSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+        </div>
+        <div class="field">
+          <label for="gPeso">Peso (kg)</label>
+          <input id="gPeso" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="80" data-sync="peso">
+        </div>
+        <div class="field">
+          <label for="gAltura">Altura (cm)</label>
+          <input id="gAltura" type="number" inputmode="numeric" min="120" max="230" step="1" value="178" data-sync="altura">
+        </div>
+      </div>
+      <div class="fields" style="margin-top:14px">
+        <div class="field">
+          <label for="gCuello">Cuello (cm)</label>
+          <input id="gCuello" type="number" inputmode="decimal" min="20" max="70" step="0.5" value="38" data-keep>
+        </div>
+        <div class="field">
+          <label for="gCintura" id="gCinturaL">Cintura, a la altura del ombligo (cm)</label>
+          <input id="gCintura" type="number" inputmode="decimal" min="40" max="200" step="0.5" value="86" data-keep>
+        </div>
+        <div class="field" id="gCaderaF" hidden>
+          <label for="gCadera">Cadera, en la parte más ancha (cm)</label>
+          <input id="gCadera" type="number" inputmode="decimal" min="50" max="200" step="0.5" value="98" data-keep>
+        </div>
+      </div>
+      <div class="out">
+        <div class="big" id="gOut">—<small id="gSub"></small></div>
+        <p class="warn" id="gWarn" hidden></p>
+        <table class="pct" id="gTabla" hidden><tbody></tbody></table>
+        <p class="vtxt">Este método tiene un margen de error de unos 3 o 4 puntos. Úsalo para ver la tendencia, no como una sentencia.</p>
+        <p class="cta-line">Mídete una vez al mes, siempre igual, y mira cómo cambia. ¿Te ha servido? <a href="/#batido">Invita a un batido 🥤</a></p>
+      </div>
+    </div>
+
+    <div class="articulo">
+<h2>Cómo medirte</h2>
+<p>Mide siempre igual: por la mañana, en ayunas y con la cinta ajustada pero sin apretar.</p>
+<ul>
+<li><strong>Cuello:</strong> justo por debajo de la nuez.</li>
+<li><strong>Cintura:</strong> los hombres a la altura del ombligo; las mujeres en la parte más estrecha.</li>
+<li><strong>Cadera</strong> (solo mujeres): en la parte más ancha de los glúteos.</li>
+</ul>
+<h2>Qué es el FFMI</h2>
+<p>El FFMI es como el índice de masa corporal, pero contando solo la masa libre de grasa. Sirve para saber cuánto músculo tienes para tu altura. En hombres, por encima de 22 se nota que entrenas; por encima de 25 es muy raro sin ayudas.</p>
+<p>El método tiene un margen de error de 3 o 4 puntos. Lo valioso es la tendencia: mídete una vez al mes y mira cómo cambia.</p>
+    </div>
+
+    <div class="faq">
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Es fiable el método de la Marina?</summary>
+        <p>Para seguir tu evolución, sí: el error es de unos 3-4 puntos, pero si mides siempre igual, los cambios de un mes a otro son reales.</p>
+      </details>
+      <details>
+        <summary>¿Qué FFMI es normal?</summary>
+        <p>En hombres sin entrenar suele estar entre 18 y 20; entrenando varios años, entre 21 y 23. En mujeres, unos 3 puntos menos.</p>
+      </details>
+    </div>
+
+    <div class="otras">
+      <h2>Más herramientas gratis</h2>
+      <nav class="idx" aria-label="Otras herramientas">
+      <div class="idx-g">
+        <span class="idx-t">Fuerza</span>
+        <a href="/herramientas/calculadora-1rm/">Tu máximo (1RM)</a>
+        <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>
+        <a href="/herramientas/nivel-de-fuerza/">¿Cómo de fuerte soy?</a>
+        <a href="/herramientas/calculadora-discos/">Discos en la barra</a>
+        <a href="/herramientas/series-de-aproximacion/">Series de aproximación</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Nutrición y cuerpo</span>
+        <a href="/herramientas/calculadora-calorias-macros/">Calorías y macros</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Organiza el entreno</span>
+        <a href="/herramientas/volumen-semanal/">Volumen semanal</a>
+        <a href="/herramientas/recuperacion-heavy-duty/">Recuperación Heavy Duty</a>
+        <a href="/herramientas/cronometro-descansos/">Cronómetro de descansos</a>
+        <a href="/herramientas/tempo-repeticiones/">Tempo</a>
+      </div>
+      </nav>
+    </div>
+
+    <p class="tools-foot">Estas herramientas son material de entrenamiento, no consejo médico. Las estimaciones son eso, estimaciones: si tienes una lesión o una condición de salud, consúltalo antes con tu profesional sanitario. ¿Se te ocurre una herramienta que falta aquí? <a href="/#contacto" style="color:var(--amber)">Pídemela</a>. Y si todo esto te ayuda, <a href="/#batido" style="color:var(--amber)">invítame a un batido</a> 🥤.<br><br>Lo que escribes se guarda solo en este móvil o este ordenador, nunca nos llega a nosotros. <button type="button" class="linkbtn" id="clearAll">Borrar mis datos</button></p>
+
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>
+      <a href="https://heavywork.arnoldwork.com/game/">CaveWork</a>
+      <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
+      <a href="/#batido">Invita a un batido</a>
+      <a href="/#aviso">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/herramientas/app.js?v=26fc9a2ce2"></script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

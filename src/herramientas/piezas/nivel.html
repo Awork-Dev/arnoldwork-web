@@ -1,0 +1,36 @@
+<div class="tool" id="nivel">
+  <h2>¿Cómo de fuerte soy?</h2>
+  <p class="hint">Tus tres básicos comparados con tu peso corporal. Puedes meter un máximo real (1 repetición) o una serie cualquiera cerca del fallo y lo estimo. Los niveles son orientativos: sirven para ver por dónde vas, no para compararte con nadie.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="fSexo">Sexo</label>
+      <select id="fSexo" data-sync="sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+    </div>
+    <div class="field">
+      <label for="fPeso">Tu peso corporal (kg)</label>
+      <input id="fPeso" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="80" data-sync="peso">
+    </div>
+  </div>
+  <div class="lifts">
+    <div class="lift-in">
+      <span class="lift-n">Sentadilla</span>
+      <div class="field"><label for="fSqK">kg</label><input id="fSqK" type="number" inputmode="decimal" min="0" max="500" step="0.5" value="100" data-keep></div>
+      <div class="field"><label for="fSqR">reps</label><input id="fSqR" type="number" inputmode="numeric" min="1" max="12" step="1" value="5" data-keep></div>
+    </div>
+    <div class="lift-in">
+      <span class="lift-n">Press banca</span>
+      <div class="field"><label for="fBpK">kg</label><input id="fBpK" type="number" inputmode="decimal" min="0" max="400" step="0.5" value="80" data-keep></div>
+      <div class="field"><label for="fBpR">reps</label><input id="fBpR" type="number" inputmode="numeric" min="1" max="12" step="1" value="5" data-keep></div>
+    </div>
+    <div class="lift-in">
+      <span class="lift-n">Peso muerto</span>
+      <div class="field"><label for="fDlK">kg</label><input id="fDlK" type="number" inputmode="decimal" min="0" max="500" step="0.5" value="120" data-keep></div>
+      <div class="field"><label for="fDlR">reps</label><input id="fDlR" type="number" inputmode="numeric" min="1" max="12" step="1" value="5" data-keep></div>
+    </div>
+  </div>
+  <div class="out">
+    <div id="fOut"></div>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="fShare">Compartir como imagen</button></div>
+    <p class="cta-line">Reta a tu compañero de gimnasio a comparar niveles. Y si te ha gustado, <a href="/#batido">invita a un batido 🥤</a></p>
+  </div>
+</div>

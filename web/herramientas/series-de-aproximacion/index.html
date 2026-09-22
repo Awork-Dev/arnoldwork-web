@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series de aproximación: calcula tu calentamiento con pesas — ArnoldWork</title>
+<meta name="description" content="Dime el peso de tu serie efectiva y te preparo las series de aproximación con los discos de cada una. Para hipertrofia y para Heavy Duty.">
+<link rel="canonical" href="https://arnoldwork.com/herramientas/series-de-aproximacion/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Series de aproximación: calcula tu calentamiento con pesas — ArnoldWork">
+<meta property="og:description" content="Dime el peso de tu serie efectiva y te preparo las series de aproximación con los discos de cada una. Para hipertrofia y para Heavy Duty.">
+<meta property="og:url" content="https://arnoldwork.com/herramientas/series-de-aproximacion/">
+<meta property="og:site_name" content="ArnoldWork">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ArnoldWork · Series de aproximación">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta name="author" content="ArnoldWork">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=f18b864ee5">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Series de aproximación","url":"https://arnoldwork.com/herramientas/series-de-aproximacion/","description":"Dime el peso de tu serie efectiva y te preparo las series de aproximación con los discos de cada una. Para hipertrofia y para Heavy Duty.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Series de aproximación","item":"https://arnoldwork.com/herramientas/series-de-aproximacion/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cuántas series de calentamiento hay que hacer?","acceptedAnswer":{"@type":"Answer","text":"Entre dos y cinco, según lo pesada que sea la serie de trabajo. Cuanto más cerca de tu máximo, más escalones."}}]}]</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span></a>
+    <nav class="nav-links">
+      <a href="/#porque">Por qué</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#heavywork">HeavyWork</a>
+      <a href="/#libro">Libro</a>
+      <a href="/#material">Fichas</a>
+      <a href="/#regalo">Guía gratis</a>
+      <a href="/#quien">Quién soy</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-sm" href="/#batido">🥤 Invita a un batido</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="tools-hero">
+  <div class="wrap">
+    <nav class="migas" aria-label="Estás en"><a href="/herramientas/">Herramientas</a><span>/</span>Series de aproximación</nav>
+    <h1>Series de aproximación</h1>
+    <p class="lede" style="margin-top:20px">Dime el peso de tu serie efectiva y te preparo el calentamiento, serie a serie, con los discos que tienes que poner en cada una.</p>
+  </div>
+</section>
+
+<section class="solo">
+  <div class="wrap">
+
+    <div class="tool" id="calentamiento">
+      <p class="hint">Dime el peso de tu serie efectiva y te preparo el calentamiento, con los discos de cada serie. Si entrenas Heavy Duty, esto importa el doble: con una sola serie buena, llegar frío es perder la sesión.</p>
+      <div class="fields">
+        <div class="field">
+          <label for="cPeso">Serie efectiva (kg)</label>
+          <input id="cPeso" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="100" data-keep>
+        </div>
+        <div class="field">
+          <label for="cBarra">Barra</label>
+          <select id="cBarra" data-sync="barra">
+            <option value="20">Olímpica · 20 kg</option>
+            <option value="15">Olímpica mujer · 15 kg</option>
+            <option value="10">Corta / Z · 10 kg</option>
+            <option value="7">Barra ligera · 7 kg</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cTipo">Cómo entrenas</label>
+          <select id="cTipo" data-keep>
+            <option value="hip">Hipertrofia · 8 a 12 reps</option>
+            <option value="hd">Fuerza o Heavy Duty · serie muy pesada</option>
+          </select>
+        </div>
+      </div>
+      <div class="out">
+        <table class="pct wu" id="cTabla">
+          <thead><tr><th scope="col">Serie</th><th scope="col">Peso</th><th scope="col">Reps</th><th scope="col">Discos por lado</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <p class="vtxt" id="cTxt">Entre aproximaciones, 1 minuto como mucho. Antes de la serie efectiva, 2 o 3 minutos. Ninguna aproximación se acerca al fallo: son para calentar, no para cansar.</p>
+      </div>
+    </div>
+
+    <div class="articulo">
+<h2>Para qué sirven</h2>
+<p>Las series de aproximación preparan las articulaciones, afinan la técnica y te avisan si hoy el peso se mueve bien o mal, <strong>sin cansarte</strong> para la serie que cuenta. Por eso ninguna se acerca al fallo.</p>
+<h2>Cómo se reparten</h2>
+<p>Se empieza con la barra sola y se sube por escalones, bajando las repeticiones a medida que el peso se acerca al de trabajo. Para hipertrofia bastan dos o tres aproximaciones. Si entrenas fuerza o <a href="/herramientas/recuperacion-heavy-duty/">Heavy Duty</a>, con una sola serie muy pesada, conviene hacer más escalones y más cortos.</p>
+<p>Entre aproximaciones, un minuto como mucho. Antes de la serie efectiva, dos o tres.</p>
+    </div>
+
+    <div class="faq">
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Cuántas series de calentamiento hay que hacer?</summary>
+        <p>Entre dos y cinco, según lo pesada que sea la serie de trabajo. Cuanto más cerca de tu máximo, más escalones.</p>
+      </details>
+    </div>
+
+    <div class="otras">
+      <h2>Más herramientas gratis</h2>
+      <nav class="idx" aria-label="Otras herramientas">
+      <div class="idx-g">
+        <span class="idx-t">Fuerza</span>
+        <a href="/herramientas/calculadora-1rm/">Tu máximo (1RM)</a>
+        <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>
+        <a href="/herramientas/nivel-de-fuerza/">¿Cómo de fuerte soy?</a>
+        <a href="/herramientas/calculadora-discos/">Discos en la barra</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Nutrición y cuerpo</span>
+        <a href="/herramientas/calculadora-calorias-macros/">Calorías y macros</a>
+        <a href="/herramientas/grasa-corporal-ffmi/">Grasa corporal y FFMI</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Organiza el entreno</span>
+        <a href="/herramientas/volumen-semanal/">Volumen semanal</a>
+        <a href="/herramientas/recuperacion-heavy-duty/">Recuperación Heavy Duty</a>
+        <a href="/herramientas/cronometro-descansos/">Cronómetro de descansos</a>
+        <a href="/herramientas/tempo-repeticiones/">Tempo</a>
+      </div>
+      </nav>
+    </div>
+
+    <p class="tools-foot">Estas herramientas son material de entrenamiento, no consejo médico. Las estimaciones son eso, estimaciones: si tienes una lesión o una condición de salud, consúltalo antes con tu profesional sanitario. ¿Se te ocurre una herramienta que falta aquí? <a href="/#contacto" style="color:var(--amber)">Pídemela</a>. Y si todo esto te ayuda, <a href="/#batido" style="color:var(--amber)">invítame a un batido</a> 🥤.<br><br>Lo que escribes se guarda solo en este móvil o este ordenador, nunca nos llega a nosotros. <button type="button" class="linkbtn" id="clearAll">Borrar mis datos</button></p>
+
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>
+      <a href="https://heavywork.arnoldwork.com/game/">CaveWork</a>
+      <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
+      <a href="/#batido">Invita a un batido</a>
+      <a href="/#aviso">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/herramientas/app.js?v=26fc9a2ce2"></script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

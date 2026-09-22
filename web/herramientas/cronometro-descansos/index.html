@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cronómetro de descansos entre series para el gimnasio — ArnoldWork</title>
+<meta name="description" content="Temporizador de descanso entre series con aviso sonoro: 1, 1:30, 2, 3 o 5 minutos. Mantiene la pantalla encendida. Gratis y sin descargar nada.">
+<link rel="canonical" href="https://arnoldwork.com/herramientas/cronometro-descansos/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cronómetro de descansos entre series para el gimnasio — ArnoldWork">
+<meta property="og:description" content="Temporizador de descanso entre series con aviso sonoro: 1, 1:30, 2, 3 o 5 minutos. Mantiene la pantalla encendida. Gratis y sin descargar nada.">
+<meta property="og:url" content="https://arnoldwork.com/herramientas/cronometro-descansos/">
+<meta property="og:site_name" content="ArnoldWork">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ArnoldWork · Cronómetro de descansos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og-herramientas.png">
+<meta name="author" content="ArnoldWork">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=f18b864ee5">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Cronómetro de descansos","url":"https://arnoldwork.com/herramientas/cronometro-descansos/","description":"Temporizador de descanso entre series con aviso sonoro: 1, 1:30, 2, 3 o 5 minutos. Mantiene la pantalla encendida. Gratis y sin descargar nada.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Cronómetro de descansos","item":"https://arnoldwork.com/herramientas/cronometro-descansos/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cuánto hay que descansar entre series para ganar músculo?","acceptedAnswer":{"@type":"Answer","text":"Entre 1:30 y 3 minutos. Descansos más largos permiten hacer más repeticiones con el mismo peso, y eso suele dar mejores resultados."}}]}]</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span></a>
+    <nav class="nav-links">
+      <a href="/#porque">Por qué</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#heavywork">HeavyWork</a>
+      <a href="/#libro">Libro</a>
+      <a href="/#material">Fichas</a>
+      <a href="/#regalo">Guía gratis</a>
+      <a href="/#quien">Quién soy</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-sm" href="/#batido">🥤 Invita a un batido</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="tools-hero">
+  <div class="wrap">
+    <nav class="migas" aria-label="Estás en"><a href="/herramientas/">Herramientas</a><span>/</span>Cronómetro de descansos</nav>
+    <h1>Cronómetro de descansos</h1>
+    <p class="lede" style="margin-top:20px">Elige el descanso y dale. Te avisa con un pitido al terminar y mantiene la pantalla encendida mientras corre. Sin descargar ninguna app.</p>
+  </div>
+</section>
+
+<section class="solo">
+  <div class="wrap">
+
+    <div class="tool" id="descansos">
+      <p class="hint">Elige el descanso y dale. Avisa con un pitido al terminar y, en la mayoría de móviles, mantiene la pantalla encendida mientras corre. Si el tuyo se bloquea igualmente, el aviso puede no sonar.</p>
+      <div class="presets" id="tPresets">
+        <button type="button" data-s="60">1:00 · fuerza ligera</button>
+        <button type="button" data-s="90" class="on">1:30 · hipertrofia</button>
+        <button type="button" data-s="120">2:00 · básicos</button>
+        <button type="button" data-s="180">3:00 · fuerza</button>
+        <button type="button" data-s="300">5:00 · Heavy Duty</button>
+      </div>
+      <div class="timer" id="tOut" aria-live="off">1:30</div>
+      <div class="timer-cta">
+        <button class="btn" id="tGo" type="button">Empezar</button>
+        <button class="btn btn-ghost" id="tReset" type="button">Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="articulo">
+<h2>Cuánto descansar entre series</h2>
+<ul>
+<li><strong>1 minuto:</strong> ejercicios ligeros y de aislamiento.</li>
+<li><strong>1:30 a 2 minutos:</strong> hipertrofia en general.</li>
+<li><strong>2 a 3 minutos:</strong> básicos pesados como sentadilla, banca o peso muerto.</li>
+<li><strong>3 a 5 minutos:</strong> fuerza máxima y series al fallo absoluto.</li>
+</ul>
+<p>Descansar poco no hace el entrenamiento mejor, solo más cansado. Si en la siguiente serie pierdes muchas repeticiones, descansa más.</p>
+<p>Consejo: añade la web a tu pantalla de inicio y el cronómetro se abre como una app, también sin cobertura.</p>
+    </div>
+
+    <div class="faq">
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Cuánto hay que descansar entre series para ganar músculo?</summary>
+        <p>Entre 1:30 y 3 minutos. Descansos más largos permiten hacer más repeticiones con el mismo peso, y eso suele dar mejores resultados.</p>
+      </details>
+    </div>
+
+    <div class="otras">
+      <h2>Más herramientas gratis</h2>
+      <nav class="idx" aria-label="Otras herramientas">
+      <div class="idx-g">
+        <span class="idx-t">Fuerza</span>
+        <a href="/herramientas/calculadora-1rm/">Tu máximo (1RM)</a>
+        <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>
+        <a href="/herramientas/nivel-de-fuerza/">¿Cómo de fuerte soy?</a>
+        <a href="/herramientas/calculadora-discos/">Discos en la barra</a>
+        <a href="/herramientas/series-de-aproximacion/">Series de aproximación</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Nutrición y cuerpo</span>
+        <a href="/herramientas/calculadora-calorias-macros/">Calorías y macros</a>
+        <a href="/herramientas/grasa-corporal-ffmi/">Grasa corporal y FFMI</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Organiza el entreno</span>
+        <a href="/herramientas/volumen-semanal/">Volumen semanal</a>
+        <a href="/herramientas/recuperacion-heavy-duty/">Recuperación Heavy Duty</a>
+        <a href="/herramientas/tempo-repeticiones/">Tempo</a>
+      </div>
+      </nav>
+    </div>
+
+    <p class="tools-foot">Estas herramientas son material de entrenamiento, no consejo médico. Las estimaciones son eso, estimaciones: si tienes una lesión o una condición de salud, consúltalo antes con tu profesional sanitario. ¿Se te ocurre una herramienta que falta aquí? <a href="/#contacto" style="color:var(--amber)">Pídemela</a>. Y si todo esto te ayuda, <a href="/#batido" style="color:var(--amber)">invítame a un batido</a> 🥤.<br><br>Lo que escribes se guarda solo en este móvil o este ordenador, nunca nos llega a nosotros. <button type="button" class="linkbtn" id="clearAll">Borrar mis datos</button></p>
+
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>
+      <a href="https://heavywork.arnoldwork.com/game/">CaveWork</a>
+      <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
+      <a href="/#batido">Invita a un batido</a>
+      <a href="/#aviso">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/herramientas/app.js?v=26fc9a2ce2"></script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

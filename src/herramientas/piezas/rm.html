@@ -1,0 +1,24 @@
+<div class="tool" id="rm">
+  <h2>Tu máximo (1RM) y con qué peso entrenar</h2>
+  <p class="hint">Dime un peso con el que hayas llegado al límite y cuántas repeticiones hiciste. Te calculo el máximo estimado y la tabla de cargas por porcentaje. Es una estimación: cuanto más lejos del fallo real, menos fiable.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="rmPeso">Peso levantado (kg)</label>
+      <input id="rmPeso" type="number" inputmode="decimal" min="1" max="500" step="0.5" value="80" data-keep>
+    </div>
+    <div class="field">
+      <label for="rmReps">Repeticiones</label>
+      <input id="rmReps" type="number" inputmode="numeric" min="1" max="20" step="1" value="8" data-keep>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="rmOut">—<small id="rmSub">Escribe tus datos arriba</small></div>
+    <p class="warn" id="rmWarn" hidden></p>
+    <table class="pct" id="rmTabla" hidden>
+      <thead><tr><th scope="col">%</th><th scope="col">Peso</th><th scope="col">Reps aproximadas</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="rmShare">Compartir como imagen</button></div>
+    <p class="cta-line">¿Te ha servido? <a href="/#batido">Invita a un batido 🥤</a> · o comparte tu máximo con tu compañero de banco.</p>
+  </div>
+</div>

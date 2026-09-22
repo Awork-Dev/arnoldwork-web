@@ -1,0 +1,35 @@
+<div class="tool" id="tempo">
+  <h2>Tempo</h2>
+  <p class="hint">Te marca el ritmo de cada repetición con pitidos, para que no aceleres cuando quema. Heavy Duty trabaja a 4 segundos para subir y 4 para bajar. Si llegas al fallo antes de acabar, dale a parar: eso es exactamente lo que buscas.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="pBaja">Bajar (s)</label>
+      <input id="pBaja" type="number" inputmode="numeric" min="1" max="10" step="1" value="4" data-keep>
+    </div>
+    <div class="field">
+      <label for="pAbajo">Pausa abajo (s)</label>
+      <input id="pAbajo" type="number" inputmode="numeric" min="0" max="5" step="1" value="0" data-keep>
+    </div>
+    <div class="field">
+      <label for="pSube">Subir (s)</label>
+      <input id="pSube" type="number" inputmode="numeric" min="1" max="10" step="1" value="4" data-keep>
+    </div>
+    <div class="field">
+      <label for="pArriba">Pausa arriba (s)</label>
+      <input id="pArriba" type="number" inputmode="numeric" min="0" max="5" step="1" value="0" data-keep>
+    </div>
+    <div class="field">
+      <label for="pReps">Repeticiones</label>
+      <input id="pReps" type="number" inputmode="numeric" min="1" max="30" step="1" value="8" data-keep>
+    </div>
+  </div>
+  <div class="out">
+    <div class="tempo">
+      <div class="tempo-top"><span class="tempo-ph" id="pFase">Preparado</span><span class="tempo-rep" id="pRep">0 / 8</span></div>
+      <div class="tempo-bar"><i id="pBar"></i></div>
+    </div>
+    <div class="timer-cta">
+      <button class="btn" id="pGo" type="button">Empezar</button>
+    </div>
+  </div>
+</div>
