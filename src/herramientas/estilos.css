@@ -509,7 +509,7 @@
   .dia ul{list-style:none;margin:0;padding:0}
   .dia li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:.9rem}
   .dia li:last-child{border-bottom:0}
-  .dia li b{white-space:nowrap;color:var(--amber);font-variant-numeric:tabular-nums}
+  .dia li b{color:var(--amber);font-variant-numeric:tabular-nums;text-align:right;flex:0 0 auto;max-width:45%}
   .graf{display:block;width:100%;height:auto;margin-top:20px;background:var(--ink);border:1px solid var(--rule)}
   .graf[hidden]{display:none}
   .hist td:last-child{text-align:right}
