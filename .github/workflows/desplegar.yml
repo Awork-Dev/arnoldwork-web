@@ -1,0 +1,38 @@
+# Publica la carpeta web/ en Cloudflare Pages.
+# - Push a main: publica en arnoldwork.com (producción).
+# - Push a cualquier otra rama: crea una vista previa en <rama>.<proyecto>.pages.dev
+#
+# Necesita en GitHub (Settings → Secrets and variables → Actions):
+#   Secretos:  CLOUDFLARE_API_TOKEN  (permiso "Cloudflare Pages: Edit")
+#              CLOUDFLARE_ACCOUNT_ID
+#   Variable:  CLOUDFLARE_PROJECT    (nombre del proyecto de Pages)
+
+name: Desplegar web
+
+on:
+  push:
+    paths:
+      - "web/**"
+      - ".github/workflows/desplegar.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: desplegar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publicar en Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy web --project-name=${{ vars.CLOUDFLARE_PROJECT }} --branch=${{ github.ref_name }} --commit-dirty=true
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
