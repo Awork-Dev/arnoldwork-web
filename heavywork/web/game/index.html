@@ -1,13 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CaveWork · An ArnoldWork game</title>
-<meta name="description" content="Free retro caveman game. Smash dinos, eat protein, lift MORE WEIGHT. Made for the ArnoldWork community.">
+<title>CaveWork · El juego de ArnoldWork</title>
+<meta name="description" content="Juego retro gratis: un cavernícola, una mancuerna de piedra y muchos dinosaurios. Come proteína, recoge los discos, derrota al T-Rex y levanta más peso.">
 <meta name="theme-color" content="#000000">
-<meta property="og:title" content="CaveWork · Smash dinos. Eat protein. Lift more weight.">
-<meta property="og:description" content="A free retro game for the ArnoldWork community. How far can you go?">
+<meta property="og:title" content="CaveWork · Aplasta dinos. Come proteína. Levanta más peso.">
+<meta property="og:description" content="Un juego retro gratis de ArnoldWork. ¿Hasta dónde llegas?">
+<meta property="og:url" content="https://heavywork.arnoldwork.com/game/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-137 -40 926 926'%3E%3Crect x='-137' y='-40' width='926' height='926' fill='%23000'/%3E%3Cg transform='translate(65,84) scale(.8)'%3E%3Cpolygon points='319,0 0,845 649,341 198,579 319,238' fill='%23fff'/%3E%3Cpolygon points='333,0 333,231 441,439 489,415' fill='%23DE3A3A'/%3E%3Cpolygon points='507,462 469,492 650,839' fill='%23DE3A3A'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,10 +59,16 @@ button,input,a{font:inherit;color:inherit}
 #bocadillo.grito{background:var(--oro)}
 #bocadillo.grito::after{border-top-color:var(--oro);border-left-color:var(--oro)}
 
-#rotulo{position:absolute;left:0;right:0;top:38%;text-align:center;font-size:clamp(16px,6vw,40px);color:var(--oro);text-shadow:3px 3px 0 var(--rojo),6px 6px 0 #000;pointer-events:none}
+#rotulo{position:absolute;left:0;right:0;top:38%;text-align:center;font-size:clamp(16px,6vw,40px);color:var(--oro);text-shadow:3px 3px 0 var(--rojo),6px 6px 0 #000;pointer-events:none;padding:0 8px}
 #rotulo[hidden]{display:none}
 #rotulo.anim{animation:golpe .9s steps(6) both}
+#rotulo.pista{font-size:clamp(12px,4.2vw,26px);animation:parpadeo .6s steps(2) infinite}
 @keyframes golpe{0%{transform:scale(2.4);opacity:0}20%{transform:scale(1);opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+
+#logro{position:absolute;left:50%;top:24%;transform:translateX(-50%);z-index:5;background:#000d;border:2px solid var(--oro);color:var(--oro);padding:6px 10px;font-size:clamp(7px,2vw,10px);line-height:1.5;text-align:center;pointer-events:none;max-width:80%;animation:entra .3s steps(3)}
+#logro small{display:block;color:var(--tiza);font-size:.85em}
+#logro[hidden]{display:none}
+@keyframes entra{from{transform:translate(-50%,-30px)}to{transform:translate(-50%,0)}}
 
 /* Controles táctiles */
 #controles{display:flex;gap:10px;padding:10px;width:100%;max-width:640px}
@@ -69,7 +76,6 @@ button,input,a{font:inherit;color:inherit}
 #controles button.pulsado{transform:translateY(4px);box-shadow:0 1px 0 #000;background:#2a1f1a}
 #btnGolpe{border-color:var(--rojo)!important;color:#fff}
 #controles small{display:block;font-size:.55em;color:var(--gris);margin-top:6px}
-@media (hover:hover) and (pointer:fine){#controles small{display:block}}
 @media (orientation:landscape) and (max-height:520px){
   #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:space-between;padding:10px 16px calc(10px + env(safe-area-inset-bottom));pointer-events:none}
   #controles button{flex:0 0 26%;height:84px;background:#0008;pointer-events:auto}
@@ -87,6 +93,7 @@ button,input,a{font:inherit;color:inherit}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:8px 12px;border:3px solid var(--tiza);background:#231915;color:var(--tiza);text-decoration:none;cursor:pointer;text-align:center;box-shadow:0 4px 0 #000}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
 .btn-rojo{background:var(--rojo);border-color:var(--rojo);color:#fff}
+.btn-oro{background:var(--oro);border-color:var(--oro);color:#111}
 .btn-grande{min-height:64px;font-size:16px}
 .btn[aria-pressed="false"]{color:var(--gris);border-color:var(--borde)}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
@@ -124,33 +131,45 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 .ok{color:var(--verde);font-size:9px;min-height:1.4em;margin:0 0 8px}
 .trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .enlace-volver{display:inline-block;margin-top:14px;font-size:9px;color:var(--gris)}
+
+.logros{list-style:none;margin:0 0 12px;padding:0;max-height:52vh;overflow-y:auto}
+.logros li{display:flex;gap:10px;align-items:flex-start;padding:8px 2px;border-top:2px solid var(--borde);font-size:9px;line-height:1.6}
+.logros li .ico{flex:none;width:18px;text-align:center;color:var(--borde)}
+.logros li.si .ico{color:var(--oro)}
+.logros li b{display:block;font-weight:400;color:var(--gris)}
+.logros li.si b{color:var(--oro)}
+.logros li span{color:var(--gris)}
+.barra-logros{height:10px;border:2px solid var(--tiza);background:#000;margin:0 0 12px}
+.barra-logros i{display:block;height:100%;background:var(--oro)}
+.nuevo{color:var(--oro)!important;font-size:9px}
 </style>
 </head>
 <body>
 <div id="app">
   <div id="stage">
-    <canvas id="lienzo" width="320" height="180" aria-label="CaveWork game screen"></canvas>
+    <canvas id="lienzo" width="320" height="180" data-t-aria="aCanvas" aria-label="CaveWork"></canvas>
     <div id="hud" hidden>
       <div class="hud-izq">
-        <span id="vidas" aria-label="Lives"></span>
-        <span class="etiqueta">PROTEIN</span>
+        <span id="vidas" data-t-aria="aVidas" aria-label="Vidas"></span>
+        <span class="etiqueta" data-t="proteina">PROTEINA</span>
         <div class="medidor" id="medidor"><i id="medidorBarra"></i></div>
         <span id="combo"></span>
       </div>
       <div class="hud-der">
         <span id="marcador">0</span>
         <span id="peso">20 KG</span>
-        <button type="button" id="btnPausa" aria-label="Pause">
+        <button type="button" id="btnPausa" data-t-aria="aPausa" aria-label="Pausa">
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1" width="4" height="12" fill="#f4efe6"/><rect x="8" y="1" width="4" height="12" fill="#f4efe6"/></svg>
         </button>
       </div>
     </div>
     <div id="bocadillo" hidden></div>
     <div id="rotulo" hidden></div>
+    <div id="logro" hidden role="status"></div>
   </div>
   <div id="controles">
-    <button type="button" id="btnSalto">JUMP<small>SPACE / ↑</small></button>
-    <button type="button" id="btnGolpe">SMASH<small>X / J</small></button>
+    <button type="button" id="btnSalto"><span data-t="saltar">SALTAR</span><small>ESPACIO / ↑</small></button>
+    <button type="button" id="btnGolpe"><span data-t="golpear">GOLPE</span><small>X / J</small></button>
   </div>
 </div>
 
@@ -161,45 +180,51 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <svg viewBox="-40 -30 731 906" aria-hidden="true"><rect x="-40" y="-30" width="731" height="906" fill="#000"/><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></svg>
       <h1 id="tituloJuego">CAVE<b>WORK</b></h1>
     </div>
-    <p class="subtitulo">A free game by ArnoldWork &amp; HeavyWork</p>
+    <p class="subtitulo" data-t="subtitulo">Un juego gratis de ArnoldWork y HeavyWork</p>
 
     <div class="deuda" aria-live="polite">
-      <div class="tit">PLAYERS OWE THE DEVELOPER</div>
-      <div class="cifra" id="deudaCifra">$0.00</div>
-      <div class="nota" id="deudaPartidas">Loading...</div>
-      <p class="nota">Symbolic debt: every game adds $0.10. Nobody has to pay it.</p>
-      <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> PAY THE DEBT (DONATE)</a>
+      <div class="tit" data-t="deudaTit">LOS JUGADORES LE DEBEN AL DESARROLLADOR</div>
+      <div class="cifra" id="deudaCifra">0,00 $</div>
+      <div class="nota" id="deudaPartidas">…</div>
+      <p class="nota" data-t="deudaNota">Deuda simbólica: cada partida suma 0,10 $. Nadie tiene que pagarla.</p>
+      <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="pagarDeuda">PAGAR LA DEUDA (DONAR)</span></a>
     </div>
 
     <div class="pila">
-      <button type="button" class="btn btn-rojo btn-grande" id="btnJugar">PLAY</button>
+      <button type="button" class="btn btn-rojo btn-grande" id="btnJugar" data-t="jugar">JUGAR</button>
+      <p class="nuevo" id="mejor" hidden></p>
       <div class="fila">
         <button type="button" class="btn" data-abrir="pTop">TOP 10</button>
-        <button type="button" class="btn" data-abrir="pFeedback">FEEDBACK</button>
+        <button type="button" class="btn" data-abrir="pLogros" data-t="logros">LOGROS</button>
       </div>
       <div class="fila">
-        <button type="button" class="btn" id="btnMusica" aria-pressed="true">MUSIC ON</button>
-        <button type="button" class="btn" id="btnSfx" aria-pressed="true">SFX ON</button>
+        <button type="button" class="btn" id="btnMusica" aria-pressed="true">MUSICA SI</button>
+        <button type="button" class="btn" id="btnSfx" aria-pressed="true">EFECTOS SI</button>
+      </div>
+      <div class="fila">
+        <button type="button" class="btn" data-abrir="pFeedback" data-t="opinion">OPINION</button>
+        <button type="button" class="btn" id="btnIdioma">ENGLISH</button>
       </div>
     </div>
 
     <div class="cajita">
-      <p><b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.</p>
-      <p><b>AVOID</b> junk food, boulders and logs. Boulders can't be smashed: jump them.</p>
-      <p style="margin:0"><b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.</p>
+      <p data-t-html="ayuda1"></p>
+      <p data-t-html="ayuda2"></p>
+      <p data-t-html="ayuda3"></p>
+      <p style="margin:0" data-t-html="ayuda4"></p>
     </div>
-    <a class="enlace-volver" href="/">← Back to HeavyWork</a>
+    <a class="enlace-volver" href="/" data-t="volverHW">← Volver a HeavyWork</a>
   </div>
 </section>
 
 <!-- Pausa -->
 <section class="panel" id="pPausa" hidden aria-labelledby="tPausa">
   <div class="caja">
-    <h2 id="tPausa">PAUSED</h2>
-    <p class="suave">Rest between sets. Not too long.</p>
+    <h2 id="tPausa" data-t="pausa">PAUSA</h2>
+    <p class="suave" data-t="pausaTxt">Descansa entre series. Pero no mucho.</p>
     <div class="pila">
-      <button type="button" class="btn btn-rojo btn-grande" id="btnSeguir">RESUME</button>
-      <button type="button" class="btn" id="btnSalirPausa">QUIT TO MENU</button>
+      <button type="button" class="btn btn-rojo btn-grande" id="btnSeguir" data-t="seguir">SEGUIR</button>
+      <button type="button" class="btn" id="btnSalirPausa" data-t="salirMenu">SALIR AL MENU</button>
     </div>
   </div>
 </section>
@@ -207,29 +232,31 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 <!-- Fin de partida -->
 <section class="panel" id="pFin" hidden aria-labelledby="tFin">
   <div class="caja">
-    <h2 id="tFin">GAME OVER</h2>
+    <h2 id="tFin" data-t="finTit">¡AL FALLO!</h2>
     <p class="suave" id="finFrase"></p>
     <div class="puntos-final" id="finPuntos">0</div>
     <p id="finDetalle" class="suave"></p>
+    <p id="finLogros" class="nuevo" hidden></p>
     <div id="finRecord" hidden>
-      <p style="color:var(--oro)">NEW TOP 10! ENTER YOUR INITIALS</p>
+      <p style="color:var(--oro)" data-t="nuevoTop">¡NUEVO TOP 10! PON TUS INICIALES</p>
       <form id="formIniciales" class="iniciales" autocomplete="off">
-        <input id="inIniciales" maxlength="3" inputmode="text" autocapitalize="characters" spellcheck="false" aria-label="Your initials, 3 letters" placeholder="AAA">
-        <button type="submit" class="btn btn-rojo" style="min-width:90px">SAVE</button>
+        <input id="inIniciales" maxlength="3" inputmode="text" autocapitalize="characters" spellcheck="false" data-t-aria="aIniciales" aria-label="Tus iniciales, 3 letras" placeholder="AAA">
+        <button type="submit" class="btn btn-rojo" style="min-width:90px" data-t="guardar">GUARDAR</button>
       </form>
       <p class="error" id="errIniciales" role="alert"></p>
     </div>
     <div class="pila">
-      <button type="button" class="btn btn-rojo btn-grande" id="btnOtra">PLAY AGAIN</button>
+      <button type="button" class="btn btn-rojo btn-grande" id="btnOtra" data-t="otra">OTRA SERIE</button>
+      <button type="button" class="btn btn-oro" id="btnCompartir" data-t="compartir">COMPARTIR MI MARCA</button>
       <div class="fila">
         <button type="button" class="btn" data-abrir="pTop">TOP 10</button>
-        <button type="button" class="btn" id="btnMenu">MENU</button>
+        <button type="button" class="btn" id="btnMenu" data-t="menu">MENU</button>
       </div>
-      <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> DONATE TO THE DEVELOPER</a>
-      <button type="button" class="btn" data-abrir="pFeedback">SEND FEEDBACK</button>
+      <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="donar">DONAR AL DESARROLLADOR</span></a>
+      <button type="button" class="btn" data-abrir="pFeedback" data-t="enviarOpinion">ENVIAR OPINION</button>
     </div>
     <div class="cajita">
-      <p style="margin:0">Players now owe the developer <b id="finDeuda">$0.00</b>. Just kidding. <button type="button" class="btn" data-abrir="pDonar" style="display:inline-flex;min-height:36px;margin-top:8px;box-shadow:none">Why donate?</button></p>
+      <p style="margin:0"><span data-t="deudaYa">Los jugadores ya le deben</span> <b id="finDeuda">0,00 $</b> <span data-t="esBroma">al desarrollador. Es broma.</span> <button type="button" class="btn" data-abrir="pDonar" style="display:inline-flex;min-height:36px;margin-top:8px;box-shadow:none" data-t="porQue">¿Por qué donar?</button></p>
     </div>
   </div>
 </section>
@@ -240,44 +267,55 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <h2 id="tTop">TOP 10</h2>
     <p class="suave" id="topModo"></p>
     <table class="tabla">
-      <thead><tr><th>#</th><th>NAME</th><th>KG</th><th>SCORE</th></tr></thead>
+      <thead><tr><th>#</th><th data-t="nombre">NOMBRE</th><th>KG</th><th data-t="puntos">PUNTOS</th></tr></thead>
       <tbody id="topCuerpo"></tbody>
     </table>
-    <button type="button" class="btn btn-rojo" data-volver>BACK</button>
+    <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
+  </div>
+</section>
+
+<!-- Logros -->
+<section class="panel" id="pLogros" hidden aria-labelledby="tLogros">
+  <div class="caja">
+    <h2 id="tLogros" data-t="logros">LOGROS</h2>
+    <p class="suave" id="logrosCuenta"></p>
+    <div class="barra-logros"><i id="logrosBarra"></i></div>
+    <ul class="logros" id="logrosLista"></ul>
+    <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
   </div>
 </section>
 
 <!-- Donaciones -->
 <section class="panel" id="pDonar" hidden aria-labelledby="tDonar">
   <div class="caja">
-    <h2 id="tDonar">SUPPORT THE CAVE</h2>
-    <p>CaveWork is free. Forever. It's made for the ArnoldWork community, like the rest of our training tools.</p>
-    <p class="suave">Every game adds $0.10 of symbolic debt to the counter. Nobody has to pay it. But if you had fun and want more free games and tools, you can buy the developer a protein shake.</p>
+    <h2 id="tDonar" data-t="apoya">APOYA LA CUEVA</h2>
+    <p data-t="donarTxt1">CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.</p>
+    <p class="suave" data-t="donarTxt2">Cada partida suma 0,10 $ de deuda simbólica al contador. Nadie tiene que pagarla. Pero si te lo has pasado bien y quieres más juegos y herramientas gratis, puedes invitar al desarrollador a un batido.</p>
     <div class="pila">
-      <a class="btn btn-dona btn-grande" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> DONATE WITH PAYPAL</a>
-      <button type="button" class="btn" data-volver>BACK</button>
+      <a class="btn btn-dona btn-grande" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="donarPaypal">DONAR CON PAYPAL</span></a>
+      <button type="button" class="btn" data-volver data-t="volver">VOLVER</button>
     </div>
-    <p class="suave" style="font-size:8px;margin:12px 0 0">Donations are voluntary and don't unlock anything. Thank you!</p>
+    <p class="suave" style="font-size:8px;margin:12px 0 0" data-t="donarNota">Las donaciones son voluntarias y no desbloquean nada. ¡Gracias!</p>
   </div>
 </section>
 
 <!-- Feedback privado -->
 <section class="panel" id="pFeedback" hidden aria-labelledby="tFeedback">
   <div class="caja">
-    <h2 id="tFeedback">SEND FEEDBACK</h2>
-    <p class="suave">Ideas, bugs, new enemies you'd like to smash... Your message goes privately to the developer. It won't be published.</p>
+    <h2 id="tFeedback" data-t="opinionTit">ENVIA TU OPINION</h2>
+    <p class="suave" data-t="opinionTxt">Ideas, fallos, dinos que te gustaría aplastar... Tu mensaje le llega en privado al desarrollador. No se publica.</p>
     <form id="formFeedback" autocomplete="off">
-      <label for="fbTexto" class="suave" style="font-size:9px">YOUR MESSAGE</label>
+      <label for="fbTexto" class="suave" style="font-size:9px" data-t="tuMensaje">TU MENSAJE</label>
       <textarea id="fbTexto" class="comentario" maxlength="280" required></textarea>
       <div class="contador-car" id="fbCuenta">0 / 280</div>
-      <label for="fbNombre" class="suave" style="font-size:9px">INITIALS (OPTIONAL)</label>
+      <label for="fbNombre" class="suave" style="font-size:9px" data-t="inicialesOpc">INICIALES (OPCIONAL)</label>
       <input id="fbNombre" class="campo-ini" maxlength="3" autocapitalize="characters" spellcheck="false">
       <div class="trampa" aria-hidden="true"><input id="fbWeb" tabindex="-1" autocomplete="off"></div>
       <p class="error" id="fbError" role="alert"></p>
       <p class="ok" id="fbOk" role="status"></p>
       <div class="pila">
-        <button type="submit" class="btn btn-rojo btn-grande" id="fbEnviar">SEND</button>
-        <button type="button" class="btn" data-volver>BACK</button>
+        <button type="submit" class="btn btn-rojo btn-grande" id="fbEnviar" data-t="enviar">ENVIAR</button>
+        <button type="button" class="btn" data-volver data-t="volver">VOLVER</button>
       </div>
     </form>
   </div>
@@ -285,31 +323,227 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 
 <script>
 'use strict';
-/* ================= CONFIGURATION ================= */
+/* ================= CONFIGURACIÓN ================= */
 const PAYPAL_URL = 'https://paypal.me/Xarlyds';
-const API_BASE = 'https://cavework-api.arnoldwork.workers.dev';   // shared Top 10 + debt counter
+const API_BASE = 'https://cavework-api.arnoldwork.workers.dev';   // Top 10 mundial + contador de deuda
 const DEBT_PER_GAME = 0.10;
-const FEEDBACK_EMAIL = 'arnoldwork4you@gmail.com';   // used only if the server is not available
+const FEEDBACK_EMAIL = 'arnoldwork4you@gmail.com';   // solo si el servidor no responde
+const GAME_URL = 'heavywork.arnoldwork.com/game';
 
-/* ================= BASICS ================= */
+/* ================= BÁSICOS ================= */
 const W = 320, H = 180, GROUND = 154;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const rand = (a, b) => a + Math.random() * (b - a);
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const money = v => '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 const lienzo = $('#lienzo');
-const ctx = lienzo.getContext('2d');
+const pantalla = lienzo.getContext('2d');
+let ctx = pantalla;           // los sprites dibujan en ctx; para la tarjeta de compartir se cambia a otro lienzo
 ctx.imageSmoothingEnabled = false;
 
 const STORE_KEY = 'cavework-v1';
+const STORE_BASE = {music:true, sfx:true, best:0, plays:0, top:[], ach:{}, plates:0, bosses:0, tut:false, lang:null};
 function loadStore(){
-  try { return Object.assign({music:true, sfx:true, best:0, plays:0, top:[]}, JSON.parse(localStorage.getItem(STORE_KEY)) || {}); }
-  catch { return {music:true, sfx:true, best:0, plays:0, top:[]}; }
+  try { return Object.assign({}, STORE_BASE, JSON.parse(localStorage.getItem(STORE_KEY)) || {}); }
+  catch { return Object.assign({}, STORE_BASE); }
 }
 let store = loadStore();
+if (!store.ach || typeof store.ach !== 'object') store.ach = {};
 function saveStore(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch {} }
+
+/* ================= IDIOMA ================= */
+let lang = store.lang || ((navigator.language || 'es').toLowerCase().startsWith('es') ? 'es' : 'en');
+const TXT = {
+  es: {
+    aCanvas:'Pantalla del juego CaveWork', aVidas:'Vidas', aPausa:'Pausa', aIniciales:'Tus iniciales, 3 letras',
+    proteina:'PROTEÍNA', saltar:'SALTAR', golpear:'GOLPE',
+    subtitulo:'Un juego gratis de ArnoldWork y HeavyWork',
+    deudaTit:'LOS JUGADORES LE DEBEN AL DESARROLLADOR', deudaNota:'Deuda simbólica: cada partida suma 0,10 $. Nadie tiene que pagarla.',
+    pagarDeuda:'PAGAR LA DEUDA (DONAR)', jugar:'JUGAR', logros:'LOGROS', opinion:'OPINIÓN', idioma:'ENGLISH',
+    musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
+    ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
+    ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
+    ayuda3:'<b>NUEVO.</b> Recoge los discos del suelo, pilla los potenciadores (batido, cinturón, pre-entreno y... MAKINA) y prepárate: a los 40 KG llega el T-Rex.',
+    ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
+    volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
+    finTit:'¡AL FALLO!', nuevoTop:'¡NUEVO TOP 10! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'COMPARTIR MI MARCA', menu:'MENÚ',
+    donar:'DONAR AL DESARROLLADOR', enviarOpinion:'ENVIAR OPINIÓN', deudaYa:'Los jugadores ya le deben', esBroma:'al desarrollador. Es broma.', porQue:'¿Por qué donar?',
+    nombre:'NOMBRE', puntos:'PUNTOS', volver:'VOLVER', apoya:'APOYA LA CUEVA',
+    donarTxt1:'CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.',
+    donarTxt2:'Cada partida suma 0,10 $ de deuda simbólica al contador. Nadie tiene que pagarla. Pero si te lo has pasado bien y quieres más juegos y herramientas gratis, puedes invitar al desarrollador a un batido.',
+    donarPaypal:'DONAR CON PAYPAL', donarNota:'Las donaciones son voluntarias y no desbloquean nada. ¡Gracias!',
+    opinionTit:'ENVÍA TU OPINIÓN', opinionTxt:'Ideas, fallos, dinos que te gustaría aplastar... Tu mensaje le llega en privado al desarrollador. No se publica.',
+    tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
+    partidas:n => `${n.toLocaleString('es-ES')} partidas jugadas`, sinConexion:'Sin conexión: contando solo en este dispositivo',
+    rankMundial:'Ranking mundial', rankLocal:'Sin conexión: ranking de este dispositivo', sinPuntos:'Todavía no hay puntuaciones. ¡Sé el primero!',
+    detalle:(kg, d, p, b) => `Levantaste ${kg} KG. ${d} dinos aplastados. ${p} discos recogidos.` + (b ? ` T-Rex derrotados: ${b}.` : ''),
+    mejor:n => `Tu récord: ${n.toLocaleString('es-ES')}`, record:n => ` Récord: ${n.toLocaleString('es-ES')}`,
+    err3:'Usa exactamente 3 letras (A-Z).', errNombre:'Elige otras iniciales.', guardando:'Guardando...',
+    errNoAcept:'Puntuación no aceptada. Prueba en la próxima partida.', errConexion:'No se ha podido guardar. Revisa la conexión.',
+    fbCorto:'Escribe unas palabras primero.', fbEspera:'Espera un minuto antes de enviar otro mensaje.', fbOk:'¡Enviado! Gracias por ayudar a que la cueva crezca.',
+    fb429:'Demasiados mensajes. Prueba más tarde.', fb400:'Mensaje no aceptado.', fbMail:'El servidor no responde. Abriendo tu correo...',
+    donPronto:'DONACIONES PRÓXIMAMENTE', go:'¡VAMOS!', masPeso:'¡MÁS PESO!', trex:'¡T-REX!', trexKO:'¡T-REX KO!',
+    logroTit:'¡LOGRO!', logrosCuenta:(a, b) => `${a} de ${b} conseguidos`, logrosNuevos:n => n === 1 ? '¡1 logro nuevo!' : `¡${n} logros nuevos!`,
+    tutSalta:'¡SALTA! (↑ o SALTAR)', tutGolpea:'¡GOLPEA! (X o GOLPE)', tutCome:'¡CÓMETELO! Proteína = más peso',
+    pu:{shaker:'BATIDO', belt:'CINTURÓN', pre:'PRE-ENTRENO', boombox:'MAKINA'},
+    compartirTit:'Mi marca en CaveWork', compartirTxt:(p, kg) => `He hecho ${p} puntos y he levantado ${kg} KG en CaveWork. ¿Me superas?`,
+    tarjeta:{kg:'KG', dinos:'DINOS', discos:'DISCOS', reto:'¿ME SUPERAS?'}, copiado:'¡ENLACE COPIADO!'
+  },
+  en: {
+    aCanvas:'CaveWork game screen', aVidas:'Lives', aPausa:'Pause', aIniciales:'Your initials, 3 letters',
+    proteina:'PROTEIN', saltar:'JUMP', golpear:'SMASH',
+    subtitulo:'A free game by ArnoldWork & HeavyWork',
+    deudaTit:'PLAYERS OWE THE DEVELOPER', deudaNota:'Symbolic debt: every game adds $0.10. Nobody has to pay it.',
+    pagarDeuda:'PAY THE DEBT (DONATE)', jugar:'PLAY', logros:'ACHIEVEMENTS', opinion:'FEEDBACK', idioma:'Español',
+    musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
+    ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
+    ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
+    ayuda3:'<b>NEW.</b> Pick up the plates on the floor, grab power-ups (shake, belt, pre-workout and... MAKINA) and get ready: at 40 KG the T-Rex shows up.',
+    ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
+    volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
+    finTit:'FAILURE!', nuevoTop:'NEW TOP 10! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'SHARE MY SCORE', menu:'MENU',
+    donar:'DONATE TO THE DEVELOPER', enviarOpinion:'SEND FEEDBACK', deudaYa:'Players now owe the developer', esBroma:'Just kidding.', porQue:'Why donate?',
+    nombre:'NAME', puntos:'SCORE', volver:'BACK', apoya:'SUPPORT THE CAVE',
+    donarTxt1:'CaveWork is free. Forever. It\'s made for the ArnoldWork community, like the rest of our training tools.',
+    donarTxt2:'Every game adds $0.10 of symbolic debt to the counter. Nobody has to pay it. But if you had fun and want more free games and tools, you can buy the developer a protein shake.',
+    donarPaypal:'DONATE WITH PAYPAL', donarNota:'Donations are voluntary and don\'t unlock anything. Thank you!',
+    opinionTit:'SEND FEEDBACK', opinionTxt:'Ideas, bugs, new enemies you\'d like to smash... Your message goes privately to the developer. It won\'t be published.',
+    tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',
+    partidas:n => `${n.toLocaleString('en-US')} games played`, sinConexion:'Offline: counting on this device only',
+    rankMundial:'Worldwide ranking', rankLocal:'Offline: ranking on this device', sinPuntos:'No scores yet. Be the first!',
+    detalle:(kg, d, p, b) => `Lifted ${kg} KG. ${d} dinos smashed. ${p} plates racked.` + (b ? ` T-Rex beaten: ${b}.` : ''),
+    mejor:n => `Your best: ${n.toLocaleString('en-US')}`, record:n => ` Best: ${n.toLocaleString('en-US')}`,
+    err3:'Use exactly 3 letters (A-Z).', errNombre:'Please choose other initials.', guardando:'Saving...',
+    errNoAcept:'Score not accepted. Try again next game.', errConexion:'Could not save. Check your connection.',
+    fbCorto:'Write a few words first.', fbEspera:'Please wait a minute before sending another message.', fbOk:'Sent! Thanks for helping the cave grow.',
+    fb429:'Too many messages. Try again later.', fb400:'Message not accepted.', fbMail:'Server not available. Opening your email instead...',
+    donPronto:'DONATIONS COMING SOON', go:'GO!', masPeso:'MORE WEIGHT!', trex:'T-REX!', trexKO:'T-REX DOWN!',
+    logroTit:'ACHIEVEMENT!', logrosCuenta:(a, b) => `${a} of ${b} unlocked`, logrosNuevos:n => n === 1 ? '1 new achievement!' : `${n} new achievements!`,
+    tutSalta:'JUMP! (↑ or JUMP)', tutGolpea:'SMASH! (X or SMASH)', tutCome:'EAT IT! Protein = more weight',
+    pu:{shaker:'SHAKE', belt:'BELT', pre:'PRE-WORKOUT', boombox:'MAKINA'},
+    compartirTit:'My CaveWork score', compartirTxt:(p, kg) => `I scored ${p} and lifted ${kg} KG in CaveWork. Can you beat me?`,
+    tarjeta:{kg:'KG', dinos:'DINOS', discos:'PLATES', reto:'CAN YOU BEAT ME?'}, copiado:'LINK COPIED!'
+  }
+};
+// La fuente pixelada no tiene mayúsculas con tilde (las pinta como minúsculas): se escriben sin tilde.
+const SIN_TILDE = {'Á':'A', 'É':'E', 'Í':'I', 'Ó':'O', 'Ú':'U', 'Ü':'U'};
+const fix = s => s.replace(/[ÁÉÍÓÚÜ]/g, c => SIN_TILDE[c]);
+function fixAll(v){
+  if (typeof v === 'string') return fix(v);
+  if (typeof v === 'function') return (...a) => fixAll(v(...a));
+  if (v && typeof v === 'object'){ const o = {}; for (const k in v) o[k] = fixAll(v[k]); return o; }
+  return v;
+}
+const T = k => fixAll(TXT[lang][k] !== undefined ? TXT[lang][k] : TXT.en[k]);
+const NUM = n => Math.floor(n).toLocaleString(lang === 'es' ? 'es-ES' : 'en-US');
+const money = v => lang === 'es'
+  ? v.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' $'
+  : '$' + v.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+const LINES = {
+  es: {
+    start:  ['¡A cazar ganancias!', '¿Día de pierna? Todos los días.', 'Edad de Piedra. Voluntad de hierro.', 'Una serie al fallo. ¡Vamos!', 'Pon makina, que empezamos.'],
+    kill:   ['¡Aplastado!', '¡Ganancias tamaño dino!', '¡Qué bombeo!', '¡Otra repe!', '¡Marca personal!'],
+    combo:  ['¡Combo! ¡No pares!', '¡Estoy on fire!', '¡Imparable!', '¡Modo bestia!'],
+    food:   ['¡Llega proteína!', 'Mmm... macros.', '¿Pollo? Casi.', '¡A recargar!'],
+    steak:  ['¡Eso SÍ es comer!', '¡Filete! Mi repe favorita.'],
+    golden: ['¡Huevo de oro! ¡Vida extra!', '¡Proteína brillante!'],
+    junk:   ['¡Eso no entra en mis macros!', '¿Comida trampa? Hoy no.', 'Puaj... ¡azúcar!', '¿Quién ha tirado eso?'],
+    level:  ['¡MÁS PESO!', '¡Otro disco!', '¡Más! ¡MÁS!', '¿Eso es todo?'],
+    hungry: ['Qué hambre...', 'Necesito... proteína...', '¿Dónde está mi batido?'],
+    hurt:   ['¡Ay! ¡Mala técnica!', '¡Eso deja marca!', '¡Sigue, sigue!', '¡Ayudante! ¡AYUDANTE!'],
+    boulder:['No se puede hacer curl con una roca.', 'Demasiado pesada. Hasta para mí.'],
+    log:    ['¡Madera!', 'Eso no era una barra.'],
+    plate:  ['¡Recoge los discos!', 'Discos a su sitio.', 'Alguien no recoge...', '¡El de 20 con los de 20!'],
+    plates10:['¡Gracias por recoger los discos!', 'Sala recogida, sala feliz.'],
+    boss:   ['¡Un T-Rex! ¿Te queda mucho?', 'Brazos cortos, ego grande.', 'Ese no ha hecho curl en su vida.'],
+    bossHit:['¡Ahora! ¡Dale!', '¡Está cansado!', '¡A la cabeza!'],
+    bossHead:['¡Cabeza dura!', 'Espera a que se canse.'],
+    bossKO: ['¡T-Rex al fallo!', 'Vuelve cuando hagas brazo.', 'Brazos cortos, derrota larga.'],
+    shaker: ['¡Batido! Imán de proteína.', 'Batido de vainilla. Perfecto.'],
+    belt:   ['¡Cinturón puesto!', 'Faja apretada. Espalda protegida.'],
+    pre:    ['¡PRE-ENTRENO! ¡Me pica la cara!', '¡Tres cacitos! ¡VAMOS!'],
+    boombox:['¡PON MAKINA!', '¡UNTZ UNTZ UNTZ!'],
+    belted: ['¡El cinturón me ha salvado!'],
+    record: ['¡Nuevo récord! ¡A posar!'],
+    over:   ['El fallo es parte de la serie.', 'Descansa. Vuelve más fuerte.', 'Mañana se vuelve a entrenar.', 'Hasta las leyendas fallan una repe.', 'Recoge los discos antes de irte.']
+  },
+  en: {
+    start:  ['Time to hunt some gains!', 'Leg day? Every day.', 'Stone Age. Iron will.', 'One set to failure. Go!', 'Put on some makina!'],
+    kill:   ['Smashed it!', 'Dino-sized gains!', 'Feel the pump!', 'Another rep!', 'That\'s a PR!'],
+    combo:  ['Combo! Don\'t stop now!', 'I\'m on fire!', 'Unstoppable!', 'Beast mode!'],
+    food:   ['Protein incoming!', 'Mmm... macros.', 'Chicken? Close enough.', 'Refuel!'],
+    steak:  ['Now THAT\'S a meal!', 'Steak! My favorite rep.'],
+    golden: ['Golden egg! Extra life!', 'Shiny protein!'],
+    junk:   ['Not in my macros!', 'Cheat meal? Not today!', 'Ugh... sugar!', 'Who threw that?!'],
+    level:  ['MORE WEIGHT!', 'Add another plate!', 'Heavier! HEAVIER!', 'Is that all you got?'],
+    hungry: ['So hungry...', 'Need... protein...', 'Where\'s my shaker?'],
+    hurt:   ['Ouch! Bad form!', 'That\'ll leave a mark!', 'Walk it off!', 'Spotter! SPOTTER!'],
+    boulder:['Can\'t curl a boulder!', 'Too heavy. Even for me.'],
+    log:    ['Wood you move?', 'Timber!'],
+    plate:  ['Rerack your plates!', 'Plates go back home.', 'Someone didn\'t rerack...', '20s with the 20s!'],
+    plates10:['Thanks for reracking!', 'Clean gym, happy gym.'],
+    boss:   ['A T-Rex! You done with that?', 'Short arms, big ego.', 'That one never did a curl.'],
+    bossHit:['Now! Hit it!', 'It\'s tired!', 'Go for the head!'],
+    bossHead:['Hard head!', 'Wait until it gets tired.'],
+    bossKO: ['T-Rex to failure!', 'Come back when you train arms.', 'Short arms, long defeat.'],
+    shaker: ['Protein shake! Food magnet.', 'Vanilla shake. Perfect.'],
+    belt:   ['Belt on!', 'Belt tight. Back safe.'],
+    pre:    ['PRE-WORKOUT! My face is tingling!', 'Three scoops! LET\'S GO!'],
+    boombox:['MAKINA TIME!', 'UNTZ UNTZ UNTZ!'],
+    belted: ['The belt saved me!'],
+    record: ['New record! Flex time!'],
+    over:   ['Failure is part of the set.', 'Rest. Then come back stronger.', 'Tomorrow we lift again.', 'Even legends skip a rep.', 'Rerack before you leave.']
+  }
+};
+
+/* ================= LOGROS ================= */
+const ACH = [
+  ['dino',     'Primera sangre',      'Aplasta tu primer dino.',                    'First blood',        'Smash your first dino.'],
+  ['combo5',   'Combo máximo',        'Consigue un combo x5.',                      'Max combo',          'Reach a x5 combo.'],
+  ['kg40',     'Sin miedo al hierro', 'Levanta 40 KG.',                             'Iron is not scary',  'Lift 40 KG.'],
+  ['kg60',     'Ya se nota',          'Levanta 60 KG.',                             'People notice',      'Lift 60 KG.'],
+  ['kg100',    'Club de los 100',     'Levanta 100 KG.',                            'The 100 club',       'Lift 100 KG.'],
+  ['trex',     'Brazos cortos',       'Derrota a un T-Rex.',                        'Short arms',         'Beat a T-Rex.'],
+  ['trex3',    'Cazador de reyes',    'Derrota 3 T-Rex en total.',                  'King hunter',        'Beat 3 T-Rex in total.'],
+  ['plates10', 'Buen compañero',      'Recoge 10 discos en una partida.',           'Good gym buddy',     'Rack 10 plates in one game.'],
+  ['plates100','Sala impecable',      'Recoge 100 discos en total.',                'Spotless gym',       'Rack 100 plates in total.'],
+  ['makina',   '¡Pon makina!',        'Activa el modo MAKINA.',                     'Makina time!',       'Turn on MAKINA mode.'],
+  ['limpio',   'Dieta limpia',        'Llega a 40 KG sin comer comida basura.',     'Clean diet',         'Reach 40 KG without eating junk food.'],
+  ['oro',      'Huevo de oro',        'Cómete un huevo de oro.',                    'Golden egg',         'Eat a golden egg.'],
+  ['p10k',     'Diez mil',            'Haz 10.000 puntos en una partida.',          'Ten thousand',       'Score 10,000 in one game.'],
+  ['p50k',     'Leyenda de la cueva', 'Haz 50.000 puntos en una partida.',          'Cave legend',        'Score 50,000 in one game.'],
+  ['fiel',     'Socio fundador',      'Juega 25 partidas.',                         'Founding member',    'Play 25 games.']
+];
+let nuevosLogros = 0;
+function logro(id){
+  if (store.ach[id]) return;
+  store.ach[id] = Date.now(); saveStore(); nuevosLogros++;
+  const a = ACH.find(x => x[0] === id); if (!a) return;
+  const el = $('#logro');
+  el.innerHTML = '';
+  el.append('🏆 ' + T('logroTit') + ' ' + fix(lang === 'es' ? a[1] : a[3]));
+  const s = document.createElement('small'); s.textContent = fix(lang === 'es' ? a[2] : a[4]); el.append(s);
+  el.hidden = false; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+  clearTimeout(logro.to); logro.to = setTimeout(() => { el.hidden = true; }, 2600);
+  SFX.play('ach');
+}
+function renderLogros(){
+  const ul = $('#logrosLista'); ul.innerHTML = '';
+  let n = 0;
+  ACH.forEach(a => {
+    const si = !!store.ach[a[0]]; if (si) n++;
+    const li = document.createElement('li'); if (si) li.className = 'si';
+    const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = si ? '★' : '☆';
+    const d = document.createElement('div');
+    const b = document.createElement('b'); b.textContent = fix(lang === 'es' ? a[1] : a[3]);
+    const s = document.createElement('span'); s.textContent = fix(lang === 'es' ? a[2] : a[4]);
+    d.append(b, s); li.append(ico, d); ul.append(li);
+  });
+  $('#logrosCuenta').textContent = T('logrosCuenta')(n, ACH.length);
+  $('#logrosBarra').style.width = (n / ACH.length * 100) + '%';
+}
 
 /* ================= AUDIO ================= */
 const Audio = {
@@ -330,10 +564,10 @@ const Audio = {
   },
   setMusic(on){ if (this.musicBus) this.musicBus.gain.setTargetAtTime(on ? 0.32 : 0, this.ctx.currentTime, 0.05); },
   setSfx(on){ if (this.sfxBus) this.sfxBus.gain.setTargetAtTime(on ? 0.55 : 0, this.ctx.currentTime, 0.05); },
-  tone(bus, t, f, dur, type='square', vol=0.2, f2=null){
+  tone(bus, t, f, dur, type='square', vol=0.2, f2=null, detune=0){
     if (!this.ctx) return;
     const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-    o.type = type; o.frequency.setValueAtTime(f, t);
+    o.type = type; o.frequency.setValueAtTime(f, t); if (detune) o.detune.value = detune;
     if (f2) o.frequency.exponentialRampToValueAtTime(Math.max(20, f2), t + dur);
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(vol, t + 0.008);
@@ -363,31 +597,42 @@ const SFX = {
       case 'clank': T(1100, .06, 'square', .14); T(1560, .08, 'square', .1, null, .04); break;
       case 'crack': N(.14, .3, 'lowpass', 700); T(140, .1, 'square', .14, 60); break;
       case 'food': [660, 880, 1320].forEach((f,i) => T(f, .07, 'square', .12, null, i*.05)); break;
+      case 'plate': T(1480, .05, 'square', .1); T(1975, .12, 'triangle', .14, null, .04); break;
       case 'steak': [523, 659, 784, 1046].forEach((f,i) => T(f, .08, 'square', .13, null, i*.05)); break;
       case 'heart': [880, 1175, 1568, 2093].forEach((f,i) => T(f, .1, 'triangle', .2, null, i*.06)); break;
+      case 'power': [392, 523, 659, 784, 1046].forEach((f,i) => T(f, .07, 'square', .14, null, i*.04)); T(1568, .3, 'triangle', .16, null, .22); break;
       case 'junk': T(360, .22, 'sawtooth', .16, 110); T(140, .28, 'square', .12, 70, .12); break;
       case 'hurt': T(240, .3, 'square', .2, 70); N(.2, .2, 'lowpass', 600); break;
+      case 'shield': T(900, .08, 'square', .14); T(600, .2, 'triangle', .2, 300, .06); break;
+      case 'roar': T(110, .7, 'sawtooth', .28, 55); T(165, .6, 'sawtooth', .16, 70, .05); N(.7, .3, 'bandpass', 500); break;
+      case 'stomp': T(90, .3, 'sine', .6, 35); N(.25, .35, 'lowpass', 300); break;
+      case 'bossko': [262, 330, 392, 523, 659, 784, 1046].forEach((f,i) => T(f, .12, 'square', .16, null, i*.07)); T(1318, .7, 'triangle', .22, null, .5); break;
       case 'levelup': [523, 659, 784, 1046].forEach((f,i) => T(f, .12, 'square', .15, null, i*.09)); T(784, .12, 'square', .15, null, .42); T(1046, .45, 'square', .17, null, .54); break;
       case 'record': [392, 523, 659, 784, 1046, 1318].forEach((f,i) => T(f, .14, 'square', .15, null, i*.1)); T(1568, .6, 'triangle', .2, null, .62); break;
+      case 'ach': [784, 988, 1175, 1568].forEach((f,i) => T(f, .09, 'triangle', .18, null, i*.07)); break;
       case 'gameover': [392, 349, 311, 262].forEach((f,i) => T(f, i === 3 ? .7 : .22, 'triangle', .28, null, i*.24)); break;
       case 'chaching': N(.08, .25, 'highpass', 3000); T(1319, .12, 'square', .12, null, .06); T(1760, .35, 'triangle', .22, null, .12); T(2637, .3, 'triangle', .12, null, .14); break;
       case 'ui': T(660, .05, 'square', .1); break;
     }
   }
 };
+function vibra(ms){ if (store.sfx && navigator.vibrate) { try { navigator.vibrate(ms); } catch {} } }
 
-/* Music: tribal drums + 8-bit flute that turns into gym rock as the weight goes up */
-const NOTE = {E4:329.63, G4:392, A4:440, C5:523.25, D5:587.33, E5:659.26, G5:783.99};
+/* Música: tambores tribales + flauta que se convierte en rock de gimnasio al subir de peso.
+   En modo MAKINA suena makina de verdad: bombo a negras, contratiempos y un lead chillón. */
+const NOTE = {E4:329.63, G4:392, A4:440, C5:523.25, D5:587.33, E5:659.26, G5:783.99, A5:880, C6:1046.5, B5:987.77};
 const MELODY = [
   'A4','','','C5','','D5','','', 'E5','','D5','','C5','','A4','',
   'G4','','','A4','','','C5','', 'A4','','','','','','','',
   'A4','','','C5','','D5','','', 'E5','','G5','','E5','','D5','',
   'C5','','A4','','G4','','','E4', '','','A4','','','','',''
 ];
+const MAKINA_LEAD = ['A5','','A5','','C6','','A5','', 'E5','','G5','','A5','','','', 'A5','','A5','','C6','','B5','', 'G5','','E5','','D5','','E5',''];
 const ROOTS = [110, 110, 87.31, 98];
+const MAK_ROOTS = [110, 87.31, 130.81, 98];
 const Music = {
-  on:false, step:0, next:0, timer:null, level:1,
-  bpm(){ return Math.min(172, 104 + (this.level - 1) * 7); },
+  on:false, step:0, next:0, timer:null, level:1, mode:'normal', boss:false,
+  bpm(){ if (this.mode === 'makina') return 172; return Math.min(172, 104 + (this.level - 1) * 7 + (this.boss ? 10 : 0)); },
   start(){
     if (!Audio.ctx || this.on) return;
     this.on = true; this.step = 0; this.next = Audio.ctx.currentTime + 0.08;
@@ -397,28 +642,34 @@ const Music = {
   tick(){
     const c = Audio.ctx; if (!c) return;
     while (this.next < c.currentTime + 0.12){
-      this.playStep(this.step, this.next);
+      if (this.mode === 'makina') this.makina(this.step, this.next); else this.playStep(this.step, this.next);
       this.next += 60 / this.bpm() / 4;
       this.step = (this.step + 1) % 64;
     }
   },
+  makina(s, t){
+    const b = Audio.musicBus, i = s % 16, bar = Math.floor(s / 16), root = MAK_ROOTS[bar];
+    if (i % 4 === 0) Audio.tone(b, t, 150, .18, 'sine', .8, 42);
+    if (i % 4 === 2){ Audio.noise(b, t, .09, .12, 'highpass', 7000); Audio.tone(b, t, root, .13, 'sawtooth', .2); Audio.tone(b, t, root * 2, .1, 'square', .06); }
+    if (i === 4 || i === 12) Audio.noise(b, t, .1, .22, 'bandpass', 1600, .8);
+    if (i % 2 === 1) Audio.noise(b, t, .02, .04, 'highpass', 10000);
+    const n = MAKINA_LEAD[s % 32];
+    if (n){ Audio.tone(b, t, NOTE[n], .14, 'sawtooth', .08, NOTE[n] * .985); Audio.tone(b, t, NOTE[n], .14, 'sawtooth', .07, null, 14); }
+  },
   playStep(s, t){
     const b = Audio.musicBus, bar = Math.floor(s / 16), i = s % 16, L = this.level;
-    const rock = L >= 3, heavy = L >= 6;
-    // tribal kit
+    const rock = L >= 3 || this.boss, heavy = L >= 6 || this.boss;
     if (i === 0 || i === 7 || i === 10 || (heavy && (i === 8 || i === 14))) Audio.tone(b, t, 130, .16, 'sine', .7, 42);
     if (!rock && (i === 4 || i === 12)) Audio.tone(b, t, 180, .2, 'sine', .45, 110);
     if (i === 14 || (bar === 3 && i === 15)) Audio.tone(b, t, 260, .12, 'sine', .35, 170);
     if (i % 2 === 0) Audio.noise(b, t, .04, rock ? .06 : .12, 'highpass', 6500);
-    // rock layer
     if (rock){
-      const root = ROOTS[bar];
+      const root = this.boss ? ROOTS[bar] * 0.94 : ROOTS[bar];
       if (i % 2 === 0) Audio.tone(b, t, (i === 6 || i === 14) ? root * 2 : root, .17, 'sawtooth', .16);
       if (i === 4 || i === 12) { Audio.noise(b, t, .13, .3, 'bandpass', 1800, .9); Audio.tone(b, t, 190, .07, 'triangle', .2, 120); }
       if (heavy || i % 2 === 1) Audio.noise(b, t, .025, .05, 'highpass', 9000);
       if (i === 0) { Audio.tone(b, t, root * 2, .35, 'sawtooth', .07); Audio.tone(b, t, root * 3, .35, 'sawtooth', .05); }
     }
-    // melody
     const n = MELODY[s];
     if (n) {
       if (rock) Audio.tone(b, t, NOTE[n], .16, 'square', .09);
@@ -427,7 +678,7 @@ const Music = {
   }
 };
 
-/* ================= API (shared Top 10 + debt) ================= */
+/* ================= API (Top 10 mundial + deuda) ================= */
 const BLOCKED = ['ASS','FUK','FCK','FUC','SEX','KKK','NAZ','CUM','DIK','DIC','TIT','PIS','FAG','NIG','GAY','WTF','XXX','PUT','PTA','CUL','COÑ','MRD','POL','PEN','VAG','ANO','JOD','HDP','SS1','KYS'];
 const nameOk = n => /^[A-Z]{3}$/.test(n) && !BLOCKED.includes(n);
 
@@ -468,31 +719,40 @@ const API = {
 let lastState = API.local();
 function qualifies(score, top){ return score > 0 && (top.length < 10 || score > top[top.length - 1].score); }
 
-/* ================= BACKGROUND ================= */
+/* ================= FONDOS ================= */
 function capa(draw){ const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; draw(x); return c; }
 function seeded(seed){ return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
 
-const SKY = capa(x => {
-  const bands = ['#1d1030','#2a1540','#3d1a4a','#5a2150','#7a2a52','#9c3a50','#bf4f4a','#dc6b45','#ef8a48','#f7a957'];
-  const bh = Math.ceil(130 / bands.length);
-  bands.forEach((c, i) => { x.fillStyle = c; x.fillRect(0, i * bh, W, bh); });
-  // dither between bands
-  for (let i = 1; i < bands.length; i++){
-    x.fillStyle = bands[i];
-    for (let px = 0; px < W; px += 2) x.fillRect(px + (i % 2), i * bh - 1, 1, 1);
-  }
-  // stars
-  const r = seeded(7); x.fillStyle = '#f4efe6';
-  for (let i = 0; i < 40; i++) x.fillRect(Math.floor(r() * W), Math.floor(r() * 40), 1, 1);
-  // sun
-  const cx = 246, cy = 70, R = 22;
-  for (let yy = -R; yy <= R; yy++){
-    const w = Math.floor(Math.sqrt(R * R - yy * yy));
-    if ((yy > 6 && yy % 4 === 0) || (yy > 14 && yy % 3 === 0)) continue;
-    x.fillStyle = yy < -8 ? '#ffe7a3' : '#ffd27a';
-    x.fillRect(cx - w, cy + yy, w * 2, 1);
-  }
-});
+// Cielos: cambian según el peso que levantas (atardecer, día, noche y erupción).
+function cielo(bands, astro, stars){
+  return capa(x => {
+    const bh = Math.ceil(130 / bands.length);
+    bands.forEach((c, i) => { x.fillStyle = c; x.fillRect(0, i * bh, W, bh); });
+    for (let i = 1; i < bands.length; i++){
+      x.fillStyle = bands[i];
+      for (let px = 0; px < W; px += 2) x.fillRect(px + (i % 2), i * bh - 1, 1, 1);
+    }
+    const r = seeded(7); x.fillStyle = '#f4efe6';
+    for (let i = 0; i < stars; i++) x.fillRect(Math.floor(r() * W), Math.floor(r() * (stars > 60 ? 90 : 40)), 1, 1);
+    const cx = 246, cy = astro === 'sol' ? 40 : 70, R = astro === 'luna' ? 14 : 22;
+    for (let yy = -R; yy <= R; yy++){
+      const w = Math.floor(Math.sqrt(R * R - yy * yy));
+      if (astro === 'atardecer' && ((yy > 6 && yy % 4 === 0) || (yy > 14 && yy % 3 === 0))) continue;
+      x.fillStyle = astro === 'luna' ? (yy < -4 ? '#fffbe8' : '#e8e2c8') : astro === 'sol' ? '#fff3b0' : (yy < -8 ? '#ffe7a3' : '#ffd27a');
+      x.fillRect(cx - w, cy + yy, w * 2, 1);
+    }
+    if (astro === 'luna'){ x.fillStyle = '#cfc8ab'; x.fillRect(cx - 5, cy - 4, 3, 3); x.fillRect(cx + 3, cy + 3, 4, 3); }
+    if (astro === 'sol'){ x.fillStyle = '#f4efe6'; const nubes = [[40,52,28],[120,34,20],[170,60,34],[280,86,24]]; nubes.forEach(([nx, ny, nw]) => { x.fillRect(nx, ny, nw, 4); x.fillRect(nx + 4, ny - 3, nw - 10, 3); }); }
+  });
+}
+const CIELOS = [
+  cielo(['#1d1030','#2a1540','#3d1a4a','#5a2150','#7a2a52','#9c3a50','#bf4f4a','#dc6b45','#ef8a48','#f7a957'], 'atardecer', 40),
+  cielo(['#3a7bd5','#4486da','#4f92df','#5b9ee3','#68aae6','#77b5e8','#86c0ea','#98caeb','#abd4ec','#c2deec'], 'sol', 0),
+  cielo(['#05030f','#080519','#0c0822','#110b2c','#160f35','#1c133e','#231847','#2b1e50','#342459','#3e2b62'], 'luna', 90),
+  cielo(['#1a0505','#2a0707','#3d0a08','#56100a','#70180c','#8c220e','#a82e10','#c23d12','#d65214','#e66a18'], 'atardecer', 10)
+];
+const TINTES = [null, 'rgba(255,240,200,.06)', 'rgba(10,6,40,.38)', 'rgba(90,10,0,.18)'];
+const fase = L => L <= 2 ? 0 : L <= 4 ? 1 : L <= 6 ? 2 : 3;
 
 const FAR = capa(x => {
   x.fillStyle = '#4a2748';
@@ -500,7 +760,6 @@ const FAR = capa(x => {
     const h = 34 + 10 * Math.sin(px / W * Math.PI * 4) + 6 * Math.sin(px / W * Math.PI * 10 + 1);
     x.fillRect(px, 134 - h, 1, h + 46);
   }
-  // volcano
   x.fillStyle = '#3a1d3a';
   for (let yy = 0; yy < 64; yy++){
     const half = 8 + yy * 0.95;
@@ -563,41 +822,50 @@ const GROUND_TILE = capa(x => {
   }
 });
 
-let smoke = [];
-function drawBackground(scroll, t){
-  ctx.drawImage(SKY, 0, 0);
+let smoke = [], lava = [];
+let cieloActual = 0, cieloAnterior = 0, cieloMezcla = 1;
+function drawBackground(scroll){
+  if (cieloMezcla < 1){ ctx.drawImage(CIELOS[cieloAnterior], 0, 0); ctx.globalAlpha = cieloMezcla; }
+  ctx.drawImage(CIELOS[cieloActual], 0, 0); ctx.globalAlpha = 1;
   const layer = (img, f) => { const o = -((scroll * f) % W); ctx.drawImage(img, Math.floor(o), 0); ctx.drawImage(img, Math.floor(o) + W, 0); };
   layer(FAR, .08);
-  // volcano smoke drifts with far layer
   const volX = 200 - ((scroll * .08) % W);
-  if (Math.random() < .08) smoke.push({x:0, y:0, r:2, life:0});
+  const erupcion = cieloActual === 3;
+  if (Math.random() < (erupcion ? .25 : .08)) smoke.push({x:0, y:0, r:2, life:0});
   smoke.forEach(p => { p.life += 1/60; p.y -= .25; p.x += .12; p.r += .03; });
   smoke = smoke.filter(p => p.life < 4);
-  ctx.fillStyle = 'rgba(40,24,44,.55)';
+  ctx.fillStyle = erupcion ? 'rgba(60,20,20,.6)' : 'rgba(40,24,44,.55)';
   for (const vx of [volX, volX + W]) smoke.forEach(p => { const rr = Math.round(p.r); ctx.fillRect(Math.round(vx + p.x - rr), Math.round(66 + p.y - rr), rr * 2, rr * 2); });
+  if (erupcion){
+    if (Math.random() < .3) lava.push({x:rand(-4, 4), y:0, vx:rand(-20, 20), vy:rand(-70, -35)});
+    lava.forEach(p => { p.vy += 60 / 60; p.x += p.vx / 60; p.y += p.vy / 60; });
+    lava = lava.filter(p => p.y < 40);
+    for (const vx of [volX, volX + W]) lava.forEach(p => R(vx + p.x, 68 + p.y, 1, 1, Math.random() < .5 ? '#ff8a3c' : '#ffd23c'));
+  }
   layer(MID, .25);
   layer(NEAR, .55);
+  const tinte = TINTES[cieloActual];
+  if (tinte){ ctx.fillStyle = tinte; ctx.fillRect(0, 60, W, GROUND - 60); }
   layer(GROUND_TILE, 1);
 }
 
-/* ================= SPRITES (drawn pixel by pixel) ================= */
+/* ================= SPRITES (píxel a píxel) ================= */
 function R(x, y, w, h, c){ ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); }
 
 const SKIN = '#e0a070', SKIN2 = '#b8744a', HAIR = '#2b1a10', FUR = '#c46a28', FUR2 = '#8a4618', STONE = '#9a938a', STONE2 = '#625c55', RED = '#DE3A3A';
 
 function drawCaveman(x, y, o){
-  // o: {run, air, swing, level, hurt}
   if (o.hurt && Math.floor(o.hurt * 12) % 2 === 0) return;
   const f = o.air ? -1 : Math.floor(o.run / 7) % 4;
   const bob = (!o.air && (f === 1 || f === 3)) ? -1 : 0;
-  const Y = y + bob;
+  const Y = y + bob + (o.baile ? (Math.floor(o.baile * 5.7) % 2 ? -1 : 0) : 0);
   const plateL = 5 + Math.min(6, o.level - 1), plateT = 2 + Math.min(2, Math.floor((o.level - 1) / 3));
 
-  // back arm
+  if (o.pre){ ctx.fillStyle = 'rgba(255,60,172,.35)'; ctx.fillRect(Math.round(x - 9), Math.round(Y - 35), 18, 35); }
+
   const armSwing = o.air ? -2 : (f === 0 ? 2 : f === 2 ? -2 : 0);
   R(x - 8 + armSwing * .5, Y - 21, 3, 7, SKIN2);
 
-  // legs
   if (o.air){
     R(x - 4, Y - 8, 3, 5, SKIN2); R(x - 5, Y - 4, 4, 2, '#3a2414');
     R(x + 1, Y - 7, 3, 4, SKIN); R(x + 1, Y - 4, 4, 2, '#3a2414');
@@ -606,11 +874,9 @@ function drawCaveman(x, y, o){
     R(x - 4 + a, Y - 8, 3, 7, SKIN2); R(x - 4 + a, Y - 1, 4, 1, '#3a2414');
     R(x + 1 + b, Y - 8, 3, 7, SKIN);  R(x + 1 + b, Y - 1, 4, 1, '#3a2414');
   }
-  // loincloth
   R(x - 6, Y - 12, 12, 4, FUR);
   R(x - 6, Y - 8, 1, 1, FUR); R(x - 2, Y - 8, 2, 1, FUR); R(x + 3, Y - 8, 1, 1, FUR);
   R(x - 4, Y - 11, 1, 1, FUR2); R(x + 1, Y - 10, 1, 1, FUR2); R(x + 3, Y - 12, 1, 1, FUR2);
-  // torso (V shape)
   for (let i = 0; i < 10; i++){
     const w = 14 - Math.round(i * 0.5);
     R(x - Math.floor(w / 2), Y - 22 + i, w, 1, SKIN);
@@ -618,18 +884,16 @@ function drawCaveman(x, y, o){
   }
   R(x - 5, Y - 18, 4, 1, SKIN2); R(x + 1, Y - 18, 4, 1, SKIN2);
   R(x - 2, Y - 16, 1, 1, SKIN2); R(x + 1, Y - 16, 1, 1, SKIN2); R(x - 2, Y - 14, 1, 1, SKIN2); R(x + 1, Y - 14, 1, 1, SKIN2);
-  // fur strap
   for (let i = 0; i < 10; i++) R(x - 6 + i, Y - 22 + i, 2, 1, i % 3 === 0 ? FUR2 : FUR);
-  // head
+  if (o.belt){ R(x - 6, Y - 14, 12, 3, '#6b3a16'); R(x - 1, Y - 15, 4, 5, '#ffd23c'); R(x, Y - 14, 2, 3, '#6b3a16'); }
   R(x - 3, Y - 30, 7, 7, SKIN);
   R(x - 4, Y - 33, 8, 3, HAIR); R(x - 5, Y - 31, 3, 6, HAIR); R(x - 3, Y - 34, 5, 1, HAIR);
-  R(x - 4, Y - 30, 8, 1, RED);                       // ArnoldWork headband
+  R(x - 4, Y - 30, 8, 1, o.pre ? '#ff3cac' : RED);
   R(x - 2, Y - 25, 7, 3, HAIR); R(x - 1, Y - 22, 5, 1, HAIR);
   R(x + 2, Y - 28, 2, 1, '#fff'); R(x + 3, Y - 28, 1, 1, '#000');
   R(x + 1, Y - 29, 3, 1, HAIR);
   R(x + 4, Y - 27, 1, 2, SKIN2);
 
-  // front arm + dumbbell
   const s = o.swing;
   if (s < 0){
     R(x + 4, Y - 21, 3, 6, SKIN); R(x + 5, Y - 16, 3, 4, SKIN);
@@ -715,10 +979,54 @@ function drawLog(e){
   R(x + 7, y - 7, 3, 7, '#a87a4a'); R(x + 8, y - 5, 1, 3, '#6b4226');
 }
 
+function drawBone(e){
+  const x = e.x, y = e.y, v = Math.floor(e.t * 10) % 2;
+  if (v && !e.suelo){ R(x - 1, y - 5, 2, 8, '#f3ead8'); R(x - 2, y - 6, 4, 2, '#f3ead8'); R(x - 2, y + 2, 4, 2, '#f3ead8'); }
+  else { R(x - 4, y - 1, 8, 2, '#f3ead8'); R(x - 5, y - 2, 2, 4, '#f3ead8'); R(x + 3, y - 2, 2, 4, '#f3ead8'); }
+}
+
+function drawWave(e){
+  const x = e.x, y = e.y, a = Math.floor(e.t * 20) % 2;
+  R(x - 7, y - 6 - a, 3, 6 + a, '#e0c090'); R(x - 3, y - 9 + a, 4, 9 - a, '#c9a06a'); R(x + 2, y - 5 - a, 3, 5 + a, '#e0c090');
+  R(x - 9, y - 2, 18, 2, '#8a5a36');
+}
+
+function drawTRex(b){
+  const x = Math.round(b.x), y = GROUND + (b.jy || 0), f = Math.floor(b.anim * 6) % 2;
+  const C = b.flash > 0 ? '#fff' : '#5d8a3a', D = '#3d6424', B = '#c9c77a';
+  const tired = b.state === 'tired', roar = b.state === 'roar' || (b.state === 'throw' && b.t % .35 < .12);
+  if (b.state === 'dead' && Math.floor(b.t * 10) % 2) return;
+  R(x + 14, y - 32, 14, 6, C); R(x + 26, y - 30, 8, 4, C); R(x + 33, y - 29, 6, 2, C);
+  R(x - 6, y - 38, 24, 16, C); R(x - 4, y - 24, 18, 4, C); R(x - 4, y - 33, 12, 11, B);
+  R(x + 2 + (f ? 2 : 0), y - 21, 6, 15, D); R(x + (f ? 3 : 1), y - 6, 9, 6, D);
+  R(x + 11 - (f ? 2 : 0), y - 21, 6, 15, C); R(x + 10 - (f ? 1 : 0), y - 6, 9, 6, C);
+  R(x + 1, y - 1, 1, 1, '#fff'); R(x + 4, y - 1, 1, 1, '#fff'); R(x + 12, y - 1, 1, 1, '#fff');
+  const hy = y - (tired ? 36 : 50);
+  R(x - 10, hy + 8, 9, tired ? 8 : 14, C);
+  R(x - 28, hy, 22, 12, C);
+  const jaw = roar ? 5 : 0;
+  R(x - 28, hy + 12 + jaw, 17, 4, C);
+  if (roar){ R(x - 27, hy + 12, 14, jaw, '#7a1a1a'); }
+  R(x - 28, hy + 11, 15, 1, D);
+  for (let k = 0; k < 6; k++){ R(x - 26 + k * 2, hy + 12, 1, 1, '#fff'); R(x - 25 + k * 2, hy + 11 + jaw, 1, 1, '#fff'); }
+  R(x - 14, hy + 3, 3, 3, '#fff'); R(x - 14 + (tired ? 0 : 0), hy + 4, 1, 2, '#000');
+  R(x - 17, hy + 1, 6, 1, D);
+  R(x - 24, hy, 14, 2, RED);
+  R(x - 27, hy + 3, 1, 1, D);
+  R(x - 8, y - 30, 4, 2, C); R(x - 10, y - 29, 2, 3, C);
+  R(x - 13, y - 28, 5, 1, STONE2); R(x - 14, y - 29, 1, 3, STONE); R(x - 8, y - 29, 1, 3, STONE);
+  if (tired){
+    R(x - 4, hy - 6 + Math.floor(b.t * 8) % 3, 1, 2, '#7fd0ff'); R(x + 2, hy - 3 + Math.floor(b.t * 6) % 3, 1, 2, '#7fd0ff');
+    ctx.font = '8px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#000'; ctx.fillText('Z', x + 9, hy - 3); ctx.fillStyle = '#fff'; ctx.fillText('Z', x + 8, hy - 4);
+  }
+}
+
 function drawItem(it){
-  const x = it.x, y = it.y + (it.grounded ? 0 : 0);
-  const bob = it.junk ? Math.round(Math.sin(it.t * 4) * 2) : (it.grounded ? 0 : 0);
+  const x = it.x, y = it.y;
+  const bob = (it.junk || it.pu) ? Math.round(Math.sin(it.t * 4) * 2) : 0;
   const Y = y + bob;
+  if (it.pu && Math.floor(it.t * 4) % 2){ ctx.fillStyle = 'rgba(255,210,60,.35)'; ctx.fillRect(Math.round(x - 9), Math.round(Y - 15), 18, 17); }
   switch (it.kind){
     case 'drumstick':
       R(x - 4, Y - 6, 6, 5, '#a0522d'); R(x - 3, Y - 6, 3, 1, '#c8703a'); R(x + 2, Y - 4, 3, 1, '#fff'); R(x + 5, Y - 5, 1, 3, '#fff'); break;
@@ -737,34 +1045,36 @@ function drawItem(it){
       R(x - 5, Y - 5, 11, 1, '#6cc04a'); R(x - 4, Y - 4, 9, 2, '#5a2e1a'); R(x - 4, Y - 2, 9, 2, '#c9853a'); break;
     case 'soda':
       R(x - 3, Y - 8, 6, 8, '#3a7bd5'); R(x - 3, Y - 6, 6, 2, '#fff'); R(x + 1, Y - 11, 1, 3, '#fff'); R(x + 1, Y - 11, 2, 1, '#fff'); break;
+    case 'plate': {
+      const col = ['#DE3A3A', '#3a7bd5', '#e0c23c'][it.s], h = [14, 12, 10][it.s];
+      R(x - 2, Y - h, 4, h, col); R(x - 2, Y - h, 1, h, '#0003'); R(x - 1, Y - h / 2 - 1, 2, 2, '#1a1a1a');
+      R(x + 2, Y - h + 2, 1, h - 4, col); break;
+    }
+    case 'shaker':
+      R(x - 3, Y - 12, 6, 11, '#f4efe6'); R(x - 3, Y - 14, 6, 2, RED); R(x - 1, Y - 16, 2, 2, RED);
+      R(x - 2, Y - 8, 4, 4, '#6cc04a'); R(x - 3, Y - 2, 6, 1, '#cfc7b8'); break;
+    case 'belt':
+      R(x - 7, Y - 8, 14, 5, '#8a4618'); R(x - 7, Y - 8, 14, 1, '#a8602a'); R(x - 2, Y - 9, 5, 7, '#ffd23c'); R(x - 1, Y - 8, 3, 5, '#8a4618'); break;
+    case 'pre':
+      R(x - 4, Y - 12, 9, 12, '#141414'); R(x - 4, Y - 13, 9, 2, '#ff3cac'); R(x - 4, Y - 8, 9, 4, '#ff3cac');
+      R(x, Y - 8, 2, 1, '#fff'); R(x - 1, Y - 7, 2, 1, '#fff'); R(x, Y - 6, 1, 1, '#fff'); break;
+    case 'boombox':
+      R(x - 8, Y - 10, 16, 9, '#2b2b2b'); R(x - 5, Y - 13, 10, 1, '#999'); R(x - 5, Y - 13, 1, 3, '#999'); R(x + 4, Y - 13, 1, 3, '#999');
+      R(x - 7, Y - 8, 5, 5, '#888'); R(x + 2, Y - 8, 5, 5, '#888'); R(x - 6, Y - 7, 3, 3, '#333'); R(x + 3, Y - 7, 3, 3, '#333');
+      R(x - 1, Y - 9, 2, 2, '#ff3cac');
+      if (Math.floor(it.t * 5) % 2){ R(x + 8, Y - 16, 1, 4, '#fff'); R(x + 9, Y - 16, 2, 1, '#fff'); R(x - 10, Y - 14, 1, 3, '#fff'); } break;
   }
   if (it.junk && Math.floor(it.t * 3) % 2) { R(x - 2, Y - 13, 1, 2, '#7fb069'); R(x + 2, Y - 14, 1, 2, '#7fb069'); }
 }
 
-/* ================= COMMENTS ================= */
-const LINES = {
-  start:  ['Time to hunt some gains!', 'Leg day? Every day.', 'Stone Age. Iron will.', 'One set to failure. Go!'],
-  kill:   ['Smashed it!', 'Dino-sized gains!', 'Feel the pump!', 'Another rep!', 'That\'s a PR!'],
-  combo:  ['Combo! Don\'t stop now!', 'I\'m on fire!', 'Unstoppable!', 'Beast mode!'],
-  food:   ['Protein incoming!', 'Mmm... macros.', 'Chicken? Close enough.', 'Refuel!'],
-  steak:  ['Now THAT\'S a meal!', 'Steak! My favorite rep.'],
-  golden: ['Golden egg! Extra life!', 'Shiny protein!'],
-  junk:   ['Not in my macros!', 'Cheat meal? Not today!', 'Ugh... sugar!', 'Who threw that?!'],
-  level:  ['MORE WEIGHT!', 'Add another plate!', 'Heavier! HEAVIER!', 'Is that all you got?'],
-  hungry: ['So hungry...', 'Need... protein...', 'Where\'s my shaker?'],
-  hurt:   ['Ouch! Bad form!', 'That\'ll leave a mark!', 'Walk it off!', 'Spotter! SPOTTER!'],
-  boulder:['Can\'t curl a boulder!', 'Too heavy. Even for me.'],
-  log:    ['Wood you move?', 'Timber!'],
-  record: ['New record! Flex time!'],
-  over:   ['Failure is part of the set.', 'Rest. Then come back stronger.', 'Tomorrow we lift again.', 'Even legends skip a rep.']
-};
+/* ================= COMENTARIOS ================= */
 let bubbleTimer = 0, bubbleCD = 0;
 const bubble = $('#bocadillo');
 function say(kind, force=false){
   if (!force && bubbleCD > 0) return;
-  const text = pick(LINES[kind]);
+  const text = fix(pick(LINES[lang][kind]));
   bubble.textContent = text;
-  bubble.classList.toggle('grito', kind === 'level' || kind === 'record');
+  bubble.classList.toggle('grito', ['level', 'record', 'boombox', 'pre', 'bossKO'].includes(kind));
   bubble.hidden = false;
   bubbleTimer = kind === 'level' ? 2.2 : 1.9;
   bubbleCD = force ? 0.8 : 2.6;
@@ -777,30 +1087,48 @@ function positionBubble(){
 }
 const rotulo = $('#rotulo');
 function bigText(t){
-  rotulo.textContent = t; rotulo.hidden = false;
+  rotulo.textContent = t; rotulo.hidden = false; rotulo.classList.remove('pista');
   rotulo.classList.remove('anim'); void rotulo.offsetWidth; rotulo.classList.add('anim');
   clearTimeout(bigText.to); bigText.to = setTimeout(() => { rotulo.hidden = true; }, 950);
 }
+function pista(t){
+  clearTimeout(bigText.to);
+  rotulo.classList.remove('anim'); rotulo.classList.add('pista');
+  if (t){ rotulo.textContent = t; rotulo.hidden = false; } else { rotulo.hidden = true; rotulo.classList.remove('pista'); }
+}
 
-/* ================= GAME STATE ================= */
+/* ================= ESTADO DE LA PARTIDA ================= */
 const P = { x:58, y:GROUND, vy:0, ground:true, swing:-1, cd:0, swingId:0 };
 const G = {
   state:'menu', t:0, scroll:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1,
-  inv:0, shake:0, spawnT:1.2, entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0
+  inv:0, shake:0, spawnT:1.2, entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0,
+  plates:0, junk:0, bosses:0, boss:null, bossIn:0, fx:{magnet:0, shield:false, pre:0, makina:0},
+  freeze:0, flash:0, puT:12, tut:null, slow:false
 };
 const input = { jump:false, jumpQueued:0, smashQueued:0 };
 
 function resetGame(){
   Object.assign(P, { y:GROUND, vy:0, ground:true, swing:-1, cd:0 });
   Object.assign(G, { t:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1, inv:0, shake:0, spawnT:1.4,
-    entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0 });
-  Music.level = 1;
+    entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0, plates:0, junk:0, bosses:0, boss:null, bossIn:0,
+    fx:{magnet:0, shield:false, pre:0, makina:0}, freeze:0, flash:0, puT:rand(14, 20),
+    tut:store.tut ? null : {n:0, e:null}, slow:false });
+  Music.level = 1; Music.mode = 'normal'; Music.boss = false;
+  cieloActual = cieloAnterior = 0; cieloMezcla = 1;
+  nuevosLogros = 0; pista('');
 }
+const mult = () => G.fx.makina > 0 ? 2 : 1;
+const kgDe = L => 20 + (L - 1) * 10;
 
 function hurt(reason){
   if (G.inv > 0 || G.state !== 'play') return;
+  if (reason !== 'hungry' && G.fx.pre > 0) return;
+  if (reason !== 'hungry' && G.fx.shield){
+    G.fx.shield = false; G.inv = 1; G.shake = 4; SFX.play('shield'); say('belted', true);
+    burst(P.x, P.y - 12, '#ffd23c', 12); return;
+  }
   G.hearts--; G.combo = 1; G.inv = 1.5; G.shake = 6;
-  SFX.play('hurt');
+  SFX.play('hurt'); vibra(90);
   if (reason === 'hungry') say('hungry', true); else say('hurt', true);
   burst(P.x, P.y - 14, '#DE3A3A', 10);
   if (G.hearts <= 0) gameOver();
@@ -810,36 +1138,71 @@ function addScore(n, x, y, color='#ffd23c'){
   G.score += n;
   if (x != null) G.texts.push({x, y, text:'+' + n, t:0, color});
 }
+function floatText(text, x, y, color='#fff'){ G.texts.push({x, y, text, t:0, color}); }
 
 function burst(x, y, color, n=8){
   for (let i = 0; i < n; i++) G.parts.push({x, y, vx:rand(-60, 60), vy:rand(-110, -20), t:0, life:rand(.3, .6), color});
 }
-
 function dust(x, y){ for (let i = 0; i < 3; i++) G.parts.push({x:x + rand(-3, 3), y, vx:rand(-30, -5), vy:rand(-20, -5), t:0, life:.3, color:'#a07850'}); }
+
+function checkLogrosPeso(){
+  const kg = kgDe(G.level);
+  if (kg >= 40) logro('kg40');
+  if (kg >= 60) logro('kg60');
+  if (kg >= 100) logro('kg100');
+  if (kg >= 40 && G.junk === 0) logro('limpio');
+}
 
 function levelUp(){
   G.level++; G.meter = 40; Music.level = G.level;
   addScore(500 * (G.level - 1), P.x, P.y - 40, '#7cc454');
-  bigText('MORE WEIGHT!');
+  bigText(T('masPeso'));
   SFX.play('levelup');
   say('level', true);
   G.shake = 4;
+  checkLogrosPeso();
+  const f = fase(G.level);
+  if (f !== cieloActual){ cieloAnterior = cieloActual; cieloActual = f; cieloMezcla = 0; }
+  if (G.level % 3 === 0 && !G.boss) G.bossIn = 2.6;
 }
 
 function eat(it){
+  if (it.pu){ powerUp(it.kind); burst(it.x, it.y - 6, '#ffd23c', 14); return; }
+  if (it.kind === 'plate'){
+    G.plates++; store.plates = (store.plates || 0) + 1;
+    addScore(25 * mult(), it.x, it.y - 12, '#9ad0ff'); SFX.play('plate');
+    if (G.plates % 10 === 0){ addScore(250 * mult(), P.x, P.y - 44, '#9ad0ff'); say('plates10', true); }
+    else if (Math.random() < .12) say('plate');
+    if (G.plates >= 10) logro('plates10');
+    if (store.plates >= 100) logro('plates100');
+    return;
+  }
   if (it.junk){
-    G.meter = Math.max(0, G.meter - 22); G.combo = 1;
+    G.meter = Math.max(0, G.meter - 22); G.combo = 1; G.junk++;
     SFX.play('junk'); say('junk', true); burst(it.x, it.y - 4, '#7fb069', 8);
     return;
   }
   if (it.kind === 'golden'){
-    G.hearts = Math.min(5, G.hearts + 1); SFX.play('heart'); say('golden', true); addScore(300, it.x, it.y - 10);
-    burst(it.x, it.y - 4, '#ffd23c', 12); return;
+    G.hearts = Math.min(5, G.hearts + 1); SFX.play('heart'); say('golden', true); addScore(300 * mult(), it.x, it.y - 10);
+    burst(it.x, it.y - 4, '#ffd23c', 12); logro('oro'); return;
   }
   const gain = {drumstick:12, egg:8, steak:22}[it.kind];
-  G.meter += gain; addScore(50, it.x, it.y - 10, '#7cc454');
+  G.meter += gain; addScore(50 * mult(), it.x, it.y - 10, '#7cc454');
   if (it.kind === 'steak'){ SFX.play('steak'); say('steak'); } else { SFX.play('food'); if (Math.random() < .35) say('food'); }
+  if (G.tut && G.tut.comida){ G.tut.comida = false; pista(''); }
   if (G.meter >= 100) levelUp();
+}
+
+function powerUp(kind){
+  SFX.play('power'); vibra(40);
+  floatText(T('pu')[kind], P.x + 10, P.y - 46, '#ffd23c');
+  if (kind === 'shaker'){ G.fx.magnet = 9; say('shaker', true); }
+  if (kind === 'belt'){ G.fx.shield = true; say('belt', true); }
+  if (kind === 'pre'){ G.fx.pre = 6; say('pre', true); G.shake = 3; }
+  if (kind === 'boombox'){
+    G.fx.makina = 9; say('boombox', true); logro('makina');
+    if (Music.mode !== 'makina'){ Music.mode = 'makina'; }
+  }
 }
 
 function dropFood(e){
@@ -849,6 +1212,24 @@ function dropFood(e){
   G.items.push({kind, x:e.x, y:e.type === 'ptero' ? e.y : e.y - 10, vy:-170, grounded:false, junk:false, t:0});
 }
 
+function matar(e){
+  e.dead = true;
+  if (e.type === 'log'){ SFX.play('crack'); addScore(30 * mult(), e.x, e.y - 12); burst(e.x, e.y - 4, '#8a5a36', 10); if (Math.random() < .3) say('log'); return; }
+  if (e.type === 'boulder'){ SFX.play('crack'); addScore(60 * mult(), e.x, e.y - 12); burst(e.x, e.y - 8, '#b0a898', 12); return; }
+  if (e.type === 'bone'){ SFX.play('crack'); addScore(50 * mult(), e.x, e.y - 8); burst(e.x, e.y, '#f3ead8', 8); return; }
+  if (e.type === 'wave') return;
+  SFX.play('bonk'); vibra(15);
+  const base = {raptor:100, ptero:150, trike:250}[e.type];
+  addScore(base * G.combo * mult(), e.x, e.y - 24);
+  G.kills++; logro('dino');
+  burst(e.x, e.y - 10, '#fff', 10);
+  dropFood(e);
+  G.combo = Math.min(5, G.combo + 1);
+  if (G.combo >= 5) logro('combo5');
+  G.freeze = 0.045;
+  if (G.combo >= 3 && Math.random() < .5) say('combo'); else if (Math.random() < .3) say('kill');
+}
+
 function smashTargets(){
   const x1 = P.x + 3, x2 = P.x + 34, y1 = P.y - 42, y2 = P.y + 2;
   for (const e of G.entities){
@@ -856,19 +1237,27 @@ function smashTargets(){
     const b = box(e);
     if (b.x2 < x1 || b.x1 > x2 || b.y2 < y1 || b.y1 > y2) continue;
     e.hitBy = P.swingId;
-    if (e.type === 'boulder'){ SFX.play('clank'); say('boulder'); burst(e.x - 6, e.y - 8, '#fff', 4); continue; }
+    if (e.type === 'boulder' || e.type === 'wave'){ SFX.play('clank'); if (e.type === 'boulder') say('boulder'); burst(e.x - 6, e.y - 8, '#fff', 4); continue; }
     e.hp--; e.flash = .12; G.shake = Math.max(G.shake, 2);
     if (e.hp > 0){ SFX.play('hit'); e.x += 6; burst(e.x - 10, e.y - 12, '#fff', 5); continue; }
-    e.dead = true;
-    if (e.type === 'log'){ SFX.play('crack'); addScore(30, e.x, e.y - 12); burst(e.x, e.y - 4, '#8a5a36', 10); if (Math.random() < .3) say('log'); continue; }
-    SFX.play('bonk');
-    const base = {raptor:100, ptero:150, trike:250}[e.type];
-    addScore(base * G.combo, e.x, e.y - 24);
-    G.kills++;
-    burst(e.x, e.y - 10, '#fff', 10);
-    dropFood(e);
-    G.combo = Math.min(5, G.combo + 1);
-    if (G.combo >= 3 && Math.random() < .5) say('combo'); else if (Math.random() < .3) say('kill');
+    matar(e);
+    if (G.tut && G.tut.e === e){ G.tut.e = null; pista(''); }
+  }
+  const B = G.boss;
+  if (B && B.state !== 'dead' && B.state !== 'enter' && B.hitBy !== P.swingId){
+    const hy = GROUND - (B.state === 'tired' ? 36 : 50);
+    const hb = {x1:B.x - 28, x2:B.x - 2, y1:hy, y2:hy + 18};
+    if (!(hb.x2 < x1 || hb.x1 > x2 || hb.y2 < y1 || hb.y1 > y2)){
+      B.hitBy = P.swingId;
+      if (B.state === 'tired'){
+        B.hp--; B.flash = .14; G.shake = 4; G.freeze = 0.06; G.flash = .08;
+        SFX.play('bonk'); vibra(25); burst(B.x - 16, hy + 6, '#fff', 12);
+        addScore(100 * B.n * mult(), B.x - 16, hy - 4);
+        if (Math.random() < .4) G.items.push({kind:'drumstick', x:B.x - 16, y:hy, vy:-150, grounded:false, junk:false, t:0});
+        if (Math.random() < .35) say('bossHit');
+        if (B.hp <= 0) bossKO();
+      } else { SFX.play('clank'); say('bossHead'); burst(B.x - 16, hy + 6, '#fff', 4); }
+    }
   }
 }
 
@@ -879,16 +1268,99 @@ function box(e){
     case 'ptero':   return {x1:e.x - 11, x2:e.x + 7,  y1:e.y - 6,  y2:e.y + 4};
     case 'boulder': return {x1:e.x - 7,  x2:e.x + 7,  y1:e.y - 15, y2:e.y};
     case 'log':     return {x1:e.x - 8,  x2:e.x + 9,  y1:e.y - 7,  y2:e.y};
+    case 'bone':    return {x1:e.x - 5,  x2:e.x + 5,  y1:e.y - 4,  y2:e.y + 3};
+    case 'wave':    return {x1:e.x - 7,  x2:e.x + 6,  y1:e.y - 8,  y2:e.y};
   }
 }
 const HAZARDS = ['raptor','trike','boulder','log'];
 
+/* ---------- el jefe: T-Rex de brazos cortos ---------- */
+function bossStart(){
+  G.bosses++;
+  const n = G.bosses;
+  G.boss = {n, hp:4 + 2 * n, max:4 + 2 * n, x:W + 50, state:'enter', t:0, anim:0, flash:0, jy:0, ciclo:0, lanzados:0, pisadas:0, hitBy:-1};
+  Music.boss = true;
+  bigText(T('trex')); SFX.play('roar'); G.shake = 6;
+  setTimeout(() => say('boss', true), 900);
+}
+function bossKO(){
+  const B = G.boss; B.state = 'dead'; B.t = 0;
+  SFX.play('bossko'); G.shake = 8; G.flash = .15; vibra([60, 40, 120]);
+  bigText(T('trexKO')); say('bossKO', true);
+  addScore(1500 * B.n * mult(), B.x - 10, GROUND - 60, '#ffd23c');
+  for (let i = 0; i < 4; i++) burst(B.x - 10 + rand(-14, 14), GROUND - 30 + rand(-14, 14), pick(['#fff', '#ffd23c', '#5d8a3a']), 10);
+  ['steak', 'steak', 'drumstick', 'golden'].forEach((k, i) => G.items.push({kind:k, x:B.x - 30 + i * 12, y:GROUND - 40, vy:-120 - i * 20, grounded:false, junk:false, t:0}));
+  store.bosses = (store.bosses || 0) + 1; saveStore();
+  logro('trex'); if (store.bosses >= 3) logro('trex3');
+}
+function bossUpdate(dt){
+  const B = G.boss; if (!B) return;
+  B.t += dt; B.anim += dt; if (B.flash > 0) B.flash -= dt;
+  const n = B.n;
+  const idleT = Math.max(.45, 1.1 - (n - 1) * .15);
+  switch (B.state){
+    case 'enter':
+      B.x -= 70 * dt;
+      if (B.x <= 250){ B.x = 250; B.state = 'idle'; B.t = 0; }
+      break;
+    case 'idle':
+      if (B.t > idleT){
+        const orden = ['throw', 'stomp', 'roar'];
+        B.state = orden[B.ciclo % 3]; B.ciclo++; B.t = 0; B.lanzados = 0; B.pisadas = 0;
+        if (B.state === 'roar') SFX.play('roar');
+      }
+      break;
+    case 'throw':
+      if (B.t > .35 * (B.lanzados + 1)){
+        B.lanzados++;
+        G.entities.push({type:'bone', x:B.x - 26, y:GROUND - 52, vx:0, fvx:rand(95, 150) + n * 10, vy:rand(-150, -60), hp:1, t:0, flash:0, suelo:false});
+      }
+      if (B.lanzados >= 2 + n){ B.state = 'idle'; B.t = 0; }
+      break;
+    case 'stomp': {
+      const dur = .7;
+      B.jy = -Math.sin(Math.min(1, B.t / dur) * Math.PI) * 16;
+      if (B.t >= dur){
+        B.jy = 0; B.pisadas++; B.t = 0; G.shake = 6; SFX.play('stomp'); vibra(50);
+        G.entities.push({type:'wave', x:B.x - 22, y:GROUND, vx:0, wv:150 + n * 15, hp:99, t:0, flash:0});
+        dust(B.x - 10, GROUND); dust(B.x + 10, GROUND);
+        if (B.pisadas >= (n > 1 ? 2 : 1)){ B.state = 'idle'; }
+      }
+      break;
+    }
+    case 'roar':
+      if (B.t > .7){ B.state = 'charge'; B.t = 0; }
+      break;
+    case 'charge':
+      B.x -= (240 + n * 20) * dt;
+      if (B.x <= P.x + 30){ B.x = P.x + 30; B.state = 'tired'; B.t = 0; G.shake = 5; SFX.play('stomp'); }
+      break;
+    case 'tired':
+      if (B.t > 1.6){ B.state = 'back'; B.t = 0; }
+      break;
+    case 'back':
+      B.x += 95 * dt;
+      if (B.x >= 250){ B.x = 250; B.state = 'idle'; B.t = 0; }
+      break;
+    case 'dead':
+      B.jy = Math.min(40, B.t * 30);
+      if (B.t > 1.3){ G.boss = null; Music.boss = false; G.spawnT = 1; }
+      break;
+  }
+}
+
 function spawn(){
   const L = G.level;
+  if (G.boss || G.bossIn > 0){
+    const r = Math.random();
+    if (r < .45) G.items.push({kind:Math.random() < .25 ? 'steak' : 'drumstick', x:W + 30, y:GROUND - rand(0, 40), vy:0, grounded:true, junk:false, t:0});
+    else if (r < .7) G.items.push({kind:pick(['donut','burger','soda']), x:W + 30, y:GROUND - rand(38, 60), vy:0, grounded:true, junk:true, t:0});
+    G.spawnT = rand(1.6, 2.6); return;
+  }
   const minGap = 78 + G.speed * 0.28;
   const lastX = Math.max(-999, ...G.entities.filter(e => HAZARDS.includes(e.type)).map(e => e.x));
   const weights = [
-    ['raptor', 5], ['log', 2.6], ['junk', 1.6 + L * 0.35], ['food', 1.1],
+    ['raptor', 5], ['log', 2.6], ['junk', 1.6 + L * 0.35], ['food', 1.1], ['plates', 1.3],
     ['boulder', L >= 2 ? 1.8 + L * 0.15 : 0], ['ptero', L >= 2 ? 2.4 : 0], ['trike', L >= 3 ? 1.6 + L * 0.2 : 0]
   ];
   const total = weights.reduce((a, w) => a + w[1], 0);
@@ -903,47 +1375,81 @@ function spawn(){
     case 'boulder':G.entities.push({type, x:X, y:GROUND, vx:48 + L * 4, hp:99, t:0, flash:0, rot:0}); break;
     case 'trike':  G.entities.push({type, x:X, y:GROUND, vx:10, hp:2, t:0, flash:0, charging:false}); break;
     case 'ptero':  { const by = GROUND - rand(34, 62); G.entities.push({type, x:X, y:by, baseY:by, vx:22 + L * 2, hp:1, t:rand(0, 6), flash:0}); break; }
-    case 'junk':   G.items.push({kind:pick(['donut','burger','soda']), x:X, y:GROUND - rand(38, 66), baseY:0, vy:0, grounded:true, junk:true, t:0}); break;
+    case 'junk':   G.items.push({kind:pick(['donut','burger','soda']), x:X, y:GROUND - rand(38, 66), vy:0, grounded:true, junk:true, t:0}); break;
     case 'food':   G.items.push({kind:Math.random() < .25 ? 'steak' : 'drumstick', x:X, y:Math.random() < .5 ? GROUND : GROUND - rand(24, 50), vy:0, grounded:true, junk:false, t:0}); break;
+    case 'plates': { const n = 2 + Math.floor(Math.random() * 3); for (let i = 0; i < n; i++) G.items.push({kind:'plate', s:Math.floor(Math.random() * 3), x:X + i * 14, y:GROUND, vy:0, grounded:true, junk:false, t:0}); break; }
   }
   G.spawnT = rand(0.85, 1.6) * Math.max(0.42, 1 - (L - 1) * 0.06);
 }
 
+function spawnPowerUp(){
+  const opciones = ['shaker', 'belt', 'pre', 'boombox'];
+  const kind = G.fx.shield ? pick(['shaker', 'pre', 'boombox']) : pick(opciones);
+  G.items.push({kind, pu:true, x:W + 30, y:GROUND - rand(20, 46), vy:0, grounded:true, junk:false, t:0});
+}
+
+/* ---------- tutorial de la primera partida ---------- */
+function tutorial(){
+  const tu = G.tut; if (!tu) return;
+  if (tu.e){
+    if (tu.e.dead || tu.e.x < P.x - 6){ tu.e = null; pista(''); G.slow = false; }
+    else { G.slow = !tu.hecho; return; }
+  }
+  G.slow = false;
+  if (tu.n >= 3){ store.tut = true; saveStore(); G.tut = null; return; }
+  const e = G.entities.find(e => !e.tutored && !e.dead && HAZARDS.includes(e.type) && e.x - P.x < 95 && e.x > P.x);
+  if (e){
+    e.tutored = true; tu.e = e; tu.n++; tu.hecho = false;
+    pista(e.type === 'raptor' || e.type === 'trike' ? T('tutGolpea') : T('tutSalta'));
+  } else if (!tu.comidaVista){
+    const c = G.items.find(i => !i.junk && !i.pu && i.kind !== 'plate' && i.x - P.x < 120 && i.x > P.x);
+    if (c){ tu.comidaVista = true; tu.comida = true; pista(T('tutCome')); setTimeout(() => { if (G.tut && G.tut.comida){ G.tut.comida = false; pista(''); } }, 2200); }
+  }
+}
+
 function update(dt){
+  if (G.freeze > 0){ G.freeze -= dt; return; }
+  if (G.slow) dt *= 0.3;
   G.t += dt;
   if (bubbleTimer > 0){ bubbleTimer -= dt; if (bubbleTimer <= 0) bubble.hidden = true; }
   if (bubbleCD > 0) bubbleCD -= dt;
+  if (cieloMezcla < 1) cieloMezcla = Math.min(1, cieloMezcla + dt / 2.5);
+  if (G.flash > 0) G.flash -= dt;
 
   if (G.state !== 'play'){
     G.scroll += 28 * dt; G.dist += 28 * dt;
     return;
   }
 
-  G.speed = Math.min(265, 95 + (G.level - 1) * 14);
+  const fx = G.fx;
+  if (fx.magnet > 0) fx.magnet -= dt;
+  if (fx.pre > 0) fx.pre -= dt;
+  if (fx.makina > 0){ fx.makina -= dt; if (fx.makina <= 0 && Music.mode === 'makina') Music.mode = 'normal'; }
+
+  G.speed = Math.min(265, 95 + (G.level - 1) * 14) * (fx.pre > 0 ? 1.2 : 1);
   const mv = G.speed * dt;
   G.scroll += mv; G.dist += mv;
   G.score += mv / 10;
 
-  // hunger
-  G.meter -= (2.3 + G.level * 0.35) * dt;
+  G.meter -= (2.3 + G.level * 0.35) * dt * (G.tut ? 0.5 : 1);
   G.hungryCD -= dt;
   if (G.meter < 25 && G.hungryCD <= 0){ say('hungry'); G.hungryCD = 7; }
   if (G.meter <= 0){ G.meter = 35; hurt('hungry'); if (G.state !== 'play') return; }
 
-  // player: jump with buffer and variable height
   if (input.jumpQueued > 0) input.jumpQueued -= dt;
   if (input.jumpQueued > 0 && P.ground){
     P.vy = -325; P.ground = false; input.jumpQueued = 0; SFX.play('jump'); dust(P.x, GROUND);
+    if (G.tut && G.tut.e){ G.tut.hecho = true; G.slow = false; pista(''); }
   }
   if (!input.jump && P.vy < -130) P.vy = -130;
   P.vy += 920 * dt; P.y += P.vy * dt;
   if (P.y >= GROUND){ if (!P.ground) dust(P.x, GROUND); P.y = GROUND; P.vy = 0; P.ground = true; }
 
-  // smash
   P.cd -= dt;
   if (input.smashQueued > 0) input.smashQueued -= dt;
   if (input.smashQueued > 0 && P.cd <= 0){
     P.swing = 0; P.cd = 0.34; P.swingId++; input.smashQueued = 0; SFX.play('swing');
+    if (G.tut && G.tut.e){ G.tut.hecho = true; G.slow = false; pista(''); }
   }
   if (P.swing >= 0){
     P.swing += dt;
@@ -951,7 +1457,13 @@ function update(dt){
     if (P.swing > 0.3) P.swing = -1;
   }
 
-  // entities
+  if (G.bossIn > 0){
+    G.bossIn -= dt;
+    if (G.bossIn <= 0 && !G.entities.some(e => HAZARDS.includes(e.type) && e.x > P.x)) bossStart();
+    else if (G.bossIn <= 0) G.bossIn = 0.2;
+  }
+  bossUpdate(dt);
+
   const pb = {x1:P.x - 5, x2:P.x + 5, y1:P.y - 28, y2:P.y - 1};
   for (const e of G.entities){
     e.t += dt; if (e.flash > 0) e.flash -= dt;
@@ -962,19 +1474,24 @@ function update(dt){
     }
     if (e.type === 'ptero') e.y = e.baseY + Math.sin(e.t * 3) * 9;
     if (e.type === 'boulder') e.rot -= dt * 8;
+    if (e.type === 'bone'){
+      if (!e.suelo){ extra = e.fvx - G.speed; e.vy += 300 * dt; e.y += e.vy * dt; if (e.y >= GROUND - 2){ e.y = GROUND - 2; e.suelo = true; } }
+      else extra = 0;
+    }
+    if (e.type === 'wave') extra = e.wv - G.speed;
     e.x -= (G.speed + extra) * dt;
     if (!e.dead && G.inv <= 0){
       const b = box(e);
       if (b.x1 < pb.x2 && b.x2 > pb.x1 && b.y1 < pb.y2 && b.y2 > pb.y1){
+        if (fx.pre > 0 && e.type !== 'wave'){ matar(e); continue; }
         hurt(e.type);
-        if (e.type === 'log') e.dead = true;
+        if (e.type === 'log' || e.type === 'bone') e.dead = true;
         if (G.state !== 'play') return;
       }
     }
   }
   G.entities = G.entities.filter(e => !e.dead && e.x > -40);
 
-  // items
   for (const it of G.items){
     it.t += dt;
     it.x -= (G.speed + (it.junk ? 18 : 0)) * dt;
@@ -982,43 +1499,78 @@ function update(dt){
       it.vy += 520 * dt; it.y += it.vy * dt;
       if (it.y >= GROUND){ it.y = GROUND; it.grounded = true; }
     }
-    const iy = it.y + (it.junk ? Math.sin(it.t * 4) * 2 : 0);
-    if (it.x - 5 < pb.x2 && it.x + 5 > pb.x1 && iy - 9 < pb.y2 && iy > pb.y1){
+    if (fx.magnet > 0 && !it.junk && !it.pu && Math.abs(it.x - P.x) < 110){
+      it.x += (P.x - it.x) * Math.min(1, dt * 5); it.y += (P.y - 10 - it.y) * Math.min(1, dt * 5); it.grounded = true;
+      if (Math.random() < .2) G.parts.push({x:it.x, y:it.y - 4, vx:0, vy:-10, t:0, life:.2, color:'#9ad0ff'});
+    }
+    const iy = it.y + ((it.junk || it.pu) ? Math.sin(it.t * 4) * 2 : 0);
+    const alto = it.kind === 'plate' ? 14 : 9;
+    if (it.x - 5 < pb.x2 && it.x + 5 > pb.x1 && iy - alto < pb.y2 && iy > pb.y1){
       it.eaten = true; eat(it);
     }
   }
   G.items = G.items.filter(it => !it.eaten && it.x > -20);
 
-  // spawner
   G.spawnT -= dt;
   if (G.spawnT <= 0) spawn();
+  if (G.level >= 2 || G.t > 25){
+    G.puT -= dt;
+    if (G.puT <= 0 && !G.boss){ spawnPowerUp(); G.puT = rand(18, 28); }
+  }
 
-  // fx
+  tutorial();
+
   for (const p of G.parts){ p.t += dt; p.vy += 300 * dt; p.x += p.vx * dt - mv * .3; p.y += p.vy * dt; }
   G.parts = G.parts.filter(p => p.t < p.life);
   for (const t of G.texts) { t.t += dt; t.y -= 22 * dt; }
   G.texts = G.texts.filter(t => t.t < .9);
   if (G.inv > 0) G.inv -= dt;
   if (G.shake > 0) G.shake = Math.max(0, G.shake - dt * 20);
-  if (!P.ground && Math.random() < 0) dust(P.x, P.y);
+  if (fx.pre > 0 && Math.random() < .5) G.parts.push({x:P.x - 8, y:P.y - rand(4, 26), vx:-120, vy:0, t:0, life:.18, color:'#ff3cac'});
+  if (fx.makina > 0 && Math.random() < .012) floatText('UNTZ', rand(150, 290), rand(70, 110), pick(['#ff3cac', '#3cf0ff', '#ffd23c']));
+}
+
+function barraJefe(){
+  const B = G.boss; if (!B || B.state === 'dead') return;
+  const w = 120, x = (W - w) / 2, y = 22;
+  ctx.font = '8px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+  ctx.fillStyle = '#000'; ctx.fillText('T-REX', W / 2 + 1, y - 2); ctx.fillStyle = '#ffd23c'; ctx.fillText('T-REX', W / 2, y - 3);
+  R(x - 1, y, w + 2, 6, '#000'); R(x, y + 1, w, 4, '#3a2a22');
+  R(x, y + 1, Math.max(0, Math.round(w * B.hp / B.max)), 4, B.state === 'tired' ? '#ffd23c' : RED);
+}
+function iconosPower(){
+  const fx = G.fx, lista = [];
+  if (fx.magnet > 0) lista.push(['shaker', fx.magnet / 9]);
+  if (fx.shield) lista.push(['belt', 1]);
+  if (fx.pre > 0) lista.push(['pre', fx.pre / 6]);
+  if (fx.makina > 0) lista.push(['boombox', fx.makina / 9]);
+  let x = W / 2 - (lista.length * 26) / 2 + 13;
+  for (const [k, f] of lista){
+    drawItem({kind:k, x, y:GROUND + 18, t:0});
+    R(x - 9, GROUND + 21, 18, 3, '#000'); R(x - 9, GROUND + 21, Math.round(18 * clamp(f, 0, 1)), 3, '#ffd23c');
+    x += 26;
+  }
 }
 
 function render(){
   ctx.save();
   if (G.shake > 0) ctx.translate(Math.round(rand(-G.shake, G.shake) / 2), Math.round(rand(-G.shake, G.shake) / 2));
-  drawBackground(G.scroll, G.t);
+  drawBackground(G.scroll);
   for (const it of G.items) drawItem(it);
   for (const e of G.entities){
     if (e.type === 'raptor') drawRaptor(e);
     else if (e.type === 'trike') drawTrike(e);
     else if (e.type === 'ptero') drawPtero(e);
     else if (e.type === 'boulder') drawBoulder(e);
+    else if (e.type === 'bone') drawBone(e);
+    else if (e.type === 'wave') drawWave(e);
     else drawLog(e);
   }
-  // shadow
+  if (G.boss) drawTRex(G.boss);
   const sh = Math.max(4, 10 - Math.round((GROUND - P.y) / 8));
   R(P.x - sh / 2, GROUND, sh, 1, 'rgba(0,0,0,.35)');
-  drawCaveman(P.x, P.y, { run:G.dist, air:!P.ground, swing:P.swing, level:G.level, hurt:G.inv > 0 ? G.inv : 0 });
+  drawCaveman(P.x, P.y, { run:G.dist, air:!P.ground, swing:P.swing, level:G.level, hurt:G.inv > 0 ? G.inv : 0,
+    belt:G.fx.shield, pre:G.fx.pre > 0 && Math.floor(G.t * 10) % 2 === 0, baile:G.fx.makina > 0 ? G.t : 0 });
   for (const p of G.parts) R(p.x, p.y, 2, 2, p.color);
   ctx.font = '8px "Press Start 2P", monospace';
   ctx.textAlign = 'center';
@@ -1026,6 +1578,12 @@ function render(){
     ctx.fillStyle = '#000'; ctx.fillText(t.text, Math.round(t.x) + 1, Math.round(t.y) + 1);
     ctx.fillStyle = t.color; ctx.fillText(t.text, Math.round(t.x), Math.round(t.y));
   }
+  if (G.state === 'play'){ barraJefe(); iconosPower(); }
+  if (G.fx.makina > 0 && G.state === 'play'){
+    const beat = (G.t * 172 / 60) % 1;
+    if (beat < .18){ ctx.fillStyle = ['rgba(255,60,172,.13)', 'rgba(60,240,255,.12)', 'rgba(255,210,60,.12)'][Math.floor(G.t * 172 / 60) % 3]; ctx.fillRect(0, 0, W, H); }
+  }
+  if (G.flash > 0){ ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, 0, W, H); }
   ctx.restore();
 }
 
@@ -1033,20 +1591,20 @@ function render(){
 const hud = $('#hud');
 let lastHud = '';
 function updateHud(){
-  const key = [G.hearts, Math.floor(G.score), G.level, Math.round(G.meter), G.combo].join('|');
+  const key = [G.hearts, Math.floor(G.score), G.level, Math.round(G.meter), G.combo, G.fx.makina > 0].join('|');
   if (key === lastHud) return;
   lastHud = key;
   $('#vidas').textContent = '♥'.repeat(Math.max(0, G.hearts));
-  $('#marcador').textContent = Math.floor(G.score).toLocaleString('en-US');
-  $('#peso').textContent = (20 + (G.level - 1) * 10) + ' KG';
+  $('#marcador').textContent = NUM(G.score);
+  $('#peso').textContent = kgDe(G.level) + ' KG';
   const m = clamp(G.meter, 0, 100);
   $('#medidorBarra').style.width = m + '%';
   $('#medidor').classList.toggle('bajo', m < 25);
-  $('#combo').textContent = G.combo > 1 ? 'COMBO x' + G.combo : '';
+  $('#combo').textContent = (G.combo > 1 ? 'COMBO x' + G.combo : '') + (G.fx.makina > 0 ? ' ×2' : '');
 }
 
-/* ================= FLOW ================= */
-const panels = ['pMenu','pPausa','pFin','pTop','pDonar','pFeedback'];
+/* ================= FLUJO ================= */
+const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pDonar','pFeedback'];
 let panelStack = [];
 function show(id, push=false){
   if (push && panelStack.length === 0){
@@ -1065,12 +1623,16 @@ function renderDebt(d){
   const debt = typeof d.debt === 'number' ? d.debt : (d.debtCents || 0) / 100;
   $('#deudaCifra').textContent = money(debt);
   $('#deudaPartidas').innerHTML = '';
-  $('#deudaPartidas').append(`${(d.plays || 0).toLocaleString('en-US')} games played`);
+  $('#deudaPartidas').append(T('partidas')(d.plays || 0));
   if (!API.online){
-    const s = document.createElement('div'); s.className = 'modo'; s.textContent = 'Offline: counting on this device only';
+    const s = document.createElement('div'); s.className = 'modo'; s.textContent = T('sinConexion');
     $('#deudaPartidas').append(s);
   }
   $('#finDeuda').textContent = money(debt);
+}
+function renderMejor(){
+  const m = $('#mejor');
+  m.hidden = !store.best; if (store.best) m.textContent = T('mejor')(store.best);
 }
 
 async function refreshState(){ renderDebt(await API.state()); }
@@ -1083,11 +1645,12 @@ async function startGame(){
   hud.hidden = false; lastHud = '';
   updateHud();
   SFX.play('chaching');
-  bigText('GO!');
+  bigText(T('go'));
   setTimeout(() => say('start', true), 500);
   if (store.music) Music.start();
   const d = await API.play();
   renderDebt(d);
+  if (store.plays >= 25) logro('fiel');
 }
 
 function pause(){
@@ -1102,26 +1665,30 @@ function resume(){
 }
 function toMenu(){
   G.state = 'menu'; Music.stop(); hud.hidden = true; bubble.hidden = true;
-  resetGame(); refreshState(); show('pMenu');
+  resetGame(); refreshState(); renderMejor(); show('pMenu');
 }
 
 async function gameOver(){
-  G.state = 'over'; Music.stop();
-  hud.hidden = true;
+  G.state = 'over'; Music.stop(); Music.mode = 'normal';
+  hud.hidden = true; pista('');
   const score = Math.floor(G.score);
+  if (score >= 10000) logro('p10k');
+  if (score >= 50000) logro('p50k');
   const isBest = score > store.best;
   if (isBest){ store.best = score; saveStore(); }
   const frase = say('over', true);
   setTimeout(() => SFX.play('gameover'), 150);
   $('#finFrase').textContent = '"' + frase + '"';
-  $('#finPuntos').textContent = score.toLocaleString('en-US');
-  $('#finDetalle').textContent = `Lifted ${20 + (G.level - 1) * 10} KG. ${G.kills} dinos smashed. Best: ${store.best.toLocaleString('en-US')}`;
+  $('#finPuntos').textContent = NUM(score);
+  $('#finDetalle').textContent = T('detalle')(kgDe(G.level), G.kills, G.plates, G.bosses) + T('record')(store.best);
+  $('#finLogros').hidden = !nuevosLogros; if (nuevosLogros) $('#finLogros').textContent = '🏆 ' + T('logrosNuevos')(nuevosLogros);
   $('#errIniciales').textContent = '';
   $('#inIniciales').value = store.lastName || '';
   const top = (lastState && lastState.top) || [];
   const q = qualifies(score, top);
   $('#finRecord').hidden = !q;
   G.finalScore = score; G.finalLevel = G.level; G.saved = false;
+  G.final = {score, kg:kgDe(G.level), kills:G.kills, plates:G.plates, bosses:G.bosses};
   setTimeout(() => {
     show('pFin');
     if (q){ SFX.play('record'); setTimeout(() => $('#inIniciales').focus(), 60); }
@@ -1134,9 +1701,9 @@ async function saveInitials(ev){
   const name = $('#inIniciales').value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3);
   $('#inIniciales').value = name;
   const err = $('#errIniciales');
-  if (name.length !== 3){ err.textContent = 'Use exactly 3 letters (A-Z).'; return; }
-  if (!nameOk(name)){ err.textContent = 'Please choose other initials.'; return; }
-  err.textContent = 'Saving...';
+  if (name.length !== 3){ err.textContent = T('err3'); return; }
+  if (!nameOk(name)){ err.textContent = T('errNombre'); return; }
+  err.textContent = T('guardando');
   try {
     const d = await API.score(name, G.finalScore, G.finalLevel);
     G.saved = true; store.lastName = name; saveStore();
@@ -1146,7 +1713,7 @@ async function saveInitials(ev){
     renderTop(d.top, name, G.finalScore);
     show('pTop', true);
   } catch (e) {
-    err.textContent = e.status === 400 ? 'Score not accepted. Try again next game.' : 'Could not save. Check your connection.';
+    err.textContent = e.status === 400 ? T('errNoAcept') : T('errConexion');
   }
 }
 
@@ -1155,21 +1722,73 @@ function renderTop(top, hiName, hiScore){
   body.innerHTML = '';
   if (!top || !top.length){
     const tr = document.createElement('tr'); const td = document.createElement('td');
-    td.colSpan = 4; td.textContent = 'No scores yet. Be the first!'; td.style.textAlign = 'left';
+    td.colSpan = 4; td.textContent = T('sinPuntos'); td.style.textAlign = 'left';
     tr.append(td); body.append(tr);
   }
   (top || []).forEach((r, i) => {
     const tr = document.createElement('tr');
     if (r.name === hiName && r.score === hiScore) tr.className = 'tuyo';
-    [String(i + 1), r.name, String(20 + ((r.level || 1) - 1) * 10), r.score.toLocaleString('en-US')].forEach(v => {
+    [String(i + 1), r.name, String(kgDe(r.level || 1)), NUM(r.score)].forEach(v => {
       const td = document.createElement('td'); td.textContent = v; tr.append(td);
     });
     body.append(tr);
   });
-  $('#topModo').textContent = API.online ? 'Worldwide ranking' : 'Offline: ranking on this device';
+  $('#topModo').textContent = API.online ? T('rankMundial') : T('rankLocal');
 }
 
-/* ================= INPUT ================= */
+/* ================= COMPARTIR ================= */
+function tarjeta(){
+  const f = G.final || {score:0, kg:20, kills:0, plates:0, bosses:0};
+  const c = document.createElement('canvas'); c.width = 1080; c.height = 1080;
+  const x = c.getContext('2d'); x.imageSmoothingEnabled = false;
+  const mini = document.createElement('canvas'); mini.width = 80; mini.height = 60;
+  const mx = mini.getContext('2d'); mx.imageSmoothingEnabled = false;
+  ctx = mx;
+  drawCaveman(36, 56, {run:0, air:false, swing:0.15, level:Math.max(1, (f.kg - 20) / 10 + 1), hurt:0, belt:false, pre:false, baile:0});
+  ctx = pantalla;
+  x.fillStyle = '#000'; x.fillRect(0, 0, 1080, 1080);
+  [CIELOS[fase(Math.max(1, (f.kg - 20) / 10 + 1))], FAR, MID, NEAR, GROUND_TILE].forEach(img => x.drawImage(img, 0, 0, W, H, 0, 0, 1080, 608));
+  x.fillStyle = '#56321c'; x.fillRect(0, 606, 1080, 474);
+  x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(0, 0, 1080, 1080);
+  x.drawImage(mini, 0, 0, 80, 60, 580, 240, 480, 360);
+  x.fillStyle = '#DE3A3A'; x.fillRect(0, 0, 1080, 18);
+  x.textBaseline = 'alphabetic'; x.textAlign = 'left';
+  x.font = '64px "Press Start 2P", monospace';
+  x.fillStyle = '#000'; x.fillText('CAVE', 86, 166); x.fillStyle = '#f4efe6'; x.fillText('CAVE', 80, 160);
+  const w1 = x.measureText('CAVE').width;
+  x.fillStyle = '#000'; x.fillText('WORK', 86 + w1, 166); x.fillStyle = '#DE3A3A'; x.fillText('WORK', 80 + w1, 160);
+  let fs = 110; x.font = fs + 'px "Press Start 2P", monospace';
+  const puntos = NUM(f.score);
+  while (x.measureText(puntos).width > 900 && fs > 40){ fs -= 6; x.font = fs + 'px "Press Start 2P", monospace'; }
+  x.fillStyle = '#DE3A3A'; x.fillText(puntos, 88, 718); x.fillStyle = '#ffd23c'; x.fillText(puntos, 80, 710);
+  x.font = '30px "Press Start 2P", monospace'; x.fillStyle = '#f4efe6';
+  const tt = T('tarjeta');
+  x.fillText(`${f.kg} ${tt.kg} · ${f.kills} ${tt.dinos} · ${f.plates} ${tt.discos}`, 80, 800);
+  x.font = '44px "Press Start 2P", monospace'; x.fillStyle = '#ffd23c'; x.fillText(tt.reto, 80, 900);
+  x.fillStyle = 'rgba(244,239,230,.3)'; x.fillRect(80, 950, 920, 4);
+  x.font = '24px "Press Start 2P", monospace'; x.fillStyle = '#a79c92'; x.fillText(GAME_URL, 80, 1010);
+  return c;
+}
+async function compartir(){
+  Audio.init(); SFX.play('ui');
+  const f = G.final || {score:0, kg:20};
+  const texto = T('compartirTxt')(NUM(f.score), f.kg) + ' https://' + GAME_URL + '/';
+  try { if (document.fonts && document.fonts.load) await document.fonts.load('30px "Press Start 2P"'); } catch {}
+  const c = tarjeta();
+  c.toBlob(async b => {
+    let archivo = null;
+    try { archivo = new File([b], 'cavework.png', {type:'image/png'}); } catch {}
+    try {
+      if (archivo && navigator.canShare && navigator.canShare({files:[archivo]})){ await navigator.share({files:[archivo], title:T('compartirTit'), text:texto}); return; }
+      if (navigator.share){ await navigator.share({title:T('compartirTit'), text:texto}); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'cavework.png';
+    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    try { await navigator.clipboard.writeText(texto); bigText(T('copiado')); } catch {}
+  }, 'image/png');
+}
+
+/* ================= CONTROLES ================= */
 function pressJump(){ Audio.init(); input.jump = true; input.jumpQueued = 0.13; }
 function releaseJump(){ input.jump = false; }
 function pressSmash(){ Audio.init(); input.smashQueued = 0.12; }
@@ -1204,11 +1823,13 @@ $('#btnPausa').addEventListener('click', pause);
 $('#btnSeguir').addEventListener('click', resume);
 $('#btnSalirPausa').addEventListener('click', toMenu);
 $('#btnMenu').addEventListener('click', toMenu);
+$('#btnCompartir').addEventListener('click', compartir);
 $('#formIniciales').addEventListener('submit', saveInitials);
 $('#inIniciales').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); });
 $$('[data-abrir]').forEach(b => b.addEventListener('click', async () => {
   Audio.init(); SFX.play('ui');
   const id = b.dataset.abrir;
+  if (id === 'pLogros') renderLogros();
   if (id === 'pTop'){ renderTop((lastState && lastState.top) || [], store.lastName, G.finalScore); show(id, true); const d = await API.state(); renderDebt(d); renderTop(d.top, store.lastName, G.finalScore); return; }
   show(id, true);
 }));
@@ -1216,19 +1837,30 @@ $$('[data-volver]').forEach(b => b.addEventListener('click', () => { SFX.play('u
 
 function syncSoundButtons(){
   const m = $('#btnMusica'), s = $('#btnSfx');
-  m.setAttribute('aria-pressed', String(store.music)); m.textContent = store.music ? 'MUSIC ON' : 'MUSIC OFF';
-  s.setAttribute('aria-pressed', String(store.sfx)); s.textContent = store.sfx ? 'SFX ON' : 'SFX OFF';
+  m.setAttribute('aria-pressed', String(store.music)); m.textContent = store.music ? T('musicaSi') : T('musicaNo');
+  s.setAttribute('aria-pressed', String(store.sfx)); s.textContent = store.sfx ? T('sfxSi') : T('sfxNo');
 }
 $('#btnMusica').addEventListener('click', () => { Audio.init(); store.music = !store.music; saveStore(); Audio.setMusic(store.music); syncSoundButtons(); });
 $('#btnSfx').addEventListener('click', () => { Audio.init(); store.sfx = !store.sfx; saveStore(); Audio.setSfx(store.sfx); syncSoundButtons(); SFX.play('ui'); });
-syncSoundButtons();
+
+function aplicarIdioma(){
+  document.documentElement.lang = lang;
+  document.title = lang === 'es' ? 'CaveWork · El juego de ArnoldWork' : 'CaveWork · An ArnoldWork game';
+  $$('[data-t]').forEach(el => { const v = T(el.dataset.t); if (typeof v === 'string') el.textContent = v; });
+  $$('[data-t-html]').forEach(el => { el.innerHTML = T(el.dataset.tHtml); });
+  $$('[data-t-aria]').forEach(el => el.setAttribute('aria-label', T(el.dataset.tAria)));
+  $('#btnIdioma').textContent = T('idioma');
+  syncSoundButtons(); renderMejor(); renderDebt(lastState);
+  if (!PAYPAL_URL) $$('[data-paypal]').forEach(a => { a.textContent = T('donPronto'); });
+}
+$('#btnIdioma').addEventListener('click', () => { SFX.play('ui'); lang = lang === 'es' ? 'en' : 'es'; store.lang = lang; saveStore(); aplicarIdioma(); });
 
 $$('[data-paypal]').forEach(a => {
   if (PAYPAL_URL) { a.href = PAYPAL_URL; a.addEventListener('click', () => SFX.play('chaching')); }
-  else { a.removeAttribute('href'); a.textContent = 'DONATIONS COMING SOON'; a.setAttribute('aria-disabled', 'true'); }
+  else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
 });
 
-/* ================= FEEDBACK ================= */
+/* ================= OPINIÓN ================= */
 const fbTexto = $('#fbTexto'), fbNombre = $('#fbNombre');
 fbTexto.addEventListener('input', () => { $('#fbCuenta').textContent = fbTexto.value.length + ' / 280'; });
 fbNombre.addEventListener('input', () => { fbNombre.value = fbNombre.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); });
@@ -1237,27 +1869,27 @@ $('#formFeedback').addEventListener('submit', async ev => {
   const err = $('#fbError'), ok = $('#fbOk'), btn = $('#fbEnviar');
   const message = fbTexto.value.trim();
   err.textContent = ''; ok.textContent = '';
-  if (message.length < 3){ err.textContent = 'Write a few words first.'; return; }
+  if (message.length < 3){ err.textContent = T('fbCorto'); return; }
   const last = store.lastFeedback || 0;
-  if (Date.now() - last < 60000){ err.textContent = 'Please wait a minute before sending another message.'; return; }
-  btn.disabled = true; btn.textContent = 'SENDING...';
+  if (Date.now() - last < 60000){ err.textContent = T('fbEspera'); return; }
+  btn.disabled = true; btn.textContent = T('enviando');
   try {
     await API.req('/feedback', {method:'POST', body:JSON.stringify({message, name:fbNombre.value, best:store.best, web:$('#fbWeb').value})});
     store.lastFeedback = Date.now(); saveStore();
     fbTexto.value = ''; $('#fbCuenta').textContent = '0 / 280';
-    ok.textContent = 'Sent! Thanks for helping the cave grow.';
+    ok.textContent = T('fbOk');
     SFX.play('food');
   } catch (e) {
-    if (e.status === 429) err.textContent = 'Too many messages. Try again later.';
-    else if (e.status === 400) err.textContent = 'Message not accepted.';
+    if (e.status === 429) err.textContent = T('fb429');
+    else if (e.status === 400) err.textContent = T('fb400');
     else {
-      err.textContent = 'Server not available. Opening your email instead...';
+      err.textContent = T('fbMail');
       location.href = `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent('CaveWork feedback')}&body=${encodeURIComponent(message)}`;
     }
-  } finally { btn.disabled = false; btn.textContent = 'SEND'; }
+  } finally { btn.disabled = false; btn.textContent = T('enviar'); }
 });
 
-/* ================= LAYOUT ================= */
+/* ================= TAMAÑO ================= */
 const stage = $('#stage');
 function layout(){
   const landscape = innerWidth > innerHeight && innerHeight < 520;
@@ -1271,7 +1903,7 @@ addEventListener('resize', layout);
 addEventListener('orientationchange', () => setTimeout(layout, 200));
 layout();
 
-/* ================= LOOP ================= */
+/* ================= BUCLE ================= */
 let last = performance.now();
 function frame(now){
   const dt = Math.min(0.05, (now - last) / 1000);
@@ -1282,6 +1914,7 @@ function frame(now){
   if (!bubble.hidden) positionBubble();
   requestAnimationFrame(frame);
 }
+aplicarIdioma();
 requestAnimationFrame(frame);
 refreshState();
 (document.fonts && document.fonts.ready || Promise.resolve()).then(() => layout());
