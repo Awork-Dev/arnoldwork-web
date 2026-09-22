@@ -687,7 +687,7 @@ const API = {
   async req(path, opts={}){
     if (!API_BASE) throw new Error('no api');
     const ctrl = new AbortController();
-    const to = setTimeout(() => ctrl.abort(), 4500);
+    const to = setTimeout(() => ctrl.abort(), 8000);   // margen para la mala cobertura de los gimnasios
     try {
       const r = await fetch(API_BASE + path, {...opts, signal:ctrl.signal, headers:{'Content-Type':'application/json'}});
       const j = await r.json().catch(() => ({}));
