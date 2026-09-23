@@ -6,6 +6,7 @@
 (function(){
   'use strict';
   var FIRMA = 'Made with love from Mallorca ❤️';
+  var MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
   var ICONOS = {
     wa: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="#fff" d="M17.3 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1a7.9 7.9 0 0 1-3.9-3.4c-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 1.8.8 2.5.8 3.4.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.5-.3z"/></svg>',
     tg: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#229ED9"/><path fill="#fff" d="M5.5 11.8l11.6-4.5c.5-.2 1 .1.8.9l-2 9.3c-.1.6-.5.8-1 .5l-3-2.2-1.4 1.4c-.2.2-.3.3-.6.3l.2-3.1 5.6-5.1c.2-.2 0-.3-.4-.1l-6.9 4.4-3-.9c-.6-.2-.7-.6.1-.9z"/></svg>',
@@ -40,7 +41,23 @@
     var mensaje = texto + '\n👉 ' + url + '\n\n' + FIRMA;
     var E = encodeURIComponent;
     var cont = document.createElement('div'); cont.className = 'difunde-bts';
-    cont.appendChild(enlace('wa', 'https://wa.me/?text=' + E(mensaje), 'wa', 'WhatsApp'));
+    // En el móvil se abre la app de WhatsApp directamente (wa.me pasa por una web intermedia
+    // y a veces se queda ahí sin enviar). Si la app no está, a los 1,5 s va a la web de WhatsApp.
+    var waWeb = 'https://api.whatsapp.com/send?text=' + E(mensaje);
+    var wa = enlace('wa', MOVIL ? 'whatsapp://send?text=' + E(mensaje) : waWeb, 'wa', 'WhatsApp');
+    if (MOVIL){
+      wa.removeAttribute('target');
+      wa.addEventListener('click', function(){
+        var fuera = false;
+        var marcha = function(){ if (document.hidden) fuera = true; };
+        document.addEventListener('visibilitychange', marcha);
+        setTimeout(function(){
+          document.removeEventListener('visibilitychange', marcha);
+          if (!fuera && !document.hidden) location.href = waWeb;
+        }, 1500);
+      });
+    }
+    cont.appendChild(wa);
     cont.appendChild(enlace('tg', 'https://t.me/share/url?url=' + E(url) + '&text=' + E(texto + '\n\n' + FIRMA), 'tg', 'Telegram'));
     cont.appendChild(enlace('mail', 'mailto:?subject=' + E(asunto) + '&body=' + E(mensaje), 'mail', 'Correo'));
     var copia = boton('copia', 'copia', 'Copiar mensaje');

@@ -103,6 +103,7 @@ button,input,a{font:inherit;color:inherit}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
 .btn-rojo{background:#D33030;border-color:#D33030;color:#fff}
 .btn-oro{background:var(--oro);border-color:var(--oro);color:#111}
+.btn-wa{background:#25D366;border-color:#25D366;color:#0b1f12}
 .btn-grande{min-height:64px;font-size:16px}
 .btn[aria-pressed="false"]{color:var(--gris);border-color:var(--borde)}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
@@ -272,7 +273,11 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     </div>
     <div class="pila">
       <button type="button" class="btn btn-rojo btn-grande" id="btnOtra" data-t="otra">OTRA SERIE</button>
-      <button type="button" class="btn btn-oro" id="btnCompartir" data-t="compartir">RETAR A UN AMIGO</button>
+      <button type="button" class="btn btn-wa" id="btnWhats" data-t="retarWa">RETAR POR WHATSAPP</button>
+      <div class="fila">
+        <button type="button" class="btn btn-oro" id="btnCompartir" data-t="otrasApps">OTRAS APPS</button>
+        <button type="button" class="btn btn-oro" id="btnImagen" data-t="imagen">IMAGEN</button>
+      </div>
       <div class="fila">
         <button type="button" class="btn" data-abrir="pTop">TOP 10</button>
         <button type="button" class="btn" id="btnMenu" data-t="menu">MENU</button>
@@ -392,7 +397,7 @@ const TXT = {
     ayuda3:'<b>NUEVO.</b> Recoge los discos del suelo, pilla los potenciadores (batido, cinturón, pre-entreno y... MAKINA) y prepárate: a los 40 KG llega el T-Rex.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
-    finTit:'¡AL FALLO!', nuevoTop:'¡NUEVO TOP 10! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', menu:'MENÚ',
+    finTit:'¡AL FALLO!', nuevoTop:'¡NUEVO TOP 10! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
     donar:'DONAR AL DESARROLLADOR', enviarOpinion:'ENVIAR OPINIÓN', deudaYa:'Los jugadores ya le deben', esBroma:'al desarrollador. Es broma.', porQue:'¿Por qué donar?',
     nombre:'NOMBRE', puntos:'PUNTOS', volver:'VOLVER', apoya:'APOYA LA CUEVA',
     donarTxt1:'CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.',
@@ -432,7 +437,7 @@ const TXT = {
     ayuda3:'<b>NEW.</b> Pick up the plates on the floor, grab power-ups (shake, belt, pre-workout and... MAKINA) and get ready: at 40 KG the T-Rex shows up.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
-    finTit:'FAILURE!', nuevoTop:'NEW TOP 10! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', menu:'MENU',
+    finTit:'FAILURE!', nuevoTop:'NEW TOP 10! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
     donar:'DONATE TO THE DEVELOPER', enviarOpinion:'SEND FEEDBACK', deudaYa:'Players now owe the developer', esBroma:'Just kidding.', porQue:'Why donate?',
     nombre:'NAME', puntos:'SCORE', volver:'BACK', apoya:'SUPPORT THE CAVE',
     donarTxt1:'CaveWork is free. Forever. It\'s made for the ArnoldWork community, like the rest of our training tools.',
@@ -753,10 +758,11 @@ const API = {
 };
 let lastState = API.local();
 
-/* ---------- retos: ?reto=ABC-12345 ---------- */
+/* ---------- retos: ?reto=ABC-12345 (o ?reto=12345 si aún no hay iniciales) ---------- */
 const RETO = (() => {
-  const m = /^([A-Z]{3})-(\d{1,7})$/.exec((new URLSearchParams(location.search).get('reto') || '').toUpperCase());
-  return m && nameOk(m[1]) ? { nombre:m[1], puntos:+m[2] } : null;
+  const m = /^(?:([A-Z]{3})-)?(\d{1,7})$/.exec((new URLSearchParams(location.search).get('reto') || '').toUpperCase());
+  if (!m || (m[1] && !nameOk(m[1]))) return null;
+  return { ini:m[1] || '', puntos:+m[2], get nombre(){ return this.ini || T('amigo'); } };
 })();
 function renderReto(){
   const el = $('#retoMenu');
@@ -1853,30 +1859,60 @@ function tarjeta(){
   [[1,0,2],[4,0,2],[0,1,7],[0,2,7],[1,3,5],[2,4,3],[3,5,1]].forEach(([cx, cy, w]) => x.fillRect(hx + cx * 3, 1031 + cy * 3, w * 3, 3));
   return c;
 }
-async function compartir(){
-  Audio.init(); SFX.play('ui');
+// Todo lo que abre WhatsApp o el menú de compartir se hace en el mismo toque, sin esperas:
+// si hay un "await" antes, el móvil (sobre todo el iPhone) lo bloquea y no se llega a enviar nada.
+const MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+function textoReto(){
   const f = G.final || {score:0, kg:20};
-  let ini = store.lastName && nameOk(store.lastName) ? store.lastName : '';
-  if (!ini){
-    const r = (window.prompt(T('pideIni')) || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3);
-    if (r.length === 3 && nameOk(r)){ ini = r; store.lastName = r; saveStore(); }
-  }
-  const enlace = 'https://' + GAME_URL + '/' + (ini && f.score > 0 ? '?reto=' + ini + '-' + Math.floor(f.score) : '');
-  const texto = T('retoTxt')(NUM(f.score), enlace);
-  try { if (document.fonts && document.fonts.load) await document.fonts.load('30px "Press Start 2P"'); } catch {}
-  const c = tarjeta();
-  c.toBlob(async b => {
-    let archivo = null;
-    try { archivo = new File([b], 'cavework.png', {type:'image/png'}); } catch {}
-    try {
-      if (archivo && navigator.canShare && navigator.canShare({files:[archivo]})){ await navigator.share({files:[archivo], title:T('compartirTit'), text:texto}); return; }
-      if (navigator.share){ await navigator.share({title:T('compartirTit'), text:texto}); return; }
-    } catch (e) { if (e && e.name === 'AbortError') return; }
-    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'cavework.png';
-    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
-    try { await navigator.clipboard.writeText(texto); bigText(T('copiado')); } catch {}
-  }, 'image/png');
+  const ini = store.lastName && nameOk(store.lastName) ? store.lastName : '';
+  const enlace = 'https://' + GAME_URL + '/' + (f.score > 0 ? '?reto=' + (ini ? ini + '-' : '') + Math.floor(f.score) : '');
+  return { texto:T('retoTxt')(NUM(f.score), enlace), enlace };
 }
+function abrirWhatsApp(texto){
+  const E = encodeURIComponent(texto);
+  if (!MOVIL){ window.open('https://api.whatsapp.com/send?text=' + E, '_blank', 'noopener'); return; }
+  // Abre la app directamente; si no está instalada, a los 1,5 s se va a la web de WhatsApp.
+  let fuera = false;
+  const marcha = () => { if (document.hidden) fuera = true; };
+  document.addEventListener('visibilitychange', marcha);
+  setTimeout(() => { document.removeEventListener('visibilitychange', marcha); if (!fuera && !document.hidden) location.href = 'https://api.whatsapp.com/send?text=' + E; }, 1500);
+  location.href = 'whatsapp://send?text=' + E;
+}
+async function copiar(texto){
+  try { await navigator.clipboard.writeText(texto); bigText(T('copiado')); }
+  catch { window.prompt('', texto); }
+}
+function retarWhatsApp(){
+  Audio.init(); SFX.play('ui');
+  abrirWhatsApp(textoReto().texto);
+}
+function compartir(){
+  Audio.init(); SFX.play('ui');
+  const { texto } = textoReto();
+  if (navigator.share){
+    navigator.share({ title:T('compartirTit'), text:texto }).catch(e => { if (!e || e.name !== 'AbortError') copiar(texto); });
+  } else copiar(texto);
+}
+function compartirImagen(){
+  Audio.init(); SFX.play('ui');
+  // La tarjeta se pasa a imagen de golpe (toDataURL) para no perder el toque del usuario.
+  const url = tarjeta().toDataURL('image/png');
+  const bin = atob(url.split(',')[1]), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const blob = new Blob([bytes], {type:'image/png'});
+  const descargar = () => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'cavework.png';
+    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  };
+  let archivo = null;
+  try { archivo = new File([blob], 'cavework.png', {type:'image/png'}); } catch {}
+  // Solo la imagen: WhatsApp en iPhone falla a veces si se le manda imagen y texto a la vez.
+  if (archivo && navigator.canShare && navigator.canShare({files:[archivo]})){
+    navigator.share({ files:[archivo] }).catch(e => { if (!e || e.name !== 'AbortError') descargar(); });
+  } else descargar();
+}
+// Precarga la fuente de la tarjeta para que esté lista cuando se pulse "Imagen".
+try { document.fonts && document.fonts.load && document.fonts.load('30px "Press Start 2P"'); } catch {}
 
 /* ================= CONTROLES ================= */
 function pressJump(){ Audio.init(); input.jump = true; input.jumpQueued = 0.13; }
@@ -1914,6 +1950,8 @@ $('#btnSeguir').addEventListener('click', resume);
 $('#btnSalirPausa').addEventListener('click', toMenu);
 $('#btnMenu').addEventListener('click', toMenu);
 $('#btnCompartir').addEventListener('click', compartir);
+$('#btnWhats').addEventListener('click', retarWhatsApp);
+$('#btnImagen').addEventListener('click', compartirImagen);
 $('#formIniciales').addEventListener('submit', saveInitials);
 $('#inIniciales').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); });
 $$('[data-abrir]').forEach(b => b.addEventListener('click', async () => {

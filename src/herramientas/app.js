@@ -139,22 +139,23 @@
       x.fillText('Made with love from Mallorca', 80, 1054);
       x.fillStyle = '#DE3A3A'; x.fillText('♥', 88 + x.measureText('Made with love from Mallorca').width, 1054);
     }
-    function sale(){
-      pinta();
-      c.toBlob(function(b){
-        if(!b) return;
-        var f = null;
-        try{ f = new File([b], o.archivo, { type: 'image/png' }); }catch(e){}
-        if(f && navigator.canShare && navigator.canShare({ files: [f] })){
-          navigator.share({ files: [f], title: o.titulo }).catch(function(e){
-            if(!e || e.name !== 'AbortError') descargar(b, o.archivo);
-          });
-        } else descargar(b, o.archivo);
-      }, 'image/png');
-    }
-    if(document.fonts && document.fonts.load){
-      Promise.all([document.fonts.load('60px "Archivo Black"'), document.fonts.load('700 38px Archivo'), document.fonts.load('500 40px Archivo')]).then(sale, sale);
-    } else sale();
+    // Todo en el mismo toque (toDataURL es inmediato): si se espera a toBlob o a las fuentes,
+    // el iPhone bloquea el menú de compartir y no se llega a enviar.
+    pinta();
+    var bin = atob(c.toDataURL('image/png').split(',')[1]), bytes = new Uint8Array(bin.length);
+    for(var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    var b = new Blob([bytes], { type: 'image/png' });
+    var f = null;
+    try{ f = new File([b], o.archivo, { type: 'image/png' }); }catch(e){}
+    if(f && navigator.canShare && navigator.canShare({ files: [f] })){
+      navigator.share({ files: [f], title: o.titulo }).catch(function(e){
+        if(!e || e.name !== 'AbortError') descargar(b, o.archivo);
+      });
+    } else descargar(b, o.archivo);
+  }
+  // Las fuentes de la tarjeta se cargan de antemano para que estén listas al pulsar.
+  if(document.fonts && document.fonts.load){
+    try{ document.fonts.load('60px "Archivo Black"'); document.fonts.load('700 38px Archivo'); document.fonts.load('500 40px Archivo'); }catch(e){}
   }
 
   /* ---------- 1RM ---------- */
