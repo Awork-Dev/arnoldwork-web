@@ -389,7 +389,18 @@ export default {
       let bot = null;
       if (tg) {
         const r = await fetch(`https://api.telegram.org/bot${tg}/getMe`).then(x => x.json()).catch(() => null);
-        bot = r && r.ok ? "✅ válido (@" + r.result.username + ")" : "❌ Telegram no lo acepta: revisa que esté completo";
+        // Pistas sobre la forma del token, sin enseñarlo.
+        const pistas = [];
+        if (!/^\d{6,12}:[A-Za-z0-9_-]{30,40}$/.test(tg)) {
+          pistas.push(`tiene ${tg.length} caracteres (uno bueno tiene unos 46)`);
+          if (!tg.includes(":")) pistas.push("le faltan los dos puntos «:» (¿solo copiaste una parte?)");
+          else if (!/^\d+:/.test(tg)) pistas.push("no empieza por los números del bot");
+          if (/["'“”‘’<>]/.test(tg)) pistas.push("lleva comillas o signos que sobran");
+          if (/\s/.test(tg)) pistas.push("lleva espacios o saltos de línea en medio");
+          if (/^bot/i.test(tg)) pistas.push("empieza por «bot»: quita esa palabra");
+        }
+        bot = r && r.ok ? "✅ válido (@" + r.result.username + ")"
+          : "❌ Telegram no lo acepta" + (r && r.description ? ` («${r.description}»)` : "") + (pistas.length ? ": " + pistas.join("; ") : ": la forma es correcta, pero el token no existe (¿es de otro bot o lo revocaste?)");
       }
       const m = memoria(env);
       const k = m ? await m.leer("ultimoKofi") : null;
