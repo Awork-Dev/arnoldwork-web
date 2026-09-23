@@ -1,0 +1,88 @@
+# Trae a apis/ el código de los Workers arnoldwork-api y cavework-api desde Cloudflare.
+# Solo se lanza a mano (Actions → «Traer APIs de Cloudflare» → Run workflow) o al cambiar este archivo en una rama claude/.
+# Antes de guardar nada busca tokens escritos en el código: si encuentra alguno, se para sin guardar
+# y solo dice en qué archivo y línea está (nunca su valor). El repositorio es público.
+
+name: Traer APIs de Cloudflare
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: [".github/workflows/traer-apis.yml"]
+
+jobs:
+  traer:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descargar el código
+        env:
+          CF: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACC: 53cbf9156847de65986cbfdb2ea9e4b5
+        run: |
+          set -e
+          for w in arnoldwork-api cavework-api; do
+            mkdir -p "tmp/$w"
+            curl -sf -H "Authorization: Bearer $CF" -D "tmp/$w/cabeceras" -o "tmp/$w/descarga" \
+              "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts/$w"
+            curl -sf -H "Authorization: Bearer $CF" -o "tmp/$w/ajustes.json" \
+              "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/scripts/$w/settings"
+          done
+      - name: Separar archivos y buscar tokens
+        run: |
+          python3 - <<'PY'
+          import email, json, os, re, sys
+          patrones = [
+            ("token de Telegram", re.compile(r"\d{8,11}:[A-Za-z0-9_-]{30,}")),
+            ("clave tipo sk-/pk-", re.compile(r"\b(sk|pk|rk)_(live|test)?_?[A-Za-z0-9]{16,}")),
+            ("clave de GitHub", re.compile(r"gh[pousr]_[A-Za-z0-9]{30,}")),
+            ("texto largo con pinta de clave", re.compile(r"[\"'`][A-Za-z0-9+/_=-]{40,}[\"'`]")),
+          ]
+          problemas = []
+          for w in ["arnoldwork-api", "cavework-api"]:
+              base = f"tmp/{w}"
+              cab = open(f"{base}/cabeceras", encoding="latin-1").read()
+              ct = re.search(r"(?im)^content-type:\s*(.+)$", cab).group(1).strip()
+              datos = open(f"{base}/descarga", "rb").read()
+              archivos = {}
+              if ct.startswith("multipart/"):
+                  msg = email.message_from_bytes(b"Content-Type: " + ct.encode() + b"\r\n\r\n" + datos)
+                  for parte in msg.walk():
+                      if parte.is_multipart(): continue
+                      nombre = parte.get_param("filename", header="content-disposition") or parte.get_param("name", header="content-disposition")
+                      if nombre: archivos[nombre] = parte.get_payload(decode=True)
+              else:
+                  archivos["worker.js"] = datos
+              ajustes = json.load(open(f"{base}/ajustes.json")).get("result", {})
+              # De los ajustes solo se guarda lo no secreto: nombres de enlaces, tipos, ids de KV/D1, fechas y crons.
+              limpio = {k: ajustes.get(k) for k in ["compatibility_date", "compatibility_flags", "usage_model", "placement"] if ajustes.get(k) is not None}
+              limpio["bindings"] = [{k: v for k, v in b.items() if k in ("name", "type", "namespace_id", "id", "database_id", "class_name", "bucket_name", "service")}
+                                    for b in ajustes.get("bindings", [])]
+              os.makedirs(f"apis/{w}", exist_ok=True)
+              for nombre, contenido in archivos.items():
+                  texto = contenido.decode("utf-8", "replace")
+                  for n, linea in enumerate(texto.splitlines(), 1):
+                      for que, p in patrones:
+                          if p.search(linea) and "env." not in linea:
+                              problemas.append(f"{w}/{nombre} línea {n}: posible {que}")
+                  ruta = f"apis/{w}/{os.path.basename(nombre)}"
+                  open(ruta, "wb").write(contenido)
+              json.dump(limpio, open(f"apis/{w}/ajustes-cloudflare.json", "w"), indent=2, ensure_ascii=False)
+              print(f"{w}: {', '.join(archivos)} · enlaces: {', '.join(b['type'] + ' ' + b['name'] for b in limpio['bindings'])}")
+          if problemas:
+              print("\nNO SE GUARDA NADA: hay posibles tokens escritos en el código:")
+              print("\n".join(problemas))
+              os.system("rm -rf apis")
+              sys.exit(1)
+          PY
+      - name: Guardar en el repositorio
+        run: |
+          rm -rf tmp
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apis
+          git commit -m "Traer el código de arnoldwork-api y cavework-api desde Cloudflare" || echo "Sin cambios"
+          git push
