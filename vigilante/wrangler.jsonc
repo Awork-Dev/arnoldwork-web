@@ -9,6 +9,8 @@
   // Sin esto, un Worker no puede comprobar otros *.workers.dev de la misma cuenta.
   "compatibility_flags": ["global_fetch_strictly_public"],
   "workers_dev": true,
+  // No borrar las variables puestas a mano en el panel de Cloudflare al publicar.
+  "keep_vars": true,
   "triggers": { "crons": ["*/30 * * * *", "0 7 * * *", "30 7 * * 1"] },
   // Memoria de qué está caído (no hace falta crear nada en el panel).
   "durable_objects": { "bindings": [{ "name": "MEMORIA", "class_name": "Memoria" }] },
