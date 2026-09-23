@@ -10,6 +10,7 @@
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
 //   GET  /contactos?clave=<PRUEBA_CLAVE>  descarga los mensajes de los últimos 90 días (CSV).
+//   GET  /diagnostico  dice si los secretos están bien puestos y cómo fue el último aviso de Ko-fi (sin enseñar nada secreto).
 //   GET  /          muestra el estado; con ?prueba=<PRUEBA_CLAVE> manda además el informe a Telegram.
 //
 // Secretos (se ponen en Cloudflare → vigilante → Configuración → Variables y secretos):
@@ -171,7 +172,7 @@ async function leerJSON(url) {
 
 async function enviarTelegram(env, texto) {
   if (!env.TELEGRAM_TOKEN) throw new Error("Falta el secreto TELEGRAM_TOKEN");
-  const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_TOKEN}/sendMessage`, {
+  const res = await fetch(`https://api.telegram.org/bot${String(env.TELEGRAM_TOKEN).trim()}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chat_id: CHAT_ID, text: texto, disable_web_page_preview: true }),
@@ -185,7 +186,7 @@ async function enviarDocumento(env, nombre, contenido, tipo, pie) {
   f.append("chat_id", CHAT_ID);
   if (pie) f.append("caption", pie);
   f.append("document", new File([contenido], nombre, { type: tipo }));
-  const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_TOKEN}/sendDocument`, { method: "POST", body: f });
+  const res = await fetch(`https://api.telegram.org/bot${String(env.TELEGRAM_TOKEN).trim()}/sendDocument`, { method: "POST", body: f });
   if (!res.ok) throw new Error(`Telegram respondió ${res.status}: ${await res.text()}`);
 }
 
@@ -313,11 +314,14 @@ async function resumenSemanal(env) {
 /* ================= Peticiones ================= */
 
 async function kofi(req, env) {
+  const m = memoria(env);
+  const anota = async resultado => { if (m) await m.guardar("ultimoKofi", { fecha: new Date().toISOString(), resultado }); };
   const form = await req.formData().catch(() => null);
   let d = null;
   try { d = JSON.parse(form && form.get("data")); } catch {}
-  if (!d) return new Response("Datos no válidos", { status: 400 });
-  if (!env.KOFI_TOKEN || d.verification_token !== env.KOFI_TOKEN) return new Response("No autorizado", { status: 403 });
+  if (!d) { await anota("llegó algo que no son datos de Ko-fi"); return new Response("Datos no válidos", { status: 400 }); }
+  if (!env.KOFI_TOKEN) { await anota("falta el secreto KOFI_TOKEN en Cloudflare"); return new Response("No autorizado", { status: 403 }); }
+  if (String(d.verification_token || "").trim() !== env.KOFI_TOKEN.trim()) { await anota("el token de Ko-fi no coincide con KOFI_TOKEN"); return new Response("No autorizado", { status: 403 }); }
 
   const importe = parseFloat(d.amount) || 0;
   const moneda = d.currency || "EUR";
@@ -335,9 +339,11 @@ async function kofi(req, env) {
     texto = `🥤 ¡${nombre} te ha invitado a un batido!\n\n${dinero(importe, moneda)}${detalle ? `\n«${detalle}»` : ""}`;
   }
 
-  const m = memoria(env);
   const nueva = m ? await m.guardarVenta({ id: String(d.kofi_transaction_id || d.message_id || crypto.randomUUID()), tipo, nombre, importe, moneda, detalle }) : true;
-  if (nueva) await enviarTelegram(env, texto);
+  if (!nueva) { await anota("aviso repetido de Ko-fi (ya se había enviado)"); return new Response("OK"); }
+  try { await enviarTelegram(env, texto); }
+  catch (e) { await anota("Ko-fi bien, pero Telegram falló: " + e.message.replace(/bot[^/]+\//g, "")); return new Response("OK"); }
+  await anota(`✅ recibido (${d.type}) y enviado a Telegram`);
   return new Response("OK");
 }
 
@@ -377,6 +383,25 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
     if (req.method === "POST" && url.pathname === "/kofi") return kofi(req, env);
     if (req.method === "POST" && url.pathname === "/contacto") return contacto(req, env);
+
+    if (url.pathname === "/diagnostico") {
+      const tg = env.TELEGRAM_TOKEN ? String(env.TELEGRAM_TOKEN).trim() : "";
+      let bot = null;
+      if (tg) {
+        const r = await fetch(`https://api.telegram.org/bot${tg}/getMe`).then(x => x.json()).catch(() => null);
+        bot = r && r.ok ? "✅ válido (@" + r.result.username + ")" : "❌ Telegram no lo acepta: revisa que esté completo";
+      }
+      const m = memoria(env);
+      const k = m ? await m.leer("ultimoKofi") : null;
+      const lineas = [
+        "Diagnóstico del vigilante", "",
+        `TELEGRAM_TOKEN: ${tg ? bot : "❌ no está puesto"}`,
+        `KOFI_TOKEN: ${env.KOFI_TOKEN ? "✅ puesto" : "❌ no está puesto"}`,
+        `PRUEBA_CLAVE: ${env.PRUEBA_CLAVE ? "✅ puesta" : "— (opcional, no puesta)"}`,
+        `Último aviso de Ko-fi: ${k ? `${k.resultado} · ${new Date(k.fecha).toLocaleString("es-ES", { timeZone: "Europe/Madrid" })}` : "todavía no ha llegado ninguno"}`,
+      ];
+      return new Response(lineas.join("\n"), { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+    }
 
     const clave = url.searchParams.get("clave") || url.searchParams.get("prueba");
     const autorizado = clave && env.PRUEBA_CLAVE && clave === env.PRUEBA_CLAVE;
