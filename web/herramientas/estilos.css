@@ -521,3 +521,8 @@
   /* ---------- da a conocer ---------- */
   .difunde-caja{margin-top:56px;padding-top:34px;border-top:1px solid var(--rule)}
   .difunde-caja h2{font-size:clamp(1.4rem,3.6vw,1.9rem);margin-bottom:18px}
+
+/* anuncio ArnoldWork Dev */
+.dev-franja{display:block;text-decoration:none;color:inherit;border-top:1px solid var(--rule);padding:16px 20px;text-align:center;font-weight:600;font-size:.95rem;margin-top:40px}
+.dev-franja span{color:var(--amber)}
+.dev-franja:hover span{text-decoration:underline}

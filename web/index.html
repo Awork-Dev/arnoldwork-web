@@ -227,6 +227,36 @@
   .aseso-card .btn{width:100%;text-align:center;margin-top:20px}
   .aseso-note{font-size:.86rem;color:var(--chalk-dim);margin-top:16px}
 
+  /* negocios (ArnoldWork Dev) */
+  #negocios{border-top:1px solid var(--rule)}
+  .dev{border:1px solid var(--amber);background:linear-gradient(180deg,rgba(226,72,72,.10),rgba(226,72,72,0) 60%),var(--ink-2);padding:34px 30px}
+  .dev-kicker{font-size:.76rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+  .dev h2{max-width:22ch}
+  .dev-lede{color:var(--chalk-dim);max-width:68ch;margin:16px 0 0;font-size:1.05rem}
+  .dev-lede strong{color:var(--chalk)}
+  .dev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0}
+  @media(max-width:980px){.dev-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.dev-grid{grid-template-columns:1fr}.dev{padding:26px 18px}}
+  .dev-card{border:1px solid var(--rule-strong);background:var(--ink);padding:20px 18px}
+  .dev-card b{display:block;font-family:'Archivo Black';font-size:1.05rem;margin:8px 0 8px}
+  .dev-card p{margin:0;color:var(--chalk-dim);font-size:.93rem}
+  .dev-ico{font-size:1.5rem;line-height:1}
+  .dev-bottom{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+  @media(max-width:920px){.dev-bottom{grid-template-columns:1fr}}
+  .dev h3{font-size:1.15rem;margin:0 0 14px}
+  .dev-proof{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:.95rem}
+  .dev-proof li{padding-left:28px;position:relative;color:var(--chalk-dim)}
+  .dev-proof li::before{content:"✓";position:absolute;left:0;top:0;color:var(--amber);font-weight:700}
+  .dev-pasos{list-style:none;margin:0;padding:0;counter-reset:p;display:grid;gap:12px}
+  .dev-pasos li{counter-increment:p;display:grid;grid-template-columns:34px 1fr;gap:12px;color:var(--chalk-dim);font-size:.95rem}
+  .dev-pasos li::before{content:counter(p);display:grid;place-items:center;width:34px;height:34px;background:var(--amber);color:#0A0A0A;font-family:'Archivo Black'}
+  .dev-pasos b{color:var(--chalk)}
+  .dev-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px;align-items:center}
+  .dev-nota{font-size:.86rem;color:var(--chalk-dim);margin:14px 0 0}
+  .dev-franja{display:block;text-decoration:none;color:inherit;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:14px 0;text-align:center;font-weight:600;font-size:.95rem}
+  .dev-franja span{color:var(--amber)}
+  .dev-franja:hover span{text-decoration:underline}
+
   /* heavywork */
   .hw{border:1px solid var(--rule-strong);background:var(--ink-2);padding:30px 28px;
     display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}
@@ -531,6 +561,7 @@
       <a href="#material">Fichas</a>
       <a href="#regalo">Guía gratis</a>
       <a href="#quien">Quién soy</a>
+      <a href="#negocios">Para tu negocio</a>
       <a href="#contacto">Contacto</a>
     </nav>
     <a class="btn btn-sm btn-batido" href="#batido">🥤 Invita a un batido</a>
@@ -887,6 +918,54 @@
   </div>
 </section>
 
+<!-- NEGOCIOS · ArnoldWork Dev -->
+<section id="negocios">
+  <div class="wrap">
+    <div class="dev">
+      <div class="dev-kicker">ArnoldWork Dev · Webs y automatización para negocios</div>
+      <h2>¿Te gusta esta web? La hacemos para tu negocio.</h2>
+      <p class="dev-lede">Todo lo que estás viendo lo hemos diseñado, programado y automatizado nosotros: <strong>17 herramientas, un juego con ranking mundial, un chat que llega directo al móvil y un vigilante que revisa la web día y noche</strong>. Sabemos hacerlo y sabemos dejarlo funcionando. Lo mismo, a medida, para tu gimnasio, tu tienda, tu clínica, tu restaurante o tu empresa.</p>
+
+      <div class="dev-grid">
+        <div class="dev-card"><span class="dev-ico" aria-hidden="true">⚡</span><b>Webs que venden</b><p>Rápidas, pensadas para el móvil y preparadas para Google. Con tu marca, tus textos y un botón que convierta visitas en clientes.</p></div>
+        <div class="dev-card"><span class="dev-ico" aria-hidden="true">🤖</span><b>Automatización</b><p>Lo repetitivo, que lo haga una máquina: formularios, reservas, recordatorios, presupuestos e informes que se hacen solos.</p></div>
+        <div class="dev-card"><span class="dev-ico" aria-hidden="true">📲</span><b>Avisos y bots</b><p>Cada cliente nuevo te llega al móvil por Telegram o correo. Y si algo falla, te enteras tú antes que nadie.</p></div>
+        <div class="dev-card"><span class="dev-ico" aria-hidden="true">🧩</span><b>Herramientas a medida</b><p>Calculadoras, zonas de clientes, apps instalables e incluso un juego con tu marca para que la gente vuelva y te comparta.</p></div>
+      </div>
+
+      <div class="dev-bottom">
+        <div>
+          <h3>La prueba la tienes delante</h3>
+          <ul class="dev-proof">
+            <li>Web propia, rápida y que funciona sin conexión</li>
+            <li>17 herramientas y un juego con ranking y retos entre amigos</li>
+            <li>Chat de contacto que llega al móvil en segundos</li>
+            <li>Vigilante automático que revisa todo cada 30 minutos</li>
+            <li>Botones para compartir por WhatsApp, Telegram y correo</li>
+            <li>Sin cookies de publicidad y con la privacidad cuidada</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Cómo trabajamos</h3>
+          <ol class="dev-pasos">
+            <li><span><b>Nos cuentas tu idea.</b> Sin compromiso: qué haces y qué te quita tiempo.</span></li>
+            <li><span><b>Te proponemos una solución</b> clara, con plazo y precio cerrado.</span></li>
+            <li><span><b>La construimos y la dejamos funcionando</b>, probada en móvil y ordenador.</span></li>
+            <li><span><b>Te acompañamos después:</b> cambios, mejoras y mantenimiento.</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="dev-cta">
+        <button type="button" class="btn" onclick="openChat('Web o automatización para mi negocio')">Cuéntanos tu proyecto →</button>
+        <a class="btn btn-ghost" href="https://t.me/AWorks81" target="_blank" rel="noopener">Escríbenos por Telegram</a>
+        <a class="btn btn-ghost" href="mailto:arnoldwork4you@gmail.com?subject=Web%20o%20automatizaci%C3%B3n%20para%20mi%20negocio">Por correo</a>
+      </div>
+      <p class="dev-nota">Te contestamos personalmente. Sin compromiso y sin letra pequeña.</p>
+    </div>
+  </div>
+</section>
+
 <!-- CONTACTO -->
 <section id="contacto">
   <div class="wrap">
@@ -1012,6 +1091,7 @@
       <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
       <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
       <a href="#batido">Invita a un batido</a>
+      <a href="#negocios">Webs y automatización para tu negocio</a>
       <a href="#faq">Preguntas</a>
       <a href="#aviso">Aviso legal</a>
     </div>
@@ -1138,13 +1218,17 @@ let motivoInicial = null;
 const flow = [
   { key:'nombre', type:'text', ask:()=>'¡Hola! 👋 ¿Cómo te llamas?' },
   { key:'motivo', type:'opts', ask:()=>`Encantado, ${msg.nombre}. ¿De qué va la cosa?`,
-    options:['Tengo una duda','Idea para una herramienta','He encontrado un fallo','Solo quería saludar 👋'] },
-  { key:'mensaje', type:'text', ask:()=> msg.motivo === 'Idea para una herramienta'
+    options:['Tengo una duda','Idea para una herramienta','Web o automatización para mi negocio','He encontrado un fallo','Solo quería saludar 👋'] },
+  { key:'mensaje', type:'text', ask:()=> msg.motivo === 'Web o automatización para mi negocio'
+      ? '¡Genial! 🚀 Cuéntanos a qué se dedica tu negocio y qué te gustaría: una web, reservas, avisos al móvil, automatizar algo que te quita tiempo…'
+      : msg.motivo === 'Idea para una herramienta'
       ? '¡Me encanta! Cuéntame qué herramienta te gustaría tener en la sala.'
       : msg.motivo === 'He encontrado un fallo'
       ? 'Gracias por avisar. ¿Qué ha pasado y en qué parte de la web?'
       : 'Cuéntame. Escribe lo que quieras.' },
-  { key:'contacto', type:'text', ask:()=>'¿Dónde te contesto? Déjame tu correo o tu usuario de Telegram. Si no quieres respuesta, escribe «no».' }
+  { key:'contacto', type:'text', ask:()=> msg.motivo === 'Web o automatización para mi negocio'
+      ? '¿Dónde te contactamos? Déjanos tu correo, teléfono o usuario de Telegram.'
+      : '¿Dónde te contesto? Déjame tu correo o tu usuario de Telegram. Si no quieres respuesta, escribe «no».' }
 ];
 
 function openChat(motivo){
@@ -1216,7 +1300,7 @@ async function finish(){
   const envio = {
     tipo: 'contacto',
     nombre: msg.nombre,
-    objetivo: '✉️ ' + msg.motivo,
+    objetivo: (msg.motivo === 'Web o automatización para mi negocio' ? '💼 CLIENTE DEV: ' : '✉️ ') + msg.motivo,
     nivel: msg.mensaje,
     frecuencia: '—',
     contacto: sinRespuesta ? 'No quiere respuesta' : msg.contacto,
@@ -1235,7 +1319,8 @@ async function finish(){
     opts.innerHTML='';
     if(!r.ok) throw new Error('fallo');
     bot(`¡Recibido, ${msg.nombre}! 💪`);
-    setTimeout(()=>bot(sinRespuesta
+    if (msg.motivo === 'Web o automatización para mi negocio'){ setTimeout(()=>bot('Nos ponemos en contacto contigo muy pronto para hablar de tu proyecto. ¡Gracias por confiar en nosotros! 🚀'),800); }
+    else setTimeout(()=>bot(sinRespuesta
       ? 'Gracias por escribir. Lo leo seguro.'
       : 'Te contesto en cuanto pueda. Mientras tanto, ¿has probado ya las herramientas? Están en arnoldwork.com/herramientas'),800);
   }catch(e){
