@@ -67,6 +67,15 @@ def indice(enlace, sin=None):
     return "\n".join(bloques)
 
 
+V_DIF = corto(lee(SRC, "difunde.js"))
+
+
+def difunde(texto, url_, asunto, titulo):
+    """Bloque «Da a conocer» (botones de WhatsApp, Telegram, correo...). Lo monta /difunde.js."""
+    return (f'    <div class="difunde-caja">\n      <h2>{titulo}</h2>\n'
+            f'      <div data-difunde data-texto="{html.escape(texto, quote=True)}" data-url="{url_}" data-asunto="{html.escape(asunto, quote=True)}"></div>\n    </div>\n')
+
+
 def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css, v_js):
     p = lee(SRC, "herramientas", "plantilla.html")
     for k, v in {
@@ -79,6 +88,7 @@ def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css,
         "JSONLD": json.dumps(jsonld, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"),
         "V_CSS": v_css,
         "V_JS": v_js,
+        "V_DIF": V_DIF,
         "CONTENIDO": contenido.strip("\n"),
     }.items():
         p = p.replace("{{" + k + "}}", v)
@@ -115,6 +125,7 @@ def portada(v_css, v_js):
   <div class="wrap">
 
 {"".join(cuerpo)}
+{difunde("💪 Herramientas de gimnasio gratis: 1RM, rutina, calorías, discos, cuaderno y más. Sin registro y desde el móvil.", DOMINIO + "/herramientas/", "Herramientas gratis de gimnasio · ArnoldWork", "¿Te sirven? Pásaselas a tu gente del gimnasio")}
     {lee(SRC, "herramientas", "piezas", "_pie.html").strip()}
 
   </div>
@@ -163,7 +174,7 @@ def individual(h, v_css, v_js):
       <h2>Preguntas frecuentes</h2>
 {faq}
     </div>
-""" if faq else "") + f"""
+""" if faq else "") + difunde(f"💪 {h['h1']}: gratis, sin registro y desde el móvil. Te va a servir en el gimnasio.", url(h), f"{h['h1']} · ArnoldWork", "¿Te ha servido? Pásasela a tu compañero de banco") + f"""
     <div class="otras">
       <h2>Más herramientas gratis</h2>
       <nav class="idx" aria-label="Otras herramientas">
@@ -217,6 +228,7 @@ def portada_web():
     s = lee(WEB, "index.html")
     n = len(HERRAMIENTAS)
     enlaces = "\n".join(f'      <a href="/herramientas/{h["slug"]}/">{h["corto"]}</a>' for h in HERRAMIENTAS)
+    s = re.sub(r"/difunde\.js\?v=\w+", "/difunde.js?v=" + V_DIF, s)
     s, k = re.subn(r'(<div class="toolnames"[^>]*>\n).*?(\n    </div>)', lambda m: m.group(1) + enlaces + m.group(2), s, flags=re.S)
     assert k == 1, "No encuentro la lista de herramientas de la portada"
     s = re.sub(r"\b\d+ herramientas\b", f"{n} herramientas", s)
@@ -232,8 +244,11 @@ def generar():
     css = lee(SRC, "herramientas", "estilos.css")
     js = lee(SRC, "herramientas", "app.js")
     v_css, v_js = corto(css), corto(js)
+    dif = lee(SRC, "difunde.js")
     salida = {
         "index.html": portada_web(),
+        "difunde.js": dif,
+        "../heavywork/web/difunde.js": dif,   # HeavyWork usa el mismo archivo
         "herramientas/estilos.css": css,
         "herramientas/app.js": js,
         "herramientas/index.html": portada(v_css, v_js),
@@ -245,7 +260,7 @@ def generar():
 
     paginas = ["/", "/herramientas/"] + [f"/herramientas/{s}/" for s in slugs]
     precache = paginas + ["/404.html", f"/herramientas/estilos.css?v={v_css}", f"/herramientas/app.js?v={v_js}",
-                          "/img/logo.svg", "/favicon.svg", "/manifest.webmanifest"]
+                          "/img/logo.svg", "/favicon.svg", "/manifest.webmanifest", f"/difunde.js?v={V_DIF}"]
     version = corto("".join(salida.values()) + lee(WEB, "404.html"))
     salida["sw.js"] = (lee(SRC, "sw.js").replace("{{VERSION}}", version)
                        .replace("{{PRECACHE}}", json.dumps(precache, ensure_ascii=False)))

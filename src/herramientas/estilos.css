@@ -517,3 +517,7 @@
   .alts li{padding:8px 0;border-bottom:1px solid var(--rule);font-weight:600}
   .alts li::marker{color:var(--amber);font-family:'Archivo Black'}
   @media(max-width:560px){.field.wide input{width:100%}.fields>.btn{width:100%}}
+
+  /* ---------- da a conocer ---------- */
+  .difunde-caja{margin-top:56px;padding-top:34px;border-top:1px solid var(--rule)}
+  .difunde-caja h2{font-size:clamp(1.4rem,3.6vw,1.9rem);margin-bottom:18px}

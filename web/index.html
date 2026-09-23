@@ -821,7 +821,7 @@
         </div>
         <p class="shake-note">El pago se hace en PayPal. No desbloquea nada: todo sigue siendo gratis para todo el mundo.</p>
         <div class="hero-cta" style="margin-top:18px">
-          <button class="btn btn-ghost" type="button" id="compartir" style="color:#0A0A0A;border-color:#0A0A0A">Compartir ArnoldWork con un colega</button>
+          <a class="btn btn-ghost" href="#difunde" id="compartir" style="color:#0A0A0A;border-color:#0A0A0A">Compartir ArnoldWork con un colega</a>
         </div>
       </div>
       <svg class="shaker" viewBox="0 0 120 210" role="img" aria-label="Un batido de proteína agitándose">
@@ -981,6 +981,16 @@
 </section>
 
 <!-- FINAL -->
+<section id="difunde">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Dala a conocer</h2>
+      <p>ArnoldWork crece de boca en boca, como se aprendía en la sala. Si te ha servido, pásasela a tu compañero de banco o a tu grupo del gimnasio: el mensaje ya va escrito.</p>
+    </div>
+    <div data-difunde data-texto="💪 Mira esta web: herramientas de gimnasio gratis, el método Heavy Duty y un juego de dinosaurios. Sin registro." data-url="https://arnoldwork.com/" data-asunto="ArnoldWork · Del gimnasio, para el gimnasio"></div>
+  </div>
+</section>
+
 <section class="final">
   <div class="wrap">
     <h2>Nos vemos en la sala 💪</h2>
@@ -1007,6 +1017,7 @@
     </div>
   </div>
 </footer>
+<script src="/difunde.js?v=5d86457d4c" defer></script>
 
 </main>
 
@@ -1117,18 +1128,7 @@ document.querySelectorAll('[data-batido]').forEach(a => a.addEventListener('clic
 }));
 
 /* ---------- compartir la web ---------- */
-document.getElementById('compartir').addEventListener('click', async e => {
-  const b = e.currentTarget;
-  const datos = { title: 'ArnoldWork', text: 'Herramientas de gimnasio gratis, Heavy Duty y un juego de dinosaurios. Del gimnasio, para el gimnasio. Made with love from Mallorca ❤️', url: 'https://arnoldwork.com/' };
-  try {
-    if (navigator.share) { await navigator.share(datos); return; }
-    await navigator.clipboard.writeText(datos.text + ' ' + datos.url);
-    b.textContent = 'Enlace copiado. ¡Pásaselo!';
-  } catch (err) {
-    if (err && err.name === 'AbortError') return;
-    b.textContent = 'arnoldwork.com';
-  }
-});
+
 
 /* ---------- chat de contacto ---------- */
 const msg = {};
