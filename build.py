@@ -49,10 +49,16 @@ def url(h):
     return f"{DOMINIO}/herramientas/{h['slug']}/"
 
 
+def con_version(ruta_web):
+    """URL de una imagen con ?v=<huella>, para que WhatsApp y Telegram no enseñen una copia vieja."""
+    with open(os.path.join(WEB, ruta_web.lstrip("/")), "rb") as f:
+        return f"{DOMINIO}{ruta_web}?v={hashlib.sha256(f.read()).hexdigest()[:8]}"
+
+
 def og_imagen(h):
     if os.path.exists(os.path.join(WEB, "img", "og", h["slug"] + ".png")):
-        return f"{DOMINIO}/img/og/{h['slug']}.png"
-    return f"{DOMINIO}/img/og-herramientas.png"
+        return con_version(f"/img/og/{h['slug']}.png")
+    return con_version("/img/og-herramientas.png")
 
 
 def indice(enlace, sin=None):
@@ -76,12 +82,12 @@ def difunde(texto, url_, asunto, titulo):
             f'      <div data-difunde data-texto="{html.escape(texto, quote=True)}" data-url="{url_}" data-asunto="{html.escape(asunto, quote=True)}"></div>\n    </div>\n')
 
 
-def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css, v_js):
+def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css, v_js, og_desc=None):
     p = lee(SRC, "herramientas", "plantilla.html")
     for k, v in {
         "TITULO": html.escape(titulo, quote=True),
         "DESCRIPCION": html.escape(descripcion, quote=True),
-        "OG_DESCRIPCION": html.escape(descripcion + " " + AMOR, quote=True),
+        "OG_DESCRIPCION": html.escape((og_desc or descripcion) + " " + AMOR, quote=True),
         "URL": direccion,
         "OG_IMAGEN": og,
         "OG_ALT": html.escape(og_alt, quote=True),
@@ -142,8 +148,8 @@ def portada(v_css, v_js):
         "hasPart": [{"@type": "WebApplication", "name": h["h1"], "url": url(h)} for h in HERRAMIENTAS],
     }
     return pagina("Herramientas gratis — ArnoldWork", descripcion, f"{DOMINIO}/herramientas/",
-                  f"{DOMINIO}/img/og-herramientas.png", "ArnoldWork · Herramientas gratis",
-                  contenido, jsonld, v_css, v_js)
+                  con_version("/img/og-herramientas.png"), "ArnoldWork · Herramientas gratis",
+                  contenido, jsonld, v_css, v_js, og_desc=f"{n} herramientas de gimnasio gratis y sin registro.")
 
 
 def individual(h, v_css, v_js):
@@ -219,7 +225,8 @@ def individual(h, v_css, v_js):
                             "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r in h["faq"]],
         })
     return pagina(f"{h['titulo']} — ArnoldWork", h["descripcion"], url(h), og_imagen(h),
-                  f"ArnoldWork · {h['h1']}", contenido, jsonld, v_css, v_js)
+                  f"ArnoldWork · {h['h1']}", contenido, jsonld, v_css, v_js,
+                  og_desc=f"{h['h1']}: gratis, sin registro y desde el móvil.")
 
 
 def portada_web():
