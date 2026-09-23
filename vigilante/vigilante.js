@@ -300,7 +300,12 @@ async function resumenSemanal(env) {
     if (m) await m.guardar("partidasLunes", cw.plays);
   }
   if (rk) {
-    if (rk.campeon) l.push(`👑 Campeón de la semana: ${rk.campeon.name} con ${num(rk.campeon.score)} puntos`);
+    if (rk.campeon) {
+      l.push(`👑 Campeón de la semana: ${rk.campeon.name} con ${num(rk.campeon.score)} puntos`);
+      // Código de premio: el campeón lo ve en el juego y te lo manda por Telegram para reclamar su ficha.
+      const c = env.RANKING_PRIVADO ? await env.RANKING_PRIVADO.campeon().catch(() => null) : null;
+      if (c && c.codigo) l.push(`🎁 Su código de premio es ${c.codigo}: si alguien te lo manda, es el campeón de verdad.`);
+    }
     if (rk.top && rk.top[0]) l.push(`🏆 Nº 1 de siempre: ${rk.top[0].name} con ${num(rk.top[0].score)}`);
   }
   if (dias !== null) l.push(`📅 Dominio ${DOMINIO.nombre}: caduca en ${dias} días`);

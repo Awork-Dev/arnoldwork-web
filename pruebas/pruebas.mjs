@@ -70,6 +70,7 @@ async function abrir(ruta) {
   p.on('console', m => { if (m.type() === 'error' && !/Failed to load resource|net::ERR_FAILED|ERR_BLOCKED/.test(m.text())) errores.push(m.text()); });
   const res = await p.goto(BASE + ruta, { waitUntil: 'load' });
   await p.waitForTimeout(250);
+  p.errores = errores;
   return { p, errores, estado: res ? res.status() : 0 };
 }
 
@@ -174,6 +175,26 @@ if (QUE === 'heavywork') {
   await p.waitForTimeout(400);
   (await p.locator('#topCuerpo tr').count()) ? bien('el ranking se muestra') : mal('/game/', 'el ranking sale vacío');
   await p.close();
+
+  // Reto del día: empieza con su condición, termina y lo indica en la pantalla final
+  const { p: d } = await abrir('/game/');
+  await d.evaluate(() => { store.tut = true; store.diario = null; saveStore(); });
+  await d.click('#btnDiario');
+  await d.waitForTimeout(1500);
+  const modo = await d.evaluate(() => G.modo + ':' + G.cond);
+  await d.evaluate(() => { G.score = 999; G.hearts = 1; G.inv = 0; G.fx.shield = false; G.fx.pre = 0; hurt('raptor'); });
+  await d.waitForTimeout(1800);
+  (await d.locator('#finModo').isVisible()) && modo.startsWith('diario:') ? bien(`reto del día (${modo.split(':')[1]}) se juega y termina`) : mal('/game/', `el reto del día no funciona (${modo})`);
+  // El mamut (segundo jefe) aparece, ataca y cae sin errores
+  await d.click('#btnOtra'); await d.waitForTimeout(800);
+  await d.evaluate(() => { G.bosses = 1; G.entities = []; G.inv = 99; bossStart(); });
+  await d.waitForTimeout(3500);
+  const jefe = await d.evaluate(() => G.boss && G.boss.tipo);
+  await d.evaluate(() => { G.boss.hp = 0; bossKO(); });
+  await d.waitForTimeout(300);
+  for (const e of d.errores || []) mal('/game/', e);
+  jefe === 'mamut' ? bien('el mamut aparece y se le puede derrotar') : mal('/game/', `el segundo jefe es «${jefe}»`);
+  await d.close();
 }
 
 await navegador.close();

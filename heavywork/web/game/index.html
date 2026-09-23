@@ -164,6 +164,20 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 .top3-tit{font-size:9px;color:var(--gris);margin:0 0 4px}
 .campeon{font-size:9px;line-height:1.7;color:var(--oro);border:2px solid var(--oro);padding:6px 8px;margin:0 0 14px;text-align:center}
 .pestanas{margin:0 0 10px}
+.btn-diario{background:#1f1805;border-color:var(--oro);color:var(--oro)}
+.btn-diario.pulso{animation:pulso 1s steps(2) infinite}
+@keyframes pulso{50%{background:var(--oro);color:#111}}
+@media (prefers-reduced-motion:reduce){.btn-diario.pulso{animation:none;background:var(--oro);color:#111}}
+.diario-info{font-size:9px;line-height:1.7;color:var(--gris);margin:-4px 0 4px;text-align:center}
+.campeon small{display:block;margin-top:6px;color:var(--gris);font-size:8px}
+.campeon .btn{width:100%;font-size:9px;line-height:1.6}
+.consejo{font-size:9px;line-height:1.8;border-left:4px solid var(--oro);padding:6px 0 6px 10px;margin:0 0 12px;color:var(--tiza)}
+.consejo b{display:block;color:var(--oro);font-weight:400;margin-bottom:4px}
+.consejo a{color:var(--oro)}
+.liga-caja{font-size:9px;line-height:1.7;margin:0 0 12px}
+.liga-caja .codigo{font-size:14px;color:var(--oro);text-align:center;margin:6px 0 10px;letter-spacing:2px}
+.liga-caja .btn{width:100%;margin-top:8px}
+.nota-top{font-size:8px;line-height:1.7;color:var(--gris);margin:0 0 12px}
 .pestanas .btn{min-height:40px;font-size:9px;box-shadow:none}
 .pestanas .btn[aria-pressed="true"]{background:var(--oro);border-color:var(--oro);color:#111}
 #hudReto{color:#fff;font-size:.8em}
@@ -222,9 +236,12 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <p class="top3-tit" id="top3Tit" hidden></p>
     <ol class="top3" id="top3" hidden></ol>
     <p class="campeon" id="campeon" hidden></p>
+    <p class="nuevo" id="ligaAviso" hidden></p>
     <div class="pila">
       <div class="reto" id="retoMenu" hidden></div>
       <button type="button" class="btn btn-rojo btn-grande" id="btnJugar" data-t="jugar">JUGAR</button>
+      <button type="button" class="btn btn-diario" id="btnDiario" data-t="diario">RETO DEL DIA</button>
+      <p class="diario-info" id="diarioInfo"></p>
       <p class="nuevo" id="mejor" hidden></p>
       <div class="fila">
         <button type="button" class="btn" data-abrir="pTop">TOP 50</button>
@@ -267,6 +284,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 <section class="panel" id="pFin" hidden aria-labelledby="tFin">
   <div class="caja">
     <h2 id="tFin" data-t="finTit">¡AL FALLO!</h2>
+    <p class="fin-reto" id="finModo" hidden></p>
     <p class="suave" id="finFrase"></p>
     <div class="puntos-final" id="finPuntos">0</div>
     <p id="finDetalle" class="suave"></p>
@@ -281,6 +299,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       </form>
       <p class="error" id="errIniciales" role="alert"></p>
     </div>
+    <p class="consejo" id="finConsejo"></p>
     <div class="pila">
       <button type="button" class="btn btn-rojo btn-grande" id="btnOtra" data-t="otra">OTRA SERIE</button>
       <button type="button" class="btn btn-wa" id="btnWhats" data-t="retarWa">RETAR POR WHATSAPP</button>
@@ -308,6 +327,8 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <div class="fila pestanas" role="group">
       <button type="button" class="btn" id="tabSiempre" aria-pressed="true" data-t="tabSiempre">SIEMPRE</button>
       <button type="button" class="btn" id="tabSemana" aria-pressed="false" data-t="tabSemana">ESTA SEMANA</button>
+      <button type="button" class="btn" id="tabHoy" aria-pressed="false" data-t="tabHoy">HOY</button>
+      <button type="button" class="btn" id="tabLiga" aria-pressed="false" data-t="tabLiga">MI LIGA</button>
     </div>
     <p class="suave" id="topModo"></p>
     <div class="tabla-scroll" id="topScroll">
@@ -316,6 +337,8 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <tbody id="topCuerpo"></tbody>
     </table>
     </div>
+    <p class="nota-top" id="notaTop" hidden></p>
+    <div class="liga-caja" id="ligaCaja" hidden></div>
     <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
   </div>
 </section>
@@ -412,7 +435,7 @@ const TXT = {
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
     ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
     ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
-    ayuda3:'<b>NUEVO.</b> Recoge los discos del suelo, pilla los potenciadores (batido, cinturón, pre-entreno y... MAKINA) y prepárate: a los 40 KG llega el T-Rex.',
+    ayuda3:'<b>NUEVO.</b> Reto del día (mismos dinos para todos, un intento), ligas con tus amigos y un jefe nuevo: después del T-Rex llega el MAMUT. El campeón de cada semana gana premio.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
     finTit:'¡AL FALLO!', nuevoTop:'¡ENTRAS EN EL RANKING! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
@@ -424,6 +447,42 @@ const TXT = {
     opinionTit:'ENVÍA TU OPINIÓN', opinionTxt:'Ideas, fallos, dinos que te gustaría aplastar... Tu mensaje le llega en privado al desarrollador. No se publica.',
     tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
     partidas:n => `${n.toLocaleString('es-ES')} partidas jugadas`, sinConexion:'Sin conexión: contando solo en este dispositivo',
+
+    diario:'🗓️ RETO DEL DÍA', diarioInfo:(c, d) => `Hoy: ${c}. ${d} Mismos dinos para todos y un solo intento que cuenta.`,
+    diarioHecho:p => `Reto de hoy hecho: ${p} puntos. Puedes entrenar, pero ya no puntúa. ¡Mañana, otro!`,
+    diarioModo:c => `🗓️ RETO DEL DÍA · ${c}`, diarioPractica:'🏋️ Entrenamiento: esta partida no puntúa. El reto de mañana te espera.',
+    puestoHoy:n => `🗓️ ¡Puesto ${n} en el reto de hoy! Guarda tus iniciales.`,
+    tabHoy:'HOY', tabLiga:'MI LIGA', rankHoy:c => `Reto del día · ${c}`, sinHoy:'Nadie ha jugado aún el reto de hoy. ¡Estrénalo!',
+    rankLiga:l => `Liga ${l} · solo tus amigos`, sinLiga:'Todavía no hay marcas en tu liga. ¡Pon la primera!',
+    ligaNo:'Crea una liga y compite solo con tus amigos: comparte el enlace y todos vuestros récords saldrán aquí.',
+    ligaCrear:'CREAR MI LIGA', ligaInvitar:'INVITAR POR WHATSAPP', ligaSalir:'SALIR DE LA LIGA', ligaCodigoTit:'Código de tu liga',
+    ligaUnido:l => `🤝 Te has unido a la liga ${l}. Mírala en TOP 50 → MI LIGA.`,
+    ligaTxt:(l, u) => `🤝 Únete a mi liga de CaveWork (${l}) y a ver quién aplasta más dinos: ${u}\nMade with love from Mallorca ❤️`,
+    ligaSalirSeguro:'¿Seguro que quieres salir de la liga?', puestoLiga:n => `🤝 ¡Puesto ${n} en tu liga! Guarda tus iniciales.`,
+    devolverWa:'DEVOLVER EL RETO POR WHATSAPP',
+    retoDevuelto:(n, suyo, mio, u) => `🥊 ¡Te he ganado, ${n}! Tu marca: ${suyo}. La mía: ${mio}. Te toca: ${u}\nMade with love from Mallorca ❤️`,
+    diarioTxt:(c, p, u) => `🗓️ Reto del día en CaveWork (${c}): he hecho ${p} puntos. ¿Me superas hoy? ${u}\nMade with love from Mallorca ❤️`,
+    premioInfo:'🎁 El campeón de cada semana gana una ficha de entrenamiento de ArnoldWork.',
+    eresCampeon:'👑 ¡ERES EL CAMPEÓN DE LA SEMANA! Pulsa para reclamar tu premio',
+    premioMsg:(n, c) => `Hola, soy ${n}, campeón de la semana en CaveWork. Mi código de premio es ${c} 🏆`,
+    consejoTit:'💡 CONSEJO DE ARNOLD', consejoMas:'Más herramientas gratis →',
+    mamut:'¡MAMUT!', mamutKO:'¡MAMUT KO!',
+    conds:{makina:'DÍA DE MAKINA', pierna:'DÍA DE PIERNA', ayuno:'DÍA DE AYUNO', cardio:'DÍA DE CARDIO', pteros:'DÍA DE PTEROS', hierro:'DÍA DE HIERRO', jefe:'DÍA DEL JEFE'},
+    condsDesc:{makina:'Empiezas con MAKINA: puntos x2.', pierna:'Llueven rocas desde el principio.', ayuno:'La proteína baja más rápido.', cardio:'Todo va más rápido.', pteros:'El cielo está lleno de pteros.', hierro:'El doble de discos para recoger.', jefe:'El primer jefe llega a 30 KG.'},
+    consejos:[
+      'Apunta tus pesos. Lo que no se mide, no sube.',
+      'El mejor programa es el que vas a seguir en febrero, no el que suena mejor en enero.',
+      'Calentar no es perder el tiempo: es ganar la serie buena.',
+      'Duerme. Es el suplemento más barato que existe.',
+      'Una repetición más que la semana pasada ya es progresar.',
+      'Recoge los discos. Tu yo del futuro y el de la máquina de al lado te lo agradecen.',
+      'Si la última repetición sale tan limpia como la primera, te has quedado lejos del fallo.',
+      'La proteína no hace milagros, pero sin ella no hay milagro que valga.',
+      'Pregunta en la sala. Casi todos los veteranos están deseando echar una mano.',
+      'Si duele (dolor, no esfuerzo), para. Mañana la barra sigue ahí.',
+      'Nadie te mira tanto como crees. Están todos mirándose al espejo.',
+      'La constancia gana a la intensidad. La intensidad constante gana a todo.'
+    ],
     rankMundial:'Ranking mundial', rankSemana:'Esta semana · se reinicia cada lunes', tabSiempre:'SIEMPRE', tabSemana:'ESTA SEMANA', sinSemana:'Esta semana aún no hay marcas. ¡Estrena el ranking!', campeon:(n, p) => `👑 CAMPEÓN DE LA SEMANA PASADA: ${n} · ${p}`, puestoSemana:n => `🗓️ ¡Puesto ${n} de esta semana! Guarda tus iniciales.`, rankLocal:'Sin conexión: ranking de este dispositivo', sinPuntos:'Todavía no hay puntuaciones. ¡Sé el primero!',
     detalle:(kg, d, p, b) => `Levantaste ${kg} KG. ${d} ${d === 1 ? 'dino aplastado' : 'dinos aplastados'}. ${p} ${p === 1 ? 'disco recogido' : 'discos recogidos'}.` + (b ? ` T-Rex derrotados: ${b}.` : ''),
     mejor:n => `Tu récord: ${n.toLocaleString('es-ES')}`, record:n => ` Récord: ${n.toLocaleString('es-ES')}`,
@@ -452,7 +511,7 @@ const TXT = {
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
     ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
     ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
-    ayuda3:'<b>NEW.</b> Pick up the plates on the floor, grab power-ups (shake, belt, pre-workout and... MAKINA) and get ready: at 40 KG the T-Rex shows up.',
+    ayuda3:'<b>NEW.</b> Daily challenge (same dinos for everyone, one attempt), leagues with your friends and a new boss: after the T-Rex comes the MAMMOTH. Each week\'s champion wins a prize.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
     finTit:'FAILURE!', nuevoTop:'YOU MADE THE RANKING! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
@@ -464,6 +523,42 @@ const TXT = {
     opinionTit:'SEND FEEDBACK', opinionTxt:'Ideas, bugs, new enemies you\'d like to smash... Your message goes privately to the developer. It won\'t be published.',
     tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',
     partidas:n => `${n.toLocaleString('en-US')} games played`, sinConexion:'Offline: counting on this device only',
+
+    diario:'🗓️ DAILY CHALLENGE', diarioInfo:(c, d) => `Today: ${c}. ${d} Same dinos for everyone and only one attempt counts.`,
+    diarioHecho:p => `Today's challenge done: ${p} points. You can practise, but it won't count. New one tomorrow!`,
+    diarioModo:c => `🗓️ DAILY CHALLENGE · ${c}`, diarioPractica:"🏋️ Practice: this game doesn't count. Tomorrow's challenge is waiting.",
+    puestoHoy:n => `🗓️ Number ${n} in today's challenge! Save your initials.`,
+    tabHoy:'TODAY', tabLiga:'MY LEAGUE', rankHoy:c => `Daily challenge · ${c}`, sinHoy:'Nobody has played today\'s challenge yet. Be the first!',
+    rankLiga:l => `League ${l} · just your friends`, sinLiga:'No scores in your league yet. Set the first one!',
+    ligaNo:'Create a league and compete only with your friends: share the link and all your records will show up here.',
+    ligaCrear:'CREATE MY LEAGUE', ligaInvitar:'INVITE ON WHATSAPP', ligaSalir:'LEAVE THE LEAGUE', ligaCodigoTit:'Your league code',
+    ligaUnido:l => `🤝 You joined league ${l}. See it in TOP 50 → MY LEAGUE.`,
+    ligaTxt:(l, u) => `🤝 Join my CaveWork league (${l}) and let's see who smashes more dinos: ${u}\nMade with love from Mallorca ❤️`,
+    ligaSalirSeguro:'Leave the league?', puestoLiga:n => `🤝 Number ${n} in your league! Save your initials.`,
+    devolverWa:'SEND IT BACK ON WHATSAPP',
+    retoDevuelto:(n, suyo, mio, u) => `🥊 I beat you, ${n}! Your score: ${suyo}. Mine: ${mio}. Your turn: ${u}\nMade with love from Mallorca ❤️`,
+    diarioTxt:(c, p, u) => `🗓️ CaveWork daily challenge (${c}): I scored ${p}. Can you beat me today? ${u}\nMade with love from Mallorca ❤️`,
+    premioInfo:'🎁 Each week\'s champion wins an ArnoldWork training sheet.',
+    eresCampeon:'👑 YOU ARE THE CHAMPION OF THE WEEK! Tap to claim your prize',
+    premioMsg:(n, c) => `Hi, I'm ${n}, CaveWork champion of the week. My prize code is ${c} 🏆`,
+    consejoTit:'💡 ARNOLD\'S TIP', consejoMas:'More free tools →',
+    mamut:'MAMMOTH!', mamutKO:'MAMMOTH DOWN!',
+    conds:{makina:'MAKINA DAY', pierna:'LEG DAY', ayuno:'FASTING DAY', cardio:'CARDIO DAY', pteros:'PTERO DAY', hierro:'IRON DAY', jefe:'BOSS DAY'},
+    condsDesc:{makina:'You start in MAKINA mode: x2 points.', pierna:'Boulders from the very start.', ayuno:'Protein drains faster.', cardio:'Everything runs faster.', pteros:'The sky is full of pteros.', hierro:'Twice the plates to rack.', jefe:'The first boss arrives at 30 KG.'},
+    consejos:[
+      'Log your weights. What gets measured goes up.',
+      'The best program is the one you will still follow in February.',
+      'Warming up is not wasting time: it is winning the top set.',
+      'Sleep. It is the cheapest supplement there is.',
+      'One more rep than last week is progress.',
+      'Rack your plates. Future you and the person at the next machine will thank you.',
+      'If the last rep is as clean as the first, you were far from failure.',
+      'Protein is not magic, but without it there is no magic.',
+      'Ask around the gym. Most veterans are happy to help.',
+      'If it hurts (pain, not effort), stop. The bar will still be there tomorrow.',
+      'Nobody is watching you as much as you think. They are all watching the mirror.',
+      'Consistency beats intensity. Consistent intensity beats everything.'
+    ],
     rankMundial:'Worldwide ranking', rankSemana:'This week · resets every Monday', tabSiempre:'ALL TIME', tabSemana:'THIS WEEK', sinSemana:'No scores this week yet. Be the first!', campeon:(n, p) => `👑 LAST WEEK'S CHAMPION: ${n} · ${p}`, puestoSemana:n => `🗓️ Number ${n} this week! Save your initials.`, rankLocal:'Offline: ranking on this device', sinPuntos:'No scores yet. Be the first!',
     detalle:(kg, d, p, b) => `Lifted ${kg} KG. ${d} ${d === 1 ? 'dino' : 'dinos'} smashed. ${p} ${p === 1 ? 'plate' : 'plates'} racked.` + (b ? ` T-Rex beaten: ${b}.` : ''),
     mejor:n => `Your best: ${n.toLocaleString('en-US')}`, record:n => ` Best: ${n.toLocaleString('en-US')}`,
@@ -519,6 +614,8 @@ const LINES = {
     bossHit:['¡Ahora! ¡Dale!', '¡Está cansado!', '¡A la cabeza!'],
     bossHead:['¡Cabeza dura!', 'Espera a que se canse.'],
     bossKO: ['¡T-Rex al fallo!', 'Vuelve cuando hagas brazo.', 'Brazos cortos, derrota larga.'],
+    mamut:  ['¡Un mamut! Ese sí hace pierna.', 'Mucho pelo y poca técnica.', '¡Cuidado con los colmillos!'],
+    mamutKO:['¡Mamut al fallo!', 'Ni el frío te para.', 'Se acabó la edad de hielo.'],
     shaker: ['¡Batido! Imán de proteína.', 'Batido de vainilla. Perfecto.'],
     belt:   ['¡Cinturón puesto!', 'Faja apretada. Espalda protegida.'],
     pre:    ['¡PRE-ENTRENO! ¡Me pica la cara!', '¡Tres cacitos! ¡VAMOS!'],
@@ -546,6 +643,8 @@ const LINES = {
     bossHit:['Now! Hit it!', 'It\'s tired!', 'Go for the head!'],
     bossHead:['Hard head!', 'Wait until it gets tired.'],
     bossKO: ['T-Rex to failure!', 'Come back when you train arms.', 'Short arms, long defeat.'],
+    mamut:  ['A mammoth! That one never skips leg day.', 'All hair, no technique.', 'Watch the tusks!'],
+    mamutKO:['Mammoth to failure!', 'Not even the cold stops you.', 'The ice age is over.'],
     shaker: ['Protein shake! Food magnet.', 'Vanilla shake. Perfect.'],
     belt:   ['Belt on!', 'Belt tight. Back safe.'],
     pre:    ['PRE-WORKOUT! My face is tingling!', 'Three scoops! LET\'S GO!'],
@@ -572,7 +671,11 @@ const ACH = [
   ['oro',      'Huevo de oro',        'Cómete un huevo de oro.',                    'Golden egg',         'Eat a golden egg.'],
   ['p10k',     'Diez mil',            'Haz 10.000 puntos en una partida.',          'Ten thousand',       'Score 10,000 in one game.'],
   ['p50k',     'Leyenda de la cueva', 'Haz 50.000 puntos en una partida.',          'Cave legend',        'Score 50,000 in one game.'],
-  ['fiel',     'Socio fundador',      'Juega 25 partidas.',                         'Founding member',    'Play 25 games.']
+  ['fiel',     'Socio fundador',      'Juega 25 partidas.',                         'Founding member',    'Play 25 games.'],
+  ['mamut',    'Edad de hielo',       'Derrota a un mamut.',                        'Ice age',            'Beat a mammoth.'],
+  ['diario',   'Cita diaria',         'Juega el reto del día.',                     'Daily date',         'Play the daily challenge.'],
+  ['liga',     'Buen rollo',          'Únete a una liga o crea la tuya.',           'Good vibes',         'Join or create a league.'],
+  ['venganza', 'Venganza servida',    'Supera el reto de un amigo.',                'Revenge served',     'Beat a friend\'s challenge.']
 ];
 let nuevosLogros = 0;
 function logro(id){
@@ -755,28 +858,32 @@ const API = {
   },
   local(){ return { plays:store.plays, debt:+(store.plays * DEBT_PER_GAME).toFixed(2), top:store.top }; },
   // Partidas y deuda salen de la API de siempre; el ranking, de la nueva (Top 50).
+  // Lo que viene del ranking: de siempre, semana, campeón, reto de hoy y la liga del jugador.
+  rank(r){ return { top:r.top, semana:r.semana || [], campeon:r.campeon || null, hoy:r.hoy || [], dia:r.dia, liga:r.liga || [] }; },
   async state(){
-    const [d, r] = await Promise.allSettled([this.req('/state'), this.req('/top', {}, API_RANK)]);
+    const q = ligaOk(store.liga) ? '?liga=' + store.liga : '';
+    const [d, r] = await Promise.allSettled([this.req('/state'), this.req('/top' + q, {}, API_RANK)]);
     this.online = r.status === 'fulfilled';
     const base = d.status === 'fulfilled' ? d.value : this.local();
-    if (!this.online) return Object.assign({}, base, { top: store.top, semana: [], campeon: null });
-    return Object.assign({}, base, { top: r.value.top, semana: r.value.semana || [], campeon: r.value.campeon || null });
+    if (!this.online) return Object.assign({}, base, { top: store.top, semana: [], campeon: null, hoy: [], liga: [] });
+    return Object.assign({}, base, this.rank(r.value));
   },
-  async play(){
+  async play(modo = 'normal'){
     store.plays++; saveStore();
-    const [d, r] = await Promise.allSettled([this.req('/play', {method:'POST', body:'{}'}), this.req('/partida', {method:'POST', body:'{}'}, API_RANK)]);
+    const [d, r] = await Promise.allSettled([this.req('/play', {method:'POST', body:'{}'}), this.req('/partida', {method:'POST', body:JSON.stringify({modo})}, API_RANK)]);
     this.online = r.status === 'fulfilled';
     this.runId = this.online ? r.value.runId : null;
     const base = d.status === 'fulfilled' ? d.value : this.local();
     const L = lastState || {};
-    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null });
+    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null, hoy: L.hoy || [], dia: L.dia, liga: L.liga || [] });
   },
   async score(name, score, level){
     if (this.online && this.runId){
-      const d = await this.req('/score', {method:'POST', body:JSON.stringify({runId:this.runId, name, score, level})}, API_RANK);
+      const d = await this.req('/score', {method:'POST', body:JSON.stringify({runId:this.runId, name, score, level, liga:store.liga || undefined})}, API_RANK);
       this.runId = null;
       return d;
     }
+    if (G.modo === 'diario') return { top: store.top };
     const top = store.top.concat([{name, score, level, date:Date.now()}]).sort((a,b) => b.score - a.score).slice(0, TOP_N);
     store.top = top; saveStore();
     return { top };
@@ -809,6 +916,31 @@ function renderTop3(top){
     li.append(a, b); ol.append(li);
   });
 }
+/* ---------- ligas entre amigos: un código de 5 letras que se comparte por enlace ---------- */
+const LIGA_ALF = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const ligaOk = l => typeof l === 'string' && /^[A-HJ-NP-Z2-9]{5}$/.test(l);
+const TOP_LIGA = 20, TOP_HOY = 10;
+let ligaNueva = null;
+(() => {
+  const l = (new URLSearchParams(location.search).get('liga') || '').toUpperCase();
+  if (ligaOk(l) && store.liga !== l){ store.liga = l; saveStore(); ligaNueva = l; }
+})();
+function crearLiga(){
+  store.liga = [...crypto.getRandomValues(new Uint8Array(5))].map(b => LIGA_ALF[b % LIGA_ALF.length]).join('');
+  saveStore(); logro('liga'); SFX.play('ui');
+  lastState = Object.assign({}, lastState, {liga: []});
+  renderTop(lastState, ...lastTopArgs);
+}
+function invitarLiga(){ SFX.play('ui'); abrirWhatsApp(T('ligaTxt')(store.liga, 'https://' + GAME_URL + '/?liga=' + store.liga)); }
+function salirLiga(){
+  if (!confirm(T('ligaSalirSeguro'))) return;
+  store.liga = null; saveStore();
+  lastState = Object.assign({}, lastState, {liga: []});
+  renderTop(lastState, ...lastTopArgs);
+}
+function qualifiesLiga(score, liga){ return API.online && ligaOk(store.liga) && score > 0 && (liga.length < TOP_LIGA || score > liga[liga.length - 1].score); }
+function qualifiesHoy(score, hoy){ return API.online && score > 0 && (hoy.length < TOP_HOY || score > hoy[hoy.length - 1].score); }
+
 function qualifies(score, top){ return score > 0 && (top.length < TOP_N || score > top[top.length - 1].score); }
 const TOP_SEMANA = 10;
 function qualifiesSemana(score, sem){ return API.online && score > 0 && (sem.length < TOP_SEMANA || score > sem[sem.length - 1].score); }
@@ -1085,6 +1217,40 @@ function drawWave(e){
   R(x - 9, y - 2, 18, 2, '#8a5a36');
 }
 
+// Bola de nieve que lanza el mamut
+function drawNieve(e){
+  const x = Math.round(e.x), y = Math.round(e.y);
+  R(x - 3, y - 3, 6, 6, '#eef6ff'); R(x - 4, y - 2, 8, 4, '#eef6ff'); R(x - 2, y - 2, 2, 2, '#fff'); R(x + 1, y + 1, 2, 2, '#a8c8e8');
+}
+
+// El mamut: el jefe de los niveles pares. Misma cabeza (y zona de golpe) que el T-Rex, mirando a la izquierda.
+function drawMamut(b){
+  const x = Math.round(b.x), y = GROUND + (b.jy || 0), f = Math.floor(b.anim * 5) % 2;
+  if (b.state === 'dead' && Math.floor(b.t * 10) % 2) return;
+  const C = b.flash > 0 ? '#fff' : '#7a4a2a', D = '#553018', L = '#9a6a42', MARFIL = '#f4ecd8';
+  const tired = b.state === 'tired', roar = b.state === 'roar' || (b.state === 'throw' && b.t % .35 < .12);
+  R(x - 8, y - 40, 40, 26, C); R(x - 4, y - 44, 30, 4, C); R(x + 30, y - 36, 6, 18, C);
+  for (let k = 0; k < 7; k++) R(x - 6 + k * 5, y - 16, 2, 3, D);
+  R(x, y - 45, 3, 2, L); R(x + 10, y - 46, 3, 2, L); R(x + 20, y - 45, 3, 2, L);
+  R(x + 35, y - 34, 3, 8, D); R(x + 34, y - 27, 5, 3, D);
+  R(x - 4 + (f ? 1 : 0), y - 14, 8, 14, D); R(x + 6 - (f ? 1 : 0), y - 14, 8, 14, C);
+  R(x + 16 + (f ? 1 : 0), y - 14, 8, 14, D); R(x + 25 - (f ? 1 : 0), y - 14, 7, 14, C);
+  R(x - 4, y - 1, 8, 1, D); R(x + 6, y - 1, 8, 1, L); R(x + 25, y - 1, 7, 1, L);
+  const hy = y - (tired ? 36 : 50);
+  R(x - 26, hy + 2, 24, 20, C); R(x - 22, hy - 2, 16, 4, C); R(x - 18, hy - 5, 7, 3, L); R(x - 14, hy - 7, 3, 2, L);
+  R(x - 6, hy + 4, 9, 16, D);
+  R(x - 24, hy + 3, 14, 2, RED);
+  R(x - 20, hy + 7, 3, 3, '#fff'); R(x - 20, hy + 8, 1, 2, '#000'); R(x - 22, hy + 6, 5, 1, D);
+  if (roar){ R(x - 32, hy + 8, 8, 4, C); R(x - 36, hy + 1, 5, 9, C); R(x - 37, hy - 1, 3, 3, D); R(x - 24, hy + 18, 6, 3, '#7a1a1a'); }
+  else { R(x - 30, hy + 12, 6, 7, C); R(x - 32, hy + 18, 5, 9, C); R(x - 30, hy + 26, 4, 3, C); R(x - 32, hy + 24, 2, 2, D); }
+  R(x - 30, hy + 17, 7, 2, MARFIL); R(x - 34, hy + 15, 4, 2, MARFIL); R(x - 36, hy + 12, 2, 3, MARFIL);
+  if (tired){
+    R(x - 4, hy - 6 + Math.floor(b.t * 8) % 3, 1, 2, '#7fd0ff'); R(x + 2, hy - 3 + Math.floor(b.t * 6) % 3, 1, 2, '#7fd0ff');
+    ctx.font = '8px "Press Start 2P", monospace'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#000'; ctx.fillText('Z', x + 9, hy - 3); ctx.fillStyle = '#fff'; ctx.fillText('Z', x + 8, hy - 4);
+  }
+}
+
 function drawTRex(b){
   const x = Math.round(b.x), y = GROUND + (b.jy || 0), f = Math.floor(b.anim * 6) % 2;
   const C = b.flash > 0 ? '#fff' : '#5d8a3a', D = '#3d6424', B = '#c9c77a';
@@ -1205,8 +1371,10 @@ function resetGame(){
   Object.assign(P, { y:GROUND, vy:0, ground:true, swing:-1, cd:0 });
   Object.assign(G, { t:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1, inv:0, shake:0, spawnT:1.4,
     entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0, plates:0, junk:0, bosses:0, boss:null, bossIn:0,
-    fx:{magnet:0, shield:false, pre:0, makina:0}, freeze:0, flash:0, puT:rand(14, 20),
+    fx:{magnet:0, shield:false, pre:0, makina:0}, freeze:0, flash:0, puT:0,
     tut:store.tut ? null : {n:0, e:null}, slow:false, retoAvisado:false });
+  rng = G.modo === 'diario' ? seeded(hashTexto(G.dia || hoyMadrid())) : Math.random;
+  G.puT = rr(14, 20);
   Music.level = 1; Music.mode = 'normal'; Music.boss = false;
   cieloActual = cieloAnterior = 0; cieloMezcla = 1;
   nuevosLogros = 0; pista('');
@@ -1257,7 +1425,7 @@ function levelUp(){
   checkLogrosPeso();
   const f = fase(G.level);
   if (f !== cieloActual){ cieloAnterior = cieloActual; cieloActual = f; cieloMezcla = 0; }
-  if (G.level % 3 === 0 && !G.boss) G.bossIn = 2.6;
+  if ((cond('jefe') ? (G.level + 1) % 3 === 0 : G.level % 3 === 0) && !G.boss) G.bossIn = 2.6;
 }
 
 function eat(it){
@@ -1311,6 +1479,7 @@ function matar(e){
   if (e.type === 'log'){ SFX.play('crack'); addScore(30 * mult(), e.x, e.y - 12); burst(e.x, e.y - 4, '#8a5a36', 10); if (Math.random() < .3) say('log'); return; }
   if (e.type === 'boulder'){ SFX.play('crack'); addScore(60 * mult(), e.x, e.y - 12); burst(e.x, e.y - 8, '#b0a898', 12); return; }
   if (e.type === 'bone'){ SFX.play('crack'); addScore(50 * mult(), e.x, e.y - 8); burst(e.x, e.y, '#f3ead8', 8); return; }
+  if (e.type === 'nieve'){ SFX.play('crack'); addScore(50 * mult(), e.x, e.y - 8); burst(e.x, e.y, '#eef6ff', 8); burst(e.x, e.y, '#a8c8e8', 4); return; }
   if (e.type === 'wave') return;
   SFX.play('bonk'); vibra(15);
   const base = {raptor:100, ptero:150, trike:250}[e.type];
@@ -1363,29 +1532,49 @@ function box(e){
     case 'boulder': return {x1:e.x - 7,  x2:e.x + 7,  y1:e.y - 15, y2:e.y};
     case 'log':     return {x1:e.x - 8,  x2:e.x + 9,  y1:e.y - 7,  y2:e.y};
     case 'bone':    return {x1:e.x - 5,  x2:e.x + 5,  y1:e.y - 4,  y2:e.y + 3};
+    case 'nieve':   return {x1:e.x - 4,  x2:e.x + 4,  y1:e.y - 4,  y2:e.y + 3};
     case 'wave':    return {x1:e.x - 7,  x2:e.x + 6,  y1:e.y - 8,  y2:e.y};
   }
 }
 const HAZARDS = ['raptor','trike','boulder','log'];
 
+// Azar de lo que aparece en la partida. En el reto diario usa una semilla del día:
+// todo el mundo se encuentra los mismos dinos, en el mismo orden.
+let rng = Math.random;
+const rr = (a, b) => a + rng() * (b - a);
+const rpk = a => a[Math.floor(rng() * a.length)];
+const hoyMadrid = () => { try { return new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Madrid'}).format(new Date()); } catch { return new Date().toISOString().slice(0, 10); } };
+function hashTexto(t){ let h = 2166136261; for (const c of t) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return (h >>> 0) % 2147483646 + 1; }
+const CONDS = ['makina', 'pierna', 'ayuno', 'cardio', 'pteros', 'hierro', 'jefe'];
+const condDe = dia => CONDS[hashTexto(dia + '·cond') % CONDS.length];
+const cond = c => G.cond === c;
+function estadoDiario(){
+  const dia = hoyMadrid();
+  return store.diario && store.diario.dia === dia ? store.diario : {dia, jugado:false, mejor:0};
+}
+
 /* ---------- el jefe: T-Rex de brazos cortos ---------- */
 function bossStart(){
   G.bosses++;
   const n = G.bosses;
-  G.boss = {n, hp:4 + 2 * n, max:4 + 2 * n, x:W + 50, state:'enter', t:0, anim:0, flash:0, jy:0, ciclo:0, lanzados:0, pisadas:0, hitBy:-1};
+  const tipo = n % 2 === 0 ? 'mamut' : 'trex';
+  const hp = tipo === 'mamut' ? 6 + 2 * n : 4 + 2 * n;
+  G.boss = {n, tipo, hp, max:hp, x:W + 50, state:'enter', t:0, anim:0, flash:0, jy:0, ciclo:0, lanzados:0, pisadas:0, hitBy:-1};
   Music.boss = true;
-  bigText(T('trex')); SFX.play('roar'); G.shake = 6;
-  setTimeout(() => say('boss', true), 900);
+  bigText(T(tipo)); SFX.play('roar'); G.shake = 6;
+  setTimeout(() => say(tipo === 'mamut' ? 'mamut' : 'boss', true), 900);
 }
 function bossKO(){
   const B = G.boss; B.state = 'dead'; B.t = 0;
   SFX.play('bossko'); G.shake = 8; G.flash = .15; vibra([60, 40, 120]);
-  bigText(T('trexKO')); say('bossKO', true);
+  const mam = B.tipo === 'mamut';
+  bigText(T(mam ? 'mamutKO' : 'trexKO')); say(mam ? 'mamutKO' : 'bossKO', true);
   addScore(1500 * B.n * mult(), B.x - 10, GROUND - 60, '#ffd23c');
   for (let i = 0; i < 4; i++) burst(B.x - 10 + rand(-14, 14), GROUND - 30 + rand(-14, 14), pick(['#fff', '#ffd23c', '#5d8a3a']), 10);
   ['steak', 'steak', 'drumstick', 'golden'].forEach((k, i) => G.items.push({kind:k, x:B.x - 30 + i * 12, y:GROUND - 40, vy:-120 - i * 20, grounded:false, junk:false, t:0}));
   store.bosses = (store.bosses || 0) + 1; saveStore();
-  logro('trex'); if (store.bosses >= 3) logro('trex3');
+  if (mam) logro('mamut'); else logro('trex');
+  if (store.bosses >= 3) logro('trex3');
 }
 function bossUpdate(dt){
   const B = G.boss; if (!B) return;
@@ -1407,7 +1596,7 @@ function bossUpdate(dt){
     case 'throw':
       if (B.t > .35 * (B.lanzados + 1)){
         B.lanzados++;
-        G.entities.push({type:'bone', x:B.x - 26, y:GROUND - 52, vx:0, fvx:rand(95, 150) + n * 10, vy:rand(-150, -60), hp:1, t:0, flash:0, suelo:false});
+        G.entities.push({type:B.tipo === 'mamut' ? 'nieve' : 'bone', x:B.x - 26, y:GROUND - 52, vx:0, fvx:rr(95, 150) + n * 10, vy:rr(-150, -60), hp:1, t:0, flash:0, suelo:false});
       }
       if (B.lanzados >= 2 + n){ B.state = 'idle'; B.t = 0; }
       break;
@@ -1418,7 +1607,7 @@ function bossUpdate(dt){
         B.jy = 0; B.pisadas++; B.t = 0; G.shake = 6; SFX.play('stomp'); vibra(50);
         G.entities.push({type:'wave', x:B.x - 22, y:GROUND, vx:0, wv:150 + n * 15, hp:99, t:0, flash:0});
         dust(B.x - 10, GROUND); dust(B.x + 10, GROUND);
-        if (B.pisadas >= (n > 1 ? 2 : 1)){ B.state = 'idle'; }
+        if (B.pisadas >= (n > 1 || B.tipo === 'mamut' ? 2 : 1)){ B.state = 'idle'; }
       }
       break;
     }
@@ -1426,7 +1615,7 @@ function bossUpdate(dt){
       if (B.t > .7){ B.state = 'charge'; B.t = 0; }
       break;
     case 'charge':
-      B.x -= (240 + n * 20) * dt;
+      B.x -= (B.tipo === 'mamut' ? 205 + n * 18 : 240 + n * 20) * dt;
       if (B.x <= P.x + 30){ B.x = P.x + 30; B.state = 'tired'; B.t = 0; G.shake = 5; SFX.play('stomp'); }
       break;
     case 'tired':
@@ -1446,19 +1635,20 @@ function bossUpdate(dt){
 function spawn(){
   const L = G.level;
   if (G.boss || G.bossIn > 0){
-    const r = Math.random();
-    if (r < .45) G.items.push({kind:Math.random() < .25 ? 'steak' : 'drumstick', x:W + 30, y:GROUND - rand(0, 40), vy:0, grounded:true, junk:false, t:0});
-    else if (r < .7) G.items.push({kind:pick(['donut','burger','soda']), x:W + 30, y:GROUND - rand(38, 60), vy:0, grounded:true, junk:true, t:0});
-    G.spawnT = rand(1.6, 2.6); return;
+    const r = rng();
+    if (r < .45) G.items.push({kind:rng() < .25 ? 'steak' : 'drumstick', x:W + 30, y:GROUND - rr(0, 40), vy:0, grounded:true, junk:false, t:0});
+    else if (r < .7) G.items.push({kind:rpk(['donut','burger','soda']), x:W + 30, y:GROUND - rr(38, 60), vy:0, grounded:true, junk:true, t:0});
+    G.spawnT = rr(1.6, 2.6); return;
   }
   const minGap = 78 + G.speed * 0.28;
   const lastX = Math.max(-999, ...G.entities.filter(e => HAZARDS.includes(e.type)).map(e => e.x));
   const weights = [
-    ['raptor', 5], ['log', 2.6], ['junk', 1.6 + L * 0.35], ['food', 1.1], ['plates', 1.3],
-    ['boulder', L >= 2 ? 1.8 + L * 0.15 : 0], ['ptero', L >= 2 ? 2.4 : 0], ['trike', L >= 3 ? 1.6 + L * 0.2 : 0]
+    ['raptor', 5], ['log', 2.6], ['junk', 1.6 + L * 0.35], ['food', 1.1], ['plates', cond('hierro') ? 3.2 : 1.3],
+    ['boulder', cond('pierna') ? 3 + L * 0.15 : L >= 2 ? 1.8 + L * 0.15 : 0], ['ptero', cond('pteros') ? 4 : L >= 2 ? 2.4 : 0],
+    ['trike', L >= 3 ? 1.6 + L * 0.2 : 0]
   ];
   const total = weights.reduce((a, w) => a + w[1], 0);
-  let r = Math.random() * total, type = 'raptor';
+  let r = rng() * total, type = 'raptor';
   for (const [k, w] of weights){ if ((r -= w) <= 0){ type = k; break; } }
 
   if (HAZARDS.includes(type) && lastX > W + 30 - minGap){ G.spawnT = 0.15; return; }
@@ -1468,18 +1658,18 @@ function spawn(){
     case 'log':    G.entities.push({type, x:X, y:GROUND, vx:0, hp:1, t:0, flash:0}); break;
     case 'boulder':G.entities.push({type, x:X, y:GROUND, vx:48 + L * 4, hp:99, t:0, flash:0, rot:0}); break;
     case 'trike':  G.entities.push({type, x:X, y:GROUND, vx:10, hp:2, t:0, flash:0, charging:false}); break;
-    case 'ptero':  { const by = GROUND - rand(34, 62); G.entities.push({type, x:X, y:by, baseY:by, vx:22 + L * 2, hp:1, t:rand(0, 6), flash:0}); break; }
-    case 'junk':   G.items.push({kind:pick(['donut','burger','soda']), x:X, y:GROUND - rand(38, 66), vy:0, grounded:true, junk:true, t:0}); break;
-    case 'food':   G.items.push({kind:Math.random() < .25 ? 'steak' : 'drumstick', x:X, y:Math.random() < .5 ? GROUND : GROUND - rand(24, 50), vy:0, grounded:true, junk:false, t:0}); break;
-    case 'plates': { const n = 2 + Math.floor(Math.random() * 3); for (let i = 0; i < n; i++) G.items.push({kind:'plate', s:Math.floor(Math.random() * 3), x:X + i * 14, y:GROUND, vy:0, grounded:true, junk:false, t:0}); break; }
+    case 'ptero':  { const by = GROUND - rr(34, 62); G.entities.push({type, x:X, y:by, baseY:by, vx:22 + L * 2, hp:1, t:rr(0, 6), flash:0}); break; }
+    case 'junk':   G.items.push({kind:rpk(['donut','burger','soda']), x:X, y:GROUND - rr(38, 66), vy:0, grounded:true, junk:true, t:0}); break;
+    case 'food':   G.items.push({kind:rng() < .25 ? 'steak' : 'drumstick', x:X, y:rng() < .5 ? GROUND : GROUND - rr(24, 50), vy:0, grounded:true, junk:false, t:0}); break;
+    case 'plates': { const n = 2 + Math.floor(rng() * 3); for (let i = 0; i < n; i++) G.items.push({kind:'plate', s:Math.floor(rng() * 3), x:X + i * 14, y:GROUND, vy:0, grounded:true, junk:false, t:0}); break; }
   }
-  G.spawnT = rand(0.85, 1.6) * Math.max(0.42, 1 - (L - 1) * 0.06);
+  G.spawnT = rr(0.85, 1.6) * Math.max(0.42, 1 - (L - 1) * 0.06);
 }
 
 function spawnPowerUp(){
   const opciones = ['shaker', 'belt', 'pre', 'boombox'];
-  const kind = G.fx.shield ? pick(['shaker', 'pre', 'boombox']) : pick(opciones);
-  G.items.push({kind, pu:true, x:W + 30, y:GROUND - rand(20, 46), vy:0, grounded:true, junk:false, t:0});
+  const kind = G.fx.shield ? rpk(['shaker', 'pre', 'boombox']) : rpk(opciones);
+  G.items.push({kind, pu:true, x:W + 30, y:GROUND - rr(20, 46), vy:0, grounded:true, junk:false, t:0});
 }
 
 /* ---------- tutorial de la primera partida ---------- */
@@ -1520,12 +1710,12 @@ function update(dt){
   if (fx.pre > 0) fx.pre -= dt;
   if (fx.makina > 0){ fx.makina -= dt; if (fx.makina <= 0 && Music.mode === 'makina') Music.mode = 'normal'; }
 
-  G.speed = Math.min(265, 95 + (G.level - 1) * 14) * (fx.pre > 0 ? 1.2 : 1);
+  G.speed = Math.min(265, 95 + (G.level - 1) * 14) * (fx.pre > 0 ? 1.2 : 1) * (cond('cardio') ? 1.15 : 1);
   const mv = G.speed * dt;
   G.scroll += mv; G.dist += mv;
   G.score += mv / 10;
 
-  G.meter -= (2.3 + G.level * 0.35) * dt * (G.tut ? 0.5 : 1);
+  G.meter -= (2.3 + G.level * 0.35) * dt * (G.tut ? 0.5 : 1) * (cond('ayuno') ? 1.4 : 1);
   G.hungryCD -= dt;
   if (G.meter < 25 && G.hungryCD <= 0){ say('hungry'); G.hungryCD = 7; }
   if (G.meter <= 0){ G.meter = 35; hurt('hungry'); if (G.state !== 'play') return; }
@@ -1568,7 +1758,7 @@ function update(dt){
     }
     if (e.type === 'ptero') e.y = e.baseY + Math.sin(e.t * 3) * 9;
     if (e.type === 'boulder') e.rot -= dt * 8;
-    if (e.type === 'bone'){
+    if (e.type === 'bone' || e.type === 'nieve'){
       if (!e.suelo){ extra = e.fvx - G.speed; e.vy += 300 * dt; e.y += e.vy * dt; if (e.y >= GROUND - 2){ e.y = GROUND - 2; e.suelo = true; } }
       else extra = 0;
     }
@@ -1579,7 +1769,7 @@ function update(dt){
       if (b.x1 < pb.x2 && b.x2 > pb.x1 && b.y1 < pb.y2 && b.y2 > pb.y1){
         if (fx.pre > 0 && e.type !== 'wave'){ matar(e); continue; }
         hurt(e.type);
-        if (e.type === 'log' || e.type === 'bone') e.dead = true;
+        if (e.type === 'log' || e.type === 'bone' || e.type === 'nieve') e.dead = true;
         if (G.state !== 'play') return;
       }
     }
@@ -1609,7 +1799,7 @@ function update(dt){
   if (G.spawnT <= 0) spawn();
   if (G.level >= 2 || G.t > 25){
     G.puT -= dt;
-    if (G.puT <= 0 && !G.boss){ spawnPowerUp(); G.puT = rand(18, 28); }
+    if (G.puT <= 0 && !G.boss){ spawnPowerUp(); G.puT = rr(18, 28); }
   }
 
   tutorial();
@@ -1628,7 +1818,8 @@ function barraJefe(){
   const B = G.boss; if (!B || B.state === 'dead') return;
   const w = 120, x = (W - w) / 2, y = 22;
   ctx.font = '8px "Press Start 2P", monospace'; ctx.textAlign = 'center';
-  ctx.fillStyle = '#000'; ctx.fillText('T-REX', W / 2 + 1, y - 2); ctx.fillStyle = '#ffd23c'; ctx.fillText('T-REX', W / 2, y - 3);
+  const nom = B.tipo === 'mamut' ? (lang === 'es' ? 'MAMUT' : 'MAMMOTH') : 'T-REX';
+  ctx.fillStyle = '#000'; ctx.fillText(nom, W / 2 + 1, y - 2); ctx.fillStyle = '#ffd23c'; ctx.fillText(nom, W / 2, y - 3);
   R(x - 1, y, w + 2, 6, '#000'); R(x, y + 1, w, 4, '#3a2a22');
   R(x, y + 1, Math.max(0, Math.round(w * B.hp / B.max)), 4, B.state === 'tired' ? '#ffd23c' : RED);
 }
@@ -1657,10 +1848,11 @@ function render(){
     else if (e.type === 'ptero') drawPtero(e);
     else if (e.type === 'boulder') drawBoulder(e);
     else if (e.type === 'bone') drawBone(e);
+    else if (e.type === 'nieve') drawNieve(e);
     else if (e.type === 'wave') drawWave(e);
     else drawLog(e);
   }
-  if (G.boss) drawTRex(G.boss);
+  if (G.boss) (G.boss.tipo === 'mamut' ? drawMamut : drawTRex)(G.boss);
   const sh = Math.max(4, 10 - Math.round((GROUND - P.y) / 8));
   R(P.x - sh / 2, GROUND, sh, 1, 'rgba(0,0,0,.35)');
   drawCaveman(P.x, P.y, { run:G.dist, air:!P.ground, swing:P.swing, level:G.level, hurt:G.inv > 0 ? G.inv : 0,
@@ -1734,27 +1926,55 @@ function renderDebt(d){
 function renderCampeon(d){
   const el = $('#campeon'), c = d && d.campeon;
   el.hidden = !c || !API.online;
-  if (!el.hidden) el.textContent = T('campeon')(c.name, NUM(c.score));
+  if (el.hidden) return;
+  el.innerHTML = '';
+  // ¿El campeón de la semana pasada es una marca hecha en este dispositivo? Entonces puede reclamar el premio.
+  const mia = (store.misMarcas || []).find(m => m.name === c.name && m.score === c.score && m.codigo);
+  if (mia){
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn btn-oro'; b.textContent = T('eresCampeon');
+    b.addEventListener('click', () => { SFX.play('ui'); window.open('https://t.me/AWorks81?text=' + encodeURIComponent(T('premioMsg')(mia.name, mia.codigo)), '_blank', 'noopener'); });
+    el.append(b);
+  } else el.append(T('campeon')(c.name, NUM(c.score)));
+  const s = document.createElement('small'); s.textContent = T('premioInfo'); el.append(s);
+}
+function renderDiario(){
+  const d = estadoDiario(), c = condDe(d.dia);
+  $('#diarioInfo').textContent = d.jugado ? T('diarioHecho')(NUM(d.mejor || 0)) : T('diarioInfo')(T('conds')[c], T('condsDesc')[c]);
+  const a = $('#ligaAviso');
+  a.hidden = !ligaNueva; if (ligaNueva) a.textContent = T('ligaUnido')(ligaNueva);
 }
 function renderMejor(){
   const m = $('#mejor');
   m.hidden = !store.best; if (store.best) m.textContent = T('mejor')(store.best);
+  renderDiario();
 }
 
 async function refreshState(){ renderDebt(await API.state()); }
 
+function jugarNormal(){ G.modo = 'normal'; G.cond = null; G.dia = null; G.cuenta = true; startGame(); }
+function jugarDiario(){
+  const d = estadoDiario();
+  G.modo = 'diario'; G.dia = d.dia; G.cond = condDe(d.dia); G.cuenta = !d.jugado;
+  // Un solo intento que cuenta al día: se gasta al empezar (salir a mitad también cuenta).
+  if (G.cuenta){ store.diario = {dia:d.dia, jugado:true, mejor:0}; saveStore(); }
+  logro('diario');
+  startGame();
+}
 async function startGame(){
   Audio.init();
   hideAll();
   resetGame();
+  if (cond('makina')){ G.fx.makina = 20; Music.mode = 'makina'; }
   G.state = 'play';
   hud.hidden = false; lastHud = '';
   updateHud();
   SFX.play('chaching');
-  bigText(T('go'));
+  bigText(G.modo === 'diario' ? T('conds')[G.cond] : T('go'));
   setTimeout(() => say('start', true), 500);
   if (store.music) Music.start();
-  const d = await API.play();
+  const d = await API.play(G.modo === 'diario' && G.cuenta ? 'diario' : 'normal');
+  if (G.modo === 'diario' && !G.cuenta){ API.runId = null; }
   renderDebt(d);
   if (store.plays >= 25) logro('fiel');
 }
@@ -1770,7 +1990,7 @@ function resume(){
   if (store.music) Music.start();
 }
 function toMenu(){
-  G.state = 'menu'; Music.stop(); hud.hidden = true; bubble.hidden = true;
+  G.state = 'menu'; G.modo = 'normal'; G.cond = null; Music.stop(); hud.hidden = true; bubble.hidden = true;
   resetGame(); refreshState(); renderMejor(); show('pMenu');
 }
 
@@ -1790,28 +2010,45 @@ async function gameOver(){
   $('#finLogros').hidden = !nuevosLogros; if (nuevosLogros) $('#finLogros').textContent = '🏆 ' + T('logrosNuevos')(nuevosLogros);
   $('#errIniciales').textContent = '';
   $('#inIniciales').value = store.lastName || '';
-  const top = (lastState && lastState.top) || [];
-  const sem = (lastState && lastState.semana) || [];
-  const qTop = qualifies(score, top), qSem = qualifiesSemana(score, sem);
-  const q = qTop || qSem;
+  const L = lastState || {};
+  const top = L.top || [], sem = L.semana || [], hoy = L.hoy || [], liga = L.liga || [];
+  const diario = G.modo === 'diario';
+  const qTop = !diario && qualifies(score, top), qSem = !diario && qualifiesSemana(score, sem);
+  const qLiga = !diario && qualifiesLiga(score, liga), qHoy = diario && G.cuenta && qualifiesHoy(score, hoy);
+  const q = qTop || qSem || qLiga || qHoy;
+  G.qFin = {qTop, qSem, qLiga, qHoy};
+  if (diario && G.cuenta){ store.diario = Object.assign(estadoDiario(), {jugado:true, mejor:Math.max(score, (store.diario && store.diario.mejor) || 0)}); saveStore(); }
+  const fm = $('#finModo');
+  fm.hidden = !diario;
+  if (diario){ fm.textContent = G.cuenta ? T('diarioModo')(T('conds')[G.cond]) : T('diarioPractica'); fm.classList.toggle('gana', G.cuenta); }
   const fr = $('#finReto');
-  fr.hidden = !RETO;
-  if (RETO){
-    const gana = score > RETO.puntos;
+  const gana = !!RETO && !diario && score > RETO.puntos;
+  fr.hidden = !RETO || diario;
+  if (!fr.hidden){
     fr.classList.toggle('gana', gana);
     fr.textContent = gana ? T('retoGana')(RETO.nombre, NUM(RETO.puntos)) : T('retoPierde')(RETO.nombre, NUM(RETO.puntos - score + 1));
+    if (gana) logro('venganza');
   }
+  $('#btnWhats').textContent = gana ? T('devolverWa') : T('retarWa');
   const fp = $('#finPuesto');
-  fp.hidden = !API.online || !top.length;
+  fp.hidden = !API.online || (!top.length && !diario);
   if (!fp.hidden){
     const puesto = top.filter(r => r.score >= score).length + 1;
     const puestoSem = sem.filter(r => r.score >= score).length + 1;
-    fp.textContent = qTop && puesto <= TOP_N ? T('puesto')(puesto)
+    fp.textContent = qHoy ? T('puestoHoy')(hoy.filter(r => r.score >= score).length + 1)
+      : diario ? ''
+      : qTop && puesto <= TOP_N ? T('puesto')(puesto)
       : qSem ? T('puestoSemana')(puestoSem)
+      : qLiga ? T('puestoLiga')(liga.filter(r => r.score >= score).length + 1)
       : top.length >= TOP_N ? T('faltaTop')(NUM(top[TOP_N - 1].score - score + 1)) : '';
     fp.hidden = !fp.textContent;
   }
   $('#finRecord').hidden = !q;
+  const consejos = TXT[lang].consejos;
+  const fc = $('#finConsejo'); fc.innerHTML = '';
+  const bt = document.createElement('b'); bt.textContent = T('consejoTit');
+  const a = document.createElement('a'); a.href = 'https://arnoldwork.com/herramientas/'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = T('consejoMas');
+  fc.append(bt, fix(consejos[Math.floor(Math.random() * consejos.length)]) + ' ', a);
   G.finalScore = score; G.finalLevel = G.level; G.saved = false;
   G.final = {score, kg:kgDe(G.level), kills:G.kills, plates:G.plates, bosses:G.bosses};
   setTimeout(() => {
@@ -1832,10 +2069,15 @@ async function saveInitials(ev){
   try {
     const d = await API.score(name, G.finalScore, G.finalLevel);
     G.saved = true; store.lastName = name; saveStore();
-    lastState = Object.assign({}, lastState, {top:d.top}, d.semana ? {semana:d.semana, campeon:d.campeon || null} : {});
+    lastState = Object.assign({}, lastState, {top:d.top}, d.semana ? API.rank(d) : {});
+    if (d.codigo && d.modo !== 'diario'){
+      store.misMarcas = (store.misMarcas || []).concat([{name, score:G.finalScore, codigo:d.codigo, date:Date.now()}]).slice(-40);
+      saveStore();
+    }
     err.textContent = '';
     $('#finRecord').hidden = true;
-    vistaTop = qualifies(G.finalScore, d.top || []) || !d.semana ? 'siempre' : 'semana';
+    const Q = G.qFin || {};
+    vistaTop = G.modo === 'diario' ? 'hoy' : Q.qTop || !d.semana ? 'siempre' : Q.qSem ? 'semana' : Q.qLiga ? 'liga' : 'siempre';
     renderTop(lastState, name, G.finalScore);
     show('pTop', true);
   } catch (e) {
@@ -1846,18 +2088,33 @@ async function saveInitials(ev){
 let vistaTop = 'siempre', lastTopArgs = [];
 function renderTop(d, hiName, hiScore){
   if (!API.online) vistaTop = 'siempre';
-  const semana = vistaTop === 'semana';
-  const top = semana ? (d && d.semana) || [] : (d && d.top) || [];
-  $('#tTop').textContent = semana ? 'TOP ' + TOP_SEMANA : 'TOP ' + TOP_N;
+  const v = vistaTop, semana = v === 'semana';
+  const listas = {siempre:d && d.top, semana:d && d.semana, hoy:d && d.hoy, liga:d && d.liga};
+  const top = listas[v] || [];
+  $('#tTop').textContent = v === 'siempre' ? 'TOP ' + TOP_N : v === 'semana' ? 'TOP ' + TOP_SEMANA : v === 'hoy' ? T('tabHoy') : T('tabLiga');
   $('.pestanas').hidden = !API.online;
-  $('#tabSiempre').setAttribute('aria-pressed', String(!semana));
-  $('#tabSemana').setAttribute('aria-pressed', String(semana));
+  for (const [id, k] of [['#tabSiempre', 'siempre'], ['#tabSemana', 'semana'], ['#tabHoy', 'hoy'], ['#tabLiga', 'liga']]) $(id).setAttribute('aria-pressed', String(v === k));
   lastTopArgs = [hiName, hiScore];
+  // Liga: sin liga, se explica y se ofrece crearla; con liga, código e invitación.
+  const caja = $('#ligaCaja'), sinLiga = v === 'liga' && !ligaOk(store.liga);
+  caja.hidden = v !== 'liga'; caja.innerHTML = '';
+  $('#topScroll').hidden = sinLiga;
+  const boton = (txt, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (cls || ''); b.textContent = txt; b.addEventListener('click', fn); return b; };
+  if (v === 'liga'){
+    if (sinLiga){ const p = document.createElement('p'); p.textContent = T('ligaNo'); caja.append(p, boton(T('ligaCrear'), crearLiga, 'btn-oro')); }
+    else {
+      const t = document.createElement('div'); t.textContent = T('ligaCodigoTit');
+      const c = document.createElement('div'); c.className = 'codigo'; c.textContent = store.liga;
+      caja.append(t, c, boton(T('ligaInvitar'), invitarLiga, 'btn-wa'), boton(T('ligaSalir'), salirLiga));
+    }
+  }
+  const nota = $('#notaTop');
+  nota.hidden = !(API.online && semana); if (!nota.hidden) nota.textContent = T('premioInfo');
   const body = $('#topCuerpo');
   body.innerHTML = '';
   if (!top || !top.length){
     const tr = document.createElement('tr'); const td = document.createElement('td');
-    td.colSpan = 4; td.textContent = semana ? T('sinSemana') : T('sinPuntos'); td.style.textAlign = 'left';
+    td.colSpan = 4; td.textContent = {semana:T('sinSemana'), hoy:T('sinHoy'), liga:T('sinLiga')}[v] || T('sinPuntos'); td.style.textAlign = 'left';
     tr.append(td); body.append(tr);
   }
   (top || []).forEach((r, i) => {
@@ -1871,7 +2128,9 @@ function renderTop(d, hiName, hiScore){
   const tuyo = body.querySelector('.tuyo'), sc = $('#topScroll');
   sc.scrollTop = 0;
   if (tuyo) requestAnimationFrame(() => { sc.scrollTop = Math.max(0, tuyo.offsetTop - sc.clientHeight / 2); });
-  $('#topModo').textContent = !API.online ? T('rankLocal') : semana ? T('rankSemana') : T('rankMundial');
+  $('#topModo').textContent = !API.online ? T('rankLocal') : v === 'semana' ? T('rankSemana')
+    : v === 'hoy' ? T('rankHoy')(T('conds')[condDe((d && d.dia) || hoyMadrid())])
+    : v === 'liga' ? (ligaOk(store.liga) ? T('rankLiga')(store.liga) : '') : T('rankMundial');
 }
 
 /* ================= COMPARTIR ================= */
@@ -1916,8 +2175,14 @@ function tarjeta(){
 const MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
 function textoReto(){
   const f = G.final || {score:0, kg:20};
+  if (G.modo === 'diario'){
+    const enlace = 'https://' + GAME_URL + '/?diario=1';
+    return { texto:T('diarioTxt')(T('conds')[G.cond], NUM(f.score), enlace), enlace };
+  }
   const ini = store.lastName && nameOk(store.lastName) ? store.lastName : '';
   const enlace = 'https://' + GAME_URL + '/' + (f.score > 0 ? '?reto=' + (ini ? ini + '-' : '') + Math.floor(f.score) : '');
+  // Si has ganado el reto de un amigo, se lo devuelves con las dos marcas.
+  if (RETO && f.score > RETO.puntos) return { texto:T('retoDevuelto')(RETO.nombre, NUM(RETO.puntos), NUM(f.score), enlace), enlace };
   return { texto:T('retoTxt')(NUM(f.score), enlace), enlace };
 }
 function abrirWhatsApp(texto){
@@ -1995,8 +2260,10 @@ document.addEventListener('keyup', e => {
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 
-$('#btnJugar').addEventListener('click', startGame);
-$('#btnOtra').addEventListener('click', startGame);
+$('#btnJugar').addEventListener('click', jugarNormal);
+$('#btnDiario').addEventListener('click', jugarDiario);
+if (new URLSearchParams(location.search).has('diario')) $('#btnDiario').classList.add('pulso');
+$('#btnOtra').addEventListener('click', () => G.modo === 'diario' ? jugarDiario() : jugarNormal());
 $('#btnPausa').addEventListener('click', pause);
 $('#btnSeguir').addEventListener('click', resume);
 $('#btnSalirPausa').addEventListener('click', toMenu);
@@ -2005,6 +2272,8 @@ $('#btnCompartir').addEventListener('click', compartir);
 $('#btnWhats').addEventListener('click', retarWhatsApp);
 $('#tabSiempre').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'siempre'; renderTop(lastState, ...lastTopArgs); });
 $('#tabSemana').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'semana'; renderTop(lastState, ...lastTopArgs); });
+$('#tabHoy').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'hoy'; renderTop(lastState, ...lastTopArgs); });
+$('#tabLiga').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'liga'; renderTop(lastState, ...lastTopArgs); });
 $('#btnImagen').addEventListener('click', compartirImagen);
 $('#formIniciales').addEventListener('submit', saveInitials);
 $('#inIniciales').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); });

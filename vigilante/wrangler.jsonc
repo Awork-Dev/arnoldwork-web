@@ -13,6 +13,8 @@
   "keep_vars": true,
   "triggers": { "crons": ["*/30 * * * *", "0 7 * * *", "30 7 * * 1"] },
   // Memoria de qué está caído (no hace falta crear nada en el panel).
+  // Acceso interno al ranking (código de premio del campeón): no se puede usar desde internet.
+  "services": [{ "binding": "RANKING_PRIVADO", "service": "cavework-ranking", "entrypoint": "Privado" }],
   "durable_objects": { "bindings": [{ "name": "MEMORIA", "class_name": "Memoria" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Memoria"] }]
 }
