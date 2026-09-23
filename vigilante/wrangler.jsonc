@@ -1,5 +1,6 @@
 // Worker "vigilante": revisa las webs y avisa por Telegram.
-// Secretos (se ponen una vez en el panel o con `wrangler secret put`): TELEGRAM_TOKEN, PRUEBA_CLAVE.
+// Secretos (se ponen una vez en el panel o con `wrangler secret put`): TELEGRAM_TOKEN, KOFI_TOKEN, PRUEBA_CLAVE.
+// Horarios (UTC): revisión cada 30 min, resumen diario a las 7:00 y resumen semanal los lunes a las 7:30.
 {
   "name": "vigilante",
   "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
@@ -8,7 +9,7 @@
   // Sin esto, un Worker no puede comprobar otros *.workers.dev de la misma cuenta.
   "compatibility_flags": ["global_fetch_strictly_public"],
   "workers_dev": true,
-  "triggers": { "crons": ["*/30 * * * *", "0 7 * * *"] },
+  "triggers": { "crons": ["*/30 * * * *", "0 7 * * *", "30 7 * * 1"] },
   // Memoria de qué está caído (no hace falta crear nada en el panel).
   "durable_objects": { "bindings": [{ "name": "MEMORIA", "class_name": "Memoria" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Memoria"] }]

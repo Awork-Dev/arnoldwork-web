@@ -1053,7 +1053,7 @@
       <h3>Compras y donaciones</h3>
       <p>El libro y las fichas se venden y se entregan a través de Ko-fi, con sus propias condiciones. Las donaciones se hacen a través de PayPal, son voluntarias y no dan acceso a ningún contenido ni servicio adicional.</p>
       <h3>Datos personales</h3>
-      <p>Las herramientas guardan lo que escribes solo en tu dispositivo. Si nos envías un mensaje por el chat o tu correo para recibir la guía, usamos esos datos únicamente para responderte o enviarte la guía y las novedades que aceptaste. Puedes pedir que los borremos escribiendo al correo de contacto.</p>
+      <p>Las herramientas guardan lo que escribes solo en tu dispositivo. Si nos envías un mensaje por el chat o tu correo para recibir la guía, usamos esos datos únicamente para responderte o enviarte la guía y las novedades que aceptaste. Los mensajes del chat se guardan como mucho 12 meses, solo para poder contestarte, y después se borran solos. Puedes pedir que los borremos escribiendo al correo de contacto.</p>
       <p>Para saber qué páginas se visitan usamos Cloudflare Web Analytics, que cuenta visitas de forma agregada sin cookies, sin guardar nada en tu dispositivo y sin identificarte. No usamos publicidad ni herramientas de seguimiento de terceros.</p>
     </div>
   </div>
@@ -1291,6 +1291,12 @@ function answer(value){
 }
 
 const LEAD_URL='https://arnoldwork-api.arnoldwork.workers.dev/lead';
+/* Copia de cada mensaje en el vigilante: si la API principal falla, el vigilante avisa por Telegram. */
+const COPIA_URL='https://vigilante.arnoldwork.workers.dev/contacto';
+function copiaContacto(envio, principalOk){
+  return fetch(COPIA_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({},envio,{principalOk}))}).then(r=>r.ok).catch(()=>false);
+}
 
 async function finish(){
   const opts=document.getElementById('chatOpts');
@@ -1315,9 +1321,12 @@ async function finish(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(envio)
-    });
+    }).catch(()=>null);
+    const principalOk = !!(r && r.ok);
+    const copia = copiaContacto(envio, principalOk);
+    // Si la API principal falla, el mensaje vale igual si el vigilante lo ha recibido.
+    if(!principalOk && !(await copia)) throw new Error('fallo');
     opts.innerHTML='';
-    if(!r.ok) throw new Error('fallo');
     bot(`¡Recibido, ${msg.nombre}! 💪`);
     if (msg.motivo === 'Web o automatización para mi negocio'){ setTimeout(()=>bot('Nos ponemos en contacto contigo muy pronto para hablar de tu proyecto. ¡Gracias por confiar en nosotros! 🚀'),800); }
     else setTimeout(()=>bot(sinRespuesta

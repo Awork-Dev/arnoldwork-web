@@ -1,8 +1,11 @@
 // CaveWork · Ranking mundial (Top 50)
 //
-//   GET  /top      → { size, top:[{name, score, level, date}] }
+//   GET  /top      → { size, top:[…50], semana:[…10], campeon, semanaInicio }
 //   POST /partida  → { runId }                  (al empezar cada partida)
-//   POST /score    { runId, name, score, level } → { top, puesto }
+//   POST /score    { runId, name, score, level } → { top, semana, puesto, puestoSemana }
+//   GET  /export   → todas las marcas guardadas (para las copias de seguridad; son datos públicos)
+//
+// La semana empieza el lunes a las 00:00 UTC. «campeon» es el mejor de la semana anterior.
 //
 // Antitrampas sencillo: cada puntuación necesita una partida empezada de verdad (runId de un solo uso),
 // y los puntos tienen que ser posibles para el tiempo que ha durado la partida.
@@ -11,6 +14,15 @@
 import { DurableObject } from "cloudflare:workers";
 
 const TAM = 50;
+const TAM_SEMANA = 10;
+const DIA = 86400e3;
+
+// Lunes 00:00 UTC de la semana de `t`.
+function inicioSemana(t = Date.now()) {
+  const d = new Date(t);
+  const dow = (d.getUTCDay() + 6) % 7;   // 0 = lunes
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - dow * DIA;
+}
 const API_ANTIGUA = "https://cavework-api.arnoldwork.workers.dev/state";
 const ORIGENES = [
   /^https:\/\/heavywork\.arnoldwork\.com$/,
@@ -50,9 +62,27 @@ export class Ranking extends DurableObject {
     return this.sql.exec(`SELECT name, score, level, date FROM marcas ORDER BY score DESC, date ASC LIMIT ?`, TAM).toArray();
   }
 
+  entre(desde, hasta, n) {
+    return this.sql.exec(`SELECT name, score, level, date FROM marcas WHERE date >= ? AND date < ? ORDER BY score DESC, date ASC LIMIT ?`, desde, hasta, n).toArray();
+  }
+
+  datos() {
+    const ini = inicioSemana();
+    return {
+      size: TAM, sizeSemana: TAM_SEMANA, semanaInicio: ini,
+      top: this.top(),
+      semana: this.entre(ini, Infinity, TAM_SEMANA),
+      campeon: this.entre(ini - 7 * DIA, ini, 1)[0] || null,
+    };
+  }
+
   async verTop() {
     await this.importar();
-    return { size: TAM, top: this.top() };
+    return this.datos();
+  }
+
+  exportar() {
+    return { exportado: Date.now(), marcas: this.sql.exec(`SELECT name, score, level, date FROM marcas ORDER BY score DESC`).toArray() };
   }
 
   partida() {
@@ -74,10 +104,11 @@ export class Ranking extends DurableObject {
     const segundos = (Date.now() - p.inicio) / 1000;
     if (score > 3000 + segundos * PUNTOS_POR_SEGUNDO) return { error: "Puntuación imposible", status: 400 };
     this.sql.exec(`INSERT INTO marcas (name, score, level, date) VALUES (?, ?, ?, ?)`, name, score, level, Date.now());
-    // Guarda de sobra (500) por si algún día se amplía, y borra el resto.
-    this.sql.exec(`DELETE FROM marcas WHERE id NOT IN (SELECT id FROM marcas ORDER BY score DESC, date ASC LIMIT 500)`);
+    // Guarda las 500 mejores de siempre y todo lo de las dos últimas semanas (para el ranking semanal).
+    this.sql.exec(`DELETE FROM marcas WHERE date < ? AND id NOT IN (SELECT id FROM marcas ORDER BY score DESC, date ASC LIMIT 500)`, inicioSemana() - 8 * DIA);
     const puesto = this.sql.exec(`SELECT COUNT(*) AS n FROM marcas WHERE score > ?`, score).one().n + 1;
-    return { top: this.top(), puesto, size: TAM };
+    const puestoSemana = this.sql.exec(`SELECT COUNT(*) AS n FROM marcas WHERE score > ? AND date >= ?`, score, inicioSemana()).one().n + 1;
+    return { ...this.datos(), puesto, puestoSemana };
   }
 }
 
@@ -96,6 +127,7 @@ export default {
     const r = env.RANKING.get(env.RANKING.idFromName("mundial"));
     try {
       if (req.method === "GET" && (pathname === "/top" || pathname === "/")) return json(req, await r.verTop());
+      if (req.method === "GET" && pathname === "/export") return json(req, await r.exportar());
       if (req.method === "POST" && pathname === "/partida") return json(req, await r.partida());
       if (req.method === "POST" && pathname === "/score") {
         const body = await req.json().catch(() => ({}));

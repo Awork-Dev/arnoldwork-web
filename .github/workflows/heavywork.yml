@@ -1,6 +1,7 @@
 # Publica heavywork/web en el Worker "heavywork" (heavywork.arnoldwork.com).
 # - Push a main: publica en heavywork.arnoldwork.com.
 # - Push a otra rama: vista previa en https://<rama>-heavywork.arnoldwork.workers.dev
+# Antes de publicar pasa las pruebas de pruebas/: si alguna falla, no se publica nada.
 # Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
 
 name: Desplegar HeavyWork
@@ -9,6 +10,7 @@ on:
   push:
     paths:
       - "heavywork/**"
+      - "pruebas/**"
       - ".github/workflows/heavywork.yml"
   workflow_dispatch:
 
@@ -17,7 +19,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar el navegador de pruebas
+        working-directory: pruebas
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Pasar las pruebas (heavywork)
+        working-directory: pruebas
+        run: node pruebas.mjs heavywork
+
   desplegar:
+    needs: pruebas
     runs-on: ubuntu-latest
     permissions:
       contents: read

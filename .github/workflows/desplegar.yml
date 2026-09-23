@@ -3,6 +3,7 @@
 # - Push a cualquier otra rama: sube una versión de prueba (sin tocar la web real)
 #   y la deja en https://<rama>-arnoldwork-v11.arnoldwork.workers.dev
 #
+# Antes de publicar pasa las pruebas de pruebas/: si alguna falla, no se publica nada.
 # Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
 
 name: Desplegar web
@@ -14,6 +15,7 @@ on:
       - "src/**"
       - "build.py"
       - "wrangler.jsonc"
+      - "pruebas/**"
       - ".github/workflows/desplegar.yml"
   workflow_dispatch:
 
@@ -22,7 +24,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar el navegador de pruebas
+        working-directory: pruebas
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Pasar las pruebas (web)
+        working-directory: pruebas
+        run: node pruebas.mjs web
+
   desplegar:
+    needs: pruebas
     runs-on: ubuntu-latest
     permissions:
       contents: read

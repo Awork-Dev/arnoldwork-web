@@ -162,6 +162,10 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 .top3 li{display:flex;justify-content:space-between;gap:8px;padding:5px 2px;border-top:2px solid var(--borde)}
 .top3 li:first-child{color:var(--oro)}
 .top3-tit{font-size:9px;color:var(--gris);margin:0 0 4px}
+.campeon{font-size:9px;line-height:1.7;color:var(--oro);border:2px solid var(--oro);padding:6px 8px;margin:0 0 14px;text-align:center}
+.pestanas{margin:0 0 10px}
+.pestanas .btn{min-height:40px;font-size:9px;box-shadow:none}
+.pestanas .btn[aria-pressed="true"]{background:var(--oro);border-color:var(--oro);color:#111}
 #hudReto{color:#fff;font-size:.8em}
 #hudReto.ok{color:var(--verde)}
 .fin-reto{border:3px dashed var(--oro);padding:8px;font-size:10px;line-height:1.7;margin:0 0 12px;color:var(--tiza)}
@@ -217,6 +221,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 
     <p class="top3-tit" id="top3Tit" hidden></p>
     <ol class="top3" id="top3" hidden></ol>
+    <p class="campeon" id="campeon" hidden></p>
     <div class="pila">
       <div class="reto" id="retoMenu" hidden></div>
       <button type="button" class="btn btn-rojo btn-grande" id="btnJugar" data-t="jugar">JUGAR</button>
@@ -269,7 +274,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <div class="fin-reto" id="finReto" hidden></div>
     <p class="nuevo" id="finPuesto" hidden></p>
     <div id="finRecord" hidden>
-      <p style="color:var(--oro)" data-t="nuevoTop">¡NUEVO TOP 50! PON TUS INICIALES</p>
+      <p style="color:var(--oro)" data-t="nuevoTop">¡ENTRAS EN EL RANKING! PON TUS INICIALES</p>
       <form id="formIniciales" class="iniciales" autocomplete="off">
         <input id="inIniciales" maxlength="3" inputmode="text" autocapitalize="characters" spellcheck="false" data-t-aria="aIniciales" aria-label="Tus iniciales, 3 letras" placeholder="AAA">
         <button type="submit" class="btn btn-rojo" style="min-width:90px" data-t="guardar">GUARDAR</button>
@@ -300,6 +305,10 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 <section class="panel" id="pTop" hidden aria-labelledby="tTop">
   <div class="caja">
     <h2 id="tTop">TOP 50</h2>
+    <div class="fila pestanas" role="group">
+      <button type="button" class="btn" id="tabSiempre" aria-pressed="true" data-t="tabSiempre">SIEMPRE</button>
+      <button type="button" class="btn" id="tabSemana" aria-pressed="false" data-t="tabSemana">ESTA SEMANA</button>
+    </div>
     <p class="suave" id="topModo"></p>
     <div class="tabla-scroll" id="topScroll">
     <table class="tabla">
@@ -406,7 +415,7 @@ const TXT = {
     ayuda3:'<b>NUEVO.</b> Recoge los discos del suelo, pilla los potenciadores (batido, cinturón, pre-entreno y... MAKINA) y prepárate: a los 40 KG llega el T-Rex.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
-    finTit:'¡AL FALLO!', nuevoTop:'¡NUEVO TOP 50! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
+    finTit:'¡AL FALLO!', nuevoTop:'¡ENTRAS EN EL RANKING! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
     donar:'DONAR AL DESARROLLADOR', enviarOpinion:'ENVIAR OPINIÓN', deudaYa:'Los jugadores ya le deben', esBroma:'al desarrollador. Es broma.', porQue:'¿Por qué donar?',
     nombre:'NOMBRE', puntos:'PUNTOS', volver:'VOLVER', apoya:'APOYA LA CUEVA',
     donarTxt1:'CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.',
@@ -415,7 +424,7 @@ const TXT = {
     opinionTit:'ENVÍA TU OPINIÓN', opinionTxt:'Ideas, fallos, dinos que te gustaría aplastar... Tu mensaje le llega en privado al desarrollador. No se publica.',
     tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
     partidas:n => `${n.toLocaleString('es-ES')} partidas jugadas`, sinConexion:'Sin conexión: contando solo en este dispositivo',
-    rankMundial:'Ranking mundial', rankLocal:'Sin conexión: ranking de este dispositivo', sinPuntos:'Todavía no hay puntuaciones. ¡Sé el primero!',
+    rankMundial:'Ranking mundial', rankSemana:'Esta semana · se reinicia cada lunes', tabSiempre:'SIEMPRE', tabSemana:'ESTA SEMANA', sinSemana:'Esta semana aún no hay marcas. ¡Estrena el ranking!', campeon:(n, p) => `👑 CAMPEÓN DE LA SEMANA PASADA: ${n} · ${p}`, puestoSemana:n => `🗓️ ¡Puesto ${n} de esta semana! Guarda tus iniciales.`, rankLocal:'Sin conexión: ranking de este dispositivo', sinPuntos:'Todavía no hay puntuaciones. ¡Sé el primero!',
     detalle:(kg, d, p, b) => `Levantaste ${kg} KG. ${d} ${d === 1 ? 'dino aplastado' : 'dinos aplastados'}. ${p} ${p === 1 ? 'disco recogido' : 'discos recogidos'}.` + (b ? ` T-Rex derrotados: ${b}.` : ''),
     mejor:n => `Tu récord: ${n.toLocaleString('es-ES')}`, record:n => ` Récord: ${n.toLocaleString('es-ES')}`,
     err3:'Usa exactamente 3 letras (A-Z).', errNombre:'Elige otras iniciales.', guardando:'Guardando...',
@@ -446,7 +455,7 @@ const TXT = {
     ayuda3:'<b>NEW.</b> Pick up the plates on the floor, grab power-ups (shake, belt, pre-workout and... MAKINA) and get ready: at 40 KG the T-Rex shows up.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
-    finTit:'FAILURE!', nuevoTop:'NEW TOP 50! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
+    finTit:'FAILURE!', nuevoTop:'YOU MADE THE RANKING! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
     donar:'DONATE TO THE DEVELOPER', enviarOpinion:'SEND FEEDBACK', deudaYa:'Players now owe the developer', esBroma:'Just kidding.', porQue:'Why donate?',
     nombre:'NAME', puntos:'SCORE', volver:'BACK', apoya:'SUPPORT THE CAVE',
     donarTxt1:'CaveWork is free. Forever. It\'s made for the ArnoldWork community, like the rest of our training tools.',
@@ -455,7 +464,7 @@ const TXT = {
     opinionTit:'SEND FEEDBACK', opinionTxt:'Ideas, bugs, new enemies you\'d like to smash... Your message goes privately to the developer. It won\'t be published.',
     tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',
     partidas:n => `${n.toLocaleString('en-US')} games played`, sinConexion:'Offline: counting on this device only',
-    rankMundial:'Worldwide ranking', rankLocal:'Offline: ranking on this device', sinPuntos:'No scores yet. Be the first!',
+    rankMundial:'Worldwide ranking', rankSemana:'This week · resets every Monday', tabSiempre:'ALL TIME', tabSemana:'THIS WEEK', sinSemana:'No scores this week yet. Be the first!', campeon:(n, p) => `👑 LAST WEEK'S CHAMPION: ${n} · ${p}`, puestoSemana:n => `🗓️ Number ${n} this week! Save your initials.`, rankLocal:'Offline: ranking on this device', sinPuntos:'No scores yet. Be the first!',
     detalle:(kg, d, p, b) => `Lifted ${kg} KG. ${d} ${d === 1 ? 'dino' : 'dinos'} smashed. ${p} ${p === 1 ? 'plate' : 'plates'} racked.` + (b ? ` T-Rex beaten: ${b}.` : ''),
     mejor:n => `Your best: ${n.toLocaleString('en-US')}`, record:n => ` Best: ${n.toLocaleString('en-US')}`,
     err3:'Use exactly 3 letters (A-Z).', errNombre:'Please choose other initials.', guardando:'Saving...',
@@ -750,7 +759,8 @@ const API = {
     const [d, r] = await Promise.allSettled([this.req('/state'), this.req('/top', {}, API_RANK)]);
     this.online = r.status === 'fulfilled';
     const base = d.status === 'fulfilled' ? d.value : this.local();
-    return Object.assign({}, base, { top: this.online ? r.value.top : store.top });
+    if (!this.online) return Object.assign({}, base, { top: store.top, semana: [], campeon: null });
+    return Object.assign({}, base, { top: r.value.top, semana: r.value.semana || [], campeon: r.value.campeon || null });
   },
   async play(){
     store.plays++; saveStore();
@@ -758,7 +768,8 @@ const API = {
     this.online = r.status === 'fulfilled';
     this.runId = this.online ? r.value.runId : null;
     const base = d.status === 'fulfilled' ? d.value : this.local();
-    return Object.assign({}, base, { top: (lastState && lastState.top) || base.top || [] });
+    const L = lastState || {};
+    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null });
   },
   async score(name, score, level){
     if (this.online && this.runId){
@@ -799,6 +810,8 @@ function renderTop3(top){
   });
 }
 function qualifies(score, top){ return score > 0 && (top.length < TOP_N || score > top[top.length - 1].score); }
+const TOP_SEMANA = 10;
+function qualifiesSemana(score, sem){ return API.online && score > 0 && (sem.length < TOP_SEMANA || score > sem[sem.length - 1].score); }
 
 /* ================= FONDOS ================= */
 function capa(draw){ const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; draw(x); return c; }
@@ -1716,6 +1729,12 @@ function renderDebt(d){
   }
   $('#finDeuda').textContent = money(debt);
   renderTop3(d.top);
+  renderCampeon(d);
+}
+function renderCampeon(d){
+  const el = $('#campeon'), c = d && d.campeon;
+  el.hidden = !c || !API.online;
+  if (!el.hidden) el.textContent = T('campeon')(c.name, NUM(c.score));
 }
 function renderMejor(){
   const m = $('#mejor');
@@ -1772,7 +1791,9 @@ async function gameOver(){
   $('#errIniciales').textContent = '';
   $('#inIniciales').value = store.lastName || '';
   const top = (lastState && lastState.top) || [];
-  const q = qualifies(score, top);
+  const sem = (lastState && lastState.semana) || [];
+  const qTop = qualifies(score, top), qSem = qualifiesSemana(score, sem);
+  const q = qTop || qSem;
   const fr = $('#finReto');
   fr.hidden = !RETO;
   if (RETO){
@@ -1784,7 +1805,10 @@ async function gameOver(){
   fp.hidden = !API.online || !top.length;
   if (!fp.hidden){
     const puesto = top.filter(r => r.score >= score).length + 1;
-    fp.textContent = q && puesto <= TOP_N ? T('puesto')(puesto) : top.length >= TOP_N ? T('faltaTop')(NUM(top[TOP_N - 1].score - score + 1)) : '';
+    const puestoSem = sem.filter(r => r.score >= score).length + 1;
+    fp.textContent = qTop && puesto <= TOP_N ? T('puesto')(puesto)
+      : qSem ? T('puestoSemana')(puestoSem)
+      : top.length >= TOP_N ? T('faltaTop')(NUM(top[TOP_N - 1].score - score + 1)) : '';
     fp.hidden = !fp.textContent;
   }
   $('#finRecord').hidden = !q;
@@ -1808,22 +1832,32 @@ async function saveInitials(ev){
   try {
     const d = await API.score(name, G.finalScore, G.finalLevel);
     G.saved = true; store.lastName = name; saveStore();
-    lastState = Object.assign({}, lastState, {top:d.top});
+    lastState = Object.assign({}, lastState, {top:d.top}, d.semana ? {semana:d.semana, campeon:d.campeon || null} : {});
     err.textContent = '';
     $('#finRecord').hidden = true;
-    renderTop(d.top, name, G.finalScore);
+    vistaTop = qualifies(G.finalScore, d.top || []) || !d.semana ? 'siempre' : 'semana';
+    renderTop(lastState, name, G.finalScore);
     show('pTop', true);
   } catch (e) {
     err.textContent = e.status === 400 ? T('errNoAcept') : T('errConexion');
   }
 }
 
-function renderTop(top, hiName, hiScore){
+let vistaTop = 'siempre', lastTopArgs = [];
+function renderTop(d, hiName, hiScore){
+  if (!API.online) vistaTop = 'siempre';
+  const semana = vistaTop === 'semana';
+  const top = semana ? (d && d.semana) || [] : (d && d.top) || [];
+  $('#tTop').textContent = semana ? 'TOP ' + TOP_SEMANA : 'TOP ' + TOP_N;
+  $('.pestanas').hidden = !API.online;
+  $('#tabSiempre').setAttribute('aria-pressed', String(!semana));
+  $('#tabSemana').setAttribute('aria-pressed', String(semana));
+  lastTopArgs = [hiName, hiScore];
   const body = $('#topCuerpo');
   body.innerHTML = '';
   if (!top || !top.length){
     const tr = document.createElement('tr'); const td = document.createElement('td');
-    td.colSpan = 4; td.textContent = T('sinPuntos'); td.style.textAlign = 'left';
+    td.colSpan = 4; td.textContent = semana ? T('sinSemana') : T('sinPuntos'); td.style.textAlign = 'left';
     tr.append(td); body.append(tr);
   }
   (top || []).forEach((r, i) => {
@@ -1837,7 +1871,7 @@ function renderTop(top, hiName, hiScore){
   const tuyo = body.querySelector('.tuyo'), sc = $('#topScroll');
   sc.scrollTop = 0;
   if (tuyo) requestAnimationFrame(() => { sc.scrollTop = Math.max(0, tuyo.offsetTop - sc.clientHeight / 2); });
-  $('#topModo').textContent = API.online ? T('rankMundial') : T('rankLocal');
+  $('#topModo').textContent = !API.online ? T('rankLocal') : semana ? T('rankSemana') : T('rankMundial');
 }
 
 /* ================= COMPARTIR ================= */
@@ -1969,6 +2003,8 @@ $('#btnSalirPausa').addEventListener('click', toMenu);
 $('#btnMenu').addEventListener('click', toMenu);
 $('#btnCompartir').addEventListener('click', compartir);
 $('#btnWhats').addEventListener('click', retarWhatsApp);
+$('#tabSiempre').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'siempre'; renderTop(lastState, ...lastTopArgs); });
+$('#tabSemana').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'semana'; renderTop(lastState, ...lastTopArgs); });
 $('#btnImagen').addEventListener('click', compartirImagen);
 $('#formIniciales').addEventListener('submit', saveInitials);
 $('#inIniciales').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); });
@@ -1976,7 +2012,7 @@ $$('[data-abrir]').forEach(b => b.addEventListener('click', async () => {
   Audio.init(); SFX.play('ui');
   const id = b.dataset.abrir;
   if (id === 'pLogros') renderLogros();
-  if (id === 'pTop'){ renderTop((lastState && lastState.top) || [], store.lastName, G.finalScore); show(id, true); const d = await API.state(); renderDebt(d); renderTop(d.top, store.lastName, G.finalScore); return; }
+  if (id === 'pTop'){ vistaTop = 'siempre'; renderTop(lastState, store.lastName, G.finalScore); show(id, true); const d = await API.state(); renderDebt(d); renderTop(d, store.lastName, G.finalScore); return; }
   show(id, true);
 }));
 $$('[data-volver]').forEach(b => b.addEventListener('click', () => { SFX.play('ui'); back(); }));
