@@ -1,0 +1,16 @@
+{
+  "compatibility_date": "2026-09-17",
+  "compatibility_flags": [],
+  "usage_model": "standard",
+  "placement": {},
+  "bindings": [
+    {
+      "name": "TELEGRAM_CHAT_ID",
+      "type": "plain_text"
+    },
+    {
+      "name": "TELEGRAM_TOKEN",
+      "type": "secret_text"
+    }
+  ]
+}
