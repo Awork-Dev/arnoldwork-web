@@ -1,0 +1,11 @@
+// API del ranking mundial de CaveWork (Top 50). Guarda las puntuaciones en un Durable Object con SQLite:
+// no hace falta crear nada a mano en Cloudflare, se crea solo al publicar.
+{
+  "name": "cavework-ranking",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "main": "ranking.js",
+  "compatibility_date": "2026-09-17",
+  "workers_dev": true,
+  "durable_objects": { "bindings": [{ "name": "RANKING", "class_name": "Ranking" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Ranking"] }]
+}

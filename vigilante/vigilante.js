@@ -20,6 +20,7 @@ const COMPROBACIONES = [
   { nombre: "CaveWork",          url: "https://heavywork.arnoldwork.com/game/", texto: "CaveWork" },
   { nombre: "API contacto",      url: "https://arnoldwork-api.arnoldwork.workers.dev/" },
   { nombre: "API CaveWork",      url: "https://cavework-api.arnoldwork.workers.dev/" },
+  { nombre: "Ranking CaveWork",  url: "https://cavework-ranking.arnoldwork.workers.dev/top", texto: "top" },
 ];
 
 async function comprobarUnaVez(c) {

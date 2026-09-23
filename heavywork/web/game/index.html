@@ -127,6 +127,9 @@ button,input,a{font:inherit;color:inherit}
 .tabla td{padding:7px 4px;border-top:2px solid var(--borde)}
 .tabla td:last-child,.tabla th:last-child{text-align:right}
 .tabla tr.tuyo td{color:var(--oro)}
+.tabla-scroll{max-height:min(56vh,520px);overflow-y:auto;margin-bottom:12px;border-bottom:2px solid var(--borde)}
+.tabla-scroll .tabla{margin-bottom:0}
+.tabla-scroll thead th{position:sticky;top:0;background:var(--panel)}
 .tabla tr:nth-child(1) td:first-child{color:var(--oro)}
 .puntos-final{font-size:clamp(22px,8vw,34px);color:var(--oro);margin:4px 0 10px;line-height:1.2}
 .iniciales{display:flex;gap:8px;align-items:stretch;margin-bottom:8px}
@@ -219,7 +222,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <button type="button" class="btn btn-rojo btn-grande" id="btnJugar" data-t="jugar">JUGAR</button>
       <p class="nuevo" id="mejor" hidden></p>
       <div class="fila">
-        <button type="button" class="btn" data-abrir="pTop">TOP 10</button>
+        <button type="button" class="btn" data-abrir="pTop">TOP 50</button>
         <button type="button" class="btn" data-abrir="pLogros" data-t="logros">LOGROS</button>
       </div>
       <div class="fila">
@@ -266,7 +269,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <div class="fin-reto" id="finReto" hidden></div>
     <p class="nuevo" id="finPuesto" hidden></p>
     <div id="finRecord" hidden>
-      <p style="color:var(--oro)" data-t="nuevoTop">¡NUEVO TOP 10! PON TUS INICIALES</p>
+      <p style="color:var(--oro)" data-t="nuevoTop">¡NUEVO TOP 50! PON TUS INICIALES</p>
       <form id="formIniciales" class="iniciales" autocomplete="off">
         <input id="inIniciales" maxlength="3" inputmode="text" autocapitalize="characters" spellcheck="false" data-t-aria="aIniciales" aria-label="Tus iniciales, 3 letras" placeholder="AAA">
         <button type="submit" class="btn btn-rojo" style="min-width:90px" data-t="guardar">GUARDAR</button>
@@ -281,7 +284,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
         <button type="button" class="btn btn-oro" id="btnImagen" data-t="imagen">IMAGEN</button>
       </div>
       <div class="fila">
-        <button type="button" class="btn" data-abrir="pTop">TOP 10</button>
+        <button type="button" class="btn" data-abrir="pTop">TOP 50</button>
         <button type="button" class="btn" id="btnMenu" data-t="menu">MENU</button>
       </div>
       <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="donar">DONAR AL DESARROLLADOR</span></a>
@@ -293,15 +296,17 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
   </div>
 </section>
 
-<!-- Top 10 -->
+<!-- Top 50 -->
 <section class="panel" id="pTop" hidden aria-labelledby="tTop">
   <div class="caja">
-    <h2 id="tTop">TOP 10</h2>
+    <h2 id="tTop">TOP 50</h2>
     <p class="suave" id="topModo"></p>
+    <div class="tabla-scroll" id="topScroll">
     <table class="tabla">
       <thead><tr><th>#</th><th data-t="nombre">NOMBRE</th><th>KG</th><th data-t="puntos">PUNTOS</th></tr></thead>
       <tbody id="topCuerpo"></tbody>
     </table>
+    </div>
     <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
   </div>
 </section>
@@ -357,7 +362,9 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 'use strict';
 /* ================= CONFIGURACIÓN ================= */
 const PAYPAL_URL = 'https://paypal.me/Xarlyds';
-const API_BASE = 'https://cavework-api.arnoldwork.workers.dev';   // Top 10 mundial + contador de deuda
+const API_BASE = 'https://cavework-api.arnoldwork.workers.dev';   // contador de partidas y deuda
+const API_RANK = 'https://cavework-ranking.arnoldwork.workers.dev';  // ranking mundial (Top 50), código en cavework/
+const TOP_N = 50;
 const DEBT_PER_GAME = 0.10;
 const FEEDBACK_EMAIL = 'arnoldwork4you@gmail.com';   // solo si el servidor no responde
 const GAME_URL = 'heavywork.arnoldwork.com/game';
@@ -399,7 +406,7 @@ const TXT = {
     ayuda3:'<b>NUEVO.</b> Recoge los discos del suelo, pilla los potenciadores (batido, cinturón, pre-entreno y... MAKINA) y prepárate: a los 40 KG llega el T-Rex.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
-    finTit:'¡AL FALLO!', nuevoTop:'¡NUEVO TOP 10! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
+    finTit:'¡AL FALLO!', nuevoTop:'¡NUEVO TOP 50! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
     donar:'DONAR AL DESARROLLADOR', enviarOpinion:'ENVIAR OPINIÓN', deudaYa:'Los jugadores ya le deben', esBroma:'al desarrollador. Es broma.', porQue:'¿Por qué donar?',
     nombre:'NOMBRE', puntos:'PUNTOS', volver:'VOLVER', apoya:'APOYA LA CUEVA',
     donarTxt1:'CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.',
@@ -424,7 +431,7 @@ const TXT = {
     retoMenu:(n, p) => `🥊 ${n} TE RETA<b>SUPERA ${p}</b>`, retoHud:p => `RETO ${p}`, retoSuperado:'¡RETO SUPERADO!',
     retoGana:(n, p) => `🥊 ¡Has ganado a ${n}! Su marca era ${p}. Devuélvele el reto.`,
     retoPierde:(n, f) => `🥊 ${n} sigue por delante: te han faltado ${f} puntos. Otra serie.`,
-    top3:'TOP MUNDIAL', puesto:n => `🌍 ¡Puesto ${n} del mundo! Guarda tus iniciales para que lo vea todo el mundo.`, faltaTop:f => `Te faltan ${f} puntos para entrar en el Top 10 mundial.`,
+    top3:'TOP MUNDIAL', puesto:n => `🌍 ¡Puesto ${n} del mundo! Guarda tus iniciales para que lo vea todo el mundo.`, faltaTop:f => `Te faltan ${f} puntos para entrar en el Top 50 mundial.`,
     retoTxt:(p, u) => `🥊 Te reto en CaveWork: he hecho ${p} puntos. ¿Me superas? ${u}\nMade with love from Mallorca ❤️`, pideIni:'Tus iniciales para el reto (3 letras):'
   },
   en: {
@@ -439,7 +446,7 @@ const TXT = {
     ayuda3:'<b>NEW.</b> Pick up the plates on the floor, grab power-ups (shake, belt, pre-workout and... MAKINA) and get ready: at 40 KG the T-Rex shows up.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
-    finTit:'FAILURE!', nuevoTop:'NEW TOP 10! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
+    finTit:'FAILURE!', nuevoTop:'NEW TOP 50! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
     donar:'DONATE TO THE DEVELOPER', enviarOpinion:'SEND FEEDBACK', deudaYa:'Players now owe the developer', esBroma:'Just kidding.', porQue:'Why donate?',
     nombre:'NAME', puntos:'SCORE', volver:'BACK', apoya:'SUPPORT THE CAVE',
     donarTxt1:'CaveWork is free. Forever. It\'s made for the ArnoldWork community, like the rest of our training tools.',
@@ -464,7 +471,7 @@ const TXT = {
     retoMenu:(n, p) => `🥊 ${n} CHALLENGES YOU<b>BEAT ${p}</b>`, retoHud:p => `BEAT ${p}`, retoSuperado:'CHALLENGE BEATEN!',
     retoGana:(n, p) => `🥊 You beat ${n}! Their score was ${p}. Send the challenge back.`,
     retoPierde:(n, f) => `🥊 ${n} is still ahead: you were ${f} points short. One more set.`,
-    top3:'WORLD TOP', puesto:n => `🌍 Number ${n} in the world! Save your initials so everyone sees it.`, faltaTop:f => `${f} more points to enter the world Top 10.`,
+    top3:'WORLD TOP', puesto:n => `🌍 Number ${n} in the world! Save your initials so everyone sees it.`, faltaTop:f => `${f} more points to enter the world Top 50.`,
     retoTxt:(p, u) => `🥊 I challenge you in CaveWork: I scored ${p}. Can you beat me? ${u}\nMade with love from Mallorca ❤️`, pideIni:'Your initials for the challenge (3 letters):'
   }
 };
@@ -720,40 +727,46 @@ const Music = {
   }
 };
 
-/* ================= API (Top 10 mundial + deuda) ================= */
+/* ================= API (Top 50 mundial + deuda) ================= */
 const BLOCKED = ['ASS','FUK','FCK','FUC','SEX','KKK','NAZ','CUM','DIK','DIC','TIT','PIS','FAG','NIG','GAY','WTF','XXX','PUT','PTA','CUL','COÑ','MRD','POL','PEN','VAG','ANO','JOD','HDP','SS1','KYS'];
 const nameOk = n => /^[A-Z]{3}$/.test(n) && !BLOCKED.includes(n);
 
 const API = {
   online:false, runId:null,
-  async req(path, opts={}){
-    if (!API_BASE) throw new Error('no api');
+  async req(path, opts={}, base=API_BASE){
+    if (!base) throw new Error('no api');
     const ctrl = new AbortController();
     const to = setTimeout(() => ctrl.abort(), 8000);   // margen para la mala cobertura de los gimnasios
     try {
-      const r = await fetch(API_BASE + path, {...opts, signal:ctrl.signal, headers:{'Content-Type':'application/json'}});
+      const r = await fetch(base + path, {...opts, signal:ctrl.signal, headers:{'Content-Type':'application/json'}});
       const j = await r.json().catch(() => ({}));
       if (!r.ok) { const e = new Error(j.error || 'HTTP ' + r.status); e.status = r.status; throw e; }
       return j;
     } finally { clearTimeout(to); }
   },
   local(){ return { plays:store.plays, debt:+(store.plays * DEBT_PER_GAME).toFixed(2), top:store.top }; },
+  // Partidas y deuda salen de la API de siempre; el ranking, de la nueva (Top 50).
   async state(){
-    try { const d = await this.req('/state'); this.online = true; return d; }
-    catch { this.online = false; return this.local(); }
+    const [d, r] = await Promise.allSettled([this.req('/state'), this.req('/top', {}, API_RANK)]);
+    this.online = r.status === 'fulfilled';
+    const base = d.status === 'fulfilled' ? d.value : this.local();
+    return Object.assign({}, base, { top: this.online ? r.value.top : store.top });
   },
   async play(){
     store.plays++; saveStore();
-    try { const d = await this.req('/play', {method:'POST', body:'{}'}); this.online = true; this.runId = d.runId; return d; }
-    catch { this.online = false; this.runId = null; return this.local(); }
+    const [d, r] = await Promise.allSettled([this.req('/play', {method:'POST', body:'{}'}), this.req('/partida', {method:'POST', body:'{}'}, API_RANK)]);
+    this.online = r.status === 'fulfilled';
+    this.runId = this.online ? r.value.runId : null;
+    const base = d.status === 'fulfilled' ? d.value : this.local();
+    return Object.assign({}, base, { top: (lastState && lastState.top) || base.top || [] });
   },
   async score(name, score, level){
     if (this.online && this.runId){
-      const d = await this.req('/score', {method:'POST', body:JSON.stringify({runId:this.runId, name, score, level})});
+      const d = await this.req('/score', {method:'POST', body:JSON.stringify({runId:this.runId, name, score, level})}, API_RANK);
       this.runId = null;
       return d;
     }
-    const top = store.top.concat([{name, score, level, date:Date.now()}]).sort((a,b) => b.score - a.score).slice(0, 10);
+    const top = store.top.concat([{name, score, level, date:Date.now()}]).sort((a,b) => b.score - a.score).slice(0, TOP_N);
     store.top = top; saveStore();
     return { top };
   }
@@ -785,7 +798,7 @@ function renderTop3(top){
     li.append(a, b); ol.append(li);
   });
 }
-function qualifies(score, top){ return score > 0 && (top.length < 10 || score > top[top.length - 1].score); }
+function qualifies(score, top){ return score > 0 && (top.length < TOP_N || score > top[top.length - 1].score); }
 
 /* ================= FONDOS ================= */
 function capa(draw){ const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; draw(x); return c; }
@@ -1771,7 +1784,7 @@ async function gameOver(){
   fp.hidden = !API.online || !top.length;
   if (!fp.hidden){
     const puesto = top.filter(r => r.score >= score).length + 1;
-    fp.textContent = q && puesto <= 10 ? T('puesto')(puesto) : top.length >= 10 ? T('faltaTop')(NUM(top[9].score - score + 1)) : '';
+    fp.textContent = q && puesto <= TOP_N ? T('puesto')(puesto) : top.length >= TOP_N ? T('faltaTop')(NUM(top[TOP_N - 1].score - score + 1)) : '';
     fp.hidden = !fp.textContent;
   }
   $('#finRecord').hidden = !q;
@@ -1821,6 +1834,9 @@ function renderTop(top, hiName, hiScore){
     });
     body.append(tr);
   });
+  const tuyo = body.querySelector('.tuyo'), sc = $('#topScroll');
+  sc.scrollTop = 0;
+  if (tuyo) requestAnimationFrame(() => { sc.scrollTop = Math.max(0, tuyo.offsetTop - sc.clientHeight / 2); });
   $('#topModo').textContent = API.online ? T('rankMundial') : T('rankLocal');
 }
 
