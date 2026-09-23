@@ -1,0 +1,11 @@
+// Worker "arnoldwork-api": recibe los mensajes del chat y las peticiones de la guía de arnoldwork.com
+// y los manda a Telegram (POST /lead).
+// En Cloudflare: secreto TELEGRAM_TOKEN y variable TELEGRAM_CHAT_ID (se conservan al publicar).
+{
+  "name": "arnoldwork-api",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-17",
+  "workers_dev": true,
+  "keep_vars": true
+}

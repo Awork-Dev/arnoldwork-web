@@ -1,0 +1,14 @@
+// Worker "cavework-api": contador de partidas y «deuda» de CaveWork, comentarios del juego
+// (a Telegram) y el Top 10 antiguo. Guarda los datos en una base de datos D1 enlazada como DB.
+// En Cloudflare: secreto TELEGRAM_TOKEN y variable TELEGRAM_CHAT_ID (se conservan al publicar).
+{
+  "name": "cavework-api",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-17",
+  "workers_dev": true,
+  "keep_vars": true,
+  "d1_databases": [
+    { "binding": "DB", "database_id": "6d878f15-fad8-4679-9787-ccb9b83843b8" }
+  ]
+}

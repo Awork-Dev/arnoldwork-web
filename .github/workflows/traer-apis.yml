@@ -1,5 +1,5 @@
 # Trae a apis/ el código de los Workers arnoldwork-api y cavework-api desde Cloudflare.
-# Solo se lanza a mano (Actions → «Traer APIs de Cloudflare» → Run workflow) o al cambiar este archivo en una rama claude/.
+# Solo se lanza a mano (Actions → «Traer APIs de Cloudflare» → Run workflow), por si alguien cambia el código en el panel.
 # Antes de guardar nada busca tokens escritos en el código: si encuentra alguno, se para sin guardar
 # y solo dice en qué archivo y línea está (nunca su valor). El repositorio es público.
 
@@ -7,9 +7,6 @@ name: Traer APIs de Cloudflare
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["claude/**"]
-    paths: [".github/workflows/traer-apis.yml"]
 
 jobs:
   traer:

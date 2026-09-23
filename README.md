@@ -10,6 +10,8 @@
   - cada lunes, resumen de la semana y copia de seguridad del ranking y de los contactos;
   - `POST /kofi`: avisos de ventas y batidos de Ko-fi; `POST /contacto`: copia de los mensajes del chat.
   - Secretos: `TELEGRAM_TOKEN`, `KOFI_TOKEN`, `PRUEBA_CLAVE`.
+- `apis/` — Workers `arnoldwork-api` (chat y guía → Telegram) y `cavework-api` (partidas, «deuda» y comentarios del juego, con D1).
+  Se trajeron de Cloudflare con el flujo «Traer APIs de Cloudflare» (se lanza a mano).
 - `pruebas/` — pruebas automáticas (`node pruebas.mjs web` / `heavywork`) que se pasan antes de cada publicación.
 - `.github/workflows/` — publican solos con el secreto `CLOUDFLARE_API_TOKEN`:
   push a `main` → producción; push a otra rama → vista previa en `*.arnoldwork.workers.dev`.

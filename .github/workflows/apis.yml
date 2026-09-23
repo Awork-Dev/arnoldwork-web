@@ -1,0 +1,33 @@
+# Publica las APIs de apis/ (arnoldwork-api y cavework-api) cuando cambian en main.
+# Los secretos y variables puestos en Cloudflare se conservan (keep_vars).
+# Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
+
+name: Desplegar APIs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apis/**"
+      - ".github/workflows/apis.yml"
+  workflow_dispatch:
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [arnoldwork-api, cavework-api]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar que el código no tiene errores de sintaxis
+        run: node --check apis/${{ matrix.api }}/worker.js
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: apis/${{ matrix.api }}
+          command: deploy
