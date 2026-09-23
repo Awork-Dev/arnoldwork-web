@@ -134,7 +134,10 @@
       });
       x.fillStyle = 'rgba(244,242,239,0.3)'; x.fillRect(80, 960, 920, 2);
       x.fillStyle = '#A9A9A9'; x.font = '600 32px Archivo, sans-serif';
-      x.fillText('arnoldwork.com/herramientas · gratis y sin registro', 80, 1020);
+      x.fillText('arnoldwork.com/herramientas · gratis y sin registro', 80, 1012);
+      x.font = '600 24px Archivo, sans-serif'; x.fillStyle = '#F4F2EF';
+      x.fillText('Made with love from Mallorca', 80, 1054);
+      x.fillStyle = '#DE3A3A'; x.fillText('♥', 88 + x.measureText('Made with love from Mallorca').width, 1054);
     }
     function sale(){
       pinta();

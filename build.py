@@ -22,6 +22,7 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(RAIZ, "src")
 WEB = os.path.join(RAIZ, "web")
 DOMINIO = "https://arnoldwork.com"
+AMOR = "Made with love from Mallorca ❤️"   # firma de las tarjetas al compartir
 
 sys.path.insert(0, os.path.join(SRC, "herramientas"))
 from catalogo import GRUPOS, HERRAMIENTAS  # noqa: E402
@@ -71,6 +72,7 @@ def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css,
     for k, v in {
         "TITULO": html.escape(titulo, quote=True),
         "DESCRIPCION": html.escape(descripcion, quote=True),
+        "OG_DESCRIPCION": html.escape(descripcion + " " + AMOR, quote=True),
         "URL": direccion,
         "OG_IMAGEN": og,
         "OG_ALT": html.escape(og_alt, quote=True),

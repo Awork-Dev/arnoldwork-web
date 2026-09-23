@@ -7,7 +7,7 @@
 <meta name="description" content="Juego retro gratis: un cavernícola, una mancuerna de piedra y muchos dinosaurios. Come proteína, recoge los discos, derrota al T-Rex y levanta más peso.">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="CaveWork · Aplasta dinos. Come proteína. Levanta más peso.">
-<meta property="og:description" content="Un juego retro gratis de ArnoldWork. ¿Hasta dónde llegas?">
+<meta property="og:description" content="Un juego retro gratis de ArnoldWork. ¿Hasta dónde llegas? Made with love from Mallorca ❤️">
 <meta property="og:url" content="https://heavywork.arnoldwork.com/game/">
 <link rel="canonical" href="https://heavywork.arnoldwork.com/game/">
 <meta property="og:type" content="website">
@@ -15,6 +15,7 @@
 <meta property="og:image" content="https://heavywork.arnoldwork.com/game/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta name="twitter:description" content="Un juego retro gratis de ArnoldWork. ¿Hasta dónde llegas? Made with love from Mallorca ❤️">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://heavywork.arnoldwork.com/game/og.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-137 -40 926 926'%3E%3Crect x='-137' y='-40' width='926' height='926' fill='%23000'/%3E%3Cg transform='translate(65,84) scale(.8)'%3E%3Cpolygon points='319,0 0,845 649,341 198,579 319,238' fill='%23fff'/%3E%3Cpolygon points='333,0 333,231 441,439 489,415' fill='%23DE3A3A'/%3E%3Cpolygon points='507,462 469,492 650,839' fill='%23DE3A3A'/%3E%3C/g%3E%3C/svg%3E">
@@ -417,7 +418,7 @@ const TXT = {
     retoGana:(n, p) => `🥊 ¡Has ganado a ${n}! Su marca era ${p}. Devuélvele el reto.`,
     retoPierde:(n, f) => `🥊 ${n} sigue por delante: te han faltado ${f} puntos. Otra serie.`,
     top3:'TOP MUNDIAL', puesto:n => `🌍 ¡Puesto ${n} del mundo! Guarda tus iniciales para que lo vea todo el mundo.`, faltaTop:f => `Te faltan ${f} puntos para entrar en el Top 10 mundial.`,
-    retoTxt:(p, u) => `🥊 Te reto en CaveWork: he hecho ${p} puntos. ¿Me superas? ${u}`, pideIni:'Tus iniciales para el reto (3 letras):'
+    retoTxt:(p, u) => `🥊 Te reto en CaveWork: he hecho ${p} puntos. ¿Me superas? ${u}\nMade with love from Mallorca ❤️`, pideIni:'Tus iniciales para el reto (3 letras):'
   },
   en: {
     aCanvas:'CaveWork game screen', aVidas:'Lives', aPausa:'Pause', aIniciales:'Your initials, 3 letters',
@@ -457,7 +458,7 @@ const TXT = {
     retoGana:(n, p) => `🥊 You beat ${n}! Their score was ${p}. Send the challenge back.`,
     retoPierde:(n, f) => `🥊 ${n} is still ahead: you were ${f} points short. One more set.`,
     top3:'WORLD TOP', puesto:n => `🌍 Number ${n} in the world! Save your initials so everyone sees it.`, faltaTop:f => `${f} more points to enter the world Top 10.`,
-    retoTxt:(p, u) => `🥊 I challenge you in CaveWork: I scored ${p}. Can you beat me? ${u}`, pideIni:'Your initials for the challenge (3 letters):'
+    retoTxt:(p, u) => `🥊 I challenge you in CaveWork: I scored ${p}. Can you beat me? ${u}\nMade with love from Mallorca ❤️`, pideIni:'Your initials for the challenge (3 letters):'
   }
 };
 // La fuente pixelada no tiene mayúsculas con tilde (las pinta como minúsculas): se escriben sin tilde.
@@ -1845,7 +1846,11 @@ function tarjeta(){
   x.fillText(`${f.kg} ${tt.kg} · ${f.kills} ${tt.dinos} · ${f.plates} ${tt.discos}`, 80, 800);
   x.font = '44px "Press Start 2P", monospace'; x.fillStyle = '#ffd23c'; x.fillText(tt.reto, 80, 900);
   x.fillStyle = 'rgba(244,239,230,.3)'; x.fillRect(80, 950, 920, 4);
-  x.font = '24px "Press Start 2P", monospace'; x.fillStyle = '#a79c92'; x.fillText(GAME_URL, 80, 1010);
+  x.font = '24px "Press Start 2P", monospace'; x.fillStyle = '#a79c92'; x.fillText(GAME_URL, 80, 1004);
+  x.font = '18px "Press Start 2P", monospace'; x.fillStyle = '#ffd23c'; x.fillText('Made with love from Mallorca', 80, 1050);
+  const hx = 80 + x.measureText('Made with love from Mallorca').width + 14;
+  x.fillStyle = '#ff5a5a';
+  [[1,0,2],[4,0,2],[0,1,7],[0,2,7],[1,3,5],[2,4,3],[3,5,1]].forEach(([cx, cy, w]) => x.fillRect(hx + cx * 3, 1031 + cy * 3, w * 3, 3));
   return c;
 }
 async function compartir(){
