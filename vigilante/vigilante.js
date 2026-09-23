@@ -269,6 +269,8 @@ async function resumenDiario(env) {
     ? `☀️ Buenos días. Hay ${fallos.length} cosa(s) que fallan:`
     : "☀️ Buenos días. Todo funciona correctamente 💪";
   let texto = informe(resultados, titulo);
+  const rk = await leerJSON(RANKING + "/top");
+  if (rk && rk.ayer) texto += `\n\n🗓️ Reto del día de ayer: ganó ${rk.ayer.name} con ${num(rk.ayer.score)} puntos.`;
   const dias = await diasDominio();
   if (dias !== null && dias <= 30) texto += `\n\n⚠️ El dominio ${DOMINIO.nombre} caduca en ${dias} días. ¡Renuévalo!`;
   else if (dias !== null && dias <= 60) texto += `\n\n📅 El dominio ${DOMINIO.nombre} caduca en ${dias} días.`;

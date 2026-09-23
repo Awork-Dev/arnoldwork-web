@@ -1,7 +1,7 @@
 // CaveWork · Ranking mundial
 //
 //   GET  /top[?liga=K7P2Q]  → { size, top:[…50], semana:[…10], campeon, semanaInicio,
-//                               dia, hoy:[…10 del reto diario], liga:[…20 de esa liga] }
+//                               dia, hoy:[…10 del reto diario], ayer:{ganador del reto de ayer}, liga:[…20 de esa liga] }
 //   POST /partida  { modo: "normal" | "diario" } → { runId, dia }   (al empezar cada partida)
 //   POST /score    { runId, name, score, level, liga? } → { …/top, puesto, puestoSemana, puestoHoy, codigo }
 //   GET  /export   → todas las marcas guardadas (para las copias de seguridad; sin códigos de premio)
@@ -108,6 +108,7 @@ export class Ranking extends DurableObject {
       semana: this.entre(ini, Infinity, TAM_SEMANA),
       campeon: this.entre(ini - 7 * DIA, ini, 1)[0] || null,
       hoy: this.hoy(),
+      ayer: this.hoy(diaDe(Date.now() - DIA))[0] || null,   // ganador del reto diario de ayer
     };
     if (ligaOk(liga)) d.liga = this.liga(liga);
     return d;

@@ -169,6 +169,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 @keyframes pulso{50%{background:var(--oro);color:#111}}
 @media (prefers-reduced-motion:reduce){.btn-diario.pulso{animation:none;background:var(--oro);color:#111}}
 .diario-info{font-size:9px;line-height:1.7;color:var(--gris);margin:-4px 0 4px;text-align:center}
+.diario-lider{color:var(--oro)}
 .campeon small{display:block;margin-top:6px;color:var(--gris);font-size:8px}
 .campeon .btn{width:100%;font-size:9px;line-height:1.6}
 .consejo{font-size:9px;line-height:1.8;border-left:4px solid var(--oro);padding:6px 0 6px 10px;margin:0 0 12px;color:var(--tiza)}
@@ -242,6 +243,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <button type="button" class="btn btn-rojo btn-grande" id="btnJugar" data-t="jugar">JUGAR</button>
       <button type="button" class="btn btn-diario" id="btnDiario" data-t="diario">RETO DEL DIA</button>
       <p class="diario-info" id="diarioInfo"></p>
+      <p class="diario-info diario-lider" id="diarioLider" hidden></p>
       <p class="nuevo" id="mejor" hidden></p>
       <div class="fila">
         <button type="button" class="btn" data-abrir="pTop">TOP 50</button>
@@ -448,6 +450,7 @@ const TXT = {
     tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
     partidas:n => `${n.toLocaleString('es-ES')} partidas jugadas`, sinConexion:'Sin conexión: contando solo en este dispositivo',
 
+    diarioLider:(n, p) => `👑 Hoy manda ${n} con ${p} puntos. ¿Le quitas el trono?`, diarioAyer:(n, p) => `Ayer ganó ${n} con ${p}.`,
     diario:'🗓️ RETO DEL DÍA', diarioInfo:(c, d) => `Hoy: ${c}. ${d} Mismos dinos para todos y un solo intento que cuenta.`,
     diarioHecho:p => `Reto de hoy hecho: ${p} puntos. Puedes entrenar, pero ya no puntúa. ¡Mañana, otro!`,
     diarioModo:c => `🗓️ RETO DEL DÍA · ${c}`, diarioPractica:'🏋️ Entrenamiento: esta partida no puntúa. El reto de mañana te espera.',
@@ -524,6 +527,7 @@ const TXT = {
     tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',
     partidas:n => `${n.toLocaleString('en-US')} games played`, sinConexion:'Offline: counting on this device only',
 
+    diarioLider:(n, p) => `👑 Today's leader: ${n} with ${p} points. Can you take the crown?`, diarioAyer:(n, p) => `Yesterday's winner: ${n} with ${p}.`,
     diario:'🗓️ DAILY CHALLENGE', diarioInfo:(c, d) => `Today: ${c}. ${d} Same dinos for everyone and only one attempt counts.`,
     diarioHecho:p => `Today's challenge done: ${p} points. You can practise, but it won't count. New one tomorrow!`,
     diarioModo:c => `🗓️ DAILY CHALLENGE · ${c}`, diarioPractica:"🏋️ Practice: this game doesn't count. Tomorrow's challenge is waiting.",
@@ -859,7 +863,7 @@ const API = {
   local(){ return { plays:store.plays, debt:+(store.plays * DEBT_PER_GAME).toFixed(2), top:store.top }; },
   // Partidas y deuda salen de la API de siempre; el ranking, de la nueva (Top 50).
   // Lo que viene del ranking: de siempre, semana, campeón, reto de hoy y la liga del jugador.
-  rank(r){ return { top:r.top, semana:r.semana || [], campeon:r.campeon || null, hoy:r.hoy || [], dia:r.dia, liga:r.liga || [] }; },
+  rank(r){ return { top:r.top, semana:r.semana || [], campeon:r.campeon || null, hoy:r.hoy || [], ayer:r.ayer || null, dia:r.dia, liga:r.liga || [] }; },
   async state(){
     const q = ligaOk(store.liga) ? '?liga=' + store.liga : '';
     const [d, r] = await Promise.allSettled([this.req('/state'), this.req('/top' + q, {}, API_RANK)]);
@@ -875,7 +879,7 @@ const API = {
     this.runId = this.online ? r.value.runId : null;
     const base = d.status === 'fulfilled' ? d.value : this.local();
     const L = lastState || {};
-    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null, hoy: L.hoy || [], dia: L.dia, liga: L.liga || [] });
+    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null, hoy: L.hoy || [], ayer: L.ayer || null, dia: L.dia, liga: L.liga || [] });
   },
   async score(name, score, level){
     if (this.online && this.runId){
@@ -1922,6 +1926,7 @@ function renderDebt(d){
   $('#finDeuda').textContent = money(debt);
   renderTop3(d.top);
   renderCampeon(d);
+  renderDiario();
 }
 function renderCampeon(d){
   const el = $('#campeon'), c = d && d.campeon;
@@ -1941,6 +1946,11 @@ function renderCampeon(d){
 function renderDiario(){
   const d = estadoDiario(), c = condDe(d.dia);
   $('#diarioInfo').textContent = d.jugado ? T('diarioHecho')(NUM(d.mejor || 0)) : T('diarioInfo')(T('conds')[c], T('condsDesc')[c]);
+  // Quién manda hoy en el reto (y quién ganó ayer): su gloria, aparte del ranking general.
+  const L = lastState || {}, lider = API.online && L.hoy && L.hoy[0], ayer = API.online && L.ayer;
+  const dl = $('#diarioLider');
+  dl.hidden = !lider && !ayer;
+  if (!dl.hidden) dl.textContent = [lider ? T('diarioLider')(lider.name, NUM(lider.score)) : '', ayer ? T('diarioAyer')(ayer.name, NUM(ayer.score)) : ''].filter(Boolean).join(' ');
   const a = $('#ligaAviso');
   a.hidden = !ligaNueva; if (ligaNueva) a.textContent = T('ligaUnido')(ligaNueva);
 }
