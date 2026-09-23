@@ -3,13 +3,19 @@
 // Cada mañana manda un resumen "todo OK" (o lo que falle).
 //
 // Necesita un SECRETO llamado TELEGRAM_TOKEN (el token del bot de Telegram).
-// Opcional:
-//   - SECRETO PRUEBA_CLAVE: sin él, ?prueba=... no manda nada a Telegram.
-//   - Espacio KV enlazado como ESTADO: avisa solo cuando algo se cae o vuelve,
-//     en vez de repetir la alarma cada 30 minutos.
+// Opcional: SECRETO PRUEBA_CLAVE (sin él, ?prueba=... no manda nada a Telegram).
+// Recuerda qué estaba caído en un Durable Object (MEMORIA, se crea solo al publicar):
+// así avisa una vez cuando algo se cae y otra cuando vuelve, sin repetir la alarma cada 30 minutos.
 // Desencadenadores Cron:  */30 * * * *   y   0 7 * * *   (hora UTC: 9:00 en verano, 8:00 en invierno)
 
+import { DurableObject } from "cloudflare:workers";
+
 const CHAT_ID = "288460670";
+
+export class Memoria extends DurableObject {
+  async leer(clave) { return (await this.ctx.storage.get(clave)) ?? null; }
+  async guardar(clave, valor) { await this.ctx.storage.put(clave, valor); }
+}
 
 const COMPROBACIONES = [
   { nombre: "ArnoldWork",        url: "https://arnoldwork.com/",              texto: "ArnoldWork" },
@@ -73,14 +79,18 @@ async function enviarTelegram(env, texto) {
   if (!res.ok) throw new Error(`Telegram respondió ${res.status}: ${await res.text()}`);
 }
 
-// Con el KV ESTADO, recuerda qué estaba caído en la última revisión.
+// Recuerda qué estaba caído en la última revisión.
+const memoria = env => env.MEMORIA ? env.MEMORIA.get(env.MEMORIA.idFromName("vigilante")) : null;
+
 async function leerCaidos(env) {
-  if (!env.ESTADO) return null;
-  return JSON.parse((await env.ESTADO.get("caidos")) || "[]");
+  const m = memoria(env);
+  if (!m) return null;
+  return (await m.leer("caidos")) || [];
 }
 
 async function guardarCaidos(env, nombres) {
-  if (env.ESTADO) await env.ESTADO.put("caidos", JSON.stringify(nombres));
+  const m = memoria(env);
+  if (m) await m.guardar("caidos", nombres);
 }
 
 export default {
@@ -100,7 +110,7 @@ export default {
 
     const antes = await leerCaidos(env);
     if (antes === null) {
-      // Sin KV: avisa en cada revisión mientras algo falle.
+      // Sin memoria: avisa en cada revisión mientras algo falle.
       if (fallos.length) await enviarTelegram(env, informe(fallos, "🚨 ¡Algo se ha caído en ArnoldWork!"));
       return;
     }
