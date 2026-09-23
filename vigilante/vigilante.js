@@ -40,6 +40,8 @@ const PRODUCTOS_KOFI = {
   "8850046986": "Ficha: Estar en forma para la vida",
   "833e551486": "Pack completo: libro + las tres fichas",
 };
+// Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
+const KOFI_PRUEBA = "00000000-1111-2222-3333-444444444444";
 const MOTIVO_NEGOCIO = "Web o automatización para mi negocio";
 
 const COMPROBACIONES = [
@@ -63,6 +65,8 @@ export class Memoria extends DurableObject {
     this.sql.exec(`CREATE TABLE IF NOT EXISTS contactos (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, motivo TEXT, mensaje TEXT, contacto TEXT, origen TEXT, ip TEXT)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS ventas (id TEXT PRIMARY KEY, fecha INTEGER, tipo TEXT, nombre TEXT, importe REAL, moneda TEXT, detalle TEXT)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS incidencias (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, detalle TEXT)`);
+    // Las pruebas de Ko-fi no son ventas: fuera si alguna se guardó.
+    this.sql.exec(`DELETE FROM ventas WHERE id = ? OR nombre = 'Jo Example'`, KOFI_PRUEBA);
   }
 
   async leer(clave) { return (await this.ctx.storage.get(clave)) ?? null; }
@@ -91,6 +95,8 @@ export class Memoria extends DurableObject {
       v.id, Date.now(), v.tipo, v.nombre, v.importe, v.moneda, v.detalle);
     return true;
   }
+
+  olvidarVenta(id) { this.sql.exec(`DELETE FROM ventas WHERE id = ?`, id); }
 
   ventasDesde(desde) {
     return this.sql.exec(`SELECT fecha, tipo, nombre, importe, moneda, detalle FROM ventas WHERE fecha >= ? ORDER BY fecha`, desde).toArray();
@@ -339,11 +345,20 @@ async function kofi(req, env) {
     texto = `🥤 ¡${nombre} te ha invitado a un batido!\n\n${dinero(importe, moneda)}${detalle ? `\n«${detalle}»` : ""}`;
   }
 
-  const nueva = m ? await m.guardarVenta({ id: String(d.kofi_transaction_id || d.message_id || crypto.randomUUID()), tipo, nombre, importe, moneda, detalle }) : true;
+  // Las pruebas se avisan siempre y no cuentan como venta.
+  const prueba = d.kofi_transaction_id === KOFI_PRUEBA || (d.from_name === "Jo Example" && /example\.com$/.test(d.email || ""));
+  if (prueba) texto = "🧪 Prueba de Ko-fi (no es una venta real)\n\n" + texto;
+  const id = String(d.kofi_transaction_id || d.message_id || crypto.randomUUID());
+  const nueva = prueba || !m ? true : await m.guardarVenta({ id, tipo, nombre, importe, moneda, detalle });
   if (!nueva) { await anota("aviso repetido de Ko-fi (ya se había enviado)"); return new Response("OK"); }
   try { await enviarTelegram(env, texto); }
-  catch (e) { await anota("Ko-fi bien, pero Telegram falló: " + e.message.replace(/bot[^/]+\//g, "")); return new Response("OK"); }
-  await anota(`✅ recibido (${d.type}) y enviado a Telegram`);
+  catch (e) {
+    // Si Telegram falla, la venta no se da por avisada: Ko-fi la reintentará.
+    if (m && !prueba) await m.olvidarVenta(id);
+    await anota("Ko-fi bien, pero Telegram falló: " + e.message.replace(/bot[^/]+\//g, ""));
+    return new Response("Telegram falló", { status: 502 });
+  }
+  await anota(`✅ ${prueba ? "prueba" : "aviso"} recibido (${d.type}) y enviado a Telegram`);
   return new Response("OK");
 }
 
