@@ -1386,7 +1386,20 @@ function pintarInstalar(){
   c.hidden = false;
   c.replaceChildren(h('p', {text:'📲 Instala HeavyWork en tu móvil: funciona aunque en el gimnasio no haya cobertura.'}),
     avisoInstalar ? h('button', {type:'button', class:'btn btn-peligro', text:'Instalar la app', onclick:async () => { avisoInstalar.prompt(); await avisoInstalar.userChoice.catch(() => {}); avisoInstalar = null; pintarInstalar(); }})
-    : h('span', {class:'suave', text: esIOS ? 'En Safari: pulsa Compartir y después «Añadir a pantalla de inicio».' : 'En Chrome: menú ⋮ y después «Instalar aplicación».'}));
+    : h('span', {class:'suave', text: pasosInstalar()}));
+}
+// Los pasos cambian según el móvil y el navegador.
+function pasosInstalar(){
+  const ua = navigator.userAgent;
+  if (esIOS){
+    if (/CriOS/.test(ua)) return 'En Chrome: pulsa el botón Compartir (junto a la barra de direcciones) y después «Añadir a pantalla de inicio».';
+    if (/FxiOS/.test(ua)) return 'En Firefox: menú ☰, «Compartir» y después «Añadir a pantalla de inicio».';
+    if (/EdgiOS/.test(ua)) return 'En Edge: menú ⋯, «Compartir» y después «Añadir a pantalla de inicio».';
+    return 'En Safari o Chrome: pulsa el botón Compartir y después «Añadir a pantalla de inicio».';
+  }
+  if (/SamsungBrowser/.test(ua)) return 'En Samsung Internet: menú ☰, «Añadir página a» y después «Pantalla de inicio».';
+  if (/Firefox/.test(ua)) return 'En Firefox: menú ⋮ y después «Instalar» o «Añadir a pantalla de inicio».';
+  return 'En Chrome: menú ⋮ y después «Instalar aplicación» o «Añadir a pantalla de inicio».';
 }
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); avisoInstalar = e; pintarInstalar(); });
 addEventListener('appinstalled', () => { avisoInstalar = null; $('#instalar').hidden = true; });
