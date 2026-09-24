@@ -94,7 +94,7 @@ p{margin:0 0 1em;max-width:60ch}
 .logo b{font-weight:400;color:var(--peligro)}
 .firma-casa{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-stretch:85%;margin-top:6px}
 .firma-casa svg{width:22px;height:22px}
-.fuente{font-size:.95rem;color:var(--grafito);border-left:4px solid var(--peligro);padding-left:12px;margin-top:18px}
+.fuente{font-size:.95rem;color:var(--tinta);font-weight:500;border-left:4px solid var(--peligro);padding-left:12px;margin-top:18px}
 .cab nav{display:flex;gap:18px;font-weight:700;font-stretch:85%}
 .cab nav a{text-decoration:none;min-height:44px;display:flex;align-items:center}
 .cab nav a:hover{text-decoration:underline;text-decoration-thickness:3px}
@@ -166,6 +166,9 @@ p{margin:0 0 1em;max-width:60ch}
 .sec{padding:64px 0;border-top:3px solid var(--tinta)}
 .sec-cab{margin-bottom:26px}
 .sec-cab p{margin-top:12px;font-size:1.1rem}
+/* Texto directamente sobre el ladrillo: negro tinta con un halo del color de la pared para que se lea bien */
+.heroe p,.heroe .sub,.firma-casa,.sec-cab p,.sec-cab h2,.fuente,.pie-web p,#metodo > .env > h3,.suave-pared{text-shadow:0 0 2px rgba(214,206,190,.95),0 0 8px rgba(214,206,190,.85)}
+.heroe .suave,.sec-cab .suave{color:var(--tinta)}
 
 /* Rotación */
 .rotacion{display:grid;gap:18px}
@@ -202,7 +205,7 @@ p{margin:0 0 1em;max-width:60ch}
 .hoja td:last-child{text-align:right;font-weight:800}
 .sube{color:var(--bien)}
 .baja{color:var(--peligro-osc)}
-.vacio{border:3px dashed var(--grafito);padding:24px;text-align:center;color:var(--grafito)}
+.vacio{border:3px dashed var(--grafito);padding:24px;text-align:center;color:var(--tinta);background:var(--papel)}
 .ajustes{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;margin-top:26px;padding:18px;border:3px solid var(--tinta);background:var(--papel)}
 .ajustes label{font-weight:700;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .ajustes input[type=range]{width:180px;accent-color:var(--peligro)}
@@ -266,7 +269,7 @@ p{margin:0 0 1em;max-width:60ch}
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");-webkit-mask-size:240px;mask-size:240px}
 .lema.rojo span{color:rgba(190,40,40,.55)}
 .lema + .sec{border-top:0}
-.pie-web{border-top:3px solid var(--tinta);padding:28px 0 48px;font-size:.9rem;color:var(--grafito)}
+.pie-web{border-top:3px solid var(--tinta);padding:28px 0 48px;font-size:.95rem;font-weight:500;color:var(--tinta)}
 
 /* Modo serie */
 .modo{position:fixed;inset:0;z-index:50;background:var(--tinta);color:var(--papel);display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom))}
