@@ -3,7 +3,7 @@
 - `web/` — arnoldwork.com (Worker `arnoldwork-v11`, `wrangler.jsonc`).
   Las páginas de herramientas se generan con `python3 build.py` a partir de `src/`.
 - `heavywork/web/` — heavywork.arnoldwork.com (Worker `heavywork`, `heavywork/wrangler.jsonc`), con el juego CaveWork en `/game/`.
-- `cavework/` — Worker `cavework-ranking`: ranking mundial de CaveWork (Top 50 y campeón de la semana).
+- `cavework/` — Worker `cavework-ranking`: ranking mundial de CaveWork (Top 50, campeón de la semana, reto diario, ligas y temporadas mensuales).
 - `vigilante/` — Worker `vigilante`, los automatismos:
   - cada 30 min revisa webs y APIs (caídas y lentitud) y avisa por Telegram, también de un nuevo nº 1 en CaveWork;
   - cada mañana, resumen diario y aviso si el dominio va a caducar;

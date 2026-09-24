@@ -181,6 +181,15 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 .nota-top{font-size:8px;line-height:1.7;color:var(--gris);margin:0 0 12px}
 .pestanas .btn{min-height:40px;font-size:9px;box-shadow:none}
 .pestanas .btn[aria-pressed="true"]{background:var(--oro);border-color:var(--oro);color:#111}
+.pestanas .btn:last-child:nth-child(odd){grid-column:span 2}
+.pjs{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:56vh;overflow-y:auto;margin:0 0 12px;padding:2px}
+.pj{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 6px;background:#000;border:3px solid var(--borde);color:var(--tiza);font:inherit;font-size:8px;line-height:1.6;text-align:center;cursor:pointer}
+.pj canvas{width:96px;height:72px;image-rendering:pixelated}
+.pj b{font-weight:400;font-size:9px}
+.pj span{color:var(--gris)}
+.pj[aria-pressed="true"]{border-color:var(--oro)}
+.pj[aria-pressed="true"] b{color:var(--oro)}
+.pj:disabled{cursor:default;opacity:.8}
 #hudReto{color:#fff;font-size:.8em}
 #hudReto.ok{color:var(--verde)}
 .fin-reto{border:3px dashed var(--oro);padding:8px;font-size:10px;line-height:1.7;margin:0 0 12px;color:var(--tiza)}
@@ -249,6 +258,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
         <button type="button" class="btn" data-abrir="pTop">TOP 50</button>
         <button type="button" class="btn" data-abrir="pLogros" data-t="logros">LOGROS</button>
       </div>
+      <button type="button" class="btn" data-abrir="pPersonaje" id="btnPersonaje" data-t="personajes">PERSONAJES</button>
       <div class="fila">
         <button type="button" class="btn" id="btnMusica" aria-pressed="true">MUSICA SI</button>
         <button type="button" class="btn" id="btnSfx" aria-pressed="true">EFECTOS SI</button>
@@ -331,6 +341,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <button type="button" class="btn" id="tabSemana" aria-pressed="false" data-t="tabSemana">ESTA SEMANA</button>
       <button type="button" class="btn" id="tabHoy" aria-pressed="false" data-t="tabHoy">HOY</button>
       <button type="button" class="btn" id="tabLiga" aria-pressed="false" data-t="tabLiga">MI LIGA</button>
+      <button type="button" class="btn" id="tabMes" aria-pressed="false" data-t="tabMes">TEMPORADA</button>
     </div>
     <p class="suave" id="topModo"></p>
     <div class="tabla-scroll" id="topScroll">
@@ -352,6 +363,16 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <p class="suave" id="logrosCuenta"></p>
     <div class="barra-logros"><i id="logrosBarra"></i></div>
     <ul class="logros" id="logrosLista"></ul>
+    <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
+  </div>
+</section>
+
+<!-- Personajes -->
+<section class="panel" id="pPersonaje" hidden aria-labelledby="tPersonaje">
+  <div class="caja">
+    <h2 id="tPersonaje" data-t="personajes">PERSONAJES</h2>
+    <p class="suave" id="pjCuenta"></p>
+    <div class="pjs" id="pjLista"></div>
     <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
   </div>
 </section>
@@ -437,7 +458,7 @@ const TXT = {
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
     ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
     ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
-    ayuda3:'<b>NUEVO.</b> Reto del día (mismos dinos para todos, un intento), ligas con tus amigos y un jefe nuevo: después del T-Rex llega el MAMUT. El campeón de cada semana gana premio.',
+    ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y temporadas mensuales: el podio de cada mes se queda con medalla para siempre. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex. El campeón de cada semana gana premio.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
     finTit:'¡AL FALLO!', nuevoTop:'¡ENTRAS EN EL RANKING! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
@@ -456,6 +477,9 @@ const TXT = {
     diarioModo:c => `🗓️ RETO DEL DÍA · ${c}`, diarioPractica:'🏋️ Entrenamiento: esta partida no puntúa. El reto de mañana te espera.',
     puestoHoy:n => `🗓️ ¡Puesto ${n} en el reto de hoy! Guarda tus iniciales.`,
     tabHoy:'HOY', tabLiga:'MI LIGA', rankHoy:c => `Reto del día · ${c}`, sinHoy:'Nadie ha jugado aún el reto de hoy. ¡Estrénalo!',
+    tabMes:'TEMPORADA', rankMes:m => `Temporada de ${m} · se reinicia el día 1`, sinMes:'Este mes aún no hay marcas. ¡Estrena la temporada!',
+    podio:m => `🏅 Podio de ${m}: `, personajes:'PERSONAJES', pjCuenta:(a, b) => `${a} de ${b} desbloqueados · son solo de aspecto, todos juegan igual`,
+    pjBloq:'BLOQUEADO', pjElegido:'EN USO', pjNuevo:n => `🎭 ¡Personaje nuevo: ${n}!`,
     rankLiga:l => `Liga ${l} · solo tus amigos`, sinLiga:'Todavía no hay marcas en tu liga. ¡Pon la primera!',
     ligaNo:'Crea una liga y compite solo con tus amigos: comparte el enlace y todos vuestros récords saldrán aquí.',
     ligaCrear:'CREAR MI LIGA', ligaInvitar:'INVITAR POR WHATSAPP', ligaSalir:'SALIR DE LA LIGA', ligaCodigoTit:'Código de tu liga',
@@ -514,7 +538,7 @@ const TXT = {
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
     ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
     ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
-    ayuda3:'<b>NEW.</b> Daily challenge (same dinos for everyone, one attempt), leagues with your friends and a new boss: after the T-Rex comes the MAMMOTH. Each week\'s champion wins a prize.',
+    ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and monthly seasons: each month\'s podium keeps its medal forever. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex. Each week\'s champion wins a prize.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
     finTit:'FAILURE!', nuevoTop:'YOU MADE THE RANKING! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
@@ -533,6 +557,9 @@ const TXT = {
     diarioModo:c => `🗓️ DAILY CHALLENGE · ${c}`, diarioPractica:"🏋️ Practice: this game doesn't count. Tomorrow's challenge is waiting.",
     puestoHoy:n => `🗓️ Number ${n} in today's challenge! Save your initials.`,
     tabHoy:'TODAY', tabLiga:'MY LEAGUE', rankHoy:c => `Daily challenge · ${c}`, sinHoy:'Nobody has played today\'s challenge yet. Be the first!',
+    tabMes:'SEASON', rankMes:m => `${m} season · resets on the 1st`, sinMes:'No scores this month yet. Kick off the season!',
+    podio:m => `🏅 ${m} podium: `, personajes:'CHARACTERS', pjCuenta:(a, b) => `${a} of ${b} unlocked · looks only, everyone plays the same`,
+    pjBloq:'LOCKED', pjElegido:'IN USE', pjNuevo:n => `🎭 New character: ${n}!`,
     rankLiga:l => `League ${l} · just your friends`, sinLiga:'No scores in your league yet. Set the first one!',
     ligaNo:'Create a league and compete only with your friends: share the link and all your records will show up here.',
     ligaCrear:'CREATE MY LEAGUE', ligaInvitar:'INVITE ON WHATSAPP', ligaSalir:'LEAVE THE LEAGUE', ligaCodigoTit:'Your league code',
@@ -863,7 +890,7 @@ const API = {
   local(){ return { plays:store.plays, debt:+(store.plays * DEBT_PER_GAME).toFixed(2), top:store.top }; },
   // Partidas y deuda salen de la API de siempre; el ranking, de la nueva (Top 50).
   // Lo que viene del ranking: de siempre, semana, campeón, reto de hoy y la liga del jugador.
-  rank(r){ return { top:r.top, semana:r.semana || [], campeon:r.campeon || null, hoy:r.hoy || [], ayer:r.ayer || null, dia:r.dia, liga:r.liga || [] }; },
+  rank(r){ revisarPodio(r); return { top:r.top, semana:r.semana || [], campeon:r.campeon || null, hoy:r.hoy || [], ayer:r.ayer || null, dia:r.dia, liga:r.liga || [], mes:r.mes, temporada:r.temporada || [], podio:r.podio || null }; },
   async state(){
     const q = ligaOk(store.liga) ? '?liga=' + store.liga : '';
     const [d, r] = await Promise.allSettled([this.req('/state'), this.req('/top' + q, {}, API_RANK)]);
@@ -879,7 +906,7 @@ const API = {
     this.runId = this.online ? r.value.runId : null;
     const base = d.status === 'fulfilled' ? d.value : this.local();
     const L = lastState || {};
-    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null, hoy: L.hoy || [], ayer: L.ayer || null, dia: L.dia, liga: L.liga || [] });
+    return Object.assign({}, base, { top: L.top || base.top || [], semana: L.semana || [], campeon: L.campeon || null, hoy: L.hoy || [], ayer: L.ayer || null, dia: L.dia, liga: L.liga || [], mes: L.mes, temporada: L.temporada || [], podio: L.podio || null });
   },
   async score(name, score, level){
     if (this.online && this.runId){
@@ -1084,7 +1111,64 @@ function R(x, y, w, h, c){ ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.r
 
 const SKIN = '#e0a070', SKIN2 = '#b8744a', HAIR = '#2b1a10', FUR = '#c46a28', FUR2 = '#8a4618', STONE = '#9a938a', STONE2 = '#625c55', RED = '#DE3A3A';
 
+/* ================= PERSONAJES (solo aspecto: todos juegan igual) ================= */
+// [id, nombre es, nombre en, cómo se consigue es, en, colores [piel, piel2, pelo, piel de animal, piel2, cinta], corona]
+const PJS = [
+  ['grok',    'GROK',            'GROK',          'El de siempre.',                         'The original.',                        ['#e0a070','#b8744a','#2b1a10','#c46a28','#8a4618','#DE3A3A']],
+  ['makina',  'MAKINERO',        'RAVER',         'Logro «¡Pon makina!».',                  '"Makina time!" achievement.',          ['#e0a070','#b8744a','#ff3cac','#3ce0ff','#1a8aa8','#ff3cac']],
+  ['heavy',   'HEAVY DUTY',      'HEAVY DUTY',    'Logro «Club de los 100».',               '"The 100 club" achievement.',          ['#c98a5a','#9a6038','#111111','#2a2a2a','#555555','#DE3A3A']],
+  ['rex',     'REY LAGARTO',     'LIZARD KING',   'Derrota 3 T-Rex.',                       'Beat 3 T-Rex.',                        ['#8fbf5a','#5e8a36','#2f4a1c','#c49a2a','#8a6a18','#ffd23c']],
+  ['yeti',    'YETI',            'YETI',          'Derrota a un mamut.',                    'Beat a mammoth.',                      ['#f0d8c8','#c8a898','#e8f4ff','#dfe9f2','#9fb6c9','#4fb3ff']],
+  ['diario',  'MADRUGADOR',      'EARLY BIRD',    'Juega 7 retos del día.',                 'Play 7 daily challenges.',             ['#e0a070','#b8744a','#6b3a16','#3a8a4a','#1f5a2c','#ff9a1f']],
+  ['leyenda', 'LEYENDA',         'LEGEND',        'Haz 50.000 puntos en una partida.',      'Score 50,000 in one game.',            ['#e8b070','#c08850','#ffd23c','#ffd23c','#b8901a','#ffffff']],
+  ['podio',   'CAMPEÓN DE TEMPORADA', 'SEASON CHAMP', 'Acaba un mes en el podio mundial.',  'Finish a month on the world podium.',  ['#e0a070','#b8744a','#2b1a10','#7a2cff','#4a1a9a','#ffd23c'], true]
+];
+function pjAbierto(id){
+  const a = store.ach || {};
+  return id === 'grok' || (id === 'makina' && a.makina) || (id === 'heavy' && a.kg100) || (id === 'rex' && a.trex3) || (id === 'yeti' && a.mamut)
+    || (id === 'diario' && (store.nDiarios || 0) >= 7) || (id === 'leyenda' && a.p50k) || (id === 'podio' && store.podioGanado);
+}
+const pjActual = () => PJS.find(p => p[0] === store.pj && pjAbierto(p[0])) || PJS[0];
+const pjNombre = p => lang === 'es' ? p[1] : p[2];
+// Personajes recién desbloqueados que el jugador aún no ha visto (se anuncian al acabar la partida).
+function pjNuevos(){
+  if (!Array.isArray(store.pjVistos)) store.pjVistos = ['grok'];
+  const n = PJS.filter(p => pjAbierto(p[0]) && !store.pjVistos.includes(p[0]));
+  if (n.length){ store.pjVistos = store.pjVistos.concat(n.map(p => p[0])); saveStore(); }
+  return n;
+}
+// Si una marca hecha en este dispositivo acabó en el podio del mes pasado, se desbloquea el campeón de temporada.
+function revisarPodio(d){
+  const top = d && d.podio && d.podio.top;
+  if (store.podioGanado || !top || !top.length) return;
+  if ((store.misMarcas || []).some(m => top.some(t => t.name === m.name && t.score === m.score))){ store.podioGanado = true; saveStore(); }
+}
+function renderPersonajes(){
+  const cont = $('#pjLista'); cont.innerHTML = '';
+  const actual = pjActual()[0]; let n = 0;
+  PJS.forEach(p => {
+    const si = pjAbierto(p[0]); if (si) n++;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pj'; b.disabled = !si;
+    b.setAttribute('aria-pressed', String(p[0] === actual));
+    const c = document.createElement('canvas'); c.width = 48; c.height = 36;
+    const cx = c.getContext('2d'); cx.imageSmoothingEnabled = false;
+    const antes = ctx; ctx = cx;
+    drawCaveman(18, 35, {run:0, air:false, swing:0.15, level:3, hurt:0, belt:false, pre:false, baile:0, pj:p});
+    ctx = antes;
+    if (!si){ cx.globalCompositeOperation = 'source-atop'; cx.fillStyle = '#3d332d'; cx.fillRect(0, 0, 48, 36); }
+    const t = document.createElement('b'); t.textContent = si ? pjNombre(p) : '? ? ?';
+    const d = document.createElement('span'); d.textContent = p[0] === actual ? T('pjElegido') : lang === 'es' ? p[3] : p[4];
+    b.append(c, t, d);
+    b.addEventListener('click', () => { SFX.play('ui'); store.pj = p[0]; saveStore(); renderPersonajes(); });
+    cont.append(b);
+  });
+  $('#pjCuenta').textContent = T('pjCuenta')(n, PJS.length);
+}
+
 function drawCaveman(x, y, o){
+  // Colores del personaje elegido (tapan a los de siempre solo dentro de esta función).
+  const pj = o.pj || pjActual();
+  const [SKIN, SKIN2, HAIR, FUR, FUR2, RED] = pj[5];
   if (o.hurt && Math.floor(o.hurt * 12) % 2 === 0) return;
   const f = o.air ? -1 : Math.floor(o.run / 7) % 4;
   const bob = (!o.air && (f === 1 || f === 3)) ? -1 : 0;
@@ -1119,6 +1203,7 @@ function drawCaveman(x, y, o){
   R(x - 3, Y - 30, 7, 7, SKIN);
   R(x - 4, Y - 33, 8, 3, HAIR); R(x - 5, Y - 31, 3, 6, HAIR); R(x - 3, Y - 34, 5, 1, HAIR);
   R(x - 4, Y - 30, 8, 1, o.pre ? '#ff3cac' : RED);
+  if (pj[6]){ R(x - 4, Y - 36, 8, 2, '#ffd23c'); R(x - 4, Y - 38, 2, 2, '#ffd23c'); R(x - 1, Y - 39, 2, 3, '#ffd23c'); R(x + 2, Y - 38, 2, 2, '#ffd23c'); R(x - 1, Y - 36, 2, 1, '#DE3A3A'); }
   R(x - 2, Y - 25, 7, 3, HAIR); R(x - 1, Y - 22, 5, 1, HAIR);
   R(x + 2, Y - 28, 2, 1, '#fff'); R(x + 3, Y - 28, 1, 1, '#000');
   R(x + 1, Y - 29, 3, 1, HAIR);
@@ -1899,7 +1984,7 @@ function updateHud(){
 }
 
 /* ================= FLUJO ================= */
-const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pDonar','pFeedback'];
+const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pPersonaje','pDonar','pFeedback'];
 let panelStack = [];
 function show(id, push=false){
   if (push && panelStack.length === 0){
@@ -1967,7 +2052,7 @@ function jugarDiario(){
   const d = estadoDiario();
   G.modo = 'diario'; G.dia = d.dia; G.cond = condDe(d.dia); G.cuenta = !d.jugado;
   // Un solo intento que cuenta al día: se gasta al empezar (salir a mitad también cuenta).
-  if (G.cuenta){ store.diario = {dia:d.dia, jugado:true, mejor:0}; saveStore(); }
+  if (G.cuenta){ store.diario = {dia:d.dia, jugado:true, mejor:0}; store.nDiarios = (store.nDiarios || 0) + 1; saveStore(); }
   logro('diario');
   startGame();
 }
@@ -2017,7 +2102,10 @@ async function gameOver(){
   $('#finFrase').textContent = '"' + frase + '"';
   $('#finPuntos').textContent = NUM(score);
   $('#finDetalle').textContent = T('detalle')(kgDe(G.level), G.kills, G.plates, G.bosses) + T('record')(store.best);
-  $('#finLogros').hidden = !nuevosLogros; if (nuevosLogros) $('#finLogros').textContent = '🏆 ' + T('logrosNuevos')(nuevosLogros);
+  const pjN = pjNuevos(), avisos = [];
+  if (nuevosLogros) avisos.push('🏆 ' + T('logrosNuevos')(nuevosLogros));
+  pjN.forEach(p => avisos.push(T('pjNuevo')(pjNombre(p))));
+  $('#finLogros').hidden = !avisos.length; $('#finLogros').textContent = avisos.join(' · ');
   $('#errIniciales').textContent = '';
   $('#inIniciales').value = store.lastName || '';
   const L = lastState || {};
@@ -2099,11 +2187,11 @@ let vistaTop = 'siempre', lastTopArgs = [];
 function renderTop(d, hiName, hiScore){
   if (!API.online) vistaTop = 'siempre';
   const v = vistaTop, semana = v === 'semana';
-  const listas = {siempre:d && d.top, semana:d && d.semana, hoy:d && d.hoy, liga:d && d.liga};
+  const listas = {siempre:d && d.top, semana:d && d.semana, hoy:d && d.hoy, liga:d && d.liga, mes:d && d.temporada};
   const top = listas[v] || [];
-  $('#tTop').textContent = v === 'siempre' ? 'TOP ' + TOP_N : v === 'semana' ? 'TOP ' + TOP_SEMANA : v === 'hoy' ? T('tabHoy') : T('tabLiga');
+  $('#tTop').textContent = v === 'siempre' ? 'TOP ' + TOP_N : v === 'semana' ? 'TOP ' + TOP_SEMANA : v === 'hoy' ? T('tabHoy') : v === 'mes' ? T('tabMes') : T('tabLiga');
   $('.pestanas').hidden = !API.online;
-  for (const [id, k] of [['#tabSiempre', 'siempre'], ['#tabSemana', 'semana'], ['#tabHoy', 'hoy'], ['#tabLiga', 'liga']]) $(id).setAttribute('aria-pressed', String(v === k));
+  for (const [id, k] of [['#tabSiempre', 'siempre'], ['#tabSemana', 'semana'], ['#tabHoy', 'hoy'], ['#tabLiga', 'liga'], ['#tabMes', 'mes']]) $(id).setAttribute('aria-pressed', String(v === k));
   lastTopArgs = [hiName, hiScore];
   // Liga: sin liga, se explica y se ofrece crearla; con liga, código e invitación.
   const caja = $('#ligaCaja'), sinLiga = v === 'liga' && !ligaOk(store.liga);
@@ -2119,18 +2207,22 @@ function renderTop(d, hiName, hiScore){
     }
   }
   const nota = $('#notaTop');
-  nota.hidden = !(API.online && semana); if (!nota.hidden) nota.textContent = T('premioInfo');
+  // Podio del mes pasado: se enseña en la temporada, y sus marcas llevan medalla en todas las listas.
+  const podio = (d && d.podio && d.podio.top) || [], MEDALLAS = ['🥇', '🥈', '🥉'];
+  const medalla = r => { const i = podio.findIndex(t => t.name === r.name && t.score === r.score && t.date === r.date); return i < 0 ? '' : MEDALLAS[i] + ' '; };
+  nota.hidden = !(API.online && (semana || (v === 'mes' && podio.length)));
+  if (!nota.hidden) nota.textContent = semana ? T('premioInfo') : T('podio')(nombreMes(d.podio.mes)) + podio.map((t, i) => `${MEDALLAS[i]} ${t.name} ${NUM(t.score)}`).join(' · ');
   const body = $('#topCuerpo');
   body.innerHTML = '';
   if (!top || !top.length){
     const tr = document.createElement('tr'); const td = document.createElement('td');
-    td.colSpan = 4; td.textContent = {semana:T('sinSemana'), hoy:T('sinHoy'), liga:T('sinLiga')}[v] || T('sinPuntos'); td.style.textAlign = 'left';
+    td.colSpan = 4; td.textContent = {semana:T('sinSemana'), hoy:T('sinHoy'), liga:T('sinLiga'), mes:T('sinMes')}[v] || T('sinPuntos'); td.style.textAlign = 'left';
     tr.append(td); body.append(tr);
   }
   (top || []).forEach((r, i) => {
     const tr = document.createElement('tr');
     if (r.name === hiName && r.score === hiScore) tr.className = 'tuyo';
-    [String(i + 1), r.name, String(kgDe(r.level || 1)), NUM(r.score)].forEach(v => {
+    [String(i + 1), medalla(r) + r.name, String(kgDe(r.level || 1)), NUM(r.score)].forEach(v => {
       const td = document.createElement('td'); td.textContent = v; tr.append(td);
     });
     body.append(tr);
@@ -2140,7 +2232,12 @@ function renderTop(d, hiName, hiScore){
   if (tuyo) requestAnimationFrame(() => { sc.scrollTop = Math.max(0, tuyo.offsetTop - sc.clientHeight / 2); });
   $('#topModo').textContent = !API.online ? T('rankLocal') : v === 'semana' ? T('rankSemana')
     : v === 'hoy' ? T('rankHoy')(T('conds')[condDe((d && d.dia) || hoyMadrid())])
-    : v === 'liga' ? (ligaOk(store.liga) ? T('rankLiga')(store.liga) : '') : T('rankMundial');
+    : v === 'liga' ? (ligaOk(store.liga) ? T('rankLiga')(store.liga) : '') : v === 'mes' ? T('rankMes')(nombreMes(d && d.mes)) : T('rankMundial');
+}
+// "2026-09" → «septiembre» / «September».
+function nombreMes(m){
+  const [a, n] = String(m || hoyMadrid().slice(0, 7)).split('-').map(Number);
+  return new Intl.DateTimeFormat(lang === 'es' ? 'es-ES' : 'en-GB', {month:'long', timeZone:'UTC'}).format(new Date(Date.UTC(a, n - 1, 15)));
 }
 
 /* ================= COMPARTIR ================= */
@@ -2284,6 +2381,7 @@ $('#tabSiempre').addEventListener('click', () => { SFX.play('ui'); vistaTop = 's
 $('#tabSemana').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'semana'; renderTop(lastState, ...lastTopArgs); });
 $('#tabHoy').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'hoy'; renderTop(lastState, ...lastTopArgs); });
 $('#tabLiga').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'liga'; renderTop(lastState, ...lastTopArgs); });
+$('#tabMes').addEventListener('click', () => { SFX.play('ui'); vistaTop = 'mes'; renderTop(lastState, ...lastTopArgs); });
 $('#btnImagen').addEventListener('click', compartirImagen);
 $('#formIniciales').addEventListener('submit', saveInitials);
 $('#inIniciales').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); });
@@ -2291,6 +2389,7 @@ $$('[data-abrir]').forEach(b => b.addEventListener('click', async () => {
   Audio.init(); SFX.play('ui');
   const id = b.dataset.abrir;
   if (id === 'pLogros') renderLogros();
+  if (id === 'pPersonaje') renderPersonajes();
   if (id === 'pTop'){ vistaTop = 'siempre'; renderTop(lastState, store.lastName, G.finalScore); show(id, true); const d = await API.state(); renderDebt(d); renderTop(d, store.lastName, G.finalScore); return; }
   show(id, true);
 }));

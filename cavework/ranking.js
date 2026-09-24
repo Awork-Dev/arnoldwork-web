@@ -1,13 +1,15 @@
 // CaveWork · Ranking mundial
 //
 //   GET  /top[?liga=K7P2Q]  → { size, top:[…50], semana:[…10], campeon, semanaInicio,
-//                               dia, hoy:[…10 del reto diario], ayer:{ganador del reto de ayer}, liga:[…20 de esa liga] }
+//                               dia, hoy:[…10 del reto diario], ayer:{ganador del reto de ayer}, liga:[…20 de esa liga],
+//                               mes:"2026-09", temporada:[…10 de este mes], podio:{mes, top:[…3 del mes pasado]} }
 //   POST /partida  { modo: "normal" | "diario" } → { runId, dia }   (al empezar cada partida)
 //   POST /score    { runId, name, score, level, liga? } → { …/top, puesto, puestoSemana, puestoHoy, codigo }
 //   GET  /export   → todas las marcas guardadas (para las copias de seguridad; sin códigos de premio)
 //
 // - La semana empieza el lunes a las 00:00 UTC. «campeon» es el mejor de la semana anterior.
 // - El reto diario cambia a las 00:00 de Mallorca (Europe/Madrid). Tiene su propio ranking («hoy»).
+// - Temporadas: cada mes natural (hora de Mallorca) tiene su ranking; el podio del mes anterior se guarda para siempre.
 // - Ligas: un código de 5 letras que comparten unos amigos; cada marca puede llevar la liga del jugador.
 // - Cada marca guarda un «codigo» de premio que solo recibe quien la hizo: si es campeón de la semana,
 //   lo enseña para reclamar el premio. El vigilante lo lee por el entrypoint privado (Privado.campeon),
@@ -23,6 +25,7 @@ const TAM = 50;
 const TAM_SEMANA = 10;
 const TAM_HOY = 10;
 const TAM_LIGA = 20;
+const TAM_MES = 10;
 const DIA = 86400e3;
 
 // Lunes 00:00 UTC de la semana de `t`.
@@ -33,6 +36,9 @@ function inicioSemana(t = Date.now()) {
 }
 // Día del reto diario (en Mallorca): "2026-09-23".
 const diaDe = (t = Date.now()) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid" }).format(new Date(t));
+// Mes de la temporada ("2026-09") y el mes anterior.
+const mesDe = (t = Date.now()) => diaDe(t).slice(0, 7);
+function mesAnterior(m) { let [a, n] = m.split("-").map(Number); if (--n < 1) { n = 12; a--; } return `${a}-${String(n).padStart(2, "0")}`; }
 
 const API_ANTIGUA = "https://cavework-api.arnoldwork.workers.dev/state";
 const ORIGENES = [
@@ -68,6 +74,8 @@ export class Ranking extends DurableObject {
       `ALTER TABLE partidas ADD COLUMN dia TEXT`,
     ]) { try { this.sql.exec(q); } catch { /* ya existe */ } }
     this.sql.exec(`CREATE INDEX IF NOT EXISTS marcas_dia ON marcas(modo, dia, score DESC)`);
+    // Las marcas de antes de existir «dia» lo reciben ahora (aprox. hora de Mallorca) para contar en su temporada.
+    this.sql.exec(`UPDATE marcas SET dia = strftime('%Y-%m-%d', date / 1000 + 7200, 'unixepoch') WHERE dia IS NULL`);
     this.sql.exec(`CREATE INDEX IF NOT EXISTS marcas_liga ON marcas(liga, score DESC)`);
   }
 
@@ -96,6 +104,21 @@ export class Ranking extends DurableObject {
     return this.sql.exec(`SELECT ${CAMPOS} FROM marcas WHERE modo = 'diario' AND dia = ? ORDER BY score DESC, date ASC LIMIT ?`, dia, TAM_HOY).toArray();
   }
 
+  // Mejores marcas normales de un mes (por el día del reto, que ya va en hora de Mallorca).
+  mes(m, n = TAM_MES) {
+    return this.sql.exec(`SELECT ${CAMPOS} FROM marcas WHERE modo = 'normal' AND dia >= ? AND dia < ? ORDER BY score DESC, date ASC LIMIT ?`, m + "-01", m + "-99", n).toArray();
+  }
+
+  // Podio del mes anterior: se calcula una vez y se guarda, para que no se pierda al limpiar marcas viejas.
+  podio() {
+    const m = mesAnterior(mesDe()), k = "podio:" + m;
+    const g = this.sql.exec(`SELECT v FROM ajustes WHERE k = ?`, k).toArray()[0];
+    if (g) return JSON.parse(g.v);
+    const p = { mes: m, top: this.mes(m, 3) };
+    this.sql.exec(`INSERT OR REPLACE INTO ajustes (k, v) VALUES (?, ?)`, k, JSON.stringify(p));
+    return p;
+  }
+
   liga(l) {
     return ligaOk(l) ? this.sql.exec(`SELECT ${CAMPOS} FROM marcas WHERE modo = 'normal' AND liga = ? ORDER BY score DESC, date ASC LIMIT ?`, l, TAM_LIGA).toArray() : [];
   }
@@ -109,6 +132,9 @@ export class Ranking extends DurableObject {
       campeon: this.entre(ini - 7 * DIA, ini, 1)[0] || null,
       hoy: this.hoy(),
       ayer: this.hoy(diaDe(Date.now() - DIA))[0] || null,   // ganador del reto diario de ayer
+      mes: mesDe(), sizeMes: TAM_MES,
+      temporada: this.mes(mesDe()),
+      podio: this.podio(),
     };
     if (ligaOk(liga)) d.liga = this.liga(liga);
     return d;
@@ -152,14 +178,16 @@ export class Ranking extends DurableObject {
     const l = p.modo === "normal" && ligaOk(liga) ? liga : null;
     this.sql.exec(`INSERT INTO marcas (name, score, level, date, modo, dia, liga, codigo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       name, score, level, ahora, p.modo, p.dia || diaDe(ahora), l, codigo);
-    // Guarda las 500 mejores de siempre, todo lo de las dos últimas semanas y las marcas de ligas.
-    this.sql.exec(`DELETE FROM marcas WHERE date < ? AND liga IS NULL AND id NOT IN (SELECT id FROM marcas WHERE modo = 'normal' ORDER BY score DESC, date ASC LIMIT 500)`, inicioSemana() - 8 * DIA);
+    // Guarda las 500 mejores de siempre, todo lo de las dos últimas semanas y del mes anterior, y las marcas de ligas.
+    this.podio();
+    this.sql.exec(`DELETE FROM marcas WHERE date < ? AND (dia IS NULL OR dia < ?) AND liga IS NULL AND id NOT IN (SELECT id FROM marcas WHERE modo = 'normal' ORDER BY score DESC, date ASC LIMIT 500)`, inicioSemana() - 8 * DIA, mesAnterior(mesDe()) + "-01");
     const cuenta = (q, ...a) => this.sql.exec(q, ...a).one().n + 1;
     const res = { ...this.datos(l || liga), modo: p.modo, codigo };
     if (p.modo === "diario") res.puestoHoy = cuenta(`SELECT COUNT(*) AS n FROM marcas WHERE modo = 'diario' AND dia = ? AND score > ?`, p.dia, score);
     else {
       res.puesto = cuenta(`SELECT COUNT(*) AS n FROM marcas WHERE modo = 'normal' AND score > ?`, score);
       res.puestoSemana = cuenta(`SELECT COUNT(*) AS n FROM marcas WHERE modo = 'normal' AND score > ? AND date >= ?`, score, inicioSemana());
+      res.puestoMes = cuenta(`SELECT COUNT(*) AS n FROM marcas WHERE modo = 'normal' AND score > ? AND dia >= ?`, score, mesDe() + "-01");
     }
     return res;
   }
