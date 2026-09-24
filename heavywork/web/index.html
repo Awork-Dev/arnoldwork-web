@@ -33,7 +33,7 @@
   --hormigon-osc:#BDB8AE;
   --tinta:#16181B;
   --grafito:#3A3F45;
-  --acero:#5E646B;
+  --acero:#43484E;
   --papel:#F3EEE2;
   --papel-viejo:#EEE3C4;
   --peligro:#D33030;
@@ -111,7 +111,7 @@ p{margin:0 0 1em;max-width:60ch}
 .medidor{height:22px;border:3px solid var(--tinta);background:var(--hormigon);position:relative;margin:14px 0 6px}
 .medidor i{position:absolute;inset:0 auto 0 0;background:var(--grafito);width:0;transition:width .6s}
 .medidor.listo i{background:repeating-linear-gradient(-45deg,var(--peligro) 0 10px,var(--tinta) 10px 20px)}
-.medidor-pie{display:flex;justify-content:space-between;font-size:.85rem;color:var(--acero);margin-bottom:16px}
+.medidor-pie{display:flex;justify-content:space-between;font-size:.95rem;color:var(--acero);margin-bottom:16px}
 .racha{font-weight:700;font-stretch:85%;margin:-6px 0 14px}
 .descanso-ctrl{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:2px dashed var(--hormigon-osc);font-weight:700;font-stretch:85%}
 .descanso-ctrl .paso{display:flex;align-items:center;gap:8px}
@@ -121,13 +121,13 @@ p{margin:0 0 1em;max-width:60ch}
 .herramientas{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .herramientas a{display:inline-flex;align-items:center;min-height:44px;padding:.4em .9em;border:3px solid var(--tinta);background:var(--papel);font-weight:800;font-stretch:85%;text-decoration:none}
 .herramientas a:hover{background:var(--tinta);color:var(--papel)}
-.hoy{display:inline-block;margin-top:2px;font-size:.85rem;font-weight:800;color:var(--peligro-osc)}
+.hoy{display:inline-block;margin-top:2px;font-size:.95rem;font-weight:800;color:var(--peligro-osc)}
 .grafica{margin:6px 0 4px}
 .grafica svg{width:100%;height:46px;display:block}
-.grafica p{margin:0;font-size:.85rem;color:var(--acero)}
+.grafica p{margin:0;font-size:.95rem;color:var(--acero)}
 .pr{display:inline-block;background:#ffd23c;color:var(--tinta);font-weight:900;padding:.2em .6em;font-size:1.2rem;margin:0 auto}
 .calienta{border:2px solid #555b62;padding:10px 12px;max-width:36ch;margin:0 auto;text-align:left}
-.calienta b{display:block;color:#ffd23c;font-size:.85rem;letter-spacing:.04em;margin-bottom:4px}
+.calienta b{display:block;color:#ffd23c;font-size:.9rem;letter-spacing:.04em;margin-bottom:4px}
 .form-rev{display:grid;gap:10px}
 .form-rev label{display:grid;gap:4px;font-weight:700;font-size:.95rem}
 .form-rev input,.form-rev textarea{min-height:48px;padding:.5em .7em;border:3px solid var(--papel);background:transparent;color:var(--papel);font-size:1rem}
@@ -146,11 +146,11 @@ p{margin:0 0 1em;max-width:60ch}
 .tecnica.oscuro{max-width:40ch;margin:0 auto;text-align:left;border:2px solid #555b62;padding:6px 12px}
 .tecnica.oscuro summary{color:#ffd23c}
 .tecnica.oscuro a{color:#fff}
-.extras{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;max-width:360px;margin:0 auto;font-size:.9rem;color:#a9adb2}
+.extras{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;max-width:360px;margin:0 auto;font-size:.9rem;color:#c4c8cc}
 .extras span{width:100%;text-align:center}
 .extras button{min-height:44px;padding:.2em .9em;border:2px solid #555b62;background:transparent;color:var(--papel);font-weight:800;cursor:pointer}
 .extras button[aria-pressed="true"]{background:#ffd23c;border-color:#ffd23c;color:var(--tinta)}
-.extra-marca{display:block;font-size:.72rem;font-weight:800;color:var(--peligro-osc)}
+.extra-marca{display:block;font-size:.85rem;font-weight:800;color:var(--peligro-osc)}
 .avanzado{margin-top:24px;border:3px solid var(--tinta);background:var(--papel);padding:18px}
 .avanzado dl{margin:0 0 10px}
 .avanzado dt{font-weight:800;margin-top:8px}
@@ -178,11 +178,11 @@ p{margin:0 0 1em;max-width:60ch}
 .entreno-cab{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:3px solid var(--tinta)}
 .entreno-cab .letra{font-family:var(--stencil);font-size:4.2rem;line-height:.8}
 .entreno-cab h3{font-size:1.5rem}
-.entreno-cab .toca-marca{font-size:.85rem;font-weight:800;color:#fff;background:var(--peligro);padding:.1em .5em;display:inline-block;margin-top:4px}
+.entreno-cab .toca-marca{font-size:.9rem;font-weight:800;color:#fff;background:var(--peligro);padding:.1em .5em;display:inline-block;margin-top:4px}
 .entreno ol{list-style:none;margin:0;padding:6px 16px 10px;flex:1}
 .entreno li{padding:9px 0;border-bottom:1px solid var(--hormigon-osc);display:flex;justify-content:space-between;gap:10px}
 .entreno li:last-child{border-bottom:0}
-.entreno li small{display:block;color:var(--acero);font-size:.85rem}
+.entreno li small{display:block;color:var(--acero);font-size:.95rem}
 .entreno li .rng{white-space:nowrap;font-weight:700}
 .enlace-sin{border-left:4px solid var(--peligro);padding-left:8px;margin-left:-12px}
 .entreno .pie{padding:0 16px 16px}
@@ -218,7 +218,7 @@ p{margin:0 0 1em;max-width:60ch}
 .estanco a{font-weight:800}
 .modo .estanco div{background:var(--tinta);color:var(--papel);text-align:left}
 .modo .estanco a{color:var(--peligro)}
-.marca-estanco{display:inline-block;margin-left:6px;font-size:.75rem;font-weight:800;color:#fff;background:var(--peligro);padding:.05em .45em;vertical-align:middle}
+.marca-estanco{display:inline-block;margin-left:6px;font-size:.85rem;font-weight:800;color:#fff;background:var(--peligro);padding:.05em .45em;vertical-align:middle}
 .revision{margin-top:26px;background:var(--tinta);color:var(--papel);padding:22px 20px;display:grid;gap:16px}
 @media (min-width:800px){.revision{grid-template-columns:1.3fr 1fr;align-items:center}}
 .revision h3{font-size:2rem;font-weight:900;font-stretch:62%;margin-bottom:8px}
@@ -231,7 +231,7 @@ p{margin:0 0 1em;max-width:60ch}
 .casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin-bottom:20px;border:3px solid var(--tinta);max-width:460px}
 .casa svg{width:64px;height:auto;flex:none}
 .casa-txt{display:flex;flex-direction:column;gap:4px}
-.casa-pre{font-size:.8rem;color:#b9bcc0}
+.casa-pre{font-size:.9rem;color:#d6d8db}
 .casa-arnold{font-family:Montserrat,var(--texto);font-weight:500;font-size:1.9rem;letter-spacing:.32em;line-height:1}
 .casa-lema{font-family:Montserrat,var(--texto);font-size:.95rem;color:#DE3A3A;letter-spacing:.04em}
 .marca-agua{position:absolute;right:-14vw;bottom:8vh;width:min(75vw,420px);opacity:.1;pointer-events:none}
@@ -246,7 +246,7 @@ p{margin:0 0 1em;max-width:60ch}
 .cartel{grid-template-columns:1fr!important;justify-items:center;text-align:center;background:var(--papel-viejo);color:#1d1610;
   background-image:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(120,80,30,.14),transparent 70%),radial-gradient(ellipse 50% 45% at 90% 95%,rgba(120,80,30,.16),transparent 70%);
   border:3px solid #1d1610;outline:2px solid #1d1610;outline-offset:-10px;padding:30px 22px 26px}
-.cartel .cartel-pre{color:var(--peligro-osc);font-weight:900;letter-spacing:.18em;font-size:.82rem;margin:0}
+.cartel .cartel-pre{color:var(--peligro-osc);font-weight:900;letter-spacing:.18em;font-size:.9rem;margin:0}
 .cartel h2{font-family:var(--stencil);font-weight:400;font-size:clamp(2.8rem,13vw,5.4rem);line-height:.86;letter-spacing:.01em;color:#1d1610;margin:8px 0 0}
 .cartel h2 .vs{display:block;font-size:.45em;color:var(--peligro);margin:.12em 0}
 .cartel .cartel-sub{font-weight:900;font-stretch:80%;text-transform:uppercase;letter-spacing:.06em;color:#1d1610;margin:12px 0 0;font-size:1.05rem}
@@ -264,7 +264,7 @@ p{margin:0 0 1em;max-width:60ch}
 .rotacion .entreno:nth-child(even){transform:rotate(.35deg)}
 /* Lemas pintados a plantilla en la pared, medio borrados */
 .lema{text-align:center;padding:40px 16px 6px;overflow:hidden;pointer-events:none;user-select:none}
-.lema small{display:block;margin-top:10px;font-weight:900;letter-spacing:.35em;font-size:.72rem;color:rgba(40,30,20,.45);transform:rotate(-2deg)}
+.lema small{display:block;margin-top:10px;font-weight:900;letter-spacing:.35em;font-size:.8rem;color:rgba(40,30,20,.7);transform:rotate(-2deg)}
 .lema span{display:inline-block;max-width:15ch;font-family:var(--stencil);font-size:clamp(2.5rem,12vw,6.2rem);line-height:.92;letter-spacing:.04em;color:rgba(248,243,230,.62);transform:rotate(-2deg);
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");-webkit-mask-size:240px;mask-size:240px}
 .lema.rojo span{color:rgba(190,40,40,.55)}
@@ -274,7 +274,7 @@ p{margin:0 0 1em;max-width:60ch}
 /* Modo serie */
 .modo{position:fixed;inset:0;z-index:50;background:var(--tinta);color:var(--papel);display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom))}
 .modo[hidden]{display:none}
-.modo-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#a9adb2;font-weight:700;font-stretch:85%}
+.modo-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#c4c8cc;font-weight:700;font-stretch:85%}
 .modo-top button{background:none;border:2px solid #555b62;min-height:44px;padding:.2em 1em;cursor:pointer;color:var(--papel)}
 .pasos{display:flex;gap:4px;margin-top:12px}
 .pasos i{flex:1;height:6px;background:#3a3f45}
@@ -284,7 +284,7 @@ p{margin:0 0 1em;max-width:60ch}
 .modo-cuerpo .ej{font-stretch:62%;font-weight:900;font-size:clamp(2.8rem,13vw,5.5rem);line-height:.9}
 .modo-cuerpo .dato{font-size:1.2rem}
 .modo-cuerpo .dato b{color:var(--peligro)}
-.modo-cuerpo .nota{color:#a9adb2;max-width:36ch;margin:0 auto}
+.modo-cuerpo .nota{color:#c4c8cc;max-width:36ch;margin:0 auto}
 .aviso-sin{background:repeating-linear-gradient(-45deg,var(--peligro) 0 12px,var(--tinta) 12px 24px);padding:4px}
 .aviso-sin span{display:block;background:var(--tinta);padding:.5em;font-weight:800}
 .modo-acciones{display:grid;gap:10px}
@@ -299,9 +299,9 @@ p{margin:0 0 1em;max-width:60ch}
 .tempo-col i{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--peligro)}
 .tempo-info{display:flex;flex-direction:column;justify-content:center;text-align:left;gap:6px}
 .tempo-fase{font-stretch:62%;font-weight:900;font-size:3.2rem;line-height:.9}
-.tempo-seg{font-size:1.2rem;color:#a9adb2}
+.tempo-seg{font-size:1.2rem;color:#c4c8cc}
 .tempo-reps{font-family:var(--stencil);font-size:6rem;line-height:.85}
-.tempo-reps small{display:block;font-family:var(--texto);font-size:1rem;color:#a9adb2}
+.tempo-reps small{display:block;font-family:var(--texto);font-size:1rem;color:#c4c8cc}
 
 .registro{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:360px;margin:0 auto;width:100%;text-align:left}
 .registro label{font-weight:700;display:flex;flex-direction:column;gap:6px}
@@ -1083,13 +1083,13 @@ function pintarModo(){
         if (!o) return h('div', {class:'dato num', text:'Primera vez: elige un peso con el que llegues al fallo dentro del rango.'});
         return h('div', {class:'dato num'}, 'Hoy: ', h('b', {text:objTxt(o)}),
           o.sube ? ' · llegaste al tope: sube el peso' : o.lastre ? ' · añade lastre cuando puedas' : '',
-          h('br'), h('span', {class:'suave', style:'color:#a9adb2', text:`Última vez: ${kgTxt(ult.kg)} kg × ${ult.reps}`}));
+          h('br'), h('span', {class:'suave', style:'color:#c4c8cc', text:`Última vez: ${kgTxt(ult.kg)} kg × ${ult.reps}`}));
       })(),
       (() => {
         const o = objetivo(x, d.cuaderno[x.id]), cal = !vieneDeSin && o && calentamiento(o.kg);
         if (!cal) return null;
         return h('div', {class:'calienta num'}, h('b', {text:'SERIES DE APROXIMACIÓN'}), cal.map(c => `${kgTxt(c.kg)} kg × ${c.reps}`).join('  ·  '), h('br'),
-          h('span', {style:'color:#a9adb2;font-size:.9rem', text:'Sin llegar al fallo. Descansa 1–2 min antes de la serie buena.'}));
+          h('span', {style:'color:#c4c8cc;font-size:.9rem', text:'Sin llegar al fallo. Descansa 1–2 min antes de la serie buena.'}));
       })(),
       h('p', {class:'nota', text: vieneDeSin ? x.nota : objetivo(x, d.cuaderno[x.id]) ? x.nota : `${x.nota} Antes, una o dos series ligeras de aproximación.`}),
       bloqueTecnica(x.id, true)
