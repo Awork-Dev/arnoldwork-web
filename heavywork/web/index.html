@@ -46,7 +46,8 @@
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 body{margin:0;background:var(--hormigon);color:var(--tinta);font-family:var(--texto);font-size:1.0625rem;line-height:1.5;overflow-x:hidden;
-  background-image:radial-gradient(rgba(0,0,0,.045) 1px,transparent 1px);background-size:5px 5px}
+  /* Pared de ladrillo pintada de gris (con el grano de la pintura por encima) */
+  background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='48'%3E%3Crect x='2' y='2' width='44' height='20' fill='rgba(255,255,255,.07)'/%3E%3Crect x='74' y='26' width='22' height='20' fill='rgba(0,0,0,.035)'/%3E%3Crect x='26' y='26' width='44' height='20' fill='rgba(255,255,255,.04)'/%3E%3Crect x='50' y='2' width='44' height='20' fill='rgba(0,0,0,.025)'/%3E%3Cg fill='none' stroke='rgba(22,24,27,.13)' stroke-width='2'%3E%3Cpath d='M0 1H96M0 25H96'/%3E%3Cpath d='M1 1V25M49 1V25M25 25V49M73 25V49'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,255,255,.22)' stroke-width='1'%3E%3Cpath d='M2 2.5H47M50 2.5H95M26 26.5H71M74 26.5H95M0 26.5H23'/%3E%3C/g%3E%3C/svg%3E");background-size:5px 5px,96px 48px}
 a{color:inherit}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--peligro);outline-offset:3px}
