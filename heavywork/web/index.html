@@ -253,6 +253,7 @@ p{margin:0 0 1em;max-width:60ch}
 .revision .estado-msg{min-height:1.4em;font-size:1rem;font-weight:700;color:#fff}
 .revision .estado-msg.aviso{background:var(--peligro);padding:10px 12px}
 .revision .btn[data-vacio]{opacity:.75}
+.revision .plazas{margin-top:12px;display:inline-block;background:var(--peligro);color:#fff;font-weight:700;padding:6px 10px}
 .casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin-bottom:20px;border:3px solid var(--tinta);max-width:460px}
 .casa svg{width:64px;height:auto;flex:none}
 .casa-txt{display:flex;flex-direction:column;gap:4px}
@@ -455,6 +456,7 @@ p{margin:0 0 1em;max-width:60ch}
         <div>
           <h3>Que un entrenador revise tu cuaderno</h3>
           <p>Envía tus marcas y recibirás un análisis: qué ejercicios se han estancado, si necesitas más descanso y qué cambiar para seguir progresando.</p>
+          <p class="plazas" id="plazasRev">🎁 Las primeras 20 revisiones son gratis. Plazas limitadas.</p>
         </div>
         <div class="botones">
           <button type="button" class="btn btn-peligro btn-bloque" id="abrirRevision">Pedir revisión</button>
@@ -1035,9 +1037,22 @@ $('#formRevision').addEventListener('submit', async e => {
     ok = r.ok;
   } catch {}
   btn.disabled = false; btn.textContent = 'Enviar mi cuaderno';
-  if (ok){ f.hidden = true; msgRevision(`¡Recibido, ${f.nombre.value.trim()}! Te contestaremos personalmente en cuanto revisemos tu cuaderno. 💪`); }
+  if (ok){ f.hidden = true; pintarPlazas(); msgRevision(`¡Recibido, ${f.nombre.value.trim()}! Te contestaremos personalmente en cuanto revisemos tu cuaderno. 💪`); }
   else { msgRevision('No se ha podido enviar. Prueba por correo con el botón de abajo.', true); $('#pedirRevision').hidden = false; }
 });
+
+// Plazas de revisión gratis que quedan (las cuenta el vigilante).
+async function pintarPlazas(){
+  try {
+    const r = await fetch(VIGILANTE.replace(/\/contacto$/, '/revisiones'));
+    const { gratis, quedan } = await r.json();
+    if (!Number.isFinite(quedan)) return;
+    $('#plazasRev').textContent = quedan > 0
+      ? `🎁 Revisión gratis: quedan ${quedan} de ${gratis} plazas.`
+      : `Las ${gratis} revisiones gratis ya están pedidas. Envíalo igualmente y te contamos cómo seguir.`;
+  } catch {}
+}
+pintarPlazas();
 
 $$('#programas button').forEach(b => b.addEventListener('click', () => cambiarPrograma(b.dataset.p)));
 

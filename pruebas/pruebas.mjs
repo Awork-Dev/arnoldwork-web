@@ -51,6 +51,7 @@ await ctx.route(u => !u.href.startsWith(BASE), async r => {
   const json = (status, cuerpo) => r.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(cuerpo) });
   if (u.includes('arnoldwork-api') && u.endsWith('/lead')) { API.enviados.push('lead'); return json(API.lead, API.lead === 200 ? { ok: true } : { error: 'x' }); }
   if (u.includes('vigilante') && u.endsWith('/contacto')) { API.enviados.push('copia:' + r.request().postDataJSON().principalOk); return json(API.copia, API.copia === 200 ? { ok: true } : { error: 'x' }); }
+  if (u.includes('vigilante') && u.endsWith('/revisiones')) return json(200, { gratis: 20, quedan: 17 });
   if (u.includes('cavework-api')) return json(200, { plays: 10, debt: 1, debtCents: 100, runId: 'prueba', top: [] });
   if (u.includes('cavework-ranking')) {
     const top = [{ name: 'AAA', score: 5000, level: 2, date: Date.now() }];
@@ -160,6 +161,14 @@ if (QUE === 'web') {
 
 // 4) El juego arranca, se juega y termina
 if (QUE === 'heavywork') {
+  console.log('\n▶ Revisión gratis');
+  {
+    const { p } = await abrir('/');
+    await p.waitForTimeout(800);
+    const t = await p.locator('#plazasRev').innerText();
+    /quedan 17 de 20/.test(t) ? bien(`muestra las plazas que quedan («${t}»)`) : mal('/', `plazas de revisión: «${t}»`);
+    await p.close();
+  }
   console.log('\n▶ CaveWork');
   const { p, errores } = await abrir('/game/');
   await p.evaluate(() => { store.tut = true; saveStore(); });
