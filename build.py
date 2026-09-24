@@ -274,7 +274,7 @@ def generar():
 
     hoy = os.environ.get("FECHA_SITEMAP") or date.today().isoformat()
     urls = [("/", "weekly", "1.0"), ("/herramientas/", "weekly", "0.9")] + \
-           [(f"/herramientas/{s}/", "monthly", "0.8") for s in slugs]
+           [(f"/herramientas/{s}/", "monthly", "0.8") for s in slugs] + [("/trabajos/", "monthly", "0.6")]
     salida["sitemap.xml"] = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
                              "".join(f"  <url>\n    <loc>{DOMINIO}{u}</loc>\n    <lastmod>{hoy}</lastmod>\n"
