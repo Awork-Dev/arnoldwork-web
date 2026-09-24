@@ -464,7 +464,7 @@ p{margin:0 0 1em;max-width:60ch}
         <div>
           <h3>Que un entrenador revise tu cuaderno</h3>
           <p>Envía tus marcas y recibirás un análisis: qué ejercicios se han estancado, si necesitas más descanso y qué cambiar para seguir progresando.</p>
-          <p class="plazas" id="plazasRev">🎁 Las primeras 20 revisiones son gratis. Plazas limitadas.</p>
+          <p class="plazas" id="plazasRev">🎁 Revisión gratis para los primeros en pedirla.</p>
         </div>
         <div class="botones">
           <button type="button" class="btn btn-peligro btn-bloque" id="abrirRevision">Pedir revisión</button>
@@ -1078,15 +1078,15 @@ $('#formRevision').addEventListener('submit', async e => {
   else { msgRevision('No se ha podido enviar. Prueba por correo con el botón de abajo.', true); $('#pedirRevision').hidden = false; }
 });
 
-// Plazas de revisión gratis que quedan (las cuenta el vigilante).
+// Si ya no quedan revisiones gratis (las cuenta el vigilante), se dice; nunca se muestran números.
 async function pintarPlazas(){
   try {
     const r = await fetch(VIGILANTE.replace(/\/contacto$/, '/revisiones'));
-    const { gratis, quedan } = await r.json();
+    const { quedan } = await r.json();
     if (!Number.isFinite(quedan)) return;
     $('#plazasRev').textContent = quedan > 0
-      ? `🎁 Revisión gratis: quedan ${quedan} de ${gratis} plazas.`
-      : `Las ${gratis} revisiones gratis ya están pedidas. Envíalo igualmente y te contamos cómo seguir.`;
+      ? '🎁 Revisión gratis para los primeros en pedirla.'
+      : 'Las revisiones gratis ya están pedidas. Envíalo igualmente y te contamos cómo seguir.';
   } catch {}
 }
 pintarPlazas();
