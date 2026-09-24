@@ -41,6 +41,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 body{margin:0;background:var(--hormigon);color:var(--tinta);font-family:var(--texto);font-size:1.0625rem;line-height:1.5;overflow-x:hidden;
@@ -72,7 +73,12 @@ p{margin:0 0 1em;max-width:60ch}
 .cab .env{display:flex;align-items:center;justify-content:space-between;height:64px}
 .logo{display:flex;align-items:center;gap:10px;font-family:var(--stencil);font-size:1.75rem;letter-spacing:.03em;text-decoration:none;line-height:1}
 .logo-a{width:38px;height:38px;flex:none}
-@media (max-width:480px){.logo{font-size:1.4rem;gap:8px}.logo-a{width:32px;height:32px}.cab nav a[href="#rotacion"]{display:none}}
+@media (max-width:480px){.logo{font-size:1.4rem;gap:8px}.logo-a{width:32px;height:32px}}
+@media (max-width:640px){
+  .cab .env{flex-wrap:wrap;height:auto;padding-top:10px}
+  .cab nav{order:3;width:100%;gap:18px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;margin-top:2px}
+  .cab nav::-webkit-scrollbar{display:none}
+}
 .logo b{font-weight:400;color:var(--peligro)}
 .firma-casa{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-stretch:85%;margin-top:6px}
 .firma-casa svg{width:22px;height:22px}
@@ -94,6 +100,28 @@ p{margin:0 0 1em;max-width:60ch}
 .medidor i{position:absolute;inset:0 auto 0 0;background:var(--grafito);width:0;transition:width .6s}
 .medidor.listo i{background:repeating-linear-gradient(-45deg,var(--peligro) 0 10px,var(--tinta) 10px 20px)}
 .medidor-pie{display:flex;justify-content:space-between;font-size:.85rem;color:var(--acero);margin-bottom:16px}
+.racha{font-weight:700;font-stretch:85%;margin:-6px 0 14px}
+.descanso-ctrl{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:2px dashed var(--hormigon-osc);font-weight:700;font-stretch:85%}
+.descanso-ctrl .paso{display:flex;align-items:center;gap:8px}
+.descanso-ctrl button{width:44px;height:44px;border:3px solid var(--tinta);background:var(--papel);font-size:1.3rem;font-weight:900;cursor:pointer}
+.descanso-ctrl output{min-width:4.2em;text-align:center}
+.btn-cal{margin-top:10px;background:none;border:0;padding:0;min-height:44px;font-weight:800;text-decoration:underline;text-decoration-thickness:2px;cursor:pointer}
+.herramientas{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.herramientas a{display:inline-flex;align-items:center;min-height:44px;padding:.4em .9em;border:3px solid var(--tinta);background:var(--papel);font-weight:800;font-stretch:85%;text-decoration:none}
+.herramientas a:hover{background:var(--tinta);color:var(--papel)}
+.hoy{display:inline-block;margin-top:2px;font-size:.85rem;font-weight:800;color:var(--peligro-osc)}
+.grafica{margin:6px 0 4px}
+.grafica svg{width:100%;height:46px;display:block}
+.grafica p{margin:0;font-size:.85rem;color:var(--acero)}
+.pr{display:inline-block;background:#ffd23c;color:var(--tinta);font-weight:900;padding:.2em .6em;font-size:1.2rem;margin:0 auto}
+.calienta{border:2px solid #555b62;padding:10px 12px;max-width:36ch;margin:0 auto;text-align:left}
+.calienta b{display:block;color:#ffd23c;font-size:.85rem;letter-spacing:.04em;margin-bottom:4px}
+.form-rev{display:grid;gap:10px}
+.form-rev label{display:grid;gap:4px;font-weight:700;font-size:.95rem}
+.form-rev input,.form-rev textarea{min-height:48px;padding:.5em .7em;border:3px solid var(--papel);background:transparent;color:var(--papel);font-size:1rem}
+.form-rev textarea{min-height:72px;resize:vertical}
+.copia-caja{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.copia-msg{width:100%;margin:0;font-weight:700;min-height:1.2em}
 
 /* Secciones */
 .sec{padding:64px 0;border-top:3px solid var(--tinta)}
@@ -222,7 +250,7 @@ p{margin:0 0 1em;max-width:60ch}
 <header class="cab">
   <div class="env">
     <a class="logo" href="#top" aria-label="HeavyWork, inicio"><svg class="logo-a" viewBox="-137 -40 926 926" aria-hidden="true"><rect x="-137" y="-40" width="926" height="926" rx="80" fill="#000"/><g transform="translate(65,84) scale(.8)"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></g></svg><span>HEAVY<b>WORK</b></span></a>
-    <nav><a href="#rotacion">Entrenos</a><a href="#cuaderno">Cuaderno</a></nav>
+    <nav aria-label="Secciones"><a href="#rotacion">Rutina</a><a href="#metodo">Método</a><a href="#cuaderno">Cuaderno</a><a href="#juego">Juego</a><a href="https://arnoldwork.com/herramientas/">Herramientas</a></nav>
   </div>
 </header>
 
@@ -244,7 +272,7 @@ p{margin:0 0 1em;max-width:60ch}
       <div class="juego-promo">
         <div>
           <h2>CaveWork, el juego</h2>
-          <p>Un cavernícola, una mancuerna de piedra y dinosaurios. Aplasta, come proteína, recoge los discos y derrota al T-Rex de brazos cortos. Con modo MAKINA, logros y ranking mundial. Gratis y retro.</p>
+          <p>Un cavernícola, una mancuerna de piedra y dinosaurios. Cada día, un <b>reto del día</b> con los mismos dinos para todos; crea una <b>liga con tus amigos</b>, derrota al T-Rex y al mamut, y pelea por el ranking mundial: el campeón de cada semana gana premio. Gratis y retro.</p>
         </div>
         <a class="btn btn-peligro" href="/game/">Jugar ahora</a>
       </div>
@@ -261,7 +289,7 @@ p{margin:0 0 1em;max-width:60ch}
     </div>
   </section>
 
-  <section class="sec">
+  <section class="sec" id="metodo">
     <div class="env">
       <div class="sec-cab"><h2>El método Heavy Duty</h2>
         <p>Mike Mentzer defendía que el músculo crece por la intensidad del esfuerzo, no por la cantidad de series, y que hay que darle tiempo para recuperarse. Estas son sus ideas principales.</p></div>
@@ -273,6 +301,15 @@ p{margin:0 0 1em;max-width:60ch}
         <div class="principio"><h3>Control total</h3><p>Repeticiones lentas, sin rebotes ni impulso, con todo el recorrido.</p></div>
         <div class="principio"><h3>Progresión y registro</h3><p>Cada entreno, una repetición más o algo más de peso. Sin cuaderno no sabes si mejoras.</p></div>
       </div>
+      <h3 style="margin-top:28px">Herramientas gratis para el método</h3>
+      <div class="herramientas">
+        <a href="https://arnoldwork.com/herramientas/recuperacion-heavy-duty/">Días de recuperación</a>
+        <a href="https://arnoldwork.com/herramientas/tempo-repeticiones/">Tempo de repeticiones</a>
+        <a href="https://arnoldwork.com/herramientas/cuando-subir-peso/">¿Cuándo subir peso?</a>
+        <a href="https://arnoldwork.com/herramientas/series-de-aproximacion/">Series de aproximación</a>
+        <a href="https://arnoldwork.com/herramientas/calculadora-1rm/">Calculadora 1RM</a>
+        <a href="https://arnoldwork.com/herramientas/sustituto-de-ejercicio/">Sustituto de ejercicio</a>
+      </div>
       <p class="fuente">Rutina basada en la "rutina ideal" que Mike Mentzer describió para sus clientes. Existen varias versiones publicadas; esta es una adaptación. HeavyWork no está afiliada a Mike Mentzer ni a quienes gestionan su legado.</p>
     </div>
   </section>
@@ -281,7 +318,7 @@ p{margin:0 0 1em;max-width:60ch}
     <div class="env">
       <div class="sec-cab">
         <h2>Cuaderno</h2>
-        <p>Tus últimas marcas por ejercicio. Se guarda en este móvil, sin cuentas ni registros.</p>
+        <p>Tus últimas marcas por ejercicio, tu mejor marca y cómo evoluciona tu fuerza. Se guarda en este móvil, sin cuentas ni registros: haz una copia de seguridad para no perderlo si cambias de móvil.</p>
       </div>
       <div class="cuaderno" id="hojas"></div>
       <div class="revision">
@@ -290,17 +327,27 @@ p{margin:0 0 1em;max-width:60ch}
           <p>Envía tus marcas y recibirás un análisis: qué ejercicios se han estancado, si necesitas más descanso y qué cambiar para seguir progresando.</p>
         </div>
         <div class="botones">
-          <a class="btn btn-peligro btn-bloque" id="pedirRevision" href="#">Pedir revisión por email</a>
+          <button type="button" class="btn btn-peligro btn-bloque" id="abrirRevision">Pedir revisión</button>
+          <form class="form-rev" id="formRevision" hidden>
+            <label>Tu nombre<input name="nombre" autocomplete="name" required maxlength="80"></label>
+            <label>¿Dónde te contestamos? (correo, teléfono o Telegram)<input name="contacto" required maxlength="160"></label>
+            <label>Tu objetivo<textarea name="objetivo" maxlength="300" placeholder="Ganar músculo, fuerza, volver después de una lesión…"></textarea></label>
+            <label>Años entrenando<input name="anos" inputmode="numeric" maxlength="20"></label>
+            <button type="submit" class="btn btn-peligro btn-bloque">Enviar mi cuaderno</button>
+          </form>
+          <a class="btn btn-claro btn-bloque" id="pedirRevision" href="#" hidden>Pedir revisión por email</a>
           <button type="button" class="btn btn-claro btn-bloque" id="compartir">Compartir o descargar mi cuaderno</button>
           <div class="estado-msg" id="revisionMsg" aria-live="polite"></div>
           <p class="alternativa">¿No se abre tu correo? Escribe a <a id="emailVisible" href="#"></a> y pega tu cuaderno: <button type="button" id="copiarCuaderno">copiar cuaderno</button></p>
         </div>
       </div>
       <div class="ajustes">
-        <label for="dias">Días de descanso entre entrenos
-          <input type="range" id="dias" min="3" max="7" step="1">
-          <output id="diasValor" class="num"></output>
-        </label>
+        <div class="copia-caja">
+          <button type="button" class="btn btn-claro" id="guardarCopia">Guardar copia de seguridad</button>
+          <button type="button" class="btn btn-claro" id="restaurarCopia">Restaurar una copia</button>
+          <input type="file" id="archivoCopia" accept=".json,application/json" hidden>
+          <p class="copia-msg" id="copiaMsg" aria-live="polite"></p>
+        </div>
         <button type="button" class="btn-texto" id="borrar">Borrar todo el cuaderno</button>
       </div>
     </div>
@@ -410,6 +457,68 @@ const fechaCorta = iso => new Date(iso).toLocaleDateString('es-ES', {day:'numeri
 const diaSemana = d => d.toLocaleDateString('es-ES', {weekday:'long', day:'numeric'});
 const poner = (el, ...hijos) => el.replaceChildren(...hijos.flat().filter(c => c != null));
 const kgTxt = n => (Math.round(n*10)/10).toLocaleString('es-ES');
+
+/* ===== Progresión (doble progresión de Mentzer) =====
+   Mismo peso, una repetición más cada vez. Al llegar al tope del rango, sube ~5 % el peso
+   y vuelve al mínimo del rango. Si te estancas, se descansa más; no se baja el peso. */
+const e1rm = r => r.kg * (1 + r.reps / 30);                 // fuerza estimada (Epley)
+const redondeo = kg => { const paso = kg >= 20 ? 2.5 : 1; return Math.round(kg / paso) * paso; };
+function objetivo(x, reg){
+  const ult = reg && reg[reg.length-1];
+  if (!ult) return null;
+  if (ult.reps >= x.rango[1]){
+    if (ult.kg === 0) return { kg:0, reps:ult.reps + 1, lastre:true };
+    let nuevo = redondeo(ult.kg * 1.05);
+    if (nuevo <= ult.kg) nuevo = ult.kg + (ult.kg >= 20 ? 2.5 : 1);
+    return { kg:nuevo, reps:x.rango[0], sube:true };
+  }
+  return { kg:ult.kg, reps:Math.max(ult.reps + 1, x.rango[0]) };
+}
+const objTxt = o => o.kg > 0 ? `${kgTxt(o.kg)} kg × ${o.reps}+` : `${o.reps}+ reps`;
+const mejorMarca = reg => (reg || []).reduce((m, r) => !m || e1rm(r) > e1rm(m) ? r : m, null);
+// Series de aproximación: 50 % × 6 y 75 % × 3 del peso de hoy (redondeado a discos).
+function calentamiento(kg){
+  if (!(kg >= 10)) return null;
+  return [[.5, 6], [.75, 3]].map(([f, r]) => ({ kg:redondeo(kg * f), reps:r })).filter((s, i, a) => s.kg > 0 && (i === 0 || s.kg !== a[i-1].kg));
+}
+// Racha: entrenos seguidos sin pasarte más de 3 días del descanso que has elegido.
+function racha(d){
+  const s = d.sesiones; if (!s.length) return 0;
+  if (diasEntre(s[s.length-1].fecha) > d.descanso + 3) return 0;
+  let n = 1;
+  for (let i = s.length - 1; i > 0; i--){
+    const gap = Math.round((new Date(s[i].fecha) - new Date(s[i-1].fecha)) / 86400000);
+    if (gap > d.descanso + 3) break;
+    n++;
+  }
+  return n;
+}
+const esteMes = d => { const a = new Date(); return d.sesiones.filter(x => { const f = new Date(x.fecha); return f.getMonth() === a.getMonth() && f.getFullYear() === a.getFullYear(); }).length; };
+// Añadir el próximo entreno al calendario del móvil (archivo .ics con aviso a las 9:00).
+function calendario(fecha, letra){
+  const ymd = f => `${f.getFullYear()}${String(f.getMonth()+1).padStart(2,'0')}${String(f.getDate()).padStart(2,'0')}`;
+  const fin = new Date(fecha); fin.setDate(fin.getDate() + 1);
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HeavyWork//ES', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
+    `UID:${Date.now()}-${letra}@heavywork.arnoldwork.com`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
+    `DTSTART;VALUE=DATE:${ymd(fecha)}`, `DTEND;VALUE=DATE:${ymd(fin)}`,
+    `SUMMARY:HeavyWork: entreno ${letra} (${ENTRENOS[letra].nombre})`,
+    'DESCRIPTION:Una serie. Al fallo. Y a casa. https://heavywork.arnoldwork.com/',
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Hoy toca entreno en HeavyWork', 'TRIGGER;RELATED=START:PT9H', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const a = h('a', {href:URL.createObjectURL(new Blob([ics], {type:'text/calendar'})), download:`heavywork-entreno-${letra}.ics`});
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+function fechaProximo(d){
+  const ult = d.sesiones[d.sesiones.length-1];
+  const f = hoy0();
+  if (ult) f.setDate(f.getDate() + Math.max(0, d.descanso - diasEntre(ult.fecha)));
+  return f;
+}
+function cambiarDescanso(delta){
+  const d = leer(); d.descanso = Math.min(7, Math.max(3, d.descanso + delta)); guardar(d);
+  pintarEstado();
+}
 
 function siguienteLetra(d){
   const ult = d.sesiones[d.sesiones.length-1];
@@ -521,12 +630,18 @@ function pintarEstado(){
   const letra = siguienteLetra(d);
   const ult = d.sesiones[d.sesiones.length-1];
   const boton = h('button', {type:'button', class:'btn btn-peligro btn-bloque', text:`Empezar entreno ${letra}`, onclick:() => abrirModo(letra)});
+  const ctrl = h('div', {class:'descanso-ctrl'},
+    h('span', {text:'Días de descanso entre entrenos'}),
+    h('span', {class:'paso'},
+      h('button', {type:'button', 'aria-label':'Un día menos de descanso', text:'−', onclick:() => cambiarDescanso(-1)}),
+      h('output', {class:'num', text:`${d.descanso} días`}),
+      h('button', {type:'button', 'aria-label':'Un día más de descanso', text:'+', onclick:() => cambiarDescanso(1)})));
   if (!ult){
     caja.replaceChildren(
       h('div', {class:'rot', text:'Sin entrenos todavía'}),
       h('div', {class:'titular', text:`Empieza por el entreno A: ${ENTRENOS.A.nombre.toLowerCase()}`}),
-      h('p', {class:'suave', text:'Calienta 5–10 minutos y haz una o dos series ligeras de aproximación antes de cada serie efectiva.'}),
-      boton);
+      h('p', {class:'suave', text:'Calienta 5–10 minutos. Antes de cada serie efectiva te diremos qué series de aproximación hacer.'}),
+      boton, ctrl);
     return;
   }
   const pasados = diasEntre(ult.fecha);
@@ -540,7 +655,10 @@ function pintarEstado(){
     h('div', {class:'titular', text: listo ? `Recuperado. Te toca el ${letra}.` : `Recuperando. Vuelve el ${diaSemana(vuelta)}.`}),
     medidor,
     h('div', {class:'medidor-pie num'}, h('span', {text:`${Math.min(pasados, d.descanso)} de ${d.descanso} días`}), h('span', {text: listo ? 'Listo' : `Faltan ${faltan}`})),
-    listo ? boton : h('button', {type:'button', class:'btn btn-claro btn-bloque', text:`Entrenar el ${letra} igualmente`, onclick:() => abrirModo(letra)})
+    (() => { const r = racha(d), m = esteMes(d); return h('div', {class:'racha num', text:`${r >= 2 ? `🔥 Racha: ${r} entrenos a tiempo · ` : ''}${m} entreno${m === 1 ? '' : 's'} este mes`}); })(),
+    listo ? boton : h('button', {type:'button', class:'btn btn-claro btn-bloque', text:`Entrenar el ${letra} igualmente`, onclick:() => abrirModo(letra)}),
+    listo ? null : h('button', {type:'button', class:'btn-cal', text:`📅 Añadir el entreno ${letra} a mi calendario`, onclick:() => calendario(vuelta, letra)}),
+    ctrl
   );
   const aviso = avisoEstanco(estancados(d));
   if (aviso) caja.append(aviso);
@@ -559,9 +677,10 @@ function pintarEntrenos(){
         h('div', {}, h('h3', {text:`Entreno ${L}: ${e.nombre}`}), L === toca ? h('span', {class:'toca-marca', text:'Te toca'}) : null)),
       h('ol', {}, e.ejercicios.map((x, i) => {
         const prevSin = i > 0 && e.ejercicios[i-1].sinDescanso;
-        const ultimo = (d.cuaderno[x.id] || []).slice(-1)[0];
+        const reg = d.cuaderno[x.id] || [], ultimo = reg[reg.length-1], o = objetivo(x, reg);
         return h('li', {class: (x.sinDescanso || prevSin) ? 'enlace-sin' : null},
-          h('div', {}, x.n, h('small', {text: ultimo ? `Última: ${kgTxt(ultimo.kg)} kg × ${ultimo.reps}` : 'Sin marca todavía'})),
+          h('div', {}, x.n, h('small', {text: ultimo ? `Última: ${kgTxt(ultimo.kg)} kg × ${ultimo.reps}` : 'Sin marca todavía'}),
+            o ? h('span', {class:'hoy num', text:`Próxima: ${objTxt(o)}${o.sube ? ' ▲ sube peso' : ''}`}) : null),
           h('span', {class:'rng num', text:`${x.rango[0]}–${x.rango[1]}`}));
       })),
       h('div', {class:'pie'}, h('button', {type:'button', class:'btn btn-bloque' + (L === toca ? '' : ' btn-claro'), text:`Empezar ${L}`, onclick:() => abrirModo(L)}))
@@ -577,8 +696,21 @@ function pintarCuaderno(){
     const reg = d.cuaderno[x.id];
     if (!reg || !reg.length) return;
     const ult = reg.slice(-6);
+    const mejor = mejorMarca(reg);
+    let grafica = null;
+    if (reg.length >= 2){
+      const v = reg.slice(-20).map(e1rm), min = Math.min(...v), max = Math.max(...v), rango = max - min || 1;
+      const pts = v.map((y, i) => `${(i / (v.length - 1) * 196 + 2).toFixed(1)},${(40 - (y - min) / rango * 34 - 3).toFixed(1)}`);
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 200 44'); svg.setAttribute('preserveAspectRatio', 'none'); svg.setAttribute('aria-hidden', 'true');
+      svg.innerHTML = `<polyline points="${pts.join(' ')}" fill="none" stroke="#16181B" stroke-width="2.5" vector-effect="non-scaling-stroke"/><circle cx="${pts[pts.length-1].split(',')[0]}" cy="${pts[pts.length-1].split(',')[1]}" r="3.5" fill="#D33030"/>`;
+      const ini = v[0], fin = v[v.length-1], pct = Math.round((fin - ini) / (ini || 1) * 100);
+      grafica = h('div', {class:'grafica'}, svg, h('p', {class:'num', text:`Fuerza estimada: ${kgTxt(Math.round(ini))} → ${kgTxt(Math.round(fin))} kg${ini > 0 ? ` (${pct >= 0 ? '+' : ''}${pct} %)` : ''}`}));
+    }
     hojas.push(h('div', {class:'hoja'},
       h('h3', {}, x.n, estaEstancado(reg) ? h('span', {class:'marca-estanco', text:'Estancado'}) : null),
+      mejor ? h('p', {class:'num', style:'margin:0 0 4px;font-weight:700', text:`🏆 Mejor marca: ${kgTxt(mejor.kg)} kg × ${mejor.reps} (${fechaCorta(mejor.fecha)})`}) : null,
+      grafica,
       h('table', {}, h('tbody', {}, ult.slice().reverse().map((r, i, arr) => {
         const ant = arr[i+1];
         let flecha = '', cls = null;
@@ -592,18 +724,67 @@ function pintarCuaderno(){
     ));
   });
   $('#hojas').replaceChildren(...(hojas.length ? hojas : [h('div', {class:'vacio', style:'grid-column:1/-1', text:'Aún no hay marcas. Haz tu primer entreno y aparecerán aquí.'})]));
-  $('#dias').value = d.descanso;
-  $('#diasValor').textContent = `${d.descanso} días`;
 }
-$('#dias').addEventListener('input', e => {
-  const d = leer(); d.descanso = Number(e.target.value); guardar(d);
-  pintarEstado(); pintarCuaderno();
-});
 $('#borrar').addEventListener('click', () => {
   if (!confirm('¿Borrar todas las marcas y entrenos guardados en este móvil?')) return;
   const d = leer(); guardar({ cuaderno:{}, sesiones:[], descanso:d.descanso });
   pintarTodo();
 });
+/* ===== Copia de seguridad (para cambiar de móvil sin perder nada) ===== */
+const copiaMsg = t => { $('#copiaMsg').textContent = t; };
+$('#guardarCopia').addEventListener('click', async () => {
+  const d = leer();
+  const txt = JSON.stringify({ app:'heavywork', version:1, fecha:new Date().toISOString(), datos:d });
+  const nombre = `heavywork-copia-${new Date().toISOString().slice(0,10)}.json`;
+  try {
+    const f = new File([txt], nombre, {type:'application/json'});
+    if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:'Copia de HeavyWork'}); copiaMsg('Copia lista. Guárdala en tus archivos, tu correo o donde prefieras.'); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = h('a', {href:URL.createObjectURL(new Blob([txt], {type:'application/json'})), download:nombre});
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  copiaMsg('Copia descargada. Guárdala: con ella recuperas todo en otro móvil.');
+});
+$('#restaurarCopia').addEventListener('click', () => $('#archivoCopia').click());
+$('#archivoCopia').addEventListener('change', async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try {
+    const c = JSON.parse(await f.text());
+    const d = c && c.app === 'heavywork' && c.datos;
+    if (!d || typeof d.cuaderno !== 'object' || !Array.isArray(d.sesiones)) throw new Error('formato');
+    const cuando = c.fecha ? new Date(c.fecha).toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'}) : 'sin fecha';
+    if (!confirm(`Esto sustituye el cuaderno de este móvil por la copia del ${cuando} (${d.sesiones.length} entrenos). ¿Seguir?`)) return;
+    guardar(Object.assign({ cuaderno:{}, sesiones:[], descanso:4 }, d));
+    pintarTodo();
+    copiaMsg(`Copia restaurada: ${d.sesiones.length} entrenos recuperados.`);
+  } catch { copiaMsg('Ese archivo no es una copia de HeavyWork.'); }
+});
+
+/* ===== Revisión del cuaderno: llega directa a Telegram ===== */
+const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
+$('#abrirRevision').addEventListener('click', () => {
+  $('#formRevision').hidden = false; $('#abrirRevision').hidden = true;
+  $('#formRevision [name=nombre]').focus();
+  if (!hayMarcas(leer())) msgRevision('Aún no tienes marcas: puedes enviarlo igualmente para preguntar cómo funciona.');
+});
+$('#formRevision').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, d = leer(), btn = f.querySelector('button[type=submit]');
+  const cuerpo = `Objetivo: ${f.objetivo.value.trim() || '—'}\nAños entrenando: ${f.anos.value.trim() || '—'}\n\n` +
+    (hayMarcas(d) ? textoCuaderno(d) : '(Aún sin marcas: pregunta cómo funciona la revisión)');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  let ok = false;
+  try {
+    const r = await fetch(VIGILANTE, { method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ canal:'heavywork', nombre:f.nombre.value.trim(), contacto:f.contacto.value.trim(), motivo:'Revisión de cuaderno HeavyWork', mensaje:cuerpo, origen:location.href }) });
+    ok = r.ok;
+  } catch {}
+  btn.disabled = false; btn.textContent = 'Enviar mi cuaderno';
+  if (ok){ f.hidden = true; msgRevision(`¡Recibido, ${f.nombre.value.trim()}! Te contestaremos personalmente en cuanto revisemos tu cuaderno. 💪`); }
+  else { msgRevision('No se ha podido enviar. Prueba por correo con el botón de abajo.', true); $('#pedirRevision').hidden = false; }
+});
+
 function pintarTodo(){ pintarEstado(); pintarEntrenos(); pintarCuaderno(); actualizarEnlaces(); }
 
 /* ===== Modo serie ===== */
@@ -675,7 +856,9 @@ function guardarSerie(kg, reps){
   const d = leer(), x = ejActual();
   const lista = d.cuaderno[x.id] || (d.cuaderno[x.id] = []);
   const ant = lista[lista.length-1];
+  const mejorAntes = lista.length ? Math.max(...lista.map(e1rm)) : 0;
   lista.push({ fecha:new Date().toISOString(), kg, reps });
+  const pr = !!ant && e1rm({kg, reps}) > mejorAntes + 0.01;
   guardar(d);
   let veredicto, bien = true, consejo = '';
   if (!ant){ veredicto = 'Primera marca'; consejo = 'La próxima vez intenta superarla.'; }
@@ -685,8 +868,9 @@ function guardarSerie(kg, reps){
   else if (kg < ant.kg){ veredicto = `−${kgTxt(ant.kg - kg)} kg`; bien = false; consejo = 'Menos carga que la última vez. Si no ha sido a propósito, descansa más.'; }
   else { veredicto = `−${ant.reps - reps} rep${ant.reps - reps > 1 ? 's' : ''}`; bien = false; consejo = 'Menos que la última vez. Probablemente no estabas recuperado: descansa más días.'; }
   if (reps >= x.rango[1]) consejo += ' Has llegado al tope del rango: la próxima vez sube un 5 % el peso.';
-  M.resultados.push({ bien, primera: !ant });
-  M.ultimo = { veredicto, bien, consejo, primera: !ant };
+  M.resultados.push({ bien, primera: !ant, pr });
+  M.ultimo = { veredicto, bien, consejo, primera: !ant, pr };
+  if (pr){ tono(660, .12, .3); tono(880, .12, .3, .13); tono(1320, .25, .3, .26); try { navigator.vibrate && navigator.vibrate([80, 60, 160]); } catch {} }
   M.fase = 'resultado';
   pintarModo();
 }
@@ -730,8 +914,20 @@ function pintarModo(){
       h('div', {class:'suave', text:`Ejercicio ${M.i+1} de ${ejs.length}`}),
       h('div', {class:'ej', text:x.n}),
       h('div', {class:'dato'}, 'Objetivo: ', h('b', {class:'num', text:`${x.rango[0]}–${x.rango[1]} reps`}), ' al fallo'),
-      h('div', {class:'dato num', text: ult ? `Última vez: ${kgTxt(ult.kg)} kg × ${ult.reps}. Hoy, al menos una más.` : 'Primera vez: elige un peso con el que llegues al fallo dentro del rango.'}),
-      h('p', {class:'nota', text: vieneDeSin ? x.nota : `${x.nota} Antes, una o dos series ligeras de aproximación.`})
+      (() => {
+        const o = objetivo(x, d.cuaderno[x.id]);
+        if (!o) return h('div', {class:'dato num', text:'Primera vez: elige un peso con el que llegues al fallo dentro del rango.'});
+        return h('div', {class:'dato num'}, 'Hoy: ', h('b', {text:objTxt(o)}),
+          o.sube ? ' · llegaste al tope: sube el peso' : o.lastre ? ' · añade lastre cuando puedas' : '',
+          h('br'), h('span', {class:'suave', style:'color:#a9adb2', text:`Última vez: ${kgTxt(ult.kg)} kg × ${ult.reps}`}));
+      })(),
+      (() => {
+        const o = objetivo(x, d.cuaderno[x.id]), cal = !vieneDeSin && o && calentamiento(o.kg);
+        if (!cal) return null;
+        return h('div', {class:'calienta num'}, h('b', {text:'SERIES DE APROXIMACIÓN'}), cal.map(c => `${kgTxt(c.kg)} kg × ${c.reps}`).join('  ·  '), h('br'),
+          h('span', {style:'color:#a9adb2;font-size:.9rem', text:'Sin llegar al fallo. Descansa 1–2 min antes de la serie buena.'}));
+      })(),
+      h('p', {class:'nota', text: vieneDeSin ? x.nota : objetivo(x, d.cuaderno[x.id]) ? x.nota : `${x.nota} Antes, una o dos series ligeras de aproximación.`})
     );
     poner(acc, h('button', {type:'button', class:'btn btn-peligro gigante', text:'Empezar la serie', onclick:empezarSerie}));
   }
@@ -750,7 +946,8 @@ function pintarModo(){
   }
 
   else if (M.fase === 'registrar'){
-    const kg = h('input', {type:'number', inputmode:'decimal', min:'0', step:'0.5', id:'inKg', value: ult ? String(ult.kg) : ''});
+    const o = objetivo(x, d.cuaderno[x.id]);
+    const kg = h('input', {type:'number', inputmode:'decimal', min:'0', step:'0.5', id:'inKg', value: o ? String(o.kg) : ult ? String(ult.kg) : ''});
     const rp = h('input', {type:'number', inputmode:'numeric', min:'0', step:'1', id:'inReps', value:String(M.reps)});
     const mas = (inp, paso) => () => { inp.value = String(Math.max(0, (Number(inp.value)||0) + paso)); };
     const error = h('p', {class:'nota', role:'alert'});
@@ -774,6 +971,7 @@ function pintarModo(){
     const u = M.ultimo;
     const sig = ejs[M.i+1];
     poner(cuerpo, 
+      u.pr ? h('div', {class:'pr', text:'🏆 ¡RÉCORD PERSONAL!'}) : null,
       h('div', {class:'veredicto ' + (u.primera ? '' : u.bien ? 'bien' : 'mal'), text:u.veredicto}),
       h('p', {class:'nota', style:'font-size:1.15rem;color:#e6e6e2', text:u.consejo}),
       sig && x.sinDescanso ? h('div', {class:'aviso-sin'}, h('span', {text:`Ahora mismo: ${sig.n}`})) : null
@@ -803,12 +1001,16 @@ function pintarModo(){
       (() => { const m = h('div', {class:'marca-agua', 'aria-hidden':'true'}); m.innerHTML = "<svg viewBox=\"0 0 651 846\" aria-hidden=\"true\"><polygon points=\"319,0 0,845 649,341 198,579 319,238\" fill=\"#fff\"/><polygon points=\"333,0 333,231 441,439 489,415\" fill=\"#DE3A3A\"/><polygon points=\"507,462 469,492 650,839\" fill=\"#DE3A3A\"/></svg>"; return m; })(),
       h('div', {class:'ej', text:'Hecho. A casa.'}),
       h('div', {class:'dato num', text: comparables ? `Has mejorado en ${mejoras} de ${comparables} ejercicios.` : 'Primeras marcas guardadas en el cuaderno.'}),
+      (() => { const n = M.resultados.filter(r => r.pr).length; return n ? h('div', {class:'pr', text:`🏆 ${n} récord${n > 1 ? 's' : ''} personal${n > 1 ? 'es' : ''} hoy`}) : null; })(),
       h('p', {class:'nota', text: comparables && mejoras < comparables / 2
         ? `Pocas mejoras hoy. Prueba a descansar un día más: próximo entreno ${letraSig}, el ${diaSemana(new Date(vuelta.getTime() + 86400000))}.`
         : `Próximo entreno ${letraSig}: el ${diaSemana(vuelta)}. Come bien y duerme.`}),
       avisoEstanco(ejs.filter(e => estaEstancado(d.cuaderno[e.id])))
     );
-    poner(acc, h('button', {type:'button', class:'btn btn-peligro gigante', text:'Cerrar', onclick:cerrarModo}));
+    const proxima = new Date(vuelta.getTime() + (comparables && mejoras < comparables / 2 ? 86400000 : 0));
+    poner(acc,
+      h('button', {type:'button', class:'btn btn-claro', text:`📅 Añadir el entreno ${letraSig} a mi calendario`, onclick:() => calendario(proxima, letraSig)}),
+      h('button', {type:'button', class:'btn btn-peligro gigante', text:'Cerrar', onclick:cerrarModo}));
   }
 }
 

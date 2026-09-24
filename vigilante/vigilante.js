@@ -29,7 +29,8 @@ const CAVEWORK_API = "https://cavework-api.arnoldwork.workers.dev/state";
 const DOMINIO = { nombre: "arnoldwork.com", rdap: "https://rdap.verisign.com/com/v1/domain/arnoldwork.com" };
 const ORIGENES = [
   /^https:\/\/(www\.)?arnoldwork\.com$/,
-  /^https:\/\/[a-z0-9-]+-arnoldwork-v11\.arnoldwork\.workers\.dev$/,   // vistas previas
+  /^https:\/\/heavywork\.arnoldwork\.com$/,                            // peticiones de revisión del cuaderno
+  /^https:\/\/[a-z0-9-]+-(arnoldwork-v11|heavywork)\.arnoldwork\.workers\.dev$/,   // vistas previas
   /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/,                        // pruebas en local
 ];
 // Enlaces de la tienda de Ko-fi (ko-fi.com/s/<código>) → nombre del producto.
@@ -43,6 +44,7 @@ const PRODUCTOS_KOFI = {
 // Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
 const KOFI_PRUEBA = "00000000-1111-2222-3333-444444444444";
 const MOTIVO_NEGOCIO = "Web o automatización para mi negocio";
+const MOTIVO_REVISION = "Revisión de cuaderno HeavyWork";
 
 const COMPROBACIONES = [
   { nombre: "ArnoldWork",        url: "https://arnoldwork.com/",              texto: "ArnoldWork" },
@@ -287,7 +289,7 @@ async function resumenSemanal(env) {
 
   const compras = ventas.filter(v => v.tipo !== "Batido");
   const batidos = ventas.filter(v => v.tipo === "Batido");
-  const negocio = contactos.filter(c => c.motivo === MOTIVO_NEGOCIO);
+  const negocio = contactos.filter(c => c.motivo === MOTIVO_NEGOCIO || c.motivo === MOTIVO_REVISION);
 
   const l = [`📊 Resumen de la semana en ArnoldWork (${fechaCorta(desde)} – ${fechaCorta(hasta - 1)})`, ""];
   l.push(incidencias.length
@@ -375,7 +377,9 @@ async function contacto(req, env) {
   const b = await req.json().catch(() => null);
   if (!b) return new Response('{"error":"Datos no válidos"}', { status: 400, headers: h });
   const c = {
-    nombre: recorta(b.nombre, 80), motivo: recorta(b.motivo, 80), mensaje: String(b.mensaje ?? "").trim().slice(0, 2000),
+    nombre: recorta(b.nombre, 80), motivo: recorta(b.motivo, 80),
+    // Las revisiones de HeavyWork traen el cuaderno entero: cabe más texto (Telegram admite 4.096).
+    mensaje: String(b.mensaje ?? "").trim().slice(0, b.canal === "heavywork" ? 3500 : 2000),
     contacto: recorta(b.contacto, 160), origen: recorta(b.origen, 200),
   };
   if (!c.nombre || !c.mensaje) return new Response('{"error":"Faltan datos"}', { status: 400, headers: h });
@@ -384,8 +388,12 @@ async function contacto(req, env) {
     .then(x => [...new Uint8Array(x)].slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join(""));
   const guardado = m ? await m.guardarContacto(c, ip) : false;
   if (m && !guardado) return new Response('{"error":"Demasiados mensajes, prueba en un rato"}', { status: 429, headers: h });
+  // HeavyWork no tiene otra vía: la petición de revisión siempre la avisa el vigilante.
+  if (b.canal === "heavywork") {
+    await enviarTelegram(env, `📓 REVISIÓN DE CUADERNO (HeavyWork)\n\n👤 ${c.nombre}\n📮 ${c.contacto || "—"}\n\n${c.mensaje}`);
+  }
   // Si la API principal no pudo avisar, avisa el vigilante.
-  if (b.principalOk === false) {
+  else if (b.principalOk === false) {
     const neg = c.motivo === MOTIVO_NEGOCIO;
     await enviarTelegram(env, `${neg ? "💼 CLIENTE DEV" : "✉️ Mensaje"} del chat (enviado por el vigilante: la API principal falló)\n\n` +
       `👤 ${c.nombre}\n📌 ${c.motivo}\n💬 ${c.mensaje}\n📮 ${c.contacto || "—"}`);
