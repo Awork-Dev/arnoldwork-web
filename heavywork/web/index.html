@@ -80,6 +80,14 @@ p{margin:0 0 1em;max-width:60ch}
 .dev-hw h2{margin:0 0 12px;color:var(--papel)}
 .dev-hw p{margin:0 0 18px;color:#cfd2d6;max-width:62ch}
 .dev-hw .btn{background:var(--peligro);border-color:var(--peligro);color:#fff;box-shadow:4px 4px 0 var(--papel)}
+.apoyo{display:grid;gap:14px}
+@media (min-width:800px){.apoyo{grid-template-columns:repeat(3,1fr)}}
+.apoyo article{display:flex;flex-direction:column;gap:8px;border:3px solid var(--tinta);background:var(--papel);padding:18px 16px;box-shadow:6px 6px 0 var(--tinta)}
+.apoyo article.destaca{box-shadow:6px 6px 0 var(--peligro)}
+.apoyo h3{margin:0}
+.apoyo p{margin:0;flex:1}
+.apoyo .precio{font-family:var(--stencil);font-size:1.8rem;line-height:1}
+.apoyo-fin{display:block;margin-top:14px;color:#cfd2d6;font-weight:700;text-underline-offset:3px}
 
 /* Cabecera */
 .cab{border-bottom:3px solid var(--tinta);background:var(--hormigon)}
@@ -456,7 +464,7 @@ p{margin:0 0 1em;max-width:60ch}
         <div>
           <h3>Que un entrenador revise tu cuaderno</h3>
           <p>Envía tus marcas y recibirás un análisis: qué ejercicios se han estancado, si necesitas más descanso y qué cambiar para seguir progresando.</p>
-          <p class="plazas" id="plazasRev">🎁 Las primeras 20 revisiones son gratis. Plazas limitadas.</p>
+          <p class="plazas" id="plazasRev">🎁 Revisión gratis para los primeros en pedirla.</p>
         </div>
         <div class="botones">
           <button type="button" class="btn btn-peligro btn-bloque" id="abrirRevision">Pedir revisión</button>
@@ -481,6 +489,35 @@ p{margin:0 0 1em;max-width:60ch}
           <p class="copia-msg" id="copiaMsg" aria-live="polite"></p>
         </div>
         <button type="button" class="btn-texto" id="borrar">Borrar todo el cuaderno</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="apoya">
+    <div class="env">
+      <div class="sec-cab">
+        <h2>Apoya HeavyWork</h2>
+        <p>HeavyWork es gratis y sin anuncios. Lo pagan estas cosas de ArnoldWork: si la app te sirve, así es como la mantienes viva.</p>
+      </div>
+      <div class="apoyo">
+        <article class="destaca">
+          <span class="precio">5,99 €</span>
+          <h3>Libro + las tres fichas</h3>
+          <p>El manual «Hipertrofia desde cero» (139 páginas) y tres planes de 8 semanas en PDF. Pensado para quien empieza: perfecto para regalar a ese amigo que quiere apuntarse al gimnasio.</p>
+          <a class="btn btn-peligro" href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Llevármelo todo</a>
+        </article>
+        <article>
+          <span class="precio">4,99 €</span>
+          <h3>Solo el libro</h3>
+          <p>Rutina de 24 semanas, atlas de 25 ejercicios, nutrición sin contar calorías y qué hacer cuando te estancas.</p>
+          <a class="btn btn-claro" href="https://ko-fi.com/s/c0801ad13f" target="_blank" rel="noopener">Consigo el libro</a>
+        </article>
+        <article>
+          <span class="precio">3 €</span>
+          <h3>Invita a un batido</h3>
+          <p>Sin comprar nada: un batido de proteína para quien programa HeavyWork. Tú eliges la cantidad.</p>
+          <a class="btn btn-claro" href="https://paypal.me/Xarlyds/3EUR" target="_blank" rel="noopener">🥤 Invitar a un batido</a>
+        </article>
       </div>
     </div>
   </section>
@@ -1041,15 +1078,15 @@ $('#formRevision').addEventListener('submit', async e => {
   else { msgRevision('No se ha podido enviar. Prueba por correo con el botón de abajo.', true); $('#pedirRevision').hidden = false; }
 });
 
-// Plazas de revisión gratis que quedan (las cuenta el vigilante).
+// Si ya no quedan revisiones gratis (las cuenta el vigilante), se dice; nunca se muestran números.
 async function pintarPlazas(){
   try {
     const r = await fetch(VIGILANTE.replace(/\/contacto$/, '/revisiones'));
-    const { gratis, quedan } = await r.json();
+    const { quedan } = await r.json();
     if (!Number.isFinite(quedan)) return;
     $('#plazasRev').textContent = quedan > 0
-      ? `🎁 Revisión gratis: quedan ${quedan} de ${gratis} plazas.`
-      : `Las ${gratis} revisiones gratis ya están pedidas. Envíalo igualmente y te contamos cómo seguir.`;
+      ? '🎁 Revisión gratis para los primeros en pedirla.'
+      : 'Las revisiones gratis ya están pedidas. Envíalo igualmente y te contamos cómo seguir.';
   } catch {}
 }
 pintarPlazas();
@@ -1366,7 +1403,9 @@ function pintarModo(){
       h('p', {class:'nota', text: comparables && mejoras < comparables / 2
         ? `Pocas mejoras hoy. Prueba a descansar un día más: próximo entreno ${letraSig}, el ${diaSemana(new Date(vuelta.getTime() + 86400000))}.`
         : `Próximo entreno ${letraSig}: el ${diaSemana(vuelta)}. Come bien y duerme.`}),
-      avisoEstanco(ejs.filter(e => estaEstancado(d.cuaderno[e.id])))
+      avisoEstanco(ejs.filter(e => estaEstancado(d.cuaderno[e.id]))),
+      // Desde el segundo entreno (el primero es para probar la app, sin pedir nada).
+      d.sesiones.length >= 2 ? h('a', {class:'apoyo-fin', href:'#apoya', text:'💪 ¿Te está sirviendo HeavyWork? Así puedes apoyarla →', onclick:() => { cerrarModo(); }}) : null
     );
     const proxima = new Date(vuelta.getTime() + (comparables && mejoras < comparables / 2 ? 86400000 : 0));
     poner(acc,

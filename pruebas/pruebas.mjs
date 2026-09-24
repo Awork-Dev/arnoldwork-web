@@ -166,7 +166,7 @@ if (QUE === 'heavywork') {
     const { p } = await abrir('/');
     await p.waitForTimeout(800);
     const t = await p.locator('#plazasRev').innerText();
-    /quedan 17 de 20/.test(t) ? bien(`muestra las plazas que quedan («${t}»)`) : mal('/', `plazas de revisión: «${t}»`);
+    /primeros en pedirla/.test(t) && !/\d/.test(t) ? bien(`anuncia la revisión gratis sin números («${t}»)`) : mal('/', `plazas de revisión: «${t}»`);
     await p.close();
   }
   console.log('\n▶ CaveWork');
