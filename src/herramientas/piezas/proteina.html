@@ -1,0 +1,36 @@
+<div class="tool" id="proteina">
+  <h2>¿Cuánta proteína necesito al día?</h2>
+  <p class="hint">Según tu peso, tu objetivo y tu edad, te digo cuántos gramos de proteína comer al día, cuánto en cada comida y cómo se ve eso en el plato.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="prPeso">Tu peso (kg)</label>
+      <input id="prPeso" type="number" inputmode="decimal" min="30" max="250" step="0.5" value="80" data-sync="peso">
+    </div>
+    <div class="field">
+      <label for="prEdad">Edad</label>
+      <input id="prEdad" type="number" inputmode="numeric" min="15" max="95" step="1" value="30" data-sync="edad">
+    </div>
+    <div class="field">
+      <label for="prComidas">Comidas al día</label>
+      <select id="prComidas" data-keep><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select>
+    </div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="field wide">
+      <label for="prObj">Objetivo</label>
+      <select id="prObj" data-keep>
+        <option value="vol" selected>Ganar músculo</option>
+        <option value="def">Perder grasa sin perder músculo</option>
+        <option value="man">Mantenerme y entrenar</option>
+        <option value="sed">No entreno con pesas</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="prOut">—<small id="prSub"></small></div>
+    <div class="macros" id="prTiles"></div>
+    <p class="vtxt" id="prTxt"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="prShare">Compartir como imagen</button></div>
+    <p class="cta-line">¿Quieres las calorías y el resto de macros? <a href="/herramientas/calculadora-calorias-macros/">Calculadora de calorías y macros →</a></p>
+  </div>
+</div>

@@ -1143,6 +1143,131 @@
   }
   reg(calcSust, ['suEj', 'suMat']);
 
+  /* ---------- creatina (pautas ISSN) ---------- */
+  var ultCr = null;
+  function calcCreatina(){
+    var p = num('crPeso'), carga = $('crCarga').value === 'si';
+    var out = $('crOut'), sub = $('crSub'), tabla = $('crTabla'), txt = $('crTxt');
+    tabla.hidden = true; txt.textContent = ''; ultCr = null;
+    if(!(p > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Mete tu peso'; return; }
+    // Mantenimiento: 0,03 g/kg al día, entre 3 y 5 g. Carga: 0,3 g/kg al día durante 5-7 días, en 4 tomas.
+    var diaria = Math.min(5, Math.max(3, Math.round(p * 0.03 * 2) / 2));
+    out.textContent = dec(diaria, diaria % 1 ? 1 : 0) + ' g al día'; out.appendChild(sub);
+    sub.textContent = 'de creatina monohidrato, todos los días (también los de descanso)';
+    var tb = tabla.querySelector('tbody'); tb.innerHTML = '';
+    var fila = function(a, b, c){ var tr = document.createElement('tr'); [a, b, c].forEach(function(v){ var td = document.createElement('td'); td.textContent = v; tr.appendChild(td); }); tb.appendChild(tr); };
+    if(carga){
+      var cg = Math.min(25, Math.round(p * 0.3));
+      var toma = Math.round(cg / 4 * 2) / 2;
+      fila('Días 1 a 7 (carga)', cg + ' g al día', '4 tomas de ' + dec(toma, toma % 1 ? 1 : 0) + ' g');
+      fila('Desde el día 8', dec(diaria, diaria % 1 ? 1 : 0) + ' g al día', 'una toma, cuando quieras');
+      txt.innerHTML = 'Con la carga, los músculos se llenan de creatina en <strong>una semana</strong>. Sin carga llegas al mismo punto en <strong>3 o 4 semanas</strong>: el resultado final es igual, solo cambia cuándo lo notas. Si la carga te sienta mal al estómago, sáltatela.';
+    } else {
+      fila('Todos los días', dec(diaria, diaria % 1 ? 1 : 0) + ' g', 'una toma, cuando quieras');
+      txt.innerHTML = 'Sin fase de carga, los músculos se llenan de creatina en unas <strong>3 o 4 semanas</strong>. Lo importante es no saltarte días: la hora da igual. Una cucharadita rasa son unos 3 a 5 g, pero si puedes, pésala.';
+    }
+    tabla.hidden = false;
+    txt.innerHTML += '<br><br>Toma <strong>creatina monohidrato</strong>: es la más estudiada y la más barata, y no hace falta hacer descansos ni ciclos. Bebe agua con normalidad. Si tienes algún problema de riñón o tomas medicación, consúltalo antes con tu médico.';
+    ultCr = { d: diaria, carga: carga };
+  }
+  reg(calcCreatina, ['crPeso', 'crCarga']);
+  on('crShare', 'click', function(){
+    if(!ultCr) return;
+    tarjeta({ titulo: 'Mi dosis de creatina', grande: dec(ultCr.d, ultCr.d % 1 ? 1 : 0) + ' g al día',
+      sub: 'Creatina monohidrato, todos los días', lineas: [ultCr.carga ? 'Con una semana de carga para notarla antes.' : 'Sin carga: en 3-4 semanas, a tope.'], archivo: 'mi-creatina-arnoldwork.png' });
+  });
+
+  /* ---------- proteína diaria ---------- */
+  var PROT = { vol: [1.6, 2.2, 'para ganar músculo'], def: [1.8, 2.4, 'para perder grasa sin perder músculo'], man: [1.4, 2.0, 'para mantenerte entrenando'], sed: [1.0, 1.2, 'sin entrenar con pesas'] };
+  var ultPr = null;
+  function calcProteina(){
+    var p = num('prPeso'), edad = num('prEdad'), com = parseInt($('prComidas').value, 10), o = PROT[$('prObj').value] || PROT.vol;
+    var out = $('prOut'), sub = $('prSub'), tiles = $('prTiles'), txt = $('prTxt');
+    tiles.innerHTML = ''; txt.textContent = ''; ultPr = null;
+    if(!(p > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Mete tu peso'; return; }
+    var extra = edad >= 50 ? 0.2 : 0;   // a partir de los 50 el músculo responde peor: un poco más
+    var lo = Math.round(p * (o[0] + extra) / 5) * 5, hi = Math.round(p * (o[1] + extra) / 5) * 5;
+    out.textContent = lo + ' a ' + hi + ' g al día'; out.appendChild(sub);
+    sub.textContent = 'de proteína ' + o[2] + ' · ' + dec(o[0] + extra, 1) + ' a ' + dec(o[1] + extra, 1) + ' g por kilo';
+    var porComida = Math.round((lo + hi) / 2 / com / 5) * 5;
+    [['Por comida', porComida + ' g', com + ' comidas al día'], ['Mínimo del día', lo + ' g', 'lo que no debería faltar'], ['Tope útil', hi + ' g', 'más no te da más músculo']]
+      .forEach(function(m){ var d = document.createElement('div'); d.innerHTML = '<p class="k">' + m[0] + '</p><b>' + m[1] + '</b><span>' + m[2] + '</span>'; tiles.appendChild(d); });
+    txt.innerHTML = '¿Cómo son <strong>' + porComida + ' g de proteína</strong> en una comida? Por ejemplo: ' +
+      (porComida <= 25 ? '3 huevos y un yogur proteico, o 100 g de pechuga de pollo.' : porComida <= 35 ? '150 g de pechuga de pollo, o una lata de atún con 2 huevos.' : porComida <= 45 ? '200 g de pollo o de ternera magra, o 250 g de queso fresco batido con un batido de proteína.' : '250 g de pollo o de pescado, o un batido de proteína con 3 huevos y un yogur proteico.') +
+      '<br><br>Repartirla en varias comidas ayuda a aprovecharla mejor que meterla toda de golpe. Si te cuesta llegar, un batido de proteína es la forma más fácil de sumar 25 g.' +
+      (extra ? ' Como tienes más de 50 años, te he subido un poco la cantidad: el músculo necesita algo más de proteína para responder igual.' : '');
+    ultPr = { lo: lo, hi: hi, obj: o[2] };
+  }
+  reg(calcProteina, ['prPeso', 'prEdad', 'prComidas', 'prObj']);
+  on('prShare', 'click', function(){
+    if(!ultPr) return;
+    tarjeta({ titulo: 'Mi proteína diaria', grande: ultPr.lo + '-' + ultPr.hi + ' g', sub: 'Al día, ' + ultPr.obj, lineas: ['Repartida en varias comidas.'], archivo: 'mi-proteina-arnoldwork.png' });
+  });
+
+  /* ---------- ¿cuándo llegaré a mi peso? ---------- */
+  var RITMOS = { s: [0.5, 0.25], n: [0.75, 0.35], r: [1, 0.5] };   // % del peso por semana: [perder, ganar]
+  var ultFe = null;
+  function calcFecha(){
+    var a = num('feAhora'), m = num('feMeta'), rt = RITMOS[$('feRitmo').value] || RITMOS.n;
+    var out = $('feOut'), sub = $('feSub'), warn = $('feWarn'), tabla = $('feTabla'), txt = $('feTxt');
+    tabla.hidden = true; warn.hidden = true; txt.textContent = ''; ultFe = null;
+    if(!(a > 0) || !(m > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Mete los dos pesos'; return; }
+    var dif = m - a;
+    if(Math.abs(dif) < 0.3){ out.textContent = '¡Ya estás!'; out.appendChild(sub); sub.textContent = 'Tu peso de hoy y el objetivo son prácticamente iguales'; return; }
+    var perder = dif < 0, pctSem = (perder ? rt[0] : rt[1]) / 100;
+    // Semana a semana: el ritmo es un % del peso de ese momento, así que se va frenando al acercarte.
+    var peso = a, sem = 0, filas = [], hoy = new Date();
+    while((perder ? peso > m : peso < m) && sem < 520){
+      peso += (perder ? -1 : 1) * peso * pctSem; sem++;
+      if(sem % 4 === 0) filas.push([sem, perder ? Math.max(peso, m) : Math.min(peso, m)]);
+    }
+    var fecha = new Date(hoy.getTime() + sem * 7 * 864e5);
+    out.textContent = fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }); out.appendChild(sub);
+    sub.textContent = 'en unas ' + sem + ' semanas (' + (sem >= 9 ? 'unos ' + Math.round(sem / 4.345) + ' meses' : 'unos ' + Math.round(sem * 7) + ' días') + ') · ' + (perder ? 'perdiendo' : 'ganando') + ' ' + dec(Math.abs(dif), 1) + ' kg';
+    var kgSem = a * pctSem, kcal = Math.round(kgSem * 7700 / 7 / 10) * 10;
+    var tb = tabla.querySelector('tbody'); tb.innerHTML = '';
+    filas.slice(0, 12).forEach(function(f){
+      var d = new Date(hoy.getTime() + f[0] * 7 * 864e5), tr = document.createElement('tr');
+      [d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }), 'Semana ' + f[0], dec(f[1], 1) + ' kg'].forEach(function(v){ var td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+    tabla.hidden = !filas.length;
+    txt.innerHTML = 'Para ' + (perder ? 'perder' : 'ganar') + ' unos <strong>' + dec(kgSem, 2).replace(/0$/, '') + ' kg por semana</strong> al principio, necesitas comer unas <strong>' + kcal + ' kcal ' + (perder ? 'menos' : 'más') + ' al día</strong> de las que gastas. ' +
+      (perder ? 'Mantén la proteína alta y sigue entrenando con peso: así lo que se va es grasa y no músculo.' : 'Si la báscula sube más rápido, lo que sobra es grasa: recorta un poco.') +
+      ' Pésate cada mañana y mira la media de la semana: el peso de un día suelto engaña.';
+    if(perder && a > 0 && (a - m) / a > 0.2) { warn.hidden = false; warn.textContent = 'Es un cambio grande: ve por etapas. Marca un objetivo intermedio y revisa cómo te encuentras antes de seguir.'; }
+    if(!perder && $('feRitmo').value === 'r') { warn.hidden = false; warn.textContent = 'Subir más rápido no te da más músculo: lo que pasa de medio kilo a la semana suele ser grasa.'; }
+    ultFe = { fecha: out.firstChild.nodeValue, m: m, sem: sem };
+  }
+  reg(calcFecha, ['feAhora', 'feMeta', 'feRitmo']);
+  on('feShare', 'click', function(){
+    if(!ultFe) return;
+    tarjeta({ titulo: 'Llegaré a ' + dec(ultFe.m, 1).replace(',0', '') + ' kg', grande: ultFe.fecha, sub: 'En unas ' + ultFe.sem + ' semanas, sin prisas y sin pausa', lineas: ['Constancia: pésate, anota y sigue.'], archivo: 'mi-objetivo-arnoldwork.png' });
+  });
+
+  /* ---------- test: ¿qué rutina es para ti? ---------- */
+  function calcTest(){
+    var dias = parseInt($('teDias').value, 10), t = parseInt($('teTiempo').value, 10), exp = parseInt($('teExp').value, 10), it = $('teInt').value, casa = $('teDonde').value === 'casa';
+    var out = $('teOut'), sub = $('teSub'), txt = $('teTxt'), acts = $('teActs');
+    var r;
+    if(!casa && (it === 'hd' || (it === 'igual' && (dias <= 2 || t <= 30)))){
+      r = exp >= 2 && (dias <= 2 || it === 'hd' && t <= 30)
+        ? ['Heavy Duty: rutina consolidada', 'Dos ejercicios por entreno, una vez por semana, a muerte', 'Llevas tiempo entrenando y quieres el máximo resultado con el mínimo tiempo: la versión más radical de Mentzer, con peso muerto, fondos, sentadilla y jalón.', 'https://heavywork.arnoldwork.com/#rotacion', 'Empezar en HeavyWork']
+        : ['Heavy Duty: la rutina ideal de Mentzer', 'Una serie al fallo por ejercicio, cuatro entrenos en rueda', 'Pocas series, todas al fallo y descanso de verdad. Entrenos de 20 a 40 minutos con modo serie guiado y cuaderno que te dice si progresas.', 'https://heavywork.arnoldwork.com/', 'Empezar en HeavyWork'];
+    } else {
+      var tipo = dias <= 2 ? 'Cuerpo completo, 2 días' : dias === 3 ? 'Cuerpo completo, 3 días' : dias === 4 ? 'Torso y pierna, 4 días' : 'Empuje, tirón y pierna';
+      r = ['Rutina a medida: ' + tipo.toLowerCase(), exp === 0 ? 'Básicos bien aprendidos y subir poco a poco' : 'Volumen bien repartido y progresión semanal',
+        (casa ? 'Con mancuernas en casa: ' : '') + 'el generador te monta los ejercicios, series y repeticiones para ' + dias + ' días' + (t <= 30 ? ', en sesiones cortas' : '') + '. ' + (exp === 0 ? 'Empieza lejos del fallo y céntrate en la técnica las primeras semanas.' : 'Apunta cada entreno para saber cuándo subir peso.'),
+        '/herramientas/generador-de-rutina/', 'Generar mi rutina'];
+    }
+    out.textContent = r[0]; out.appendChild(sub); sub.textContent = r[1];
+    txt.textContent = r[2];
+    acts.innerHTML = '';
+    var a = document.createElement('a'); a.className = 'btn btn-sm'; a.href = r[3]; a.textContent = r[4] + ' →'; acts.appendChild(a);
+    var b2 = document.createElement('a'); b2.className = 'btn btn-ghost btn-sm'; b2.href = '/herramientas/cuaderno-de-entreno/'; b2.textContent = 'Cuaderno de entreno'; acts.appendChild(b2);
+  }
+  reg(calcTest, ['teDias', 'teTiempo', 'teExp', 'teInt', 'teDonde']);
+
   /* ---------- borrar datos ---------- */
   on('clearAll', 'click', function(){
     if(!window.confirm('¿Borrar todo lo que esta página ha guardado en tu móvil?')) return;

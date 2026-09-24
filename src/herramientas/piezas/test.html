@@ -1,0 +1,51 @@
+<div class="tool" id="test">
+  <h2>¿Qué rutina es para ti?</h2>
+  <p class="hint">Cinco preguntas y te digo qué forma de entrenar te encaja mejor, con enlace para empezar hoy mismo.</p>
+  <div class="fields">
+    <div class="field wide">
+      <label for="teDias">1. ¿Cuántos días puedes entrenar a la semana?</label>
+      <select id="teDias" data-keep>
+        <option value="2">1 o 2 días</option>
+        <option value="3" selected>3 días</option>
+        <option value="4">4 días</option>
+        <option value="5">5 o más días</option>
+      </select>
+    </div>
+    <div class="field wide">
+      <label for="teTiempo">2. ¿Cuánto tiempo tienes por sesión?</label>
+      <select id="teTiempo" data-keep>
+        <option value="30">Menos de 40 minutos</option>
+        <option value="60" selected>Alrededor de una hora</option>
+        <option value="90">Más de una hora</option>
+      </select>
+    </div>
+    <div class="field wide">
+      <label for="teExp">3. ¿Cuánto llevas entrenando con pesas?</label>
+      <select id="teExp" data-keep>
+        <option value="0" selected>Empiezo ahora o menos de 6 meses</option>
+        <option value="1">Entre 6 meses y 2 años</option>
+        <option value="2">Más de 2 años</option>
+      </select>
+    </div>
+    <div class="field wide">
+      <label for="teInt">4. ¿Qué te va más?</label>
+      <select id="teInt" data-keep>
+        <option value="vol" selected>Varias series y ejercicios, a buen ritmo</option>
+        <option value="hd">Pocas series, pero a muerte hasta el fallo</option>
+        <option value="igual">Me da igual, quiero lo que funcione</option>
+      </select>
+    </div>
+    <div class="field wide">
+      <label for="teDonde">5. ¿Dónde entrenas?</label>
+      <select id="teDonde" data-keep>
+        <option value="gym" selected>En un gimnasio</option>
+        <option value="casa">En casa con mancuernas</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="teOut">—<small id="teSub"></small></div>
+    <p class="vtxt" id="teTxt"></p>
+    <div class="acts" id="teActs"></div>
+  </div>
+</div>

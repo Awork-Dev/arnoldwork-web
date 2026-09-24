@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de proteína: cuántos gramos necesitas al día — ArnoldWork</title>
+<meta name="description" content="Calcula cuánta proteína necesitas al día según tu peso, objetivo y edad, cuánta en cada comida y cómo se ve en el plato. Gratis y sin registro.">
+<link rel="canonical" href="https://arnoldwork.com/herramientas/calculadora-proteina/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calculadora de proteína: cuántos gramos necesitas al día — ArnoldWork">
+<meta property="og:description" content="Calculadora de proteína diaria: gratis, sin registro y desde el móvil. Made with love from Mallorca ❤️">
+<meta name="twitter:description" content="Calculadora de proteína diaria: gratis, sin registro y desde el móvil. Made with love from Mallorca ❤️">
+<meta property="og:url" content="https://arnoldwork.com/herramientas/calculadora-proteina/">
+<meta property="og:site_name" content="ArnoldWork">
+<meta property="og:locale" content="es_ES">
+<meta property="og:image" content="https://arnoldwork.com/img/og/calculadora-proteina.png?v=b7b668b4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ArnoldWork · Calculadora de proteína diaria">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og/calculadora-proteina.png?v=b7b668b4">
+<meta name="author" content="ArnoldWork">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=749d0d5039">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Calculadora de proteína diaria","url":"https://arnoldwork.com/herramientas/calculadora-proteina/","description":"Calcula cuánta proteína necesitas al día según tu peso, objetivo y edad, cuánta en cada comida y cómo se ve en el plato. Gratis y sin registro.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Proteína diaria","item":"https://arnoldwork.com/herramientas/calculadora-proteina/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Se puede comer demasiada proteína?","acceptedAnswer":{"@type":"Answer","text":"En personas sanas, hasta unos 2,5 g por kilo es seguro. Más no da más músculo: el resto se usa como energía. Si tienes problemas de riñón, pregunta a tu médico."}},{"@type":"Question","name":"¿Hace falta tomar batidos de proteína?","acceptedAnswer":{"@type":"Answer","text":"No. Son solo comida en polvo y una forma cómoda de llegar a la cifra. Si llegas con comida normal, no los necesitas."}},{"@type":"Question","name":"¿Cuenta la proteína del pan, el arroz o las legumbres?","acceptedAnswer":{"@type":"Answer","text":"Sí, suma. Las legumbres aportan bastante; el pan y el arroz, algo menos. Las fuentes animales, los lácteos, la soja y las legumbres combinadas son las más completas."}}]}]</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span></a>
+    <nav class="nav-links">
+      <a href="/#porque">Por qué</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#heavywork">HeavyWork</a>
+      <a href="/#libro">Libro</a>
+      <a href="/#material">Fichas</a>
+      <a href="/#regalo">Guía gratis</a>
+      <a href="/#quien">Quién soy</a>
+      <a href="/#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-sm" href="/#batido">🥤 Invita a un batido</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="tools-hero">
+  <div class="wrap">
+    <nav class="migas" aria-label="Estás en"><a href="/herramientas/">Herramientas</a><span>/</span>Proteína diaria</nav>
+    <h1>Calculadora de proteína diaria</h1>
+    <p class="lede" style="margin-top:20px">Mete tu peso, tu edad y lo que buscas, y te digo cuántos gramos de proteína comer al día, cuánto en cada comida y ejemplos reales de platos. Sin polvos mágicos.</p>
+  </div>
+</section>
+
+<section class="solo">
+  <div class="wrap">
+
+    <div class="tool" id="proteina">
+      <p class="hint">Según tu peso, tu objetivo y tu edad, te digo cuántos gramos de proteína comer al día, cuánto en cada comida y cómo se ve eso en el plato.</p>
+      <div class="fields">
+        <div class="field">
+          <label for="prPeso">Tu peso (kg)</label>
+          <input id="prPeso" type="number" inputmode="decimal" min="30" max="250" step="0.5" value="80" data-sync="peso">
+        </div>
+        <div class="field">
+          <label for="prEdad">Edad</label>
+          <input id="prEdad" type="number" inputmode="numeric" min="15" max="95" step="1" value="30" data-sync="edad">
+        </div>
+        <div class="field">
+          <label for="prComidas">Comidas al día</label>
+          <select id="prComidas" data-keep><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select>
+        </div>
+      </div>
+      <div class="fields" style="margin-top:14px">
+        <div class="field wide">
+          <label for="prObj">Objetivo</label>
+          <select id="prObj" data-keep>
+            <option value="vol" selected>Ganar músculo</option>
+            <option value="def">Perder grasa sin perder músculo</option>
+            <option value="man">Mantenerme y entrenar</option>
+            <option value="sed">No entreno con pesas</option>
+          </select>
+        </div>
+      </div>
+      <div class="out">
+        <div class="big" id="prOut">—<small id="prSub"></small></div>
+        <div class="macros" id="prTiles"></div>
+        <p class="vtxt" id="prTxt"></p>
+        <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="prShare">Compartir como imagen</button></div>
+        <p class="cta-line">¿Quieres las calorías y el resto de macros? <a href="/herramientas/calculadora-calorias-macros/">Calculadora de calorías y macros →</a></p>
+      </div>
+    </div>
+
+    <div class="articulo">
+<h2>Cuánta proteína al día</h2>
+<p>Si entrenas con pesas y quieres ganar músculo, la evidencia apunta a <strong>1,6 a 2,2 g por kilo de peso al día</strong>. Si estás perdiendo grasa conviene ir a la parte alta, hasta unos 2,4 g por kilo, para no perder músculo por el camino. Sin entrenar con pesas, con 1 a 1,2 g por kilo es suficiente.</p>
+<p>A partir de los 50 años el músculo responde algo peor a la misma cantidad, por eso la calculadora suma un poco.</p>
+<h2>Repartirla en el día</h2>
+<p>Lo más práctico es repartirla en <strong>3 a 5 comidas</strong> con 25 a 45 g cada una. No hace falta obsesionarse con la «ventana anabólica»: lo que cuenta es el total del día y comerla con constancia.</p>
+    </div>
+
+    <div class="faq">
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Se puede comer demasiada proteína?</summary>
+        <p>En personas sanas, hasta unos 2,5 g por kilo es seguro. Más no da más músculo: el resto se usa como energía. Si tienes problemas de riñón, pregunta a tu médico.</p>
+      </details>
+      <details>
+        <summary>¿Hace falta tomar batidos de proteína?</summary>
+        <p>No. Son solo comida en polvo y una forma cómoda de llegar a la cifra. Si llegas con comida normal, no los necesitas.</p>
+      </details>
+      <details>
+        <summary>¿Cuenta la proteína del pan, el arroz o las legumbres?</summary>
+        <p>Sí, suma. Las legumbres aportan bastante; el pan y el arroz, algo menos. Las fuentes animales, los lácteos, la soja y las legumbres combinadas son las más completas.</p>
+      </details>
+    </div>
+    <div class="difunde-caja">
+      <h2>¿Te ha servido? Pásasela a tu compañero de banco</h2>
+      <div data-difunde data-texto="💪 Calculadora de proteína diaria: gratis, sin registro y desde el móvil. Te va a servir en el gimnasio." data-url="https://arnoldwork.com/herramientas/calculadora-proteina/" data-asunto="Calculadora de proteína diaria · ArnoldWork"></div>
+    </div>
+
+    <div class="otras">
+      <h2>Más herramientas gratis</h2>
+      <nav class="idx" aria-label="Otras herramientas">
+      <div class="idx-g">
+        <span class="idx-t">Fuerza</span>
+        <a href="/herramientas/calculadora-1rm/">Tu máximo (1RM)</a>
+        <a href="/herramientas/calculadora-rpe-rir/">RIR y RPE</a>
+        <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>
+        <a href="/herramientas/nivel-de-fuerza/">¿Cómo de fuerte soy?</a>
+        <a href="/herramientas/calculadora-dots-wilks/">Puntos DOTS y Wilks</a>
+        <a href="/herramientas/calculadora-discos/">Discos en la barra</a>
+        <a href="/herramientas/series-de-aproximacion/">Series de aproximación</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Nutrición y cuerpo</span>
+        <a href="/herramientas/calculadora-calorias-macros/">Calorías y macros</a>
+        <a href="/herramientas/calculadora-creatina/">Creatina</a>
+        <a href="/herramientas/grasa-corporal-ffmi/">Grasa corporal y FFMI</a>
+        <a href="/herramientas/cuanto-musculo-puedo-ganar/">¿Cuánto músculo puedo ganar?</a>
+        <a href="/herramientas/cuando-llegare-a-mi-peso/">¿Cuándo llegaré a mi peso?</a>
+      </div>
+      <div class="idx-g">
+        <span class="idx-t">Organiza el entreno</span>
+        <a href="/herramientas/test-que-rutina-hacer/">¿Qué rutina es para ti?</a>
+        <a href="/herramientas/generador-de-rutina/">Generador de rutina</a>
+        <a href="/herramientas/cuaderno-de-entreno/">Cuaderno de entreno</a>
+        <a href="/herramientas/sustituto-de-ejercicio/">Sustituto de ejercicio</a>
+        <a href="/herramientas/volumen-semanal/">Volumen semanal</a>
+        <a href="/herramientas/recuperacion-heavy-duty/">Recuperación Heavy Duty</a>
+        <a href="/herramientas/cronometro-descansos/">Cronómetro de descansos</a>
+        <a href="/herramientas/tempo-repeticiones/">Tempo</a>
+      </div>
+      </nav>
+    </div>
+
+    <p class="tools-foot">Estas herramientas son material de entrenamiento, no consejo médico. Las estimaciones son eso, estimaciones: si tienes una lesión o una condición de salud, consúltalo antes con tu profesional sanitario. ¿Se te ocurre una herramienta que falta aquí? <a href="/#contacto" style="color:var(--amber)">Pídemela</a>. Y si todo esto te ayuda, <a href="/#batido" style="color:var(--amber)">invítame a un batido</a> 🥤.<br><br>Lo que escribes se guarda solo en este móvil o este ordenador, nunca nos llega a nosotros. <button type="button" class="linkbtn" id="clearAll">Borrar mis datos</button></p>
+
+  </div>
+</section>
+</main>
+
+<a class="dev-franja" href="/#negocios">💼 ¿Te gusta esta web? <span>La hacemos y automatizamos para tu negocio →</span></a>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>
+      <a href="https://heavywork.arnoldwork.com/game/">CaveWork</a>
+      <a href="https://www.tiktok.com/@arnold_work" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://ko-fi.com/s/833e551486" target="_blank" rel="noopener">Libro y fichas en Ko-fi</a>
+      <a href="/#batido">Invita a un batido</a>
+      <a href="/#negocios">Webs para tu negocio</a>
+      <a href="/#aviso">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/herramientas/app.js?v=3eb8b428a1"></script>
+<script src="/difunde.js?v=08b273f93a" defer></script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

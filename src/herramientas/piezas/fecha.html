@@ -1,0 +1,32 @@
+<div class="tool" id="fecha">
+  <h2>¿Cuándo llegaré a mi peso?</h2>
+  <p class="hint">Pon tu peso de hoy, el que quieres alcanzar y a qué ritmo. Te doy la fecha aproximada, cuántas calorías de más o de menos al día supone y los controles para ir comprobando.</p>
+  <div class="fields">
+    <div class="field">
+      <label for="feAhora">Peso de hoy (kg)</label>
+      <input id="feAhora" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="85" data-sync="peso">
+    </div>
+    <div class="field">
+      <label for="feMeta">Peso objetivo (kg)</label>
+      <input id="feMeta" type="number" inputmode="decimal" min="30" max="250" step="0.1" value="78" data-keep>
+    </div>
+  </div>
+  <div class="fields" style="margin-top:14px">
+    <div class="field wide">
+      <label for="feRitmo">Ritmo</label>
+      <select id="feRitmo" data-keep>
+        <option value="s">Tranquilo · lo más fácil de mantener</option>
+        <option value="n" selected>Normal · el recomendado</option>
+        <option value="r">Rápido · exigente, sin pasarse</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="feOut">—<small id="feSub"></small></div>
+    <p class="warn" id="feWarn" hidden></p>
+    <table class="pct" id="feTabla" hidden><tbody></tbody></table>
+    <p class="vtxt" id="feTxt"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="feShare">Compartir como imagen</button></div>
+    <p class="cta-line">Para saber qué comer cada día: <a href="/herramientas/calculadora-calorias-macros/">calorías y macros →</a></p>
+  </div>
+</div>

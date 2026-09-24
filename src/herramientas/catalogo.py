@@ -421,11 +421,96 @@ HERRAMIENTAS += [
             ("¿Se puede ganar músculo solo con mancuernas?", "Sí. Con mancuernas y un banco se pueden trabajar todos los músculos. Lo importante es que las series sean duras y que vayas subiendo el peso o las repeticiones."),
         ],
     },
+    {
+        "pieza": "creatina",
+        "slug": "calculadora-creatina",
+        "grupo": "cuerpo",
+        "nombre": "Creatina",
+        "titulo": "Calculadora de creatina: cuánta tomar según tu peso",
+        "descripcion": "Calcula tu dosis diaria de creatina monohidrato según tu peso, con o sin fase de carga. Pautas de la ISSN, gratis y sin registro.",
+        "h1": "Calculadora de creatina",
+        "intro": "Mete tu peso y te digo cuántos gramos de creatina tomar al día y, si quieres notarla antes, cómo hacer la fase de carga. Sin marcas, sin cápsulas mágicas: monohidrato y constancia.",
+        "articulo": """
+<h2>Cuánta creatina tomar</h2>
+<p>La Sociedad Internacional de Nutrición Deportiva (ISSN) recomienda unos <strong>0,03 g por kilo al día</strong>, que en la práctica son <strong>3 a 5 g diarios</strong> para casi todo el mundo. Esa dosis llena los depósitos del músculo en unas 3 o 4 semanas.</p>
+<p>Si quieres notarla antes, se puede hacer una <strong>fase de carga</strong>: unos 0,3 g por kilo al día (unos 20 g) durante 5 a 7 días, repartidos en 4 tomas, y después la dosis diaria. El resultado final es el mismo; solo cambia lo rápido que llegas.</p>
+<h2>Qué creatina tomar</h2>
+<p>La <strong>creatina monohidrato</strong> es la más estudiada, la que mejor funciona y la más barata. Las versiones «avanzadas» (HCL, Kre-Alkalyn, etc.) no han demostrado ser mejores. Tómala todos los días, también los de descanso, y a la hora que te venga bien.</p>
+""",
+        "faq": [
+            ("¿Hay que hacer descansos con la creatina?", "No. No hace falta ciclarla ni descansar: se puede tomar todo el año. Si la dejas, los niveles bajan poco a poco en unas semanas."),
+            ("¿La creatina retiene líquidos?", "Hace que el músculo guarde más agua dentro, por eso la báscula puede subir 1 o 2 kg las primeras semanas. No es grasa ni hinchazón bajo la piel."),
+            ("¿A qué hora se toma la creatina?", "Da igual. Lo importante es tomarla todos los días. Mucha gente la toma después de entrenar o con una comida para no olvidarse."),
+        ],
+    },
+    {
+        "pieza": "proteina",
+        "slug": "calculadora-proteina",
+        "grupo": "cuerpo",
+        "nombre": "Proteína diaria",
+        "titulo": "Calculadora de proteína: cuántos gramos necesitas al día",
+        "descripcion": "Calcula cuánta proteína necesitas al día según tu peso, objetivo y edad, cuánta en cada comida y cómo se ve en el plato. Gratis y sin registro.",
+        "h1": "Calculadora de proteína diaria",
+        "intro": "Mete tu peso, tu edad y lo que buscas, y te digo cuántos gramos de proteína comer al día, cuánto en cada comida y ejemplos reales de platos. Sin polvos mágicos.",
+        "articulo": """
+<h2>Cuánta proteína al día</h2>
+<p>Si entrenas con pesas y quieres ganar músculo, la evidencia apunta a <strong>1,6 a 2,2 g por kilo de peso al día</strong>. Si estás perdiendo grasa conviene ir a la parte alta, hasta unos 2,4 g por kilo, para no perder músculo por el camino. Sin entrenar con pesas, con 1 a 1,2 g por kilo es suficiente.</p>
+<p>A partir de los 50 años el músculo responde algo peor a la misma cantidad, por eso la calculadora suma un poco.</p>
+<h2>Repartirla en el día</h2>
+<p>Lo más práctico es repartirla en <strong>3 a 5 comidas</strong> con 25 a 45 g cada una. No hace falta obsesionarse con la «ventana anabólica»: lo que cuenta es el total del día y comerla con constancia.</p>
+""",
+        "faq": [
+            ("¿Se puede comer demasiada proteína?", "En personas sanas, hasta unos 2,5 g por kilo es seguro. Más no da más músculo: el resto se usa como energía. Si tienes problemas de riñón, pregunta a tu médico."),
+            ("¿Hace falta tomar batidos de proteína?", "No. Son solo comida en polvo y una forma cómoda de llegar a la cifra. Si llegas con comida normal, no los necesitas."),
+            ("¿Cuenta la proteína del pan, el arroz o las legumbres?", "Sí, suma. Las legumbres aportan bastante; el pan y el arroz, algo menos. Las fuentes animales, los lácteos, la soja y las legumbres combinadas son las más completas."),
+        ],
+    },
+    {
+        "pieza": "fecha",
+        "slug": "cuando-llegare-a-mi-peso",
+        "grupo": "cuerpo",
+        "nombre": "¿Cuándo llegaré a mi peso?",
+        "titulo": "¿Cuándo llegaré a mi peso? Calculadora de fecha objetivo",
+        "descripcion": "Calcula en qué fecha llegarás a tu peso objetivo según el ritmo, cuántas calorías de menos o de más necesitas y los controles para ir comprobando.",
+        "h1": "¿Cuándo llegaré a mi peso?",
+        "intro": "Tu peso de hoy, el que quieres y a qué ritmo. Te doy la fecha aproximada, las calorías de diferencia al día y un calendario para comprobar que vas bien.",
+        "articulo": """
+<h2>A qué ritmo perder o ganar peso</h2>
+<p>Para perder grasa sin perder músculo, lo recomendable es bajar entre un <strong>0,5 % y un 1 % del peso a la semana</strong>. Con 80 kg son entre 400 y 800 gramos semanales. Más rápido suele costar músculo y rebote.</p>
+<p>Para ganar músculo, lo razonable es subir entre un <strong>0,25 % y un 0,5 % a la semana</strong>. Subir más deprisa no da más músculo: el exceso suele ser grasa.</p>
+<h2>Por qué se va frenando</h2>
+<p>La calculadora usa un porcentaje del peso de cada semana, así que el ritmo se va frenando a medida que te acercas: es lo que pasa en la vida real. Un kilo de grasa equivale a unas 7.700 kcal, y de ahí sale la diferencia diaria de calorías.</p>
+""",
+        "faq": [
+            ("¿Por qué el peso sube y baja de un día a otro?", "El agua, la sal, los hidratos y la digestión mueven la báscula 1 o 2 kg de un día para otro. Pésate cada mañana y fíjate en la media semanal."),
+            ("¿Qué hago si me estanco?", "Si la media semanal no se mueve en dos o tres semanas, ajusta 100 a 200 kcal al día y revisa que estás anotando bien lo que comes."),
+        ],
+    },
+    {
+        "pieza": "test",
+        "slug": "test-que-rutina-hacer",
+        "grupo": "entreno",
+        "nombre": "¿Qué rutina es para ti?",
+        "titulo": "Test: ¿qué rutina de gimnasio es para ti?",
+        "descripcion": "Responde 5 preguntas y descubre qué rutina de gimnasio te encaja: Heavy Duty, cuerpo completo, torso-pierna o empuje-tirón-pierna. Gratis.",
+        "h1": "¿Qué rutina es para ti?",
+        "intro": "Cinco preguntas sobre tu tiempo, tu experiencia y cómo te gusta entrenar. Te digo qué forma de entrenar te encaja y te llevo directo a empezarla.",
+        "articulo": """
+<h2>No hay una rutina perfecta, hay una que vas a seguir</h2>
+<p>La mejor rutina es la que encaja con tu vida: los días que de verdad puedes ir, el tiempo que tienes y cómo disfrutas entrenando. Una rutina brillante que abandonas en febrero vale menos que una sencilla que sigues todo el año.</p>
+<h2>Las opciones</h2>
+<p><strong>Heavy Duty</strong>: pocas series, todas al fallo, y mucho descanso. Ideal si tienes poco tiempo y te gusta entrenar a muerte. <strong>Cuerpo completo</strong>: 2 o 3 días trabajando todo el cuerpo, lo mejor para empezar. <strong>Torso y pierna</strong>: 4 días, más volumen por músculo. <strong>Empuje, tirón y pierna</strong>: para quien puede ir 5 o 6 días.</p>
+""",
+        "faq": [
+            ("¿Cuántos días a la semana hay que entrenar?", "Con 2 o 3 días bien hechos se progresa mucho, sobre todo al empezar. Más días permiten más volumen, pero solo compensa si puedes recuperarte y mantenerlo."),
+            ("¿Cuándo cambio de rutina?", "Cuando lleves varias semanas sin progresar pese a descansar y comer bien, o cuando cambie tu tiempo disponible. No hace falta cambiar solo por aburrimiento."),
+        ],
+    },
 ]
 
 _ORDEN = ["rm", "rpe", "subir", "nivel", "puntos", "discos", "calentamiento",
-          "macros", "grasa", "musculo",
-          "rutina", "cuaderno", "sustituto", "volumen", "recuperacion", "descansos", "tempo"]
+          "macros", "proteina", "creatina", "grasa", "musculo", "fecha",
+          "test", "rutina", "cuaderno", "sustituto", "volumen", "recuperacion", "descansos", "tempo"]
 assert sorted(_ORDEN) == sorted(h["pieza"] for h in HERRAMIENTAS)
 HERRAMIENTAS.sort(key=lambda h: _ORDEN.index(h["pieza"]))
 
@@ -438,6 +523,10 @@ _CORTOS = {'rm': '1RM',
             'discos': 'Discos en la barra',
             'calentamiento': 'Aproximaciones',
             'macros': 'Calorías y macros',
+            'proteina': 'Proteína diaria',
+            'creatina': 'Creatina',
+            'fecha': '¿Cuándo llegaré?',
+            'test': 'Test de rutina',
             'grasa': 'Grasa corporal',
             'musculo': '¿Cuánto músculo?',
             'rutina': 'Generador de rutina',

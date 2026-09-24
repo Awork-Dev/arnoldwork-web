@@ -1,0 +1,24 @@
+<div class="tool" id="creatina">
+  <h2>¿Cuánta creatina tomo?</h2>
+  <p class="hint">Te calculo la dosis diaria de creatina monohidrato según tu peso y, si quieres, la fase de carga para notarla antes. Son las pautas de la Sociedad Internacional de Nutrición Deportiva (ISSN).</p>
+  <div class="fields">
+    <div class="field">
+      <label for="crPeso">Tu peso (kg)</label>
+      <input id="crPeso" type="number" inputmode="decimal" min="30" max="250" step="0.5" value="80" data-sync="peso">
+    </div>
+    <div class="field wide">
+      <label for="crCarga">¿Fase de carga?</label>
+      <select id="crCarga" data-keep>
+        <option value="no" selected>No · dosis diaria desde el primer día</option>
+        <option value="si">Sí · una semana de carga y luego la dosis diaria</option>
+      </select>
+    </div>
+  </div>
+  <div class="out">
+    <div class="big" id="crOut">—<small id="crSub"></small></div>
+    <table class="pct" id="crTabla" hidden><tbody></tbody></table>
+    <p class="vtxt" id="crTxt"></p>
+    <div class="acts"><button type="button" class="btn btn-ghost btn-sm" id="crShare">Compartir como imagen</button></div>
+    <p class="cta-line">¿Te ha resuelto la duda? <a href="/#batido">Invita a un batido 🥤</a></p>
+  </div>
+</div>
