@@ -316,7 +316,9 @@ async function noticiasWeb(req, env, seccion) {
   if (!["hipertrofia", "heavyduty"].includes(seccion)) return new Response('{"error":"Sección no válida"}', { status: 400, headers: h });
   const m = memoria(env);
   let web = m ? await m.leer("noticiasWeb") : null;
-  if (m && (!web || Date.now() - web.actualizado > 8 * DIA)) {
+  // También si a alguna sección le faltan cosas (por ejemplo, si una fuente no respondió la última vez).
+  const corta = w => ["hipertrofia", "heavyduty"].some(k => !w[k] || w[k].length < 6);
+  if (m && (!web || Date.now() - web.actualizado > 8 * DIA || corta(web))) {
     const intento = await m.leer("noticiasWebIntento");
     if (!intento || Date.now() - intento > 3600e3) {
       await m.guardar("noticiasWebIntento", Date.now());
@@ -324,7 +326,7 @@ async function noticiasWeb(req, env, seccion) {
       await m.guardar("noticiasWeb", web);
     }
   }
-  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: (web && web[seccion]) || [] }), { headers: h });
+  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: (web && web[seccion]) || [], avisos: (web && web.errores) || [] }), { headers: h });
 }
 
 async function resumenSemanal(env) {

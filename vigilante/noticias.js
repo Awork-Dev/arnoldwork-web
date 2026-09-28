@@ -67,8 +67,13 @@ async function estudios(termino) {
 // Titulares de Google Noticias de la última semana.
 async function noticias({ q, idioma }) {
   const pais = idioma === "es" ? "hl=es&gl=ES&ceid=ES:es" : "hl=en-US&gl=US&ceid=US:en";
-  const r = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(q + " when:7d")}&${pais}`,
-    { headers: { "User-Agent": "Mozilla/5.0 ArnoldWork-vigilante" }, signal: AbortSignal.timeout(10000) });
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q + " when:7d")}&${pais}`;
+  let r;
+  for (let intento = 0; intento < 2; intento++) {   // Google a veces responde 429/503: se reintenta una vez
+    await espera(intento ? 1500 : 300);
+    r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; ArnoldWork-vigilante/1.0)", "Accept": "application/rss+xml, application/xml" }, signal: AbortSignal.timeout(10000) });
+    if (r.ok) break;
+  }
   if (!r.ok) throw new Error(`${r.status} en Google Noticias`);
   const xml = await r.text();
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, it]) => {
@@ -95,7 +100,7 @@ export async function recoger() {
   for (const b of BLOQUES) {
     const [est, not] = await Promise.all([
       estudios(b.estudios).catch(e => { errores.push("PubMed: " + e.message); return []; }),
-      Promise.all(b.noticias.map(n => noticias(n).catch(e => { errores.push("Noticias: " + e.message); return []; }))).then(l => l.flat()),
+      (async () => { const l = []; for (const n of b.noticias) l.push(...await noticias(n).catch(e => { errores.push("Noticias: " + e.message); return []; })); return l; })(),
     ]);
     const unicos = lista => { const v = new Set(); return lista.filter(x => !v.has(x.id) && v.add(x.id)); };
     secciones.push({ clave: b.clave, titulo: b.titulo, estudios: unicos(est), noticias: unicos(not) });
@@ -127,8 +132,8 @@ export function mensajesTelegram({ secciones, errores }, vistas = []) {
 // Lo que enseña cada web: lo último arriba, sin repetir, como mucho 12 por sección.
 // `antes` es lo que ya se enseñaba; lo nuevo entra con la fecha en que se vio por primera vez.
 const EN_WEB = 12;
-export function paraWeb({ secciones }, antes = {}) {
-  const ahora = Date.now(), web = { actualizado: ahora };
+export function paraWeb({ secciones, errores }, antes = {}) {
+  const ahora = Date.now(), web = { actualizado: ahora, errores };
   for (const b of secciones) {
     const previo = antes[b.clave] || [], ya = new Set(previo.map(x => x.id));
     // Se alternan estudios y noticias para que haya de todo.
