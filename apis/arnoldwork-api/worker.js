@@ -65,7 +65,7 @@ export default {
         '',
         'Correo: ' + clean(lead.contacto),
         '',
-        'Enviale "Cuando subir peso" y anadelo a la lista de correo.',
+        'Enviale "Cuando subir peso". Solo la guia: no se le escribe nada mas.',
         clean(lead.fecha),
       ];
     } else {
