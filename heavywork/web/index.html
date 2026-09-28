@@ -157,10 +157,6 @@ p{margin:0 0 1em;max-width:60ch}
 .pr{display:inline-block;background:#ffd23c;color:var(--tinta);font-weight:900;padding:.2em .6em;font-size:1.2rem;margin:0 auto}
 .calienta{border:2px solid #555b62;padding:10px 12px;max-width:36ch;margin:0 auto;text-align:left}
 .calienta b{display:block;color:#ffd23c;font-size:.9rem;letter-spacing:.04em;margin-bottom:4px}
-.form-rev{display:grid;gap:10px}
-.form-rev label{display:grid;gap:4px;font-weight:700;font-size:.95rem}
-.form-rev input,.form-rev textarea{min-height:48px;padding:.5em .7em;border:3px solid var(--papel);background:transparent;color:var(--papel);font-size:1rem}
-.form-rev textarea{min-height:72px;resize:vertical}
 .programas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 14px;max-width:560px}
 .programas button{min-height:52px;border:3px solid var(--tinta);background:var(--papel);font-weight:800;font-stretch:85%;cursor:pointer;padding:.3em .6em}
 .programas button[aria-pressed="true"]{background:var(--tinta);color:var(--papel);box-shadow:4px 4px 0 var(--peligro)}
@@ -289,7 +285,7 @@ p{margin:0 0 1em;max-width:60ch}
 .revision .estado-msg{min-height:1.4em;font-size:1rem;font-weight:700;color:#fff}
 .revision .estado-msg.aviso{background:var(--peligro);padding:10px 12px}
 .revision .btn[data-vacio]{opacity:.75}
-.revision .plazas{margin-top:12px;display:inline-block;background:var(--peligro);color:#fff;font-weight:700;padding:6px 10px}
+.revision .responsable{margin-top:12px;font-size:.92rem;color:#a9adb3}
 .casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin-bottom:20px;border:3px solid var(--tinta);max-width:460px}
 .casa svg{width:64px;height:auto;flex:none}
 .casa-txt{display:flex;flex-direction:column;gap:4px}
@@ -298,9 +294,6 @@ p{margin:0 0 1em;max-width:60ch}
 .casa-lema{font-family:Montserrat,var(--texto);font-size:.95rem;color:#DE3A3A;letter-spacing:.04em}
 .marca-agua{position:absolute;right:-14vw;bottom:8vh;width:min(75vw,420px);opacity:.1;pointer-events:none}
 .marca-agua svg{width:100%;height:auto}
-.alternativa{font-size:.9rem;color:#c9ccd0;margin:0}
-.alternativa a{color:#fff;font-weight:700}
-.alternativa button{background:none;border:0;padding:0;color:#fff;font-weight:700;text-decoration:underline;cursor:pointer;min-height:44px}
 .juego-promo{display:grid;gap:18px;align-items:center;background:#000;color:var(--papel);border:3px solid var(--tinta);padding:22px 20px;box-shadow:8px 8px 0 var(--peligro)}
 @media (min-width:760px){.juego-promo{grid-template-columns:1fr auto}}
 .juego-promo p{color:#c9ccd0;margin:10px 0 0}
@@ -500,23 +493,13 @@ p{margin:0 0 1em;max-width:60ch}
       <div class="insignias-caja" id="insignias"></div>
       <div class="revision">
         <div>
-          <h3>Que un entrenador revise tu cuaderno</h3>
-          <p>Envía tus marcas y recibirás un análisis: qué ejercicios se han estancado, si necesitas más descanso y qué cambiar para seguir progresando.</p>
-          <p class="plazas" id="plazasRev">🎁 Revisión gratis para los primeros en pedirla.</p>
+          <h3>Tu cuaderno es tuyo</h3>
+          <p>Se guarda solo en este móvil. Descárgalo o pásaselo a quien quieras: a tu compañero de entreno o a tu entrenador.</p>
+          <p class="responsable">HeavyWork es gratis y no hace planes ni revisiones personalizadas. Cada uno entrena bajo su propia responsabilidad.</p>
         </div>
         <div class="botones">
-          <button type="button" class="btn btn-peligro btn-bloque" id="abrirRevision">Pedir revisión</button>
-          <form class="form-rev" id="formRevision" hidden>
-            <label>Tu nombre<input name="nombre" autocomplete="name" required maxlength="80"></label>
-            <label>¿Dónde te contestamos? (correo, teléfono o Telegram)<input name="contacto" required maxlength="160"></label>
-            <label>Tu objetivo<textarea name="objetivo" maxlength="300" placeholder="Ganar músculo, fuerza, volver después de una lesión…"></textarea></label>
-            <label>Años entrenando<input name="anos" inputmode="numeric" maxlength="20"></label>
-            <button type="submit" class="btn btn-peligro btn-bloque">Enviar mi cuaderno</button>
-          </form>
-          <a class="btn btn-claro btn-bloque" id="pedirRevision" href="#" hidden>Pedir revisión por email</a>
           <button type="button" class="btn btn-claro btn-bloque" id="compartir">Compartir o descargar mi cuaderno</button>
           <div class="estado-msg" id="revisionMsg" aria-live="polite"></div>
-          <p class="alternativa">¿No se abre tu correo? Escribe a <a id="emailVisible" href="#"></a> y pega tu cuaderno: <button type="button" id="copiarCuaderno">copiar cuaderno</button></p>
         </div>
       </div>
       <div class="ajustes">
@@ -587,7 +570,7 @@ p{margin:0 0 1em;max-width:60ch}
       <svg viewBox="0 0 651 846" aria-hidden="true"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#D9A233"/><polygon points="507,462 469,492 650,839" fill="#D9A233"/></svg>
       <span class="casa-txt"><span class="casa-pre">HeavyWork es de la casa de</span><span class="casa-arnold">ARNOLD</span><span class="casa-lema" style="color:#D9A233">Una serie. Al fallo.</span></span>
     </a>
-    <p>Entrenar al fallo exige buena técnica. Usa barras de seguridad, máquinas o un compañero que te asista. Las rutinas son orientativas; si tienes una lesión o una condición médica, consulta antes con un profesional sanitario.</p>
+    <p>HeavyWork es gratis y no hace planes personalizados: cada uno entrena bajo su propia responsabilidad. Entrenar al fallo exige buena técnica. Usa barras de seguridad, máquinas o un compañero que te asista. Las rutinas son orientativas; si tienes una lesión o una condición médica, consulta antes con un profesional sanitario.</p>
     <div data-version></div>
   </div>
 </footer>
@@ -677,8 +660,6 @@ function bloqueTecnica(id, oscuro){
 }
 const TEMPO = { sube:4, baja:4 };
 const DESCANSO_SEG = 120;
-const CONTACTO_REVISION = 'arnoldwork4you@gmail.com';   // ← email donde recibes las revisiones
-const URL_PLAN = 'https://arnoldwork.com';                // ← web donde ofreces el plan personalizado
 
 /* ===== Utilidades ===== */
 const $ = (s, e=document) => e.querySelector(s);
@@ -857,8 +838,7 @@ function avisoEstanco(lista){
   const txt = nombres.length === 1 ? `Llevas tres entrenos sin mejorar en ${nombres[0]}.` : `Llevas tres entrenos sin mejorar en ${nombres.length} ejercicios: ${nombres.join(', ')}.`;
   return h('div', {class:'estanco', role:'note'}, h('div', {},
     h('b', {text:'¿Estancado?'}),
-    h('p', {text:`${txt} Prueba a descansar un día más. Si sigue igual, un plan personalizado te ayudará a salir.`}),
-    h('a', {href:URL_PLAN, target:'_blank', rel:'noopener', text:'Pedir un plan personalizado'})));
+    h('p', {text:`${txt} Prueba a descansar un día más entre entrenos. En Heavy Duty, estancarse casi siempre es falta de recuperación: revisa también el sueño y la comida.`})));
 }
 function textoCuaderno(d){
   const hoy = new Date().toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
@@ -902,43 +882,14 @@ async function compartirCuaderno(){
   setTimeout(() => URL.revokeObjectURL(a.href), 1500);
   msgRevision('Cuaderno descargado.');
 }
-function enlaceRevision(){
-  const d = leer();
-  const cuerpo = hayMarcas(d)
-    ? `Hola, quiero que revises mi cuaderno de HeavyWork.\n\nMi objetivo: \nAños entrenando: \n\n${textoCuaderno(d)}`
-    : 'Hola, me interesa la revisión del cuaderno de HeavyWork. ¿Cómo funciona?\n\nMi objetivo: \nAños entrenando: ';
-  return `mailto:${CONTACTO_REVISION}?subject=${encodeURIComponent('Revisión de cuaderno HeavyWork')}&body=${encodeURIComponent(cuerpo)}`;
-}
 function actualizarEnlaces(){
   const vacio = !hayMarcas(leer());
   const c = $('#compartir');
   c.textContent = vacio ? 'Compartir mi cuaderno (aún vacío)' : 'Compartir o descargar mi cuaderno';
   c.toggleAttribute('data-vacio', vacio);
   if (!vacio && $('#revisionMsg').classList.contains('aviso')) msgRevision('');
-  $('#pedirRevision').href = enlaceRevision();
-  const ev = $('#emailVisible');
-  ev.textContent = CONTACTO_REVISION;
-  ev.href = `mailto:${CONTACTO_REVISION}`;
 }
-async function copiarTexto(t){
-  try { await navigator.clipboard.writeText(t); return true; } catch {}
-  try {
-    const ta = h('textarea', {style:'position:fixed;opacity:0'}); ta.value = t;
-    document.body.append(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok;
-  } catch { return false; }
-}
-$('#pedirRevision').addEventListener('click', () => {
-  actualizarEnlaces();
-  msgRevision(hayMarcas(leer())
-    ? 'Abriendo tu correo con el cuaderno ya escrito. Completa tu objetivo y envíalo.'
-    : 'Abriendo tu correo. Aún no tienes marcas: puedes preguntar cómo funciona la revisión.');
-});
 $('#compartir').addEventListener('click', compartirCuaderno);
-$('#copiarCuaderno').addEventListener('click', async () => {
-  const d = leer();
-  if (!hayMarcas(d)){ cuadernoVacio(); return; }
-  msgRevision(await copiarTexto(textoCuaderno(d)) ? 'Cuaderno copiado. Pégalo en tu correo.' : 'No se ha podido copiar. Usa «Compartir o descargar».');
-});
 
 /* ===== Estado de recuperación ===== */
 function pintarEstado(){
@@ -1140,40 +1091,6 @@ const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
     $('#aldia').hidden = false; $('#navAldia').hidden = false; $('#tabNoticias').hidden = false;
   } catch {}
 })();
-$('#abrirRevision').addEventListener('click', () => {
-  $('#formRevision').hidden = false; $('#abrirRevision').hidden = true;
-  $('#formRevision [name=nombre]').focus();
-  if (!hayMarcas(leer())) msgRevision('Aún no tienes marcas: puedes enviarlo igualmente para preguntar cómo funciona.');
-});
-$('#formRevision').addEventListener('submit', async e => {
-  e.preventDefault();
-  const f = e.target, d = leer(), btn = f.querySelector('button[type=submit]');
-  const cuerpo = `Objetivo: ${f.objetivo.value.trim() || '—'}\nAños entrenando: ${f.anos.value.trim() || '—'}\n\n` +
-    (hayMarcas(d) ? textoCuaderno(d) : '(Aún sin marcas: pregunta cómo funciona la revisión)');
-  btn.disabled = true; btn.textContent = 'Enviando…';
-  let ok = false;
-  try {
-    const r = await fetch(VIGILANTE, { method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ canal:'heavywork', nombre:f.nombre.value.trim(), contacto:f.contacto.value.trim(), motivo:'Revisión de cuaderno HeavyWork', mensaje:cuerpo, origen:location.href }) });
-    ok = r.ok;
-  } catch {}
-  btn.disabled = false; btn.textContent = 'Enviar mi cuaderno';
-  if (ok){ f.hidden = true; pintarPlazas(); msgRevision(`¡Recibido, ${f.nombre.value.trim()}! Te contestaremos personalmente en cuanto revisemos tu cuaderno. 💪`); }
-  else { msgRevision('No se ha podido enviar. Prueba por correo con el botón de abajo.', true); $('#pedirRevision').hidden = false; }
-});
-
-// Si ya no quedan revisiones gratis (las cuenta el vigilante), se dice; nunca se muestran números.
-async function pintarPlazas(){
-  try {
-    const r = await fetch(VIGILANTE.replace(/\/contacto$/, '/revisiones'));
-    const { quedan } = await r.json();
-    if (!Number.isFinite(quedan)) return;
-    $('#plazasRev').textContent = quedan > 0
-      ? '🎁 Revisión gratis para los primeros en pedirla.'
-      : 'Las revisiones gratis ya están pedidas. Envíalo igualmente y te contamos cómo seguir.';
-  } catch {}
-}
-pintarPlazas();
 
 $$('#programas button').forEach(b => b.addEventListener('click', () => cambiarPrograma(b.dataset.p)));
 

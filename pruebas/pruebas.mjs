@@ -64,7 +64,6 @@ await ctx.route(u => !u.href.startsWith(BASE), async r => {
   const json = (status, cuerpo) => r.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(cuerpo) });
   if (u.includes('arnoldwork-api') && u.endsWith('/lead')) { API.enviados.push('lead'); return json(API.lead, API.lead === 200 ? { ok: true } : { error: 'x' }); }
   if (u.includes('vigilante') && u.endsWith('/contacto')) { API.enviados.push('copia:' + r.request().postDataJSON().principalOk); return json(API.copia, API.copia === 200 ? { ok: true } : { error: 'x' }); }
-  if (u.includes('vigilante') && u.endsWith('/revisiones')) return json(200, { gratis: 20, quedan: 17 });
   if (u.includes('vigilante') && u.includes('/noticias.json')) return json(200, { actualizado: Date.now(), items: [
     { id: 'pm1', tipo: 'estudio', titulo: 'Estudio de prueba sobre <b>hipertrofia</b>', fuente: 'Revista', enlace: 'https://pubmed.ncbi.nlm.nih.gov/1/', fecha: Date.now() },
     { id: 'gn1', tipo: 'noticia', titulo: 'Noticia de prueba', fuente: 'Medio', enlace: 'https://example.com/n', fecha: Date.now() } ] });
@@ -213,12 +212,14 @@ if (QUE === 'heavywork') {
     vis && n === 2 && seguro ? bien('las noticias de la semana se ven') : mal('/', `noticias: visible=${vis}, ${n} elementos, seguro=${seguro}`);
     await p.close();
   }
-  console.log('\n▶ Revisión gratis');
+  console.log('\n▶ Cuaderno sin servicios');
   {
     const { p } = await abrir('/#t=cuaderno');
     await p.waitForTimeout(800);
-    const t = await p.locator('#plazasRev').innerText();
-    /primeros en pedirla/.test(t) && !/\d/.test(t) ? bien(`anuncia la revisión gratis sin números («${t}»)`) : mal('/', `plazas de revisión: «${t}»`);
+    const t = await p.locator('#cuaderno').innerText();
+    const sinServicio = !/pedir revisi|revise tu|plan personalizado/i.test(t) && /propia responsabilidad/.test(t);
+    const boton = await p.locator('#compartir').isVisible();
+    sinServicio && boton ? bien('no ofrece revisiones ni planes, avisa de la responsabilidad y deja compartir el cuaderno') : mal('/', `cuaderno: sinServicio=${sinServicio}, compartir=${boton}`);
     await p.close();
   }
   console.log('\n▶ CaveWork');

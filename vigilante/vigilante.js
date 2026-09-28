@@ -33,7 +33,7 @@ const CAVEWORK_API = "https://cavework-api.arnoldwork.workers.dev/state";
 const DOMINIO = { nombre: "arnoldwork.com", rdap: "https://rdap.verisign.com/com/v1/domain/arnoldwork.com" };
 const ORIGENES = [
   /^https:\/\/(www\.)?arnoldwork\.com$/,
-  /^https:\/\/heavywork\.arnoldwork\.com$/,                            // peticiones de revisión del cuaderno
+  /^https:\/\/heavywork\.arnoldwork\.com$/,                            // mensajes que lleguen desde HeavyWork
   /^https:\/\/[a-z0-9-]+-(arnoldwork-v11|heavywork)\.arnoldwork\.workers\.dev$/,   // vistas previas
   /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/,                        // pruebas en local
 ];
@@ -48,10 +48,6 @@ const PRODUCTOS_KOFI = {
 // Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
 const KOFI_PRUEBA = "00000000-1111-2222-3333-444444444444";
 const MOTIVO_NEGOCIO = "Web o automatización para mi negocio";
-const MOTIVO_REVISION = "Revisión de cuaderno HeavyWork";
-// Las primeras revisiones de cuaderno son gratis (contadas desde el lanzamiento, una por persona).
-const REVISIONES_GRATIS = 20;
-const REVISIONES_DESDE = Date.UTC(2026, 8, 24);
 
 const COMPROBACIONES = [
   { nombre: "ArnoldWork",        url: "https://arnoldwork.com/",              texto: "ArnoldWork" },
@@ -90,11 +86,6 @@ export class Memoria extends DurableObject {
     this.sql.exec(`INSERT INTO contactos (fecha, nombre, motivo, mensaje, contacto, origen, ip) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       ahora, c.nombre, c.motivo, c.mensaje, c.contacto, c.origen, ip);
     return true;
-  }
-
-  // Personas distintas que han pedido revisión de cuaderno desde el lanzamiento de las gratis.
-  revisionesPedidas() {
-    return this.sql.exec(`SELECT COUNT(DISTINCT lower(trim(contacto))) AS n FROM contactos WHERE motivo = ? AND fecha >= ?`, MOTIVO_REVISION, REVISIONES_DESDE).one().n;
   }
 
   contactosDesde(desde) {
@@ -345,7 +336,7 @@ async function resumenSemanal(env) {
 
   const compras = ventas.filter(v => v.tipo !== "Batido");
   const batidos = ventas.filter(v => v.tipo === "Batido");
-  const negocio = contactos.filter(c => c.motivo === MOTIVO_NEGOCIO || c.motivo === MOTIVO_REVISION);
+  const negocio = contactos.filter(c => c.motivo === MOTIVO_NEGOCIO);
 
   const l = [`📊 Resumen de la semana en ArnoldWork (${fechaCorta(desde)} – ${fechaCorta(hasta - 1)})`, ""];
   l.push(incidencias.length
@@ -434,8 +425,7 @@ async function contacto(req, env) {
   if (!b) return new Response('{"error":"Datos no válidos"}', { status: 400, headers: h });
   const c = {
     nombre: recorta(b.nombre, 80), motivo: recorta(b.motivo, 80),
-    // Las revisiones de HeavyWork traen el cuaderno entero: cabe más texto (Telegram admite 4.096).
-    mensaje: String(b.mensaje ?? "").trim().slice(0, b.canal === "heavywork" ? 3500 : 2000),
+    mensaje: String(b.mensaje ?? "").trim().slice(0, 2000),
     contacto: recorta(b.contacto, 160), origen: recorta(b.origen, 200),
   };
   if (!c.nombre || !c.mensaje) return new Response('{"error":"Faltan datos"}', { status: 400, headers: h });
@@ -444,11 +434,9 @@ async function contacto(req, env) {
     .then(x => [...new Uint8Array(x)].slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join(""));
   const guardado = m ? await m.guardarContacto(c, ip) : false;
   if (m && !guardado) return new Response('{"error":"Demasiados mensajes, prueba en un rato"}', { status: 429, headers: h });
-  // HeavyWork no tiene otra vía: la petición de revisión siempre la avisa el vigilante.
+  // HeavyWork ya no pide nada, pero una copia vieja guardada en un móvil aún podría escribir: se avisa como mensaje normal.
   if (b.canal === "heavywork") {
-    const n = m ? await m.revisionesPedidas() : 0;
-    const plaza = !m ? "" : n <= REVISIONES_GRATIS ? `🎁 Gratis: nº ${n} de ${REVISIONES_GRATIS}\n` : `⚠️ Ya se pasaron las ${REVISIONES_GRATIS} gratis (esta es la nº ${n})\n`;
-    await enviarTelegram(env, `📓 REVISIÓN DE CUADERNO (HeavyWork)\n${plaza}\n👤 ${c.nombre}\n📮 ${c.contacto || "—"}\n\n${c.mensaje}`);
+    await enviarTelegram(env, `✉️ Mensaje desde HeavyWork\n\n👤 ${c.nombre}\n📮 ${c.contacto || "—"}\n\n${c.mensaje.slice(0, 600)}`);
   }
   // Si la API principal no pudo avisar, avisa el vigilante.
   else if (b.principalOk === false) {
@@ -479,13 +467,6 @@ export default {
     if (req.method === "POST" && url.pathname === "/kofi") return kofi(req, env);
     if (req.method === "POST" && url.pathname === "/contacto") return contacto(req, env);
     if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
-    // Cuántas revisiones de cuaderno gratis quedan (lo enseña HeavyWork).
-    if (req.method === "GET" && url.pathname === "/revisiones") {
-      const m = memoria(env);
-      const pedidas = m ? await m.revisionesPedidas() : 0;
-      return new Response(JSON.stringify({ gratis: REVISIONES_GRATIS, quedan: Math.max(0, REVISIONES_GRATIS - pedidas) }), {
-        headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=60", ...cors(req) } });
-    }
 
     if (url.pathname === "/diagnostico") {
       const tg = env.TELEGRAM_TOKEN ? String(env.TELEGRAM_TOKEN).trim() : "";
