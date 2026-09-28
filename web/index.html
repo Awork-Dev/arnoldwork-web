@@ -565,6 +565,7 @@
     <nav class="nav-links">
       <a href="#porque">Por qué</a>
       <a href="/herramientas/">Herramientas</a>
+      <a href="#ciencia" id="navCiencia" hidden>Ciencia</a>
       <a href="#heavywork">HeavyWork</a>
       <a href="#libro">Libro</a>
       <a href="#material">Fichas</a>
@@ -1334,7 +1335,7 @@ const COPIA_URL='https://vigilante.arnoldwork.workers.dev/contacto';
       const pie=document.createElement('small');pie.textContent=[x.fuente,fecha(x.fecha)].filter(Boolean).join(' · ');
       li.append(tipo,a,pie);ul.append(li);
     });
-    document.getElementById('ciencia').hidden=false;
+    document.getElementById('ciencia').hidden=false;document.getElementById('navCiencia').hidden=false;
   }catch(e){}
 })();
 function copiaContacto(envio, principalOk){

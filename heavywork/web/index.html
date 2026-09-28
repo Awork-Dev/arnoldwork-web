@@ -361,7 +361,7 @@ p{margin:0 0 1em;max-width:60ch}
 <header class="cab">
   <div class="env">
     <a class="logo" href="#top" aria-label="HeavyWork, inicio"><svg class="logo-a" viewBox="-137 -40 926 926" aria-hidden="true"><rect x="-137" y="-40" width="926" height="926" rx="80" fill="#000"/><g transform="translate(65,84) scale(.8)"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></g></svg><span>HEAVY<b>WORK</b></span></a>
-    <nav aria-label="Secciones"><a href="#rotacion">Rutina</a><a href="#metodo">Método</a><a href="#cuaderno">Cuaderno</a><a href="#preguntas">Preguntas</a><a href="#juego">Juego</a><a href="https://arnoldwork.com/herramientas/">Herramientas</a></nav>
+    <nav aria-label="Secciones"><a href="#rotacion">Rutina</a><a href="#metodo">Método</a><a href="#cuaderno">Cuaderno</a><a href="#preguntas">Preguntas</a><a href="#aldia" id="navAldia" hidden>Noticias</a><a href="#juego">Juego</a><a href="https://arnoldwork.com/herramientas/">Herramientas</a></nav>
   </div>
 </header>
 
@@ -1082,7 +1082,7 @@ const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
       const a = h('a', { href:x.enlace, target:'_blank', rel:'noopener nofollow', text:x.titulo });
       return h('li', {}, [h('span', { class:'tipo', text: x.tipo === 'estudio' ? 'Estudio' : 'Noticia' }), a, h('small', { text:[x.fuente, fecha(x.fecha)].filter(Boolean).join(' · ') })]);
     }));
-    $('#aldia').hidden = false;
+    $('#aldia').hidden = false; $('#navAldia').hidden = false;
   } catch {}
 })();
 $('#abrirRevision').addEventListener('click', () => {
