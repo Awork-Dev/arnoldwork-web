@@ -65,6 +65,7 @@ await ctx.route(u => !u.href.startsWith(BASE), async r => {
   return r.abort();   // fuentes, analítica, Ko-fi…
 });
 
+const PESTANA = /^#t=(inicio|ciencia|tienda|mas)$/;
 const aLocal = href => href.replace(DOMINIO, BASE).replace(/^https:\/\/www\.arnoldwork\.com/, BASE);
 
 async function abrir(ruta) {
@@ -93,6 +94,7 @@ for (const ruta of rutas) {
   const hrefs = await p.$$eval('a[href]', as => as.map(a => a.getAttribute('href')));
   for (const h of hrefs) {
     if (h.startsWith('#')) {
+      if (PESTANA.test(h)) continue;   // pestañas del móvil (#t=tienda…), no son secciones
       if (h.length > 1 && !(await p.$(`[id="${h.slice(1)}"]`))) mal(ruta, `el enlace ${h} no lleva a ninguna parte`);
       continue;
     }
@@ -106,7 +108,7 @@ let rotos = 0;
 for (const [destino, desde] of enlaces) {
   const [ruta, ancla] = destino.split('#');
   if (!archivo(ruta)) { rotos++; mal(desde, `enlace roto a ${ruta}`); continue; }
-  if (ancla && ruta.endsWith('/')) {
+  if (ancla && ruta.endsWith('/') && !PESTANA.test('#' + ancla)) {
     const html = fs.readFileSync(archivo(ruta), 'utf8');
     if (!html.includes(`id="${ancla}"`)) { rotos++; mal(desde, `el enlace ${destino} apunta a una sección que no existe`); }
   }
@@ -140,11 +142,26 @@ if (QUE === 'web') {
 
   console.log('\n▶ Ciencia del músculo');
   {
-    const { p } = await abrir('/');
+    const { p } = await abrir('/#t=ciencia');   // en el móvil, Ciencia es su propia pestaña
     await p.waitForTimeout(800);
     const n = await p.locator('#ciencia .novedades li').count(), vis = await p.locator('#ciencia').isVisible();
     const seguro = await p.locator('#ciencia b').count() === 0;   // el título se pinta como texto, nunca como HTML
     vis && n === 2 && seguro ? bien('las noticias de la semana se ven') : mal('/', `noticias: visible=${vis}, ${n} elementos, seguro=${seguro}`);
+    await p.close();
+  }
+
+  console.log('\n▶ Pestañas en el móvil');
+  {
+    const { p } = await abrir('/');
+    const vista = () => p.evaluate(() => [...document.querySelectorAll('main > section[id]')].filter(x => getComputedStyle(x).display !== 'none').map(x => x.id).join(','));
+    const inicio = await vista();
+    await p.click('.tabbar a[data-t="tienda"]'); await p.waitForTimeout(200);
+    const tienda = await vista();
+    await p.goto(BASE + '/#contacto'); await p.waitForTimeout(300);
+    const contacto = await vista();
+    inicio.includes('porque') && !inicio.includes('libro') && tienda.includes('libro') && !tienda.includes('porque') && contacto.includes('contacto')
+      ? bien('cada pestaña enseña lo suyo y los enlaces de siempre abren la pestaña que toca')
+      : mal('/', `pestañas: inicio=${inicio} | tienda=${tienda} | #contacto=${contacto}`);
     await p.close();
   }
 

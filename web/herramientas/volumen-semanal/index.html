@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/herramientas/estilos.css?v=749d0d5039">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=f7c344ba45">
 <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Volumen semanal por músculo","url":"https://arnoldwork.com/herramientas/volumen-semanal/","description":"Apunta tus series efectivas por músculo y comprueba si estás dentro del rango de 10 a 20 series semanales para hipertrofia.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Volumen semanal","item":"https://arnoldwork.com/herramientas/volumen-semanal/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cuántas series por músculo a la semana para hipertrofia?","acceptedAnswer":{"@type":"Answer","text":"Entre 10 y 20 series efectivas es el rango en el que crece la mayoría de la gente. Empieza por abajo y sube si dejas de progresar."}}]}]</script>
 </head>
 <body>
@@ -162,5 +162,13 @@ if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWo
 // En la app instalada no hay botón de recargar: al volver a abrirla tras un rato, se recarga sola para ver lo último.
 (()=>{const t0=Date.now(),app=matchMedia('(display-mode: standalone)').matches||navigator.standalone;document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;if(navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{});if(app&&Date.now()-t0>20*60e3)location.reload()})})();
 </script>
+<!-- Pestañas en el móvil (como una app) -->
+<nav class="tabbar" aria-label="Secciones">
+  <a href="/#t=inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Inicio</span></a>
+  <a href="/herramientas/" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Herramientas</span></a>
+  <a href="/#t=ciencia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 15h10" stroke="currentColor" stroke-width="2"/></svg><span>Ciencia</span></a>
+  <a href="/#t=tienda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Tienda</span></a>
+  <a href="/#t=mas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Más</span></a>
+</nav>
 </body>
 </html>
