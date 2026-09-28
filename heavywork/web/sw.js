@@ -1,11 +1,11 @@
 // HeavyWork · funciona sin conexión (en muchos gimnasios no hay cobertura).
 // Páginas y archivos propios: primero la red (para tener siempre lo último) y, si no hay, lo guardado.
 // Fuentes de Google: lo guardado primero. Las APIs del juego nunca se guardan.
-const VERSION = 'hw-2026-09-28-ocre';
-const PRECACHE = ['/', '/game/', '/difunde.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png', '/favicon.ico'];
+const VERSION = 'hw-2026-09-28-ocre2';
+const PRECACHE = ['/', '/game/', '/difunde.js', '/manifest.webmanifest?v=ocre', '/icon-192.png?v=ocre', '/icon-512.png?v=ocre', '/apple-touch-icon.png?v=ocre', '/favicon.ico'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(PRECACHE.map(u => new Request(u, { cache: 'reload' })))   // sin tirar de lo que el navegador tenga guardado).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
