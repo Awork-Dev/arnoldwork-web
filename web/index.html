@@ -522,7 +522,7 @@
   .free{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
   .free.free-3{grid-template-columns:repeat(3,1fr)}
   /* Proyectos de la casa */
-  .proy{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .proy{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
   @media(max-width:900px){.proy{grid-template-columns:1fr}}
   .proy-card{border:1px solid var(--rule-strong);background:var(--ink-2);display:flex;flex-direction:column}
   .proy-foto{display:block;border-bottom:1px solid var(--rule)}
@@ -764,7 +764,7 @@
   <div class="wrap">
     <div class="sec-head">
       <h2>Proyectos de la casa</h2>
-      <p>Además de ArnoldWork, hay proyectos con vida propia. Gratis, hechos en la sala y cada uno con su web.</p>
+      <p>Además de ArnoldWork, hay proyectos con vida propia, hechos en casa de principio a fin.</p>
     </div>
     <div class="proy">
       <article class="proy-card" id="heavywork">
@@ -783,6 +783,14 @@
           <h3>CaveWork</h3>
           <p>El juego de HeavyWork: un cavernícola, una mancuerna de piedra y muchos dinosaurios. Reto del día, ligas con tus amigos, temporadas y ranking mundial con premio para el campeón de la semana.</p>
           <a class="btn btn-ghost" href="https://heavywork.arnoldwork.com/game/">Jugar a CaveWork 🦖</a>
+        </div>
+      </article>
+      <article class="proy-card" id="indicativowork">
+        <div class="proy-foto"><img src="/img/trabajos/indicativo.jpg" width="1600" height="1000" alt="Pantallas de IndicativoWork en el móvil: portada, multas de tráfico, guías de actuación y herramientas" loading="lazy"></div>
+        <div class="proy-txt">
+          <span class="pill">App profesional · Acceso restringido</span>
+          <h3>IndicativoWork</h3>
+          <p>Una app de apoyo para agentes de policía en servicio: multas de tráfico y seguridad ciudadana al instante, guías de actuación y atestados paso a paso, cuadrante de turnos y calculadoras. Funciona sin cobertura. Es de uso profesional y no está abierta al público.</p>
         </div>
       </article>
     </div>
