@@ -39,6 +39,7 @@
     <nav class="nav-links">
       <a href="/#porque">Por qué</a>
       <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/#ciencia">Ciencia</a>
       <a href="/#heavywork">HeavyWork</a>
       <a href="/#libro">Libro</a>
       <a href="/#material">Fichas</a>
@@ -206,7 +207,9 @@
 <script src="/herramientas/app.js?v=3eb8b428a1"></script>
 <script src="/difunde.js?v=08b273f93a" defer></script>
 <script>
-if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).catch(()=>{}))}
+// En la app instalada no hay botón de recargar: al volver a abrirla tras un rato, se recarga sola para ver lo último.
+(()=>{const t0=Date.now(),app=matchMedia('(display-mode: standalone)').matches||navigator.standalone;document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;if(navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{});if(app&&Date.now()-t0>20*60e3)location.reload()})})();
 </script>
 </body>
 </html>

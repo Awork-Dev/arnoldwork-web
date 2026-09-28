@@ -1444,7 +1444,17 @@ function pintarModo(){
 }
 
 /* ===== App instalable y sin conexión ===== */
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js', { updateViaCache:'none' }).catch(() => {}));
+// En la app instalada no hay botón de recargar: al volver a abrirla tras un rato, se recarga sola para ver lo último
+// (salvo en mitad de un entreno, para no cortar la serie).
+(() => {
+  const t0 = Date.now();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then(r => r && r.update()).catch(() => {});
+    if (esApp && $('#modo').hidden && Date.now() - t0 > 20 * 60e3) location.reload();
+  });
+})();
 let avisoInstalar = null;
 const esApp = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const esIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));

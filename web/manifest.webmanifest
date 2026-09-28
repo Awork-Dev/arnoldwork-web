@@ -1,9 +1,9 @@
 {
-  "name": "ArnoldWork · Herramientas de gimnasio",
+  "name": "ArnoldWork",
   "short_name": "ArnoldWork",
-  "description": "Herramientas gratis para la sala de pesas: 1RM, ¿subo peso?, discos, calentamiento, macros, descansos y más. Sin registro.",
+  "description": "Herramientas gratis para la sala de pesas, ciencia del músculo, HeavyWork y el juego CaveWork. Sin registro.",
   "lang": "es",
-  "start_url": "/herramientas/?app=1",
+  "start_url": "/?app=1",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0A0A0A",
@@ -27,6 +27,10 @@
     }
   ],
   "shortcuts": [
+    {
+      "name": "Herramientas",
+      "url": "/herramientas/"
+    },
     {
       "name": "Tu máximo (1RM)",
       "url": "/herramientas/calculadora-1rm/"
