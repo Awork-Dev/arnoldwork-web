@@ -171,6 +171,15 @@
   section{padding:76px 0;border-top:1px solid var(--rule)}
   .sec-head{max-width:70ch;margin-bottom:44px}
   .sec-head p{margin-top:16px;color:var(--chalk-dim)}
+  /* Ciencia del músculo: noticias y estudios de la semana (los trae el vigilante) */
+  .novedades{list-style:none;margin:0;padding:0;display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  @media (min-width:860px){.novedades{grid-template-columns:1fr 1fr}}
+  .novedades li{background:var(--ink);padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+  .novedades .tipo{font-weight:700;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+  .novedades a{color:var(--chalk);text-decoration:none;font-weight:600;line-height:1.35}
+  .novedades a:hover{text-decoration:underline}
+  .novedades small{color:var(--chalk-dim);font-size:.85rem}
+  .novedades-nota{margin-top:18px;color:var(--chalk-dim);font-size:.9rem}
 
   /* specialties */
   .specs{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule-strong);
@@ -687,6 +696,17 @@
 </section>
 
 <!-- REGLAS -->
+<section id="ciencia" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Ciencia del músculo</h2>
+      <p>Lo último sobre ganar músculo: estudios recién publicados y noticias de culturismo. Se actualiza solo cada semana.</p>
+    </div>
+    <ul class="novedades" id="novedades"></ul>
+    <p class="novedades-nota">Los estudios enlazan a PubMed, la base de datos científica de referencia, y se publican en inglés. Las noticias enlazan a cada medio.</p>
+  </div>
+</section>
+
 <section id="reglas">
   <div class="wrap">
     <div class="sec-head">
@@ -1299,6 +1319,24 @@ function answer(value){
 const LEAD_URL='https://arnoldwork-api.arnoldwork.workers.dev/lead';
 /* Copia de cada mensaje en el vigilante: si la API principal falla, el vigilante avisa por Telegram. */
 const COPIA_URL='https://vigilante.arnoldwork.workers.dev/contacto';
+// Ciencia del músculo: se pinta solo si el vigilante devuelve algo; si falla, la sección no aparece.
+(async()=>{
+  try{
+    const r=await fetch('https://vigilante.arnoldwork.workers.dev/noticias.json?seccion=hipertrofia');
+    const {items}=await r.json();
+    if(!items||!items.length)return;
+    const ul=document.getElementById('novedades');
+    const fecha=t=>new Date(t).toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+    items.slice(0,8).forEach(x=>{
+      const li=document.createElement('li');
+      const tipo=document.createElement('span');tipo.className='tipo';tipo.textContent=x.tipo==='estudio'?'Estudio':'Noticia';
+      const a=document.createElement('a');a.href=x.enlace;a.target='_blank';a.rel='noopener nofollow';a.textContent=x.titulo;
+      const pie=document.createElement('small');pie.textContent=[x.fuente,fecha(x.fecha)].filter(Boolean).join(' · ');
+      li.append(tipo,a,pie);ul.append(li);
+    });
+    document.getElementById('ciencia').hidden=false;
+  }catch(e){}
+})();
 function copiaContacto(envio, principalOk){
   return fetch(COPIA_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
     body:JSON.stringify(Object.assign({},envio,{principalOk}))}).then(r=>r.ok).catch(()=>false);

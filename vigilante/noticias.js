@@ -18,6 +18,7 @@ const PESAS_TI = '("resistance training"[ti] OR "resistance exercise"[ti] OR "st
 
 export const BLOQUES = [
   {
+    clave: "hipertrofia",
     titulo: "🔬 HIPERTROFIA · para ArnoldWork",
     estudios: '((' + PESAS + ' AND (hypertrophy[ti] OR "muscle growth"[ti] OR "muscle size"[ti] OR "muscle thickness"[ti] OR "muscle mass"[ti] OR "lean mass"[ti] OR "fat-free mass"[ti] OR "cross-sectional area"[ti]))' +
       ' OR (' + PESAS_TI + ' AND (protein[ti] OR creatine[ti] OR supplementation[ti])) OR bodybuilders[ti] OR bodybuilding[ti])' + FUERA,
@@ -26,6 +27,7 @@ export const BLOQUES = [
     ],
   },
   {
+    clave: "heavyduty",
     titulo: "🔥 HEAVY DUTY · para HeavyWork",
     estudios: PESAS_TI + ' AND (failure[tiab] OR "repetitions in reserve"[tiab] OR "low volume"[tiab] OR "low-volume"[tiab] OR "single set"[tiab] OR "single-set"[tiab]' +
       ' OR volume[ti] OR "rest interval"[tiab] OR "inter-set rest"[tiab] OR "set configuration"[tiab] OR frequency[ti] OR "high intensity training"[tiab] OR "high-intensity training"[tiab])' + FUERA,
@@ -55,7 +57,7 @@ async function estudios(termino) {
   if (!ids.length) return [];
   const s = (await json(`${PUBMED}/esummary.fcgi?db=pubmed&retmode=json&${HERRAMIENTA}&id=${ids.join(",")}`)).result || {};
   return ids.map(id => s[id]).filter(Boolean).map(e => ({
-    id: "pm" + e.uid,
+    id: "pm" + e.uid, tipo: "estudio",
     titulo: limpia(e.title).replace(/\.$/, ""),
     fuente: limpia(e.fulljournalname || e.source || "PubMed"),
     enlace: `https://pubmed.ncbi.nlm.nih.gov/${e.uid}/`,
@@ -74,7 +76,7 @@ async function noticias({ q, idioma }) {
     const fuente = campo("source");
     let titulo = campo("title");
     if (fuente && titulo.endsWith(" - " + fuente)) titulo = titulo.slice(0, -(fuente.length + 3));
-    return { id: "gn" + clave(titulo), titulo, fuente, enlace: campo("link") };
+    return { id: "gn" + clave(titulo), tipo: "noticia", titulo, fuente, enlace: campo("link") };
   }).filter(n => n.titulo && n.enlace);
 }
 
@@ -87,27 +89,54 @@ function limpia(t) {
 const html = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const clave = t => t.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "").slice(0, 60);
 
-// Prepara los mensajes de la semana (uno por bloque; en HTML de Telegram, con el titular como enlace). `vistas` son los ids ya enviados otras semanas: no se repiten.
-export async function resumenNoticias(vistas = []) {
-  const ya = new Set(vistas), nuevas = [], errores = [], mensajes = [];
+// Busca en todas las fuentes. Devuelve, por sección, los estudios y noticias más recientes (sin filtrar).
+export async function recoger() {
+  const secciones = [], errores = [];
   for (const b of BLOQUES) {
     const [est, not] = await Promise.all([
       estudios(b.estudios).catch(e => { errores.push("PubMed: " + e.message); return []; }),
       Promise.all(b.noticias.map(n => noticias(n).catch(e => { errores.push("Noticias: " + e.message); return []; }))).then(l => l.flat()),
     ]);
-    const vistasAqui = new Set();
-    const elige = (lista, max) => lista.filter(x => !ya.has(x.id) && !vistasAqui.has(x.id) && vistasAqui.add(x.id)).slice(0, max);
-    const e = elige(est, MAX_ESTUDIOS), n = elige(not, MAX_NOTICIAS);
+    const unicos = lista => { const v = new Set(); return lista.filter(x => !v.has(x.id) && v.add(x.id)); };
+    secciones.push({ clave: b.clave, titulo: b.titulo, estudios: unicos(est), noticias: unicos(not) });
+  }
+  return { secciones, errores: [...new Set(errores)] };
+}
+
+// Mensajes de Telegram (uno por sección; en HTML, con el titular como enlace), sin lo ya enviado otras semanas.
+export function mensajesTelegram({ secciones, errores }, vistas = []) {
+  const ya = new Set(vistas), nuevas = [], mensajes = [];
+  for (const b of secciones) {
+    const e = b.estudios.filter(x => !ya.has(x.id)).slice(0, MAX_ESTUDIOS);
+    const n = b.noticias.filter(x => !ya.has(x.id)).slice(0, MAX_NOTICIAS);
     nuevas.push(...e, ...n);
     const enlace = x => `• <a href="${html(x.enlace)}">${html(x.titulo)}</a>${x.fuente ? " — <i>" + html(x.fuente) + "</i>" : ""}`;
     const l = [`<b>📰 ${html(b.titulo)}</b>`, "Noticias y estudios de la semana"];
     if (e.length) { l.push("", "<b>Estudios nuevos</b> (en inglés):"); e.forEach(x => l.push(enlace(x))); }
     if (n.length) { l.push("", "<b>En los medios:</b>"); n.forEach(x => l.push(enlace(x))); }
     if (!e.length && !n.length) l.push("", "Esta semana no hay nada nuevo.");
+    l.push("", b.clave === "hipertrofia" ? "🌐 También en arnoldwork.com" : "🌐 También en heavywork.arnoldwork.com");
     let t = l.join("\n");
     while (t.length > 4000 && t.includes("\n•")) t = t.slice(0, t.lastIndexOf("\n•"));   // límite de Telegram
     mensajes.push(t);
   }
-  if (errores.length) mensajes[mensajes.length - 1] += "\n\n⚠️ Alguna fuente no respondió: " + html([...new Set(errores)].join("; "));
+  if (errores.length) mensajes[mensajes.length - 1] += "\n\n⚠️ Alguna fuente no respondió: " + html(errores.join("; "));
   return { mensajes, nuevas: nuevas.map(x => x.id) };
+}
+
+// Lo que enseña cada web: lo último arriba, sin repetir, como mucho 12 por sección.
+// `antes` es lo que ya se enseñaba; lo nuevo entra con la fecha en que se vio por primera vez.
+const EN_WEB = 12;
+export function paraWeb({ secciones }, antes = {}) {
+  const ahora = Date.now(), web = { actualizado: ahora };
+  for (const b of secciones) {
+    const previo = antes[b.clave] || [], ya = new Set(previo.map(x => x.id));
+    // Se alternan estudios y noticias para que haya de todo.
+    const mezcla = [];
+    for (let i = 0; i < Math.max(b.estudios.length, b.noticias.length); i++) mezcla.push(b.estudios[i], b.noticias[i]);
+    const nuevos = mezcla.filter(x => x && !ya.has(x.id)).slice(0, 8)
+      .map(({ id, tipo, titulo, fuente, enlace }) => ({ id, tipo, titulo, fuente, enlace, fecha: ahora }));
+    web[b.clave] = nuevos.concat(previo).slice(0, EN_WEB);
+  }
+  return web;
 }

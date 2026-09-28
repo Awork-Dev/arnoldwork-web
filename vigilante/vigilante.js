@@ -11,6 +11,7 @@
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
 //   GET  /contactos?clave=<PRUEBA_CLAVE>  descarga los mensajes de los últimos 90 días (CSV).
+//   GET  /noticias.json?seccion=hipertrofia|heavyduty  las noticias que enseñan arnoldwork.com y HeavyWork.
 //   GET  /noticias?clave=<PRUEBA_CLAVE>  enseña las noticias de la semana (con &enviar=1 las manda ya a Telegram).
 //   GET  /diagnostico  dice si los secretos están bien puestos y cómo fue el último aviso de Ko-fi (sin enseñar nada secreto).
 //   GET  /          muestra el estado; con ?prueba=<PRUEBA_CLAVE> manda además el informe a Telegram.
@@ -22,7 +23,7 @@
 // La memoria (qué está caído, ventas, contactos…) vive en un Durable Object que se crea solo al publicar.
 
 import { DurableObject } from "cloudflare:workers";
-import { resumenNoticias } from "./noticias.js";
+import { recoger, mensajesTelegram, paraWeb } from "./noticias.js";
 
 const CHAT_ID = "288460670";
 const LENTO_MS = 4000;
@@ -290,11 +291,14 @@ async function resumenDiario(env) {
   await enviarTelegram(env, texto);
 }
 
-// Noticias y estudios de la semana (dos mensajes: hipertrofia y Heavy Duty), sin repetir lo ya enviado.
+// Noticias y estudios de la semana: dos mensajes a Telegram (hipertrofia y Heavy Duty, sin repetir
+// lo ya enviado) y lo mismo, actualizado, para las webs (GET /noticias.json).
 async function noticiasSemana(env, enviar = true) {
   const m = memoria(env);
+  const datos = await recoger();
   const vistas = (m && await m.leer("noticiasVistas")) || [];
-  const { mensajes, nuevas } = await resumenNoticias(vistas);
+  const { mensajes, nuevas } = mensajesTelegram(datos, vistas);
+  if (m) await m.guardar("noticiasWeb", paraWeb(datos, (await m.leer("noticiasWeb")) || {}));
   if (enviar) {
     for (const t of mensajes) await enviarTelegram(env, t, "HTML");
     if (m) {
@@ -303,6 +307,24 @@ async function noticiasSemana(env, enviar = true) {
     }
   }
   return mensajes;
+}
+
+// Para las webs. Si aún no hay nada guardado (o tiene más de 8 días), se busca en el momento,
+// como mucho una vez por hora, sin mandar nada a Telegram.
+async function noticiasWeb(req, env, seccion) {
+  const h = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=3600", ...cors(req) };
+  if (!["hipertrofia", "heavyduty"].includes(seccion)) return new Response('{"error":"Sección no válida"}', { status: 400, headers: h });
+  const m = memoria(env);
+  let web = m ? await m.leer("noticiasWeb") : null;
+  if (m && (!web || Date.now() - web.actualizado > 8 * DIA)) {
+    const intento = await m.leer("noticiasWebIntento");
+    if (!intento || Date.now() - intento > 3600e3) {
+      await m.guardar("noticiasWebIntento", Date.now());
+      web = paraWeb(await recoger(), web || {});
+      await m.guardar("noticiasWeb", web);
+    }
+  }
+  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: (web && web[seccion]) || [] }), { headers: h });
 }
 
 async function resumenSemanal(env) {
@@ -448,6 +470,7 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
     if (req.method === "POST" && url.pathname === "/kofi") return kofi(req, env);
     if (req.method === "POST" && url.pathname === "/contacto") return contacto(req, env);
+    if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
     // Cuántas revisiones de cuaderno gratis quedan (lo enseña HeavyWork).
     if (req.method === "GET" && url.pathname === "/revisiones") {
       const m = memoria(env);

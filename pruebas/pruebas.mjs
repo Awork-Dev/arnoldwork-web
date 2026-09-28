@@ -52,6 +52,9 @@ await ctx.route(u => !u.href.startsWith(BASE), async r => {
   if (u.includes('arnoldwork-api') && u.endsWith('/lead')) { API.enviados.push('lead'); return json(API.lead, API.lead === 200 ? { ok: true } : { error: 'x' }); }
   if (u.includes('vigilante') && u.endsWith('/contacto')) { API.enviados.push('copia:' + r.request().postDataJSON().principalOk); return json(API.copia, API.copia === 200 ? { ok: true } : { error: 'x' }); }
   if (u.includes('vigilante') && u.endsWith('/revisiones')) return json(200, { gratis: 20, quedan: 17 });
+  if (u.includes('vigilante') && u.includes('/noticias.json')) return json(200, { actualizado: Date.now(), items: [
+    { id: 'pm1', tipo: 'estudio', titulo: 'Estudio de prueba sobre <b>hipertrofia</b>', fuente: 'Revista', enlace: 'https://pubmed.ncbi.nlm.nih.gov/1/', fecha: Date.now() },
+    { id: 'gn1', tipo: 'noticia', titulo: 'Noticia de prueba', fuente: 'Medio', enlace: 'https://example.com/n', fecha: Date.now() } ] });
   if (u.includes('cavework-api')) return json(200, { plays: 10, debt: 1, debtCents: 100, runId: 'prueba', top: [] });
   if (u.includes('cavework-ranking')) {
     const top = [{ name: 'AAA', score: 5000, level: 2, date: Date.now() }];
@@ -135,6 +138,16 @@ if (QUE === 'web') {
     await p.close();
   }
 
+  console.log('\n▶ Ciencia del músculo');
+  {
+    const { p } = await abrir('/');
+    await p.waitForTimeout(800);
+    const n = await p.locator('#ciencia .novedades li').count(), vis = await p.locator('#ciencia').isVisible();
+    const seguro = await p.locator('#ciencia b').count() === 0;   // el título se pinta como texto, nunca como HTML
+    vis && n === 2 && seguro ? bien('las noticias de la semana se ven') : mal('/', `noticias: visible=${vis}, ${n} elementos, seguro=${seguro}`);
+    await p.close();
+  }
+
   // 3) Chat de contacto: normal, con la API principal caída (copia de seguridad) y con todo caído
   console.log('\n▶ Chat de contacto');
   async function chat(lead, copia) {
@@ -161,6 +174,15 @@ if (QUE === 'web') {
 
 // 4) El juego arranca, se juega y termina
 if (QUE === 'heavywork') {
+  console.log('\n▶ Heavy Duty al día');
+  {
+    const { p } = await abrir('/');
+    await p.waitForTimeout(800);
+    const n = await p.locator('#aldia .novedades li').count(), vis = await p.locator('#aldia').isVisible();
+    const seguro = await p.locator('#aldia b').count() === 0;   // el título se pinta como texto, nunca como HTML
+    vis && n === 2 && seguro ? bien('las noticias de la semana se ven') : mal('/', `noticias: visible=${vis}, ${n} elementos, seguro=${seguro}`);
+    await p.close();
+  }
   console.log('\n▶ Revisión gratis');
   {
     const { p } = await abrir('/');

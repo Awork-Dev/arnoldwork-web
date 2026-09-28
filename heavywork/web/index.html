@@ -165,6 +165,14 @@ p{margin:0 0 1em;max-width:60ch}
 .avanzado dt{font-weight:800;margin-top:8px}
 .avanzado dd{margin:2px 0 0}
 .faq{display:grid;gap:10px;max-width:760px}
+/* Heavy Duty al día: noticias y estudios de la semana (los trae el vigilante) */
+.novedades{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+@media (min-width:800px){.novedades{grid-template-columns:1fr 1fr}}
+.novedades li{border:3px solid var(--tinta);background:var(--papel);padding:14px 16px;display:flex;flex-direction:column;gap:6px;box-shadow:4px 4px 0 var(--tinta)}
+.novedades .tipo{font-weight:800;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--peligro)}
+.novedades a{color:var(--tinta);font-weight:700;line-height:1.35;text-decoration:none}
+.novedades a:hover{text-decoration:underline}
+.novedades small{color:var(--acero);font-size:.95rem}
 .faq-item{border:3px solid var(--tinta);background:var(--papel)}
 .faq-item summary{cursor:pointer;font-weight:800;font-stretch:85%;font-size:1.15rem;padding:14px 16px;min-height:52px}
 .faq-item p{margin:0;padding:0 16px 16px}
@@ -435,6 +443,14 @@ p{margin:0 0 1em;max-width:60ch}
   </section>
 
   <div class="lema" aria-hidden="true"><span>EL MÚSCULO CRECE DESCANSANDO</span><small>HEAVY DUTY</small></div>
+  <section class="sec" id="aldia" hidden>
+    <div class="env">
+      <div class="sec-cab"><h2>Heavy Duty al día</h2><p>Estudios nuevos sobre entrenar al fallo, pocas series y descanso, y lo último sobre Mike Mentzer. Se actualiza solo cada semana.</p></div>
+      <ul class="novedades" id="novedades"></ul>
+      <p class="suave" style="margin-top:16px">Los estudios enlazan a PubMed y se publican en inglés. Las noticias enlazan a cada medio.</p>
+    </div>
+  </section>
+
   <section class="sec" id="preguntas">
     <div class="env">
       <div class="sec-cab"><h2>Preguntas frecuentes</h2></div>
@@ -1056,6 +1072,19 @@ $('#archivoCopia').addEventListener('change', async e => {
 
 /* ===== Revisión del cuaderno: llega directa a Telegram ===== */
 const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
+// Heavy Duty al día: se pinta solo si el vigilante devuelve algo; si falla, la sección no aparece.
+(async () => {
+  try {
+    const { items } = await (await fetch(VIGILANTE.replace(/\/contacto$/, '/noticias.json?seccion=heavyduty'))).json();
+    if (!items || !items.length) return;
+    const fecha = t => new Date(t).toLocaleDateString('es-ES', { day:'numeric', month:'long' });
+    $('#novedades').replaceChildren(...items.slice(0, 8).map(x => {
+      const a = h('a', { href:x.enlace, target:'_blank', rel:'noopener nofollow', text:x.titulo });
+      return h('li', {}, [h('span', { class:'tipo', text: x.tipo === 'estudio' ? 'Estudio' : 'Noticia' }), a, h('small', { text:[x.fuente, fecha(x.fecha)].filter(Boolean).join(' · ') })]);
+    }));
+    $('#aldia').hidden = false;
+  } catch {}
+})();
 $('#abrirRevision').addEventListener('click', () => {
   $('#formRevision').hidden = false; $('#abrirRevision').hidden = true;
   $('#formRevision [name=nombre]').focus();

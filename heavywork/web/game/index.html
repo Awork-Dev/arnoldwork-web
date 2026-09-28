@@ -86,9 +86,15 @@ button,input,a{font:inherit;color:inherit}
 #btnGolpe{border-color:var(--rojo)!important;color:#fff}
 #controles small{display:block;font-size:.55em;color:var(--gris);margin-top:6px}
 @media (orientation:landscape) and (max-height:520px){
-  #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:space-between;padding:10px 16px calc(10px + env(safe-area-inset-bottom));pointer-events:none}
-  #controles button{flex:0 0 26%;height:84px;background:#0008;pointer-events:auto}
+  /* Botones altos y estrechos en los bordes: el pulgar llega bien y no tapan al cavernícola */
+  #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:space-between;align-items:flex-end;padding:10px max(12px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));pointer-events:none}
+  #controles button{flex:0 0 auto;width:min(14vw,150px);height:min(62vh,220px);background:rgba(0,0,0,.16);font-size:clamp(11px,1.8vw,15px);pointer-events:auto}
 }
+
+/* Girar el móvil */
+.girar-ico{display:block;margin:6px auto 14px;width:64px;height:64px;animation:girar 1.8s ease-in-out infinite}
+@keyframes girar{0%,20%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+@media (prefers-reduced-motion:reduce){.girar-ico{animation:none;transform:rotate(-90deg)}}
 
 /* Paneles */
 .panel{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);overflow-y:auto}
@@ -367,6 +373,17 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
   </div>
 </section>
 
+<!-- Girar el móvil -->
+<section class="panel" id="pGirar" hidden aria-labelledby="tGirar">
+  <div class="caja" style="text-align:center">
+    <svg class="girar-ico" viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="6" width="24" height="52" rx="4" fill="none" stroke="#f4efe6" stroke-width="4"/><rect x="28" y="50" width="8" height="3" fill="#f4efe6"/><path d="M52 18a20 20 0 0 1 4 12" fill="none" stroke="#ffd23c" stroke-width="3"/><path d="M52 12l2 8-8 0z" fill="#ffd23c"/></svg>
+    <h2 id="tGirar" data-t="girarTit">GIRA EL MÓVIL</h2>
+    <p data-t="girarTxt">CaveWork se juega mucho mejor en horizontal: la pantalla se ve el doble de grande y los botones quedan a los lados.</p>
+    <p class="suave" data-t="girarAuto">Gíralo y la partida empieza sola.</p>
+    <button type="button" class="btn" id="btnVertical" data-t="girarNo">JUGAR EN VERTICAL</button>
+  </div>
+</section>
+
 <!-- Personajes -->
 <section class="panel" id="pPersonaje" hidden aria-labelledby="tPersonaje">
   <div class="caja">
@@ -459,7 +476,7 @@ const TXT = {
     ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
     ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
     ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y temporadas mensuales: el podio de cada mes se queda con medalla para siempre. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex. El campeón de cada semana gana premio.',
-    ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa.',
+    ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa. En el móvil, mejor en horizontal.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
     finTit:'¡AL FALLO!', nuevoTop:'¡ENTRAS EN EL RANKING! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
     donar:'DONAR AL DESARROLLADOR', enviarOpinion:'ENVIAR OPINIÓN', deudaYa:'Los jugadores ya le deben', esBroma:'al desarrollador. Es broma.', porQue:'¿Por qué donar?',
@@ -477,6 +494,7 @@ const TXT = {
     diarioModo:c => `🗓️ RETO DEL DÍA · ${c}`, diarioPractica:'🏋️ Entrenamiento: esta partida no puntúa. El reto de mañana te espera.',
     puestoHoy:n => `🗓️ ¡Puesto ${n} en el reto de hoy! Guarda tus iniciales.`,
     tabHoy:'HOY', tabLiga:'MI LIGA', rankHoy:c => `Reto del día · ${c}`, sinHoy:'Nadie ha jugado aún el reto de hoy. ¡Estrénalo!',
+    girarTit:'GIRA EL MÓVIL', girarTxt:'CaveWork se juega mucho mejor en horizontal: la pantalla se ve el doble de grande y los botones quedan a los lados.', girarAuto:'Gíralo y la partida empieza sola.', girarNo:'JUGAR EN VERTICAL',
     tabMes:'TEMPORADA', rankMes:m => `Temporada de ${m} · se reinicia el día 1`, sinMes:'Este mes aún no hay marcas. ¡Estrena la temporada!',
     podio:m => `🏅 Podio de ${m}: `, personajes:'PERSONAJES', pjCuenta:(a, b) => `${a} de ${b} desbloqueados · son solo de aspecto, todos juegan igual`,
     pjBloq:'BLOQUEADO', pjElegido:'EN USO', pjNuevo:n => `🎭 ¡Personaje nuevo: ${n}!`,
@@ -539,7 +557,7 @@ const TXT = {
     ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
     ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
     ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and monthly seasons: each month\'s podium keeps its medal forever. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex. Each week\'s champion wins a prize.',
-    ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause.',
+    ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause. On a phone, better in landscape.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
     finTit:'FAILURE!', nuevoTop:'YOU MADE THE RANKING! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
     donar:'DONATE TO THE DEVELOPER', enviarOpinion:'SEND FEEDBACK', deudaYa:'Players now owe the developer', esBroma:'Just kidding.', porQue:'Why donate?',
@@ -557,6 +575,7 @@ const TXT = {
     diarioModo:c => `🗓️ DAILY CHALLENGE · ${c}`, diarioPractica:"🏋️ Practice: this game doesn't count. Tomorrow's challenge is waiting.",
     puestoHoy:n => `🗓️ Number ${n} in today's challenge! Save your initials.`,
     tabHoy:'TODAY', tabLiga:'MY LEAGUE', rankHoy:c => `Daily challenge · ${c}`, sinHoy:'Nobody has played today\'s challenge yet. Be the first!',
+    girarTit:'TURN YOUR PHONE', girarTxt:'CaveWork plays much better in landscape: the screen is twice as big and the buttons sit on the sides.', girarAuto:'Turn it and the game starts by itself.', girarNo:'PLAY IN PORTRAIT',
     tabMes:'SEASON', rankMes:m => `${m} season · resets on the 1st`, sinMes:'No scores this month yet. Kick off the season!',
     podio:m => `🏅 ${m} podium: `, personajes:'CHARACTERS', pjCuenta:(a, b) => `${a} of ${b} unlocked · looks only, everyone plays the same`,
     pjBloq:'LOCKED', pjElegido:'IN USE', pjNuevo:n => `🎭 New character: ${n}!`,
@@ -1984,7 +2003,7 @@ function updateHud(){
 }
 
 /* ================= FLUJO ================= */
-const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pPersonaje','pDonar','pFeedback'];
+const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pPersonaje','pGirar','pDonar','pFeedback'];
 let panelStack = [];
 function show(id, push=false){
   if (push && panelStack.length === 0){
@@ -2367,10 +2386,33 @@ document.addEventListener('keyup', e => {
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 
-$('#btnJugar').addEventListener('click', jugarNormal);
-$('#btnDiario').addEventListener('click', jugarDiario);
+/* ---------- Mejor en horizontal ----------
+   En el móvil en vertical, antes de jugar se pide girarlo. En Android se intenta a pantalla completa
+   y girando solo; en iPhone (no lo permite) se enseña el aviso y la partida empieza al girarlo. */
+const TACTIL = matchMedia('(pointer:coarse)').matches;
+const enVertical = () => innerHeight > innerWidth;
+let pendienteGiro = null, verticalElegido = false;
+async function conPantalla(fn){
+  if (!TACTIL || !enVertical() || verticalElegido) return fn();
+  const doc = document.documentElement;
+  if (doc.requestFullscreen && screen.orientation && screen.orientation.lock){
+    try {
+      await doc.requestFullscreen({navigationUI:'hide'});
+      await screen.orientation.lock('landscape');
+      setTimeout(layout, 250);
+      return fn();
+    } catch { try { if (document.fullscreenElement) await document.exitFullscreen(); } catch {} }
+  }
+  pendienteGiro = fn; show('pGirar');
+}
+function empezarPendiente(){ const fn = pendienteGiro; pendienteGiro = null; if (fn) fn(); }
+addEventListener('resize', () => { if (pendienteGiro && !enVertical()) setTimeout(empezarPendiente, 250); });
+$('#btnVertical').addEventListener('click', () => { SFX.play('ui'); verticalElegido = true; empezarPendiente(); });
+
+$('#btnJugar').addEventListener('click', () => conPantalla(jugarNormal));
+$('#btnDiario').addEventListener('click', () => conPantalla(jugarDiario));
 if (new URLSearchParams(location.search).has('diario')) $('#btnDiario').classList.add('pulso');
-$('#btnOtra').addEventListener('click', () => G.modo === 'diario' ? jugarDiario() : jugarNormal());
+$('#btnOtra').addEventListener('click', () => conPantalla(() => G.modo === 'diario' ? jugarDiario() : jugarNormal()));
 $('#btnPausa').addEventListener('click', pause);
 $('#btnSeguir').addEventListener('click', resume);
 $('#btnSalirPausa').addEventListener('click', toMenu);
