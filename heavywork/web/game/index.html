@@ -549,7 +549,6 @@ const TXT = {
     devolverWa:'DEVOLVER EL RETO POR WHATSAPP',
     retoDevuelto:(n, suyo, mio, u) => `🥊 ¡Te he ganado, ${n}! Tu marca: ${suyo}. La mía: ${mio}. Te toca: ${u}\nMade with love from Mallorca`,
     diarioTxt:(c, p, u) => `🗓️ Reto del día en CaveWork (${c}): he hecho ${p} puntos. ¿Me superas hoy? ${u}\nMade with love from Mallorca`,
-    premioInfo:'🎁 Guía gratis «Cuándo subir peso» →',
     eresCampeon:'👑 ¡ERES EL CAMPEÓN DE LA SEMANA!',
     consejoTit:'💡 CONSEJO DE ARNOLD', consejoMas:'Más herramientas gratis →',
     mamut:'¡MAMUT!', mamutKO:'¡MAMUT KO!',
@@ -629,7 +628,6 @@ const TXT = {
     devolverWa:'SEND IT BACK ON WHATSAPP',
     retoDevuelto:(n, suyo, mio, u) => `🥊 I beat you, ${n}! Your score: ${suyo}. Mine: ${mio}. Your turn: ${u}\nMade with love from Mallorca`,
     diarioTxt:(c, p, u) => `🗓️ CaveWork daily challenge (${c}): I scored ${p}. Can you beat me today? ${u}\nMade with love from Mallorca`,
-    premioInfo:'🎁 Free guide: when to add weight (in Spanish) →',
     eresCampeon:'👑 YOU ARE THE CHAMPION OF THE WEEK!',
     consejoTit:'💡 ARNOLD\'S TIP', consejoMas:'More free tools →',
     mamut:'MAMMOTH!', mamutKO:'MAMMOTH DOWN!',
@@ -2274,14 +2272,6 @@ function renderCampeon(d){
   // ¿El campeón de la semana pasada es una marca hecha en este dispositivo? Se le felicita (no hay premio).
   const mia = (store.misMarcas || []).find(m => m.name === c.name && m.score === c.score);
   el.append(mia ? T('eresCampeon') : T('campeon')(c.name, NUM(c.score)));
-  const s = document.createElement('small'); s.append(enlaceGuia()); el.append(s);
-}
-// La guía gratis «Cuándo subir peso» se pide en ArnoldWork (se manda una sola vez al correo).
-const GUIA_URL = 'https://arnoldwork.com/#regalo';
-function enlaceGuia(){
-  const a = document.createElement('a');
-  a.href = GUIA_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'enlace-guia'; a.textContent = T('premioInfo');
-  return a;
 }
 function renderDiario(){
   const d = estadoDiario(), c = condDe(d.dia);
@@ -2465,8 +2455,8 @@ function renderTop(d, hiName, hiScore){
   // Podio del mes pasado: se enseña en la temporada, y sus marcas llevan medalla en todas las listas.
   const podio = (d && d.podio && d.podio.top) || [], MEDALLAS = ['🥇', '🥈', '🥉'];
   const medalla = r => { const i = podio.findIndex(t => t.name === r.name && t.score === r.score && t.date === r.date); return i < 0 ? '' : MEDALLAS[i] + ' '; };
-  nota.hidden = !(API.online && (semana || (v === 'mes' && podio.length)));
-  if (!nota.hidden){ if (semana) nota.replaceChildren(enlaceGuia()); else nota.textContent = T('podio')(nombreMes(d.podio.mes)) + podio.map((t, i) => `${MEDALLAS[i]} ${t.name} ${NUM(t.score)}`).join(' · '); }
+  nota.hidden = !(API.online && v === 'mes' && podio.length);
+  if (!nota.hidden) nota.textContent = T('podio')(nombreMes(d.podio.mes)) + podio.map((t, i) => `${MEDALLAS[i]} ${t.name} ${NUM(t.score)}`).join(' · ');
   const body = $('#topCuerpo');
   body.innerHTML = '';
   if (!top || !top.length){

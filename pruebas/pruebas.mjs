@@ -232,9 +232,9 @@ if (QUE === 'heavywork') {
     await p.click('#pManual [data-volver]');
     const menu = await p.locator('#pMenu').isVisible();
     const camp = await p.locator('#campeon').innerText().catch(() => '');
-    const guia = await p.locator('#campeon a[href="https://arnoldwork.com/#regalo"]').count();
+    const guia = await p.locator('#manualTxt a[href="https://arnoldwork.com/#regalo"]').count() + (await p.locator('#campeon a').count() ? 10 : 0);
     const manualTxt = await p.locator('#manualTxt').innerText();
-    !/ficha|training sheet|reclamar|claim/i.test(camp + manualTxt) && guia === 1 ? bien('sin premios: el campeón enlaza a la guía gratis') : mal('/game/', `campeón: «${camp}», enlaces a la guía=${guia}`);
+    !/ficha|training sheet|reclamar|claim/i.test(camp + manualTxt) && guia === 1 ? bien('sin premios: el campeón sale sin premio y la guía gratis está en el manual') : mal('/game/', `campeón: «${camp}», enlaces a la guía=${guia}`);
     vis && n >= 15 && n === ind && menu && !errores.length ? bien(`el manual se abre con ${n} secciones y su índice, y vuelve al menú`) : mal('/game/', `manual: visible=${vis}, ${n} secciones, índice ${ind}, menú=${menu}, errores=${errores.join(' | ')}`);
     await p.close();
   }
