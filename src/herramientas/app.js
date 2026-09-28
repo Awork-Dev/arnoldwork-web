@@ -137,7 +137,6 @@
       x.fillText('arnoldwork.com/herramientas · gratis y sin registro', 80, 1012);
       x.font = '600 24px Archivo, sans-serif'; x.fillStyle = '#F4F2EF';
       x.fillText('Made with love from Mallorca', 80, 1054);
-      x.fillStyle = '#DE3A3A'; x.fillText('♥', 88 + x.measureText('Made with love from Mallorca').width, 1054);
     }
     // Todo en el mismo toque (toDataURL es inmediato): si se espera a toBlob o a las fuentes,
     // el iPhone bloquea el menú de compartir y no se llega a enviar.

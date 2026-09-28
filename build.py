@@ -22,7 +22,7 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(RAIZ, "src")
 WEB = os.path.join(RAIZ, "web")
 DOMINIO = "https://arnoldwork.com"
-AMOR = "Made with love from Mallorca ❤️"   # firma de las tarjetas al compartir
+AMOR = "Made with love from Mallorca"   # firma de las tarjetas al compartir
 
 sys.path.insert(0, os.path.join(SRC, "herramientas"))
 from catalogo import GRUPOS, HERRAMIENTAS  # noqa: E402

@@ -6,14 +6,14 @@
 <title>ArnoldWork — Del gimnasio, para el gimnasio</title>
 <meta name="description" content="Herramientas gratis de gimnasio (1RM, macros, ¿subo peso?, nivel de fuerza y más), el método Heavy Duty de HeavyWork y un juego retro. Hecho por un usuario de gimnasio para la comunidad.">
 <meta property="og:title" content="ArnoldWork — Del gimnasio, para el gimnasio">
-<meta property="og:description" content="21 herramientas gratis, Heavy Duty sin humo y un juego de dinosaurios. Made with love from Mallorca ❤️">
+<meta property="og:description" content="21 herramientas gratis, Heavy Duty sin humo y un juego de dinosaurios. Made with love from Mallorca">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://arnoldwork.com/">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="ArnoldWork">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ArnoldWork — Del gimnasio, para el gimnasio">
-<meta name="twitter:description" content="21 herramientas gratis, Heavy Duty sin humo y un juego de dinosaurios. Made with love from Mallorca ❤️">
+<meta name="twitter:description" content="21 herramientas gratis, Heavy Duty sin humo y un juego de dinosaurios. Made with love from Mallorca">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="ArnoldWork">
 <link rel="canonical" href="https://arnoldwork.com/">
@@ -75,11 +75,11 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0A0A0A">
-<meta property="og:image" content="https://arnoldwork.com/img/og.png?v=7a88238c">
+<meta property="og:image" content="https://arnoldwork.com/img/og.png?v=3f1bb251">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="ArnoldWork · Del gimnasio, para el gimnasio">
-<meta name="twitter:image" content="https://arnoldwork.com/img/og.png?v=7a88238c">
+<meta name="twitter:image" content="https://arnoldwork.com/img/og.png?v=3f1bb251">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
@@ -419,7 +419,10 @@
     /* En Inicio, primero lo útil (herramientas, HeavyWork, juego) y después la historia */
     .con-pestanas main{display:flex;flex-direction:column}
     .con-pestanas #porque{order:2}
-    .con-pestanas #difunde,.con-pestanas main > .final{order:3}
+    .con-pestanas .negocio-corto{order:3}
+    .con-pestanas #difunde{order:4}
+    .con-pestanas main > .final{display:none!important}   /* el cierre rojo sobra en el móvil */
+    .con-pestanas .indice-mas{order:-1}   /* en «Más», el índice arriba y los proyectos debajo */
     .con-pestanas main > footer{order:9}
     .con-pestanas .indice-mas{display:block}
     .con-pestanas .negocio-corto{display:block}
@@ -812,8 +815,8 @@
   <div class="wrap">
     <h2>Más de ArnoldWork</h2>
     <nav class="indice-grid" aria-label="Más secciones">
-      <a href="https://heavywork.arnoldwork.com"><b>HeavyWork</b><span>Su web: método Heavy Duty</span></a>
-      <a href="https://heavywork.arnoldwork.com/game/"><b>CaveWork</b><span>El juego de HeavyWork</span></a>
+      <a href="#proyectos"><b>Proyectos de la casa</b><span>HeavyWork y CaveWork</span></a>
+      <a href="#batido"><b>Invita a un batido</b><span>Si te ha servido algo</span></a>
       <a href="#quien"><b>Quién está detrás</b><span>Desde 1996 en la sala</span></a>
       <a href="#reglas"><b>Las reglas de la casa</b><span>Por qué casi todo es gratis</span></a>
       <a href="#negocios"><b>Webs para tu negocio</b><span>Lo hacemos para ti</span></a>
@@ -1210,7 +1213,7 @@
     </div>
   </div>
 </footer>
-<script src="/difunde.js?v=08b273f93a" defer></script>
+<script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 
 </main>
@@ -1419,7 +1422,7 @@ const COPIA_URL='https://vigilante.arnoldwork.workers.dev/contacto';
 // Pestañas en el móvil: la portada se reparte como una app. Cada pestaña enseña su parte y los enlaces
 // de siempre (#libro, #contacto…) abren la pestaña que toca. En el ordenador, todo sigue en una página.
 (()=>{
-  const GRUPOS={inicio:['porque','gratis','proyectos','negocio-corto','difunde'],ciencia:['ciencia'],tienda:['libro','material','batido','regalo'],mas:['indice-mas','quien','reglas','negocios','contacto','faq','aviso']};
+  const GRUPOS={inicio:['porque','gratis','negocio-corto','difunde'],ciencia:['ciencia'],tienda:['libro','material','batido','regalo'],mas:['indice-mas','proyectos','quien','reglas','negocios','contacto','faq','aviso']};
   const deId={};Object.entries(GRUPOS).forEach(([t,l])=>l.forEach(id=>deId[id]=t));
   const mq=matchMedia('(max-width:820px)'),raiz=document.documentElement;
   const bloques=[...document.querySelectorAll('main > *:not(footer)')];

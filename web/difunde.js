@@ -2,10 +2,10 @@
    Este archivo lo copia build.py a web/difunde.js y heavywork/web/difunde.js: edítalo aquí, en src/.
 
    Uso: <div data-difunde data-texto="…" data-url="https://…" data-asunto="…"></div>
-   El mensaje que se envía es: texto + enlace + la firma «Made with love from Mallorca ❤️». */
+   El mensaje que se envía es: texto + enlace + la firma «Made with love from Mallorca». */
 (function(){
   'use strict';
-  var FIRMA = 'Made with love from Mallorca ❤️';
+  var FIRMA = 'Made with love from Mallorca';
   var MOVIL = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
   var ICONOS = {
     wa: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="#fff" d="M17.3 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1a7.9 7.9 0 0 1-3.9-3.4c-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 1.8.8 2.5.8 3.4.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.5-.3z"/></svg>',
