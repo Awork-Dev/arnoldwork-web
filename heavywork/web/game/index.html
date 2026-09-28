@@ -22,7 +22,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=ocre">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --negro:#000;
@@ -202,6 +202,14 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 #hudReto.ok{color:var(--verde)}
 .fin-reto{border:3px dashed var(--oro);padding:8px;font-size:10px;line-height:1.7;margin:0 0 12px;color:var(--tiza)}
 .fin-reto.gana{border-style:solid;color:var(--oro)}
+/* Sello «de la casa de ARNOLD» */
+.casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin:0 0 22px;border:3px solid #16181B;max-width:460px;box-sizing:border-box}
+.casa svg{width:64px;height:auto;flex:none}
+.casa-txt{display:flex;flex-direction:column;gap:4px}
+.casa-pre{font-size:8px;color:#d6d8db;white-space:nowrap}
+.casa-arnold{font-family:Montserrat,system-ui,sans-serif;font-weight:500;font-size:24px;letter-spacing:.32em;line-height:1}
+.casa-lema{font-family:Montserrat,system-ui,sans-serif;font-size:12px;letter-spacing:.04em}
+@media (max-width:380px){.casa{gap:14px;padding:18px}.casa svg{width:52px}.casa-arnold{font-size:1.6rem}}
 </style>
 </head>
 <body>
@@ -284,6 +292,10 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <p style="margin:0" data-t-html="ayuda4"></p>
     </div>
     <a class="enlace-volver" href="/" data-t="volverHW">← Volver a HeavyWork</a>
+    <a class="casa" href="https://arnoldwork.com" rel="noopener" aria-label="CaveWork es de la casa de ARNOLD. Levanta. Aplasta. Repite." style="margin:14px 0 0">
+      <svg viewBox="0 0 651 846" aria-hidden="true"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></svg>
+      <span class="casa-txt"><span class="casa-pre">CaveWork es de la casa de</span><span class="casa-arnold">ARNOLD</span><span class="casa-lema" style="color:#ffd23c">Levanta. Aplasta. Repite.</span></span>
+    </a>
     <div class="version-juego" data-version></div>
     <a class="dev-juego" href="https://arnoldwork.com/#negocios" data-t="devJuego">¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →</a>
   </div>

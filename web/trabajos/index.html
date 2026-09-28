@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=Archivo+Black&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0A0A0A;--panel:#141414;--chalk:#F4F2EF;--chalk-dim:#B4B4B4;--amber:#E24848;--rule:rgba(244,242,239,.14)}
 *{box-sizing:border-box}
@@ -78,6 +78,13 @@ footer a{color:var(--chalk)}
   .cifras{grid-template-columns:1fr 1fr}
   header nav a{margin-left:0;margin-right:16px}
 }
+.casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin:0 0 22px;border:3px solid #16181B;max-width:460px;box-sizing:border-box}
+.casa svg{width:64px;height:auto;flex:none}
+.casa-txt{display:flex;flex-direction:column;gap:4px}
+.casa-pre{font-size:.9rem;color:#d6d8db}
+.casa-arnold{font-family:Montserrat,system-ui,sans-serif;font-weight:500;font-size:1.9rem;letter-spacing:.32em;line-height:1}
+.casa-lema{font-family:Montserrat,system-ui,sans-serif;font-size:.95rem;letter-spacing:.04em}
+@media (max-width:380px){.casa{gap:14px;padding:18px}.casa svg{width:52px}.casa-arnold{font-size:1.6rem}}
 </style>
 </head>
 <body>
@@ -219,6 +226,9 @@ footer a{color:var(--chalk)}
   </section>
 </main>
 
-<footer><a href="/">ArnoldWork</a> · Made with love from Mallorca</footer>
+<footer><a class="casa" href="https://arnoldwork.com" rel="noopener" aria-label="ArnoldWork es de la casa de ARNOLD. Entrena y transfórmate" style="margin:0 auto 18px;text-align:left">
+      <svg viewBox="0 0 651 846" aria-hidden="true"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></svg>
+      <span class="casa-txt"><span class="casa-pre">ArnoldWork es de la casa de</span><span class="casa-arnold">ARNOLD</span><span class="casa-lema" style="color:#E24848">Entrena y transfórmate</span></span>
+    </a><a href="/">ArnoldWork</a> · Made with love from Mallorca</footer>
 </body>
 </html>

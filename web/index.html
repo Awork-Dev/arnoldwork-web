@@ -82,7 +82,7 @@
 <meta name="twitter:image" content="https://arnoldwork.com/img/og.png?v=3f1bb251">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0A0A0A;
@@ -379,6 +379,13 @@
     .btn-cab{margin-left:auto;white-space:nowrap}
     .solo-ancho{display:none}.solo-movil{display:inline}
   }
+  .casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin:0 0 22px;border:3px solid #16181B;max-width:460px;box-sizing:border-box}
+  .casa svg{width:64px;height:auto;flex:none}
+  .casa-txt{display:flex;flex-direction:column;gap:4px}
+  .casa-pre{font-size:.9rem;color:#d6d8db}
+  .casa-arnold{font-family:Montserrat,system-ui,sans-serif;font-weight:500;font-size:1.9rem;letter-spacing:.32em;line-height:1}
+  .casa-lema{font-family:Montserrat,system-ui,sans-serif;font-size:.95rem;letter-spacing:.04em}
+  @media (max-width:380px){.casa{gap:14px;padding:18px}.casa svg{width:52px}.casa-arnold{font-size:1.6rem}}
   .ir-inicio{display:none}
   .seguir-leyendo{display:none;margin-top:6px;background:none;border:1px solid var(--rule-strong);color:var(--chalk);font:inherit;font-weight:600;padding:11px 18px;cursor:pointer}
   .negocio-corto{display:none;padding:10px 0 56px}
@@ -1196,6 +1203,12 @@
 </section>
 
 <footer>
+  <div class="wrap">
+    <a class="casa" href="https://arnoldwork.com" rel="noopener" aria-label="ArnoldWork es de la casa de ARNOLD. Entrena y transfórmate">
+      <svg viewBox="0 0 651 846" aria-hidden="true"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></svg>
+      <span class="casa-txt"><span class="casa-pre">ArnoldWork es de la casa de</span><span class="casa-arnold">ARNOLD</span><span class="casa-lema" style="color:#E24848">Entrena y transfórmate</span></span>
+    </a>
+  </div>
   <div class="wrap foot-in">
     <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio<div data-version></div></div>
     <div style="display:flex;gap:20px;flex-wrap:wrap">
