@@ -309,8 +309,8 @@ async function noticiasSemana(env, enviar = true) {
   return mensajes;
 }
 
-// Para las webs. Si aún no hay nada guardado (o tiene más de 8 días), se busca en el momento,
-// como mucho una vez por hora, sin mandar nada a Telegram.
+// Para las webs. Si aún no hay nada guardado (o tiene más de 8 días, o le falta algo), se busca en el momento,
+// como mucho una vez cada 20 minutos, sin mandar nada a Telegram. Si falla, el motivo sale en «avisos».
 async function noticiasWeb(req, env, seccion) {
   const h = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=3600", ...cors(req) };
   if (!["hipertrofia", "heavyduty"].includes(seccion)) return new Response('{"error":"Sección no válida"}', { status: 400, headers: h });
@@ -320,13 +320,18 @@ async function noticiasWeb(req, env, seccion) {
   const corta = w => ["hipertrofia", "heavyduty"].some(k => !w[k] || w[k].length < 6);
   if (m && (!web || Date.now() - web.actualizado > 8 * DIA || corta(web))) {
     const intento = await m.leer("noticiasWebIntento");
-    if (!intento || Date.now() - intento > 3600e3) {
+    if (!intento || Date.now() - intento > 20 * 60e3) {
       await m.guardar("noticiasWebIntento", Date.now());
-      web = paraWeb(await recoger(), web || {});
-      await m.guardar("noticiasWeb", web);
+      try {
+        web = paraWeb(await recoger(), web || {});
+        await m.guardar("noticiasWeb", web);
+        await m.guardar("noticiasWebFallo", null);
+      } catch (e) { await m.guardar("noticiasWebFallo", String(e && e.message || e).slice(0, 200)); }
     }
   }
-  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: (web && web[seccion]) || [], avisos: (web && web.errores) || [] }), { headers: h });
+  const fallo = m ? await m.leer("noticiasWebFallo") : null;
+  const avisos = ((web && web.errores) || []).concat(fallo ? ["Actualización: " + fallo] : []);
+  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: (web && web[seccion]) || [], avisos }), { headers: h });
 }
 
 async function resumenSemanal(env) {
