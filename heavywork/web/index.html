@@ -114,6 +114,9 @@ p{margin:0 0 1em;max-width:60ch}
   .tabbar svg{width:24px;height:24px}
   body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
   .con-pestanas main > .fuera{display:none!important}
+  /* En Inicio, el entreno y la rutina seguidos; el cartel del juego, después */
+  .con-pestanas main{display:flex;flex-direction:column}
+  .con-pestanas #juego{order:2}
 }
 .firma-casa{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-stretch:85%;margin-top:6px}
 .firma-casa svg{width:22px;height:22px}
@@ -1132,7 +1135,7 @@ const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
     const { items } = await (await fetch(VIGILANTE.replace(/\/contacto$/, '/noticias.json?seccion=heavyduty'))).json();
     if (!items || !items.length) return;
     const fecha = t => new Date(t).toLocaleDateString('es-ES', { day:'numeric', month:'long' });
-    $('#novedades').replaceChildren(...items.slice(0, 8).map(x => {
+    $('#novedades').replaceChildren(...items.slice(0, 12).map(x => {
       const a = h('a', { href:x.enlace, target:'_blank', rel:'noopener nofollow', text:x.titulo });
       return h('li', {}, [h('span', { class:'tipo', text: x.tipo === 'estudio' ? 'Estudio' : 'Noticia' }), a, h('small', { text:[x.fuente, fecha(x.fecha)].filter(Boolean).join(' · ') })]);
     }));
