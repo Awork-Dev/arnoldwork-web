@@ -380,6 +380,7 @@
     .solo-ancho{display:none}.solo-movil{display:inline}
   }
   .ir-inicio{display:none}
+  .ir-inicio.oculto{display:none!important}
   .indice-mas{display:none;padding:34px 0 8px}
   .indice-mas h2{font-size:1.6rem;margin-bottom:16px}
   .indice-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
@@ -1411,6 +1412,8 @@ const COPIA_URL='https://vigilante.arnoldwork.workers.dev/contacto';
     actual=t;
     bloques.forEach(el=>el.classList.toggle('fuera',grupo(el)!==t));
     document.querySelectorAll('.tabbar a[data-t]').forEach(a=>a.toggleAttribute('aria-current',a.dataset.t===t));
+    // En Inicio no hace falta el botón de Inicio; en las demás pestañas, sí.
+    document.querySelectorAll('.ir-inicio').forEach(b=>b.classList.toggle('oculto',t==='inicio'));
   }
   function ir(hash){
     if(!mq.matches)return;

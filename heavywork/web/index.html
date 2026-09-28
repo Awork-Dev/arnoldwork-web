@@ -103,6 +103,7 @@ p{margin:0 0 1em;max-width:60ch}
 .logo b{font-weight:400;color:var(--peligro)}
 /* Pestañas abajo en el móvil (como una app) y botón de Inicio junto al logo */
 .tabbar,.ir-inicio{display:none}
+.ir-inicio.oculto{display:none!important}
 @media (max-width:820px){
   .cab nav{display:none!important}
   .cab .env{flex-wrap:nowrap!important;height:64px!important;padding-top:0!important;justify-content:flex-start;gap:12px}
@@ -1114,6 +1115,8 @@ const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
   function pinta(t){
     bloques.forEach(([el, g]) => el.classList.toggle('fuera', g !== t));
     document.querySelectorAll('.tabbar a[data-t]').forEach(a => a.toggleAttribute('aria-current', a.dataset.t === t));
+    // En Inicio no hace falta el botón de Inicio; en las demás pestañas, sí.
+    document.querySelectorAll('.ir-inicio').forEach(b => b.classList.toggle('oculto', t === 'inicio'));
   }
   function ir(hash){
     if (!mq.matches) return;
