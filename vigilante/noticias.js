@@ -16,6 +16,9 @@ const FUERA = ' NOT (rats[tiab] OR mice[tiab] OR rat[tiab] OR mouse[tiab] OR mur
 const PESAS = '("resistance training"[tiab] OR "resistance exercise"[tiab] OR "strength training"[tiab] OR "weight training"[tiab])';
 const PESAS_TI = '("resistance training"[ti] OR "resistance exercise"[ti] OR "strength training"[ti] OR "weight training"[ti] OR hypertrophy[ti] OR bodybuilders[ti] OR bodybuilding[ti] OR "trained men"[ti] OR "trained women"[ti] OR "trained individuals"[ti])';
 
+// El titular tiene que hablar de esto (Google a veces devuelve noticias que solo lo mencionan de pasada).
+const TEMA_GYM = /culturis|bodybuild|hipertrof|hypertroph|olympia|m[úu]scul|muscle|gimnasio|\bgym\b|pesas|fuerza|strength|entrena|training|workout|mentzer|heavy duty|al fallo|failure|yates|arnold|prote[íi]na|creatina/i;
+
 export const BLOQUES = [
   {
     clave: "hipertrofia",
@@ -82,13 +85,24 @@ async function noticias({ q, idioma }) {
     let titulo = campo("title");
     if (fuente && titulo.endsWith(" - " + fuente)) titulo = titulo.slice(0, -(fuente.length + 3));
     return { id: "gn" + clave(titulo), tipo: "noticia", titulo, fuente, enlace: campo("link") };
-  }).filter(n => n.titulo && n.enlace);
+  }).filter(n => n.titulo && n.enlace && TEMA_GYM.test(n.titulo));
 }
 
 function limpia(t) {
   return String(t).replace(/<!\[CDATA\[|\]\]>/g, "").replace(/<[^>]+>/g, "")
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/\s+/g, " ").trim();
+}
+// Varios medios cuentan lo mismo con otras palabras («horarios del Mr. Olympia»…): se deja solo la primera.
+const palabras = t => new Set(t.toLowerCase().normalize("NFD").replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w.length > 3));
+function distintas(lista) {
+  const elegidas = [];
+  for (const n of lista) {
+    const p = palabras(n.titulo);
+    const parecida = elegidas.some(e => { const q = e.p; let c = 0; p.forEach(w => q.has(w) && c++); return c / Math.min(p.size, q.size || 1) >= 0.34; });
+    if (!parecida) elegidas.push({ ...n, p });
+  }
+  return elegidas.map(({ p, ...n }) => n);
 }
 // La misma noticia sale en varios medios con títulos casi iguales: se compara sin tildes ni signos.
 const html = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -103,7 +117,7 @@ export async function recoger() {
       (async () => { const l = []; for (const n of b.noticias) l.push(...await noticias(n).catch(e => { errores.push("Noticias: " + e.message); return []; })); return l; })(),
     ]);
     const unicos = lista => { const v = new Set(); return lista.filter(x => !v.has(x.id) && v.add(x.id)); };
-    secciones.push({ clave: b.clave, titulo: b.titulo, estudios: unicos(est), noticias: unicos(not) });
+    secciones.push({ clave: b.clave, titulo: b.titulo, estudios: unicos(est), noticias: distintas(unicos(not)) });
   }
   return { secciones, errores: [...new Set(errores)] };
 }
@@ -132,8 +146,16 @@ export function mensajesTelegram({ secciones, errores }, vistas = []) {
 // Lo que enseña cada web: lo último arriba, sin repetir, como mucho 12 por sección.
 // `antes` es lo que ya se enseñaba; lo nuevo entra con la fecha en que se vio por primera vez.
 const EN_WEB = 12;
+export const VERSION_WEB = 2;
+// Para enseñar: estudios y noticias alternados, lo más reciente primero.
+export function alternar(lista = []) {
+  const e = lista.filter(x => x.tipo === "estudio"), n = lista.filter(x => x.tipo !== "estudio"), r = [];
+  for (let i = 0; i < Math.max(e.length, n.length); i++) r.push(e[i], n[i]);
+  return r.filter(Boolean);
+}
 export function paraWeb({ secciones, errores }, antes = {}) {
-  const ahora = Date.now(), web = { actualizado: ahora, errores };
+  const ahora = Date.now(), web = { v: VERSION_WEB, actualizado: ahora, errores };
+  if (antes.v !== VERSION_WEB) antes = {};   // formato o filtros nuevos: se empieza de cero
   for (const b of secciones) {
     const previo = antes[b.clave] || [], ya = new Set(previo.map(x => x.id));
     // Se alternan estudios y noticias para que haya de todo.

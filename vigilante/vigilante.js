@@ -23,7 +23,7 @@
 // La memoria (qué está caído, ventas, contactos…) vive en un Durable Object que se crea solo al publicar.
 
 import { DurableObject } from "cloudflare:workers";
-import { recoger, mensajesTelegram, paraWeb } from "./noticias.js";
+import { recoger, mensajesTelegram, paraWeb, alternar, VERSION_WEB } from "./noticias.js";
 
 const CHAT_ID = "288460670";
 const LENTO_MS = 4000;
@@ -318,9 +318,10 @@ async function noticiasWeb(req, env, seccion) {
   let web = m ? await m.leer("noticiasWeb") : null;
   // También si a alguna sección le faltan cosas (por ejemplo, si una fuente no respondió la última vez).
   const corta = w => ["hipertrofia", "heavyduty"].some(k => !w[k] || w[k].length < 6);
-  if (m && (!web || Date.now() - web.actualizado > 8 * DIA || corta(web))) {
+  const vieja = web && web.v !== VERSION_WEB;
+  if (m && (!web || vieja || Date.now() - web.actualizado > 8 * DIA || corta(web))) {
     const intento = await m.leer("noticiasWebIntento");
-    if (!intento || Date.now() - intento > 20 * 60e3) {
+    if (vieja || !intento || Date.now() - intento > 20 * 60e3) {
       await m.guardar("noticiasWebIntento", Date.now());
       try {
         web = paraWeb(await recoger(), web || {});
@@ -331,7 +332,7 @@ async function noticiasWeb(req, env, seccion) {
   }
   const fallo = m ? await m.leer("noticiasWebFallo") : null;
   const avisos = ((web && web.errores) || []).concat(fallo ? ["Actualización: " + fallo] : []);
-  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: (web && web[seccion]) || [], avisos }), { headers: h });
+  return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: alternar((web && web[seccion]) || []), avisos }), { headers: h });
 }
 
 async function resumenSemanal(env) {
