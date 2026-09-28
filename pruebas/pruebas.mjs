@@ -65,7 +65,7 @@ await ctx.route(u => !u.href.startsWith(BASE), async r => {
   return r.abort();   // fuentes, analítica, Ko-fi…
 });
 
-const PESTANA = /^#t=(inicio|ciencia|tienda|mas)$/;
+const PESTANA = /^#t=(inicio|ciencia|tienda|mas|cuaderno|metodo|noticias)$/;
 const aLocal = href => href.replace(DOMINIO, BASE).replace(/^https:\/\/www\.arnoldwork\.com/, BASE);
 
 async function abrir(ruta) {
@@ -193,7 +193,7 @@ if (QUE === 'web') {
 if (QUE === 'heavywork') {
   console.log('\n▶ Heavy Duty al día');
   {
-    const { p } = await abrir('/');
+    const { p } = await abrir('/#t=noticias');   // en el móvil, Noticias es su propia pestaña
     await p.waitForTimeout(800);
     const n = await p.locator('#aldia .novedades li').count(), vis = await p.locator('#aldia').isVisible();
     const seguro = await p.locator('#aldia b').count() === 0;   // el título se pinta como texto, nunca como HTML
@@ -202,7 +202,7 @@ if (QUE === 'heavywork') {
   }
   console.log('\n▶ Revisión gratis');
   {
-    const { p } = await abrir('/');
+    const { p } = await abrir('/#t=cuaderno');
     await p.waitForTimeout(800);
     const t = await p.locator('#plazasRev').innerText();
     /primeros en pedirla/.test(t) && !/\d/.test(t) ? bien(`anuncia la revisión gratis sin números («${t}»)`) : mal('/', `plazas de revisión: «${t}»`);
