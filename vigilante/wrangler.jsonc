@@ -1,6 +1,6 @@
 // Worker "vigilante": revisa las webs y avisa por Telegram.
 // Secretos (se ponen una vez en el panel o con `wrangler secret put`): TELEGRAM_TOKEN, KOFI_TOKEN, PRUEBA_CLAVE.
-// Horarios (UTC): revisión cada 30 min, resumen diario a las 7:00 y resumen semanal los lunes a las 7:30.
+// Horarios (UTC): revisión cada 30 min, resumen diario a las 7:00 (los viernes, también las noticias) y resumen semanal los lunes a las 7:30.
 {
   "name": "vigilante",
   "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",

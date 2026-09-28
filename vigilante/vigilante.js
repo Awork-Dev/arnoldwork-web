@@ -3,6 +3,7 @@
 // Cada 30 minutos:  comprueba que las webs y las APIs respondan (y que no vayan lentas),
 //                   avisa por Telegram si algo se cae o vuelve, y si hay un nuevo nº 1 en CaveWork.
 // Cada mañana:      resumen «todo OK» (o lo que falle) y aviso si el dominio está a punto de caducar.
+// Cada viernes:     noticias y estudios de la semana sobre hipertrofia y Heavy Duty (noticias.js).
 // Cada lunes:       resumen de la semana (ventas, contactos, partidas, campeón, incidencias)
 //                   y copia de seguridad del ranking y de los contactos, enviada por Telegram.
 // En cualquier momento:
@@ -10,6 +11,7 @@
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
 //   GET  /contactos?clave=<PRUEBA_CLAVE>  descarga los mensajes de los últimos 90 días (CSV).
+//   GET  /noticias?clave=<PRUEBA_CLAVE>  enseña las noticias de la semana (con &enviar=1 las manda ya a Telegram).
 //   GET  /diagnostico  dice si los secretos están bien puestos y cómo fue el último aviso de Ko-fi (sin enseñar nada secreto).
 //   GET  /          muestra el estado; con ?prueba=<PRUEBA_CLAVE> manda además el informe a Telegram.
 //
@@ -20,6 +22,7 @@
 // La memoria (qué está caído, ventas, contactos…) vive en un Durable Object que se crea solo al publicar.
 
 import { DurableObject } from "cloudflare:workers";
+import { resumenNoticias } from "./noticias.js";
 
 const CHAT_ID = "288460670";
 const LENTO_MS = 4000;
@@ -186,12 +189,12 @@ async function leerJSON(url) {
 
 /* ================= Telegram ================= */
 
-async function enviarTelegram(env, texto) {
+async function enviarTelegram(env, texto, formato) {
   if (!env.TELEGRAM_TOKEN) throw new Error("Falta el secreto TELEGRAM_TOKEN");
   const res = await fetch(`https://api.telegram.org/bot${String(env.TELEGRAM_TOKEN).trim()}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: CHAT_ID, text: texto, disable_web_page_preview: true }),
+    body: JSON.stringify({ chat_id: CHAT_ID, text: texto, disable_web_page_preview: true, ...(formato ? { parse_mode: formato } : {}) }),
   });
   if (!res.ok) throw new Error(`Telegram respondió ${res.status}: ${await res.text()}`);
 }
@@ -285,6 +288,21 @@ async function resumenDiario(env) {
   if (dias !== null && dias <= 30) texto += `\n\n⚠️ El dominio ${DOMINIO.nombre} caduca en ${dias} días. ¡Renuévalo!`;
   else if (dias !== null && dias <= 60) texto += `\n\n📅 El dominio ${DOMINIO.nombre} caduca en ${dias} días.`;
   await enviarTelegram(env, texto);
+}
+
+// Noticias y estudios de la semana (dos mensajes: hipertrofia y Heavy Duty), sin repetir lo ya enviado.
+async function noticiasSemana(env, enviar = true) {
+  const m = memoria(env);
+  const vistas = (m && await m.leer("noticiasVistas")) || [];
+  const { mensajes, nuevas } = await resumenNoticias(vistas);
+  if (enviar) {
+    for (const t of mensajes) await enviarTelegram(env, t, "HTML");
+    if (m) {
+      await m.guardar("noticiasVistas", vistas.concat(nuevas).slice(-500));
+      await m.guardar("noticiasUltima", Date.now());
+    }
+  }
+  return mensajes;
 }
 
 async function resumenSemanal(env) {
@@ -413,7 +431,14 @@ async function contacto(req, env) {
 
 export default {
   async scheduled(event, env, ctx) {
-    if (event.cron === "0 7 * * *") return resumenDiario(env);
+    if (event.cron === "0 7 * * *") {
+      await resumenDiario(env);
+      // Los viernes (y la primera vez), noticias de la semana. Si fallan, el resumen diario ya salió.
+      const m = memoria(env);
+      const primera = m && !(await m.leer("noticiasUltima"));
+      if (new Date().getUTCDay() === 5 || primera) await noticiasSemana(env).catch(e => console.log("noticias: " + e.message));
+      return;
+    }
     if (event.cron === "30 7 * * 1") return resumenSemanal(env);
     return revisionCadaMediaHora(env);
   },
@@ -463,6 +488,12 @@ export default {
 
     const clave = url.searchParams.get("clave") || url.searchParams.get("prueba");
     const autorizado = clave && env.PRUEBA_CLAVE && clave === env.PRUEBA_CLAVE;
+
+    if (url.pathname === "/noticias") {
+      if (!autorizado) return new Response("No autorizado", { status: 403 });
+      const mensajes = await noticiasSemana(env, url.searchParams.get("enviar") === "1");
+      return new Response(mensajes.join("\n\n────────\n\n"), { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    }
 
     if (url.pathname === "/contactos") {
       if (!autorizado) return new Response("No autorizado", { status: 403 });

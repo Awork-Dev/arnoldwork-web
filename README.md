@@ -7,6 +7,7 @@
 - `vigilante/` — Worker `vigilante`, los automatismos:
   - cada 30 min revisa webs y APIs (caídas y lentitud) y avisa por Telegram, también de un nuevo nº 1 en CaveWork;
   - cada mañana, resumen diario y aviso si el dominio va a caducar;
+  - cada viernes, noticias y estudios de la semana sobre hipertrofia y Heavy Duty (`noticias.js`: PubMed y Google Noticias);
   - cada lunes, resumen de la semana y copia de seguridad del ranking y de los contactos;
   - `POST /kofi`: avisos de ventas y batidos de Ko-fi; `POST /contacto`: copia de los mensajes del chat.
   - Secretos: `TELEGRAM_TOKEN`, `KOFI_TOKEN`, `PRUEBA_CLAVE`.
