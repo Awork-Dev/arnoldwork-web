@@ -121,8 +121,6 @@ p{margin:0 0 1em;max-width:60ch}
   .con-pestanas main{display:flex;flex-direction:column}
   .con-pestanas #juego{display:none!important}   /* el juego ya tiene su pestaña */
 }
-.firma-casa{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-stretch:85%;margin-top:6px}
-.firma-casa svg{width:22px;height:22px}
 .fuente{font-size:.95rem;color:var(--tinta);font-weight:500;border-left:4px solid var(--peligro);padding-left:12px;margin-top:18px}
 .cab nav{display:flex;gap:18px;font-weight:700;font-stretch:85%}
 .cab nav a{text-decoration:none;min-height:44px;display:flex;align-items:center}
@@ -226,7 +224,7 @@ p{margin:0 0 1em;max-width:60ch}
 .sec-cab{margin-bottom:26px}
 .sec-cab p{margin-top:12px;font-size:1.1rem}
 /* Texto directamente sobre el ladrillo: negro tinta con un halo del color de la pared para que se lea bien */
-.heroe .sub,.firma-casa,.sec-cab h2,#metodo > .env > h3{text-shadow:0 0 2px rgba(214,206,190,.95),0 0 8px rgba(214,206,190,.85)}
+.heroe .sub,.sec-cab h2,#metodo > .env > h3{text-shadow:0 0 2px rgba(214,206,190,.95),0 0 8px rgba(214,206,190,.85)}
 /* Párrafos sobre la pared, sin recuadro: letra algo más gruesa y halo del color de la pared para despegarla del ladrillo */
 .heroe-grid > div:first-child > p:not(.sub),.sec-cab p,.fuente,.pie-web p{font-weight:500;text-shadow:0 0 1px rgba(222,215,200,1),0 0 3px rgba(222,215,200,1),0 0 10px rgba(222,215,200,.9)}
 .heroe .suave,.sec-cab .suave{color:var(--tinta)}
@@ -394,7 +392,6 @@ p{margin:0 0 1em;max-width:60ch}
         <p class="sub">Al fallo. Y a casa.</p>
         <p>Entrena con el método <b>Heavy Duty</b> que popularizó el culturista Mike Mentzer: pocas series, todas al fallo, y días de descanso de verdad. El cuaderno te dice si progresas o si necesitas descansar más.</p>
         <div class="instalar" id="instalar" hidden></div>
-        <span class="firma-casa"><svg viewBox="-137 -40 926 926" aria-hidden="true"><rect x="-137" y="-40" width="926" height="926" rx="80" fill="#000"/><g transform="translate(65,84) scale(.8)"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></g></svg> De la casa de ArnoldWork</span>
       </div>
       <div class="estado cinta" id="estado" aria-live="polite"></div>
     </div>
