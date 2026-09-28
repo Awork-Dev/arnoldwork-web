@@ -156,6 +156,17 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
 .enlace-volver{display:inline-block;margin-top:14px;font-size:9px;color:var(--gris)}
 .dev-juego{display:block;margin-top:12px;font-size:8px;line-height:1.8;color:var(--oro)}
 
+.caja-manual{max-width:620px}
+.manual-indice{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.manual-indice button{font:inherit;font-size:8px;background:none;border:2px solid var(--borde);color:var(--tiza);padding:6px 7px;cursor:pointer;min-height:32px}
+.manual{max-height:56vh;overflow-y:auto;margin:0 0 12px;padding-right:4px;font-family:Montserrat,system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.55;color:#e8e2d4;text-align:left}
+.manual h3{font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.6;color:var(--oro);margin:18px 0 8px;padding-top:12px;border-top:2px solid var(--borde)}
+.manual h3:first-child{margin-top:0;padding-top:0;border-top:0}
+.manual p{margin:0 0 8px}
+.manual ul{margin:0 0 8px;padding-left:18px}
+.manual li{margin:0 0 4px}
+.manual b{color:#fff}
+@media (max-height:560px){.caja-manual{padding:12px 14px}.caja-manual h2{margin-bottom:8px}.manual-indice{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.manual-indice button{flex:none}.manual{max-height:calc(100vh - 175px);max-height:calc(100dvh - 175px)}}
 .logros{list-style:none;margin:0 0 12px;padding:0;max-height:52vh;overflow-y:auto}
 .logros li{display:flex;gap:10px;align-items:flex-start;padding:8px 2px;border-top:2px solid var(--borde);font-size:9px;line-height:1.6}
 .logros li .ico{flex:none;width:18px;text-align:center;color:var(--borde)}
@@ -276,7 +287,10 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
         <button type="button" class="btn" data-abrir="pTop">TOP 50</button>
         <button type="button" class="btn" data-abrir="pLogros" data-t="logros">LOGROS</button>
       </div>
-      <button type="button" class="btn" data-abrir="pPersonaje" id="btnPersonaje" data-t="personajes">PERSONAJES</button>
+      <div class="fila">
+        <button type="button" class="btn" data-abrir="pPersonaje" id="btnPersonaje" data-t="personajes">PERSONAJES</button>
+        <button type="button" class="btn" data-abrir="pManual" data-t="manual">MANUAL</button>
+      </div>
       <div class="fila">
         <button type="button" class="btn" id="btnMusica" aria-pressed="true">MUSICA SI</button>
         <button type="button" class="btn" id="btnSfx" aria-pressed="true">EFECTOS SI</button>
@@ -390,6 +404,16 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
   </div>
 </section>
 
+<!-- Manual de usuario -->
+<section class="panel" id="pManual" hidden aria-labelledby="tManual">
+  <div class="caja caja-manual">
+    <h2 id="tManual" data-t="manualTit">MANUAL DE CAVEWORK</h2>
+    <nav class="manual-indice" id="manualIndice" aria-label="Índice"></nav>
+    <div class="manual" id="manualTxt"></div>
+    <button type="button" class="btn btn-rojo" data-volver data-t="volver">VOLVER</button>
+  </div>
+</section>
+
 <!-- Girar el móvil -->
 <section class="panel" id="pGirar" hidden aria-labelledby="tGirar">
   <div class="caja" style="text-align:center">
@@ -486,7 +510,7 @@ const TXT = {
   es: {
     aCanvas:'Pantalla del juego CaveWork', aVidas:'Vidas', aPausa:'Pausa', aIniciales:'Tus iniciales, 3 letras',
     proteina:'PROTEÍNA', saltar:'SALTAR', golpear:'GOLPE',
-    subtitulo:'El juego gratis de HeavyWork',
+    subtitulo:'El juego gratis de HeavyWork', manual:'MANUAL', manualTit:'MANUAL DE CAVEWORK',
     deudaTit:'LOS JUGADORES LE DEBEN AL DESARROLLADOR', deudaNota:'Deuda simbólica: cada partida suma 0,10 $. Nadie tiene que pagarla.',
     pagarDeuda:'PAGAR LA DEUDA (DONAR)', jugar:'JUGAR', logros:'LOGROS', opinion:'OPINIÓN', idioma:'ENGLISH',
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
@@ -567,7 +591,7 @@ const TXT = {
   en: {
     aCanvas:'CaveWork game screen', aVidas:'Lives', aPausa:'Pause', aIniciales:'Your initials, 3 letters',
     proteina:'PROTEIN', saltar:'JUMP', golpear:'SMASH',
-    subtitulo:'The free HeavyWork game',
+    subtitulo:'The free HeavyWork game', manual:'MANUAL', manualTit:'CAVEWORK MANUAL',
     deudaTit:'PLAYERS OWE THE DEVELOPER', deudaNota:'Symbolic debt: every game adds $0.10. Nobody has to pay it.',
     pagarDeuda:'PAY THE DEBT (DONATE)', jugar:'PLAY', logros:'ACHIEVEMENTS', opinion:'FEEDBACK', idioma:'Español',
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
@@ -744,6 +768,190 @@ const ACH = [
   ['liga',     'Buen rollo',          'Únete a una liga o crea la tuya.',           'Good vibes',         'Join or create a league.'],
   ['venganza', 'Venganza servida',    'Supera el reto de un amigo.',                'Revenge served',     'Beat a friend\'s challenge.']
 ];
+// Manual de usuario (menú → MANUAL). Cada sección: [título, html]. Texto fijo escrito aquí, nunca datos de fuera.
+const MANUAL = {
+  es: [
+    ['OBJETIVO', `<p>Eres un cavernícola con una mancuerna de piedra. Corres sin parar: aplasta dinosaurios, cómete la proteína que sueltan y levanta cada vez <b>más peso</b>. La partida acaba cuando te quedas sin vidas. Cuanto más aguantes, más puntos.</p>`],
+    ['CONTROLES', `<ul>
+      <li><b>Saltar:</b> botón SALTAR (izquierda), o ESPACIO / ↑ en el teclado.</li>
+      <li><b>Golpear:</b> botón GOLPE (derecha), o X / J en el teclado.</li>
+      <li><b>Pausa:</b> botón de pausa arriba, o P en el teclado.</li>
+    </ul><p>En el móvil se juega mucho mejor <b>en horizontal</b>: la pantalla se ve el doble de grande y los botones quedan a los lados. Si lo tienes en vertical, el juego te lo recuerda y empieza solo al girarlo.</p>`],
+    ['PROTEÍNA Y PESO', `<p>La barra de <b>PROTEÍNA</b> es la clave. Baja poco a poco mientras corres y sube al comer:</p>
+    <ul><li>Muslo: +12 · Huevo: +8 · Filete: +22.</li></ul>
+    <p>Cuando la barra llega al 100 %, <b>¡MÁS PESO!</b>: subes 10 KG (empiezas con 20 KG), ganas puntos y el juego va un poco más rápido.</p>
+    <p>Si la barra llega a cero, pierdes una vida por hambre. <b>No dejes de comer.</b></p>`],
+    ['VIDAS', `<p>Empiezas con <b>3 vidas</b> (corazones, arriba). Pierdes una si te golpea algo o si te quedas sin proteína. El <b>huevo de oro</b> te da una vida extra, hasta un máximo de 5. Después de un golpe tienes un momento de respiro en el que nada te hace daño.</p>`],
+    ['DINOS Y OBSTÁCULOS', `<ul>
+      <li><b>Raptor:</b> 100 puntos. Suelta muslos o huevos.</li>
+      <li><b>Ptero:</b> vuela. 150 puntos. Suelta huevos.</li>
+      <li><b>Tricerátops:</b> embiste cuando te ve y aguanta dos golpes. 250 puntos. Suelta filete.</li>
+      <li><b>Troncos:</b> se rompen de un golpe, o sáltalos.</li>
+      <li><b>Rocas:</b> no se rompen. Sáltalas.</li>
+      <li><b>Comida basura</b> (dónut, hamburguesa, refresco): no la cojas. Te quita proteína y corta el combo.</li>
+    </ul>`],
+    ['COMBO', `<p>Cada dino que aplastas seguido sube el <b>COMBO</b> (x2, x3… hasta x5) y multiplica los puntos de los dinos. Si te golpean o comes basura, el combo vuelve a empezar.</p>`],
+    ['POTENCIADORES', `<ul>
+      <li><b>Batido:</b> durante 9 segundos atrae la comida hacia ti.</li>
+      <li><b>Cinturón:</b> aguanta el siguiente golpe por ti.</li>
+      <li><b>Pre-entreno:</b> durante 6 segundos corres más, nada te hace daño y aplastas todo lo que tocas.</li>
+      <li><b>Makina:</b> durante 9 segundos, puntos x2 y música makina.</li>
+    </ul>`],
+    ['DISCOS', `<p>Por el camino hay <b>discos</b> tirados. Recógelos: cada uno da 25 puntos y cada 10 discos, un extra de 250. Como en el gimnasio: los discos, a su sitio.</p>`],
+    ['JEFES: T-REX Y MAMUT', `<p>Cada 3 subidas de peso (a 50 KG, 80 KG, 110 KG…) aparece un jefe. Primero el <b>T-Rex</b>, luego el <b>MAMUT</b>, y así alternando; cada vez son más duros.</p>
+    <ul>
+      <li><b>Lanza</b> huesos (el T-Rex) o bolas de nieve (el mamut): golpéalos o esquívalos.</li>
+      <li><b>Pisotea</b> el suelo y manda una onda: sáltala.</li>
+      <li><b>Ruge y embiste</b>. Al acabar se queda <b>cansado</b>, con la cabeza baja: ese es el momento de golpearle. Si no está cansado, su cabeza es demasiado dura.</li>
+    </ul>
+    <p>Al derrotarlo ganas muchos puntos y suelta filetes, un muslo y un huevo de oro.</p>`],
+    ['PUNTOS', `<ul>
+      <li>Dinos: 100 / 150 / 250, multiplicados por el combo.</li>
+      <li>Comida: 50 · Huevo de oro: 300 · Disco: 25 (+250 cada 10).</li>
+      <li>Subir de peso: 500 por cada nivel alcanzado.</li>
+      <li>Jefe derrotado: 1.500 por cada jefe que llevas.</li>
+      <li>Con Makina, todo cuenta el doble.</li>
+    </ul>`],
+    ['RETO DEL DÍA', `<p>Cada día hay un reto con una condición especial, <b>los mismos dinos para todos</b> y un solo intento que puntúa. Después puedes seguir entrenando, pero ya no cuenta. Las condiciones posibles:</p>
+    <ul>
+      <li><b>Día de makina:</b> empiezas con Makina, puntos x2.</li>
+      <li><b>Día de pierna:</b> llueven rocas desde el principio.</li>
+      <li><b>Día de ayuno:</b> la proteína baja más rápido.</li>
+      <li><b>Día de cardio:</b> todo va más rápido.</li>
+      <li><b>Día de pteros:</b> el cielo está lleno de pteros.</li>
+      <li><b>Día de hierro:</b> el doble de discos.</li>
+      <li><b>Día del jefe:</b> el primer jefe llega a 30 KG.</li>
+    </ul><p>En el menú verás quién manda hoy y quién ganó ayer.</p>`],
+    ['RANKINGS', `<p>Si haces una buena marca, pon tus <b>iniciales (3 letras)</b> para salir en el TOP 50. Tiene varias pestañas:</p>
+    <ul>
+      <li><b>Siempre:</b> el ranking mundial de todos los tiempos.</li>
+      <li><b>Esta semana:</b> se reinicia cada lunes.</li>
+      <li><b>Temporada:</b> el mes en curso; se reinicia el día 1.</li>
+      <li><b>Hoy:</b> el reto del día.</li>
+      <li><b>Mi liga:</b> solo tú y tus amigos.</li>
+    </ul><p>Sin conexión, el juego guarda las marcas en tu dispositivo.</p>`],
+    ['CAMPEÓN Y TEMPORADAS', `<p>El <b>campeón de cada semana</b> gana una ficha de entrenamiento de ArnoldWork: si eres tú, en el menú aparece un botón para reclamar el premio con tu código.</p>
+    <p>Cada mes es una <b>temporada</b>. El podio del mes (los 3 primeros) se queda con su medalla para siempre y desbloquea el personaje Campeón de temporada.</p>`],
+    ['LIGAS', `<p>Crea tu liga en TOP 50 → MI LIGA e invita a tus amigos por WhatsApp. Todos los récords de la liga salen juntos, y puedes salir de ella cuando quieras.</p>`],
+    ['RETAR A UN AMIGO', `<p>Al acabar una partida, pulsa <b>RETAR A UN AMIGO</b>. Le llega un enlace con tu marca y, al abrirlo, juega contra ella con tu marca arriba en pantalla. Si te gana, puede <b>devolverte el reto</b>.</p>`],
+    ['PERSONAJES', `<p>Son solo de aspecto: <b>todos juegan igual</b>. Se desbloquean jugando:</p>
+    <ul>
+      <li><b>Grok:</b> el de siempre.</li>
+      <li><b>Makinero:</b> activa el modo Makina.</li>
+      <li><b>Heavy Duty:</b> levanta 100 KG.</li>
+      <li><b>Rey lagarto:</b> derrota 3 jefes.</li>
+      <li><b>Yeti:</b> derrota a un mamut.</li>
+      <li><b>Madrugador:</b> juega 7 retos del día.</li>
+      <li><b>Leyenda:</b> haz 50.000 puntos en una partida.</li>
+      <li><b>Campeón de temporada:</b> acaba un mes en el podio mundial.</li>
+    </ul>`],
+    ['LOGROS', `<p>Hay 19 logros: primer dino, combo x5, levantar 40, 60 y 100 KG, derrotar jefes, recoger discos, llegar a 40 KG sin comer basura, 10.000 y 50.000 puntos, jugar 25 partidas y más. Míralos en el menú → LOGROS.</p>`],
+    ['OPCIONES', `<ul>
+      <li><b>Música / Efectos:</b> actívalos o quítalos por separado.</li>
+      <li><b>English / Español:</b> cambia el idioma.</li>
+      <li><b>Opinión:</b> manda ideas o fallos al desarrollador. Solo lo lee el desarrollador y no se publica.</li>
+      <li><b>Deuda del desarrollador:</b> es de broma. Cada partida suma 0,10 $ simbólicos y nadie tiene que pagar nada. Si quieres, puedes invitar a un batido: es voluntario y no desbloquea nada.</li>
+    </ul>`],
+    ['TUS DATOS', `<p>Tu récord, logros, personajes e idioma se guardan <b>solo en este dispositivo</b>, sin cuentas ni registros. Al ranking solo se envían tus iniciales y tu puntuación. Si borras los datos del navegador, empiezas de cero.</p>`],
+    ['INSTALARLO', `<p>Puedes tenerlo como una app: en Safari, Compartir → <b>Añadir a pantalla de inicio</b>; en Chrome o Android, menú → <b>Instalar app</b> o Añadir a pantalla de inicio.</p>`]
+  ],
+  en: [
+    ['GOAL', `<p>You are a caveman with a stone dumbbell. You never stop running: smash dinosaurs, eat the protein they drop and lift <b>more weight</b> every time. The game ends when you run out of lives. The longer you last, the more points you score.</p>`],
+    ['CONTROLS', `<ul>
+      <li><b>Jump:</b> JUMP button (left), or SPACE / ↑ on the keyboard.</li>
+      <li><b>Smash:</b> SMASH button (right), or X / J on the keyboard.</li>
+      <li><b>Pause:</b> pause button at the top, or P on the keyboard.</li>
+    </ul><p>On a phone it plays much better <b>in landscape</b>: the screen is twice as big and the buttons sit on the sides. If you hold it upright, the game reminds you and starts by itself when you turn it.</p>`],
+    ['PROTEIN AND WEIGHT', `<p>The <b>PROTEIN</b> bar is the key. It slowly drains while you run and fills up when you eat:</p>
+    <ul><li>Drumstick: +12 · Egg: +8 · Steak: +22.</li></ul>
+    <p>When the bar hits 100%, <b>MORE WEIGHT!</b>: you go up 10 KG (you start at 20 KG), score points and the game gets a bit faster.</p>
+    <p>If the bar hits zero, you lose a life from hunger. <b>Keep eating.</b></p>`],
+    ['LIVES', `<p>You start with <b>3 lives</b> (hearts, at the top). You lose one if something hits you or if you run out of protein. The <b>golden egg</b> gives you an extra life, up to 5. After a hit you get a short moment where nothing can hurt you.</p>`],
+    ['DINOS AND OBSTACLES', `<ul>
+      <li><b>Raptor:</b> 100 points. Drops drumsticks or eggs.</li>
+      <li><b>Ptero:</b> flies. 150 points. Drops eggs.</li>
+      <li><b>Triceratops:</b> charges when it sees you and takes two hits. 250 points. Drops steak.</li>
+      <li><b>Logs:</b> break with one hit, or jump them.</li>
+      <li><b>Boulders:</b> can't be broken. Jump them.</li>
+      <li><b>Junk food</b> (donut, burger, soda): don't take it. It drains protein and breaks your combo.</li>
+    </ul>`],
+    ['COMBO', `<p>Every dino you smash in a row raises your <b>COMBO</b> (x2, x3… up to x5) and multiplies dino points. If you get hit or eat junk, the combo starts over.</p>`],
+    ['POWER-UPS', `<ul>
+      <li><b>Shake:</b> for 9 seconds, food flies towards you.</li>
+      <li><b>Belt:</b> takes the next hit for you.</li>
+      <li><b>Pre-workout:</b> for 6 seconds you run faster, nothing hurts you and you smash everything you touch.</li>
+      <li><b>Makina:</b> for 9 seconds, double points and makina music.</li>
+    </ul>`],
+    ['PLATES', `<p>There are <b>plates</b> lying around. Pick them up: 25 points each, plus 250 extra every 10 plates. Just like at the gym: rack your plates.</p>`],
+    ['BOSSES: T-REX AND MAMMOTH', `<p>Every 3 weight-ups (at 50 KG, 80 KG, 110 KG…) a boss shows up. First the <b>T-Rex</b>, then the <b>MAMMOTH</b>, taking turns; each one is tougher.</p>
+    <ul>
+      <li>It <b>throws</b> bones (T-Rex) or snowballs (mammoth): hit them or dodge them.</li>
+      <li>It <b>stomps</b> and sends a shockwave: jump it.</li>
+      <li>It <b>roars and charges</b>. Then it gets <b>tired</b>, head down: that's your moment to hit it. When it isn't tired, its head is too hard.</li>
+    </ul>
+    <p>Beat it for lots of points, plus steaks, a drumstick and a golden egg.</p>`],
+    ['POINTS', `<ul>
+      <li>Dinos: 100 / 150 / 250, multiplied by your combo.</li>
+      <li>Food: 50 · Golden egg: 300 · Plate: 25 (+250 every 10).</li>
+      <li>Weight-up: 500 for each level reached.</li>
+      <li>Boss beaten: 1,500 for each boss so far.</li>
+      <li>With Makina, everything counts double.</li>
+    </ul>`],
+    ['DAILY CHALLENGE', `<p>Every day there is a challenge with a special rule, <b>the same dinos for everyone</b> and a single attempt that counts. After that you can keep training, but it won't score. The possible rules:</p>
+    <ul>
+      <li><b>Makina day:</b> you start with Makina, double points.</li>
+      <li><b>Leg day:</b> boulders rain from the start.</li>
+      <li><b>Fasting day:</b> protein drains faster.</li>
+      <li><b>Cardio day:</b> everything is faster.</li>
+      <li><b>Ptero day:</b> the sky is full of pteros.</li>
+      <li><b>Iron day:</b> twice as many plates.</li>
+      <li><b>Boss day:</b> the first boss arrives at 30 KG.</li>
+    </ul><p>The menu shows who is leading today and who won yesterday.</p>`],
+    ['RANKINGS', `<p>If you set a good score, enter your <b>initials (3 letters)</b> to appear in the TOP 50. It has several tabs:</p>
+    <ul>
+      <li><b>All time:</b> the worldwide ranking.</li>
+      <li><b>This week:</b> resets every Monday.</li>
+      <li><b>Season:</b> the current month; resets on the 1st.</li>
+      <li><b>Today:</b> the daily challenge.</li>
+      <li><b>My league:</b> just you and your friends.</li>
+    </ul><p>Offline, the game keeps scores on your device.</p>`],
+    ['CHAMPION AND SEASONS', `<p>The <b>champion of each week</b> wins an ArnoldWork training sheet: if it's you, a button appears in the menu to claim the prize with your code.</p>
+    <p>Each month is a <b>season</b>. The monthly podium (top 3) keeps its medal forever and unlocks the Season Champ character.</p>`],
+    ['LEAGUES', `<p>Create your league in TOP 50 → MY LEAGUE and invite your friends on WhatsApp. All the league's records show up together, and you can leave whenever you like.</p>`],
+    ['CHALLENGE A FRIEND', `<p>After a game, tap <b>CHALLENGE A FRIEND</b>. They get a link with your score and play against it, with your score shown on screen. If they beat you, they can <b>send the challenge back</b>.</p>`],
+    ['CHARACTERS', `<p>They only change the look: <b>they all play the same</b>. Unlock them by playing:</p>
+    <ul>
+      <li><b>Grok:</b> the original.</li>
+      <li><b>Raver:</b> turn on Makina mode.</li>
+      <li><b>Heavy Duty:</b> lift 100 KG.</li>
+      <li><b>Lizard King:</b> beat 3 bosses.</li>
+      <li><b>Yeti:</b> beat a mammoth.</li>
+      <li><b>Early Bird:</b> play 7 daily challenges.</li>
+      <li><b>Legend:</b> score 50,000 in one game.</li>
+      <li><b>Season Champ:</b> finish a month on the world podium.</li>
+    </ul>`],
+    ['ACHIEVEMENTS', `<p>There are 19 achievements: first dino, x5 combo, lifting 40, 60 and 100 KG, beating bosses, racking plates, reaching 40 KG without junk food, 10,000 and 50,000 points, playing 25 games and more. See them in the menu → ACHIEVEMENTS.</p>`],
+    ['OPTIONS', `<ul>
+      <li><b>Music / Sound effects:</b> turn each on or off.</li>
+      <li><b>Español / English:</b> switch language.</li>
+      <li><b>Feedback:</b> send ideas or bugs to the developer. Only the developer reads it; it is never published.</li>
+      <li><b>Developer's debt:</b> it's a joke. Every game adds a symbolic $0.10 and nobody has to pay anything. If you like, you can buy the developer a shake: it's optional and unlocks nothing.</li>
+    </ul>`],
+    ['YOUR DATA', `<p>Your record, achievements, characters and language are stored <b>only on this device</b>, with no accounts or sign-ups. Only your initials and score are sent to the ranking. If you clear your browser data, you start from scratch.</p>`],
+    ['INSTALL IT', `<p>You can keep it like an app: in Safari, Share → <b>Add to Home Screen</b>; in Chrome or on Android, menu → <b>Install app</b> or Add to Home Screen.</p>`]
+  ]
+};
+function renderManual(){
+  const secciones = MANUAL[lang] || MANUAL.es, txt = $('#manualTxt'), ind = $('#manualIndice');
+  txt.innerHTML = secciones.map(([t, html], i) => `<h3 id="man${i}">${t}</h3>${html}`).join('');
+  ind.replaceChildren(...secciones.map(([t], i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = t;
+    b.addEventListener('click', () => { const h = $('#man' + i); txt.scrollTo({ top: h.offsetTop - txt.offsetTop, behavior: 'smooth' }); });
+    return b;
+  }));
+  txt.scrollTop = 0;
+}
+
 let nuevosLogros = 0;
 function logro(id){
   if (store.ach[id]) return;
@@ -2028,7 +2236,7 @@ function updateHud(){
 }
 
 /* ================= FLUJO ================= */
-const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pPersonaje','pGirar','pDonar','pFeedback'];
+const panels = ['pMenu','pPausa','pFin','pTop','pLogros','pPersonaje','pManual','pGirar','pDonar','pFeedback'];
 let panelStack = [];
 function show(id, push=false){
   if (push && panelStack.length === 0){
@@ -2454,6 +2662,7 @@ $$('[data-abrir]').forEach(b => b.addEventListener('click', async () => {
   const id = b.dataset.abrir;
   if (id === 'pLogros') renderLogros();
   if (id === 'pPersonaje') renderPersonajes();
+  if (id === 'pManual') renderManual();
   if (id === 'pTop'){ vistaTop = 'siempre'; renderTop(lastState, store.lastName, G.finalScore); show(id, true); const d = await API.state(); renderDebt(d); renderTop(d, store.lastName, G.finalScore); return; }
   show(id, true);
 }));

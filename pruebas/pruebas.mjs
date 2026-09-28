@@ -222,6 +222,18 @@ if (QUE === 'heavywork') {
     sinServicio && boton ? bien('no ofrece revisiones ni planes, avisa de la responsabilidad y deja compartir el cuaderno') : mal('/', `cuaderno: sinServicio=${sinServicio}, compartir=${boton}`);
     await p.close();
   }
+  console.log('\n▶ Manual de CaveWork');
+  {
+    const { p, errores } = await abrir('/game/');
+    await p.click('[data-abrir=pManual]');
+    await p.waitForTimeout(300);
+    const n = await p.locator('#manualTxt h3').count(), ind = await p.locator('#manualIndice button').count();
+    const vis = await p.locator('#pManual').isVisible();
+    await p.click('#pManual [data-volver]');
+    const menu = await p.locator('#pMenu').isVisible();
+    vis && n >= 15 && n === ind && menu && !errores.length ? bien(`el manual se abre con ${n} secciones y su índice, y vuelve al menú`) : mal('/game/', `manual: visible=${vis}, ${n} secciones, índice ${ind}, menú=${menu}, errores=${errores.join(' | ')}`);
+    await p.close();
+  }
   console.log('\n▶ CaveWork');
   const { p, errores } = await abrir('/game/');
   await p.evaluate(() => { store.tut = true; saveStore(); });
