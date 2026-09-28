@@ -22,6 +22,19 @@ let fallos = 0;
 const mal = (donde, que) => { fallos++; console.log(`  ❌ ${donde}: ${que}`); };
 const bien = que => console.log(`  ✅ ${que}`);
 
+// 0) Los scripts sueltos (modo sin conexión, versión, compartir) tienen que ser JavaScript válido:
+//    si no, la app instalada deja de funcionar sin conexión y las pruebas del navegador no lo notan.
+{
+  const vm = await import('node:vm');
+  console.log('\n▶ Scripts');
+  for (const n of ['sw.js', 'version.js', 'difunde.js']) {
+    const f = path.join(RAIZ, n);
+    if (!fs.existsSync(f)) continue;
+    try { new vm.Script(fs.readFileSync(f, 'utf8'), { filename: n }); bien(`${n} es JavaScript válido`); }
+    catch (e) { mal(n, `no es JavaScript válido: ${e.message}`); }
+  }
+}
+
 // Servidor mínimo: sirve la carpeta como lo hace Cloudflare (carpeta/ → carpeta/index.html, 404.html si no existe).
 function archivo(p) {
   let f = path.join(RAIZ, decodeURIComponent(p.split('?')[0].split('#')[0]));
