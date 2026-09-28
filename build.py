@@ -74,6 +74,7 @@ def indice(enlace, sin=None):
 
 
 V_DIF = corto(lee(SRC, "difunde.js"))
+V_VER = corto(lee(SRC, "version.js"))
 
 
 def difunde(texto, url_, asunto, titulo):
@@ -95,6 +96,7 @@ def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css,
         "V_CSS": v_css,
         "V_JS": v_js,
         "V_DIF": V_DIF,
+        "V_VER": V_VER,
         "CONTENIDO": contenido.strip("\n"),
     }.items():
         p = p.replace("{{" + k + "}}", v)
@@ -236,6 +238,7 @@ def portada_web():
     n = len(HERRAMIENTAS)
     enlaces = "\n".join(f'      <a href="/herramientas/{h["slug"]}/">{h["corto"]}</a>' for h in HERRAMIENTAS)
     s = re.sub(r"/difunde\.js\?v=\w+", "/difunde.js?v=" + V_DIF, s)
+    s = re.sub(r"/version\.js\?v=\w+", "/version.js?v=" + V_VER, s)
     s, k = re.subn(r'(<div class="toolnames"[^>]*>\n).*?(\n    </div>)', lambda m: m.group(1) + enlaces + m.group(2), s, flags=re.S)
     assert k == 1, "No encuentro la lista de herramientas de la portada"
     s = re.sub(r"\b\d+ herramientas\b", f"{n} herramientas", s)
@@ -256,6 +259,8 @@ def generar():
         "index.html": portada_web(),
         "difunde.js": dif,
         "../heavywork/web/difunde.js": dif,   # HeavyWork usa el mismo archivo
+        "version.js": lee(SRC, "version.js"),
+        "../heavywork/web/version.js": lee(SRC, "version.js"),   # y también la versión y «Buscar actualización»
         "herramientas/estilos.css": css,
         "herramientas/app.js": js,
         "herramientas/index.html": portada(v_css, v_js),

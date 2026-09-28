@@ -3,3 +3,5 @@ node_modules/
 .DS_Store
 __pycache__/
 src/og/.tmp.html
+web/version.json
+heavywork/web/version.json

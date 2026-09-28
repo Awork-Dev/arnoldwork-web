@@ -175,7 +175,7 @@
 
 <footer>
   <div class="wrap foot-in">
-    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio</div>
+    <div>© <span id="yr"></span> ArnoldWork · Del gimnasio, para el gimnasio<div data-version></div></div>
     <div style="display:flex;gap:20px;flex-wrap:wrap">
       <a href="/">Inicio</a>
       <a href="/herramientas/">Herramientas</a>
@@ -192,6 +192,7 @@
 
 <script src="/herramientas/app.js?v=3eb8b428a1"></script>
 <script src="/difunde.js?v=08b273f93a" defer></script>
+<script src="/version.js?v=53b2765519" defer></script>
 <script>
 if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).catch(()=>{}))}
 // En la app instalada no hay botón de recargar: al volver a abrirla tras un rato, se recarga sola para ver lo último.

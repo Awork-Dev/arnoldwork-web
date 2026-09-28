@@ -51,6 +51,9 @@ jobs:
       - name: Comprobar que web/ está al día con src/
         run: python3 build.py --check
 
+      - name: Fecha de la versión (para «Buscar actualización»)
+        run: printf '{"version":"%s","fecha":"%s"}\n' "$(git rev-parse --short HEAD)" "$(git log -1 --format=%cI)" > web/version.json
+
       - name: Nombre de la vista previa
         id: alias
         run: echo "alias=$(echo '${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-30 | sed 's/-*$//')" >> "$GITHUB_OUTPUT"
