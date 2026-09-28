@@ -415,6 +415,9 @@
     .con-pestanas #difunde,.con-pestanas main > .final{order:3}
     .con-pestanas main > footer{order:9}
     .con-pestanas .indice-mas{display:block}
+    /* Con pestañas sobran los enlaces que llevan a otra pestaña: ya están abajo */
+    .con-pestanas .hero .hero-cta,.con-pestanas #gratis,.con-pestanas #porque .sign .btn,
+    .con-pestanas main > .final .btns,.con-pestanas footer .foot-in > div:last-child{display:none!important}
     #chatBtn,#chatPanel{bottom:calc(76px + env(safe-area-inset-bottom))!important}
   }
   #chatBtn{position:fixed;left:20px;bottom:24px;z-index:60;background:var(--amber);color:#0A0A0A;

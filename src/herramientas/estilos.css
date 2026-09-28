@@ -538,6 +538,7 @@
   .tabbar svg{width:23px;height:23px}
   body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
   .nav-links{display:none!important}
+  footer .foot-in > div:last-child{display:none!important}   /* los enlaces del pie ya están en las pestañas */
 }
 .ir-inicio{display:none}
 @media(max-width:820px){
