@@ -1,7 +1,7 @@
 // HeavyWork · funciona sin conexión (en muchos gimnasios no hay cobertura).
 // Páginas y archivos propios: primero la red (para tener siempre lo último) y, si no hay, lo guardado.
 // Fuentes de Google: lo guardado primero. Las APIs del juego nunca se guardan.
-const VERSION = 'hw-2026-09-24';
+const VERSION = 'hw-2026-09-28-ocre';
 const PRECACHE = ['/', '/game/', '/difunde.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png', '/favicon.ico'];
 
 self.addEventListener('install', e => {
