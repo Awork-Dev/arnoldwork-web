@@ -113,6 +113,7 @@ button,input,a{font:inherit;color:inherit}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
 .btn-rojo{background:#D33030;border-color:#D33030;color:#fff}
 .btn-oro{background:var(--oro);border-color:var(--oro);color:#111}
+.enlace-guia{color:var(--oro);text-underline-offset:3px}
 .btn-wa{background:#25D366;border-color:#25D366;color:#0b1f12}
 .btn-grande{min-height:64px;font-size:16px}
 .btn[aria-pressed="false"]{color:var(--gris);border-color:var(--borde)}
@@ -516,7 +517,7 @@ const TXT = {
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
     ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
     ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
-    ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y temporadas mensuales: el podio de cada mes se queda con medalla para siempre. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex. El campeón de cada semana gana premio.',
+    ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y temporadas mensuales: el podio de cada mes se queda con medalla para siempre. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa. En el móvil, mejor en horizontal.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
     finTit:'¡AL FALLO!', nuevoTop:'¡ENTRAS EN EL RANKING! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
@@ -548,9 +549,8 @@ const TXT = {
     devolverWa:'DEVOLVER EL RETO POR WHATSAPP',
     retoDevuelto:(n, suyo, mio, u) => `🥊 ¡Te he ganado, ${n}! Tu marca: ${suyo}. La mía: ${mio}. Te toca: ${u}\nMade with love from Mallorca`,
     diarioTxt:(c, p, u) => `🗓️ Reto del día en CaveWork (${c}): he hecho ${p} puntos. ¿Me superas hoy? ${u}\nMade with love from Mallorca`,
-    premioInfo:'🎁 El campeón de cada semana gana una ficha de entrenamiento de ArnoldWork.',
-    eresCampeon:'👑 ¡ERES EL CAMPEÓN DE LA SEMANA! Pulsa para reclamar tu premio',
-    premioMsg:(n, c) => `Hola, soy ${n}, campeón de la semana en CaveWork. Mi código de premio es ${c} 🏆`,
+    premioInfo:'🎁 Guía gratis «Cuándo subir peso» →',
+    eresCampeon:'👑 ¡ERES EL CAMPEÓN DE LA SEMANA!',
     consejoTit:'💡 CONSEJO DE ARNOLD', consejoMas:'Más herramientas gratis →',
     mamut:'¡MAMUT!', mamutKO:'¡MAMUT KO!',
     conds:{makina:'DÍA DE MAKINA', pierna:'DÍA DE PIERNA', ayuno:'DÍA DE AYUNO', cardio:'DÍA DE CARDIO', pteros:'DÍA DE PTEROS', hierro:'DÍA DE HIERRO', jefe:'DÍA DEL JEFE'},
@@ -597,7 +597,7 @@ const TXT = {
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
     ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
     ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
-    ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and monthly seasons: each month\'s podium keeps its medal forever. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex. Each week\'s champion wins a prize.',
+    ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and monthly seasons: each month\'s podium keeps its medal forever. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause. On a phone, better in landscape.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
     finTit:'FAILURE!', nuevoTop:'YOU MADE THE RANKING! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
@@ -629,9 +629,8 @@ const TXT = {
     devolverWa:'SEND IT BACK ON WHATSAPP',
     retoDevuelto:(n, suyo, mio, u) => `🥊 I beat you, ${n}! Your score: ${suyo}. Mine: ${mio}. Your turn: ${u}\nMade with love from Mallorca`,
     diarioTxt:(c, p, u) => `🗓️ CaveWork daily challenge (${c}): I scored ${p}. Can you beat me today? ${u}\nMade with love from Mallorca`,
-    premioInfo:'🎁 Each week\'s champion wins an ArnoldWork training sheet.',
-    eresCampeon:'👑 YOU ARE THE CHAMPION OF THE WEEK! Tap to claim your prize',
-    premioMsg:(n, c) => `Hi, I'm ${n}, CaveWork champion of the week. My prize code is ${c} 🏆`,
+    premioInfo:'🎁 Free guide: when to add weight (in Spanish) →',
+    eresCampeon:'👑 YOU ARE THE CHAMPION OF THE WEEK!',
     consejoTit:'💡 ARNOLD\'S TIP', consejoMas:'More free tools →',
     mamut:'MAMMOTH!', mamutKO:'MAMMOTH DOWN!',
     conds:{makina:'MAKINA DAY', pierna:'LEG DAY', ayuno:'FASTING DAY', cardio:'CARDIO DAY', pteros:'PTERO DAY', hierro:'IRON DAY', jefe:'BOSS DAY'},
@@ -830,7 +829,7 @@ const MANUAL = {
       <li><b>Hoy:</b> el reto del día.</li>
       <li><b>Mi liga:</b> solo tú y tus amigos.</li>
     </ul><p>Sin conexión, el juego guarda las marcas en tu dispositivo.</p>`],
-    ['CAMPEÓN Y TEMPORADAS', `<p>El <b>campeón de cada semana</b> gana una ficha de entrenamiento de ArnoldWork: si eres tú, en el menú aparece un botón para reclamar el premio con tu código.</p>
+    ['CAMPEÓN Y TEMPORADAS', `<p>El <b>campeón de cada semana</b> sale en el menú durante toda la semana siguiente. No hay premios: se juega por la gloria.</p>
     <p>Cada mes es una <b>temporada</b>. El podio del mes (los 3 primeros) se queda con su medalla para siempre y desbloquea el personaje Campeón de temporada.</p>`],
     ['LIGAS', `<p>Crea tu liga en TOP 50 → MI LIGA e invita a tus amigos por WhatsApp. Todos los récords de la liga salen juntos, y puedes salir de ella cuando quieras.</p>`],
     ['RETAR A UN AMIGO', `<p>Al acabar una partida, pulsa <b>RETAR A UN AMIGO</b>. Le llega un enlace con tu marca y, al abrirlo, juega contra ella con tu marca arriba en pantalla. Si te gana, puede <b>devolverte el reto</b>.</p>`],
@@ -852,6 +851,7 @@ const MANUAL = {
       <li><b>Opinión:</b> manda ideas o fallos al desarrollador. Solo lo lee el desarrollador y no se publica.</li>
       <li><b>Deuda del desarrollador:</b> es de broma. Cada partida suma 0,10 $ simbólicos y nadie tiene que pagar nada. Si quieres, puedes invitar a un batido: es voluntario y no desbloquea nada.</li>
     </ul>`],
+    ['GUÍA GRATIS', `<p>Si quieres llevarte algo del juego al gimnasio: la guía <b>«Cuándo subir peso»</b> es gratis. Cuatro páginas con la regla exacta, una tabla y una plantilla para imprimir. Se pide con tu correo en <a class="enlace-guia" href="https://arnoldwork.com/#regalo" target="_blank" rel="noopener">arnoldwork.com</a> y se envía una sola vez: sin novedades ni publicidad.</p>`],
     ['TUS DATOS', `<p>Tu récord, logros, personajes e idioma se guardan <b>solo en este dispositivo</b>, sin cuentas ni registros. Al ranking solo se envían tus iniciales y tu puntuación. Si borras los datos del navegador, empiezas de cero.</p>`],
     ['INSTALARLO', `<p>Puedes tenerlo como una app: en Safari, Compartir → <b>Añadir a pantalla de inicio</b>; en Chrome o Android, menú → <b>Instalar app</b> o Añadir a pantalla de inicio.</p>`]
   ],
@@ -915,7 +915,7 @@ const MANUAL = {
       <li><b>Today:</b> the daily challenge.</li>
       <li><b>My league:</b> just you and your friends.</li>
     </ul><p>Offline, the game keeps scores on your device.</p>`],
-    ['CHAMPION AND SEASONS', `<p>The <b>champion of each week</b> wins an ArnoldWork training sheet: if it's you, a button appears in the menu to claim the prize with your code.</p>
+    ['CHAMPION AND SEASONS', `<p>The <b>champion of each week</b> is shown in the menu for the whole next week. There are no prizes: you play for glory.</p>
     <p>Each month is a <b>season</b>. The monthly podium (top 3) keeps its medal forever and unlocks the Season Champ character.</p>`],
     ['LEAGUES', `<p>Create your league in TOP 50 → MY LEAGUE and invite your friends on WhatsApp. All the league's records show up together, and you can leave whenever you like.</p>`],
     ['CHALLENGE A FRIEND', `<p>After a game, tap <b>CHALLENGE A FRIEND</b>. They get a link with your score and play against it, with your score shown on screen. If they beat you, they can <b>send the challenge back</b>.</p>`],
@@ -937,6 +937,7 @@ const MANUAL = {
       <li><b>Feedback:</b> send ideas or bugs to the developer. Only the developer reads it; it is never published.</li>
       <li><b>Developer's debt:</b> it's a joke. Every game adds a symbolic $0.10 and nobody has to pay anything. If you like, you can buy the developer a shake: it's optional and unlocks nothing.</li>
     </ul>`],
+    ['FREE GUIDE', `<p>Want to take something from the game to the gym? The guide <b>"When to add weight"</b> (in Spanish) is free: four pages with the exact rule, a table and a printable template. Request it with your email at <a class="enlace-guia" href="https://arnoldwork.com/#regalo" target="_blank" rel="noopener">arnoldwork.com</a>. It is sent only once: no newsletters, no ads.</p>`],
     ['YOUR DATA', `<p>Your record, achievements, characters and language are stored <b>only on this device</b>, with no accounts or sign-ups. Only your initials and score are sent to the ranking. If you clear your browser data, you start from scratch.</p>`],
     ['INSTALL IT', `<p>You can keep it like an app: in Safari, Share → <b>Add to Home Screen</b>; in Chrome or on Android, menu → <b>Install app</b> or Add to Home Screen.</p>`]
   ]
@@ -2270,15 +2271,17 @@ function renderCampeon(d){
   el.hidden = !c || !API.online;
   if (el.hidden) return;
   el.innerHTML = '';
-  // ¿El campeón de la semana pasada es una marca hecha en este dispositivo? Entonces puede reclamar el premio.
-  const mia = (store.misMarcas || []).find(m => m.name === c.name && m.score === c.score && m.codigo);
-  if (mia){
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'btn btn-oro'; b.textContent = T('eresCampeon');
-    b.addEventListener('click', () => { SFX.play('ui'); window.open('https://t.me/AWorks81?text=' + encodeURIComponent(T('premioMsg')(mia.name, mia.codigo)), '_blank', 'noopener'); });
-    el.append(b);
-  } else el.append(T('campeon')(c.name, NUM(c.score)));
-  const s = document.createElement('small'); s.textContent = T('premioInfo'); el.append(s);
+  // ¿El campeón de la semana pasada es una marca hecha en este dispositivo? Se le felicita (no hay premio).
+  const mia = (store.misMarcas || []).find(m => m.name === c.name && m.score === c.score);
+  el.append(mia ? T('eresCampeon') : T('campeon')(c.name, NUM(c.score)));
+  const s = document.createElement('small'); s.append(enlaceGuia()); el.append(s);
+}
+// La guía gratis «Cuándo subir peso» se pide en ArnoldWork (se manda una sola vez al correo).
+const GUIA_URL = 'https://arnoldwork.com/#regalo';
+function enlaceGuia(){
+  const a = document.createElement('a');
+  a.href = GUIA_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'enlace-guia'; a.textContent = T('premioInfo');
+  return a;
 }
 function renderDiario(){
   const d = estadoDiario(), c = condDe(d.dia);
@@ -2463,7 +2466,7 @@ function renderTop(d, hiName, hiScore){
   const podio = (d && d.podio && d.podio.top) || [], MEDALLAS = ['🥇', '🥈', '🥉'];
   const medalla = r => { const i = podio.findIndex(t => t.name === r.name && t.score === r.score && t.date === r.date); return i < 0 ? '' : MEDALLAS[i] + ' '; };
   nota.hidden = !(API.online && (semana || (v === 'mes' && podio.length)));
-  if (!nota.hidden) nota.textContent = semana ? T('premioInfo') : T('podio')(nombreMes(d.podio.mes)) + podio.map((t, i) => `${MEDALLAS[i]} ${t.name} ${NUM(t.score)}`).join(' · ');
+  if (!nota.hidden){ if (semana) nota.replaceChildren(enlaceGuia()); else nota.textContent = T('podio')(nombreMes(d.podio.mes)) + podio.map((t, i) => `${MEDALLAS[i]} ${t.name} ${NUM(t.score)}`).join(' · '); }
   const body = $('#topCuerpo');
   body.innerHTML = '';
   if (!top || !top.length){

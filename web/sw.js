@@ -1,7 +1,7 @@
 // ArnoldWork · funciona sin cobertura. Este archivo lo genera build.py a partir de src/sw.js: no lo edites en web/.
 // Páginas, estilos y código: primero la red (así siempre ves la última versión) y, sin conexión, la copia guardada.
 // Imágenes y fuentes: la copia guardada, que casi nunca cambian.
-const VERSION = 'd47f2e7280';
+const VERSION = '67169314cd';
 const CACHE = 'arnoldwork-' + VERSION;
 const PRECACHE = ["/", "/herramientas/", "/herramientas/calculadora-1rm/", "/herramientas/calculadora-rpe-rir/", "/herramientas/cuando-subir-peso/", "/herramientas/nivel-de-fuerza/", "/herramientas/calculadora-dots-wilks/", "/herramientas/calculadora-discos/", "/herramientas/series-de-aproximacion/", "/herramientas/calculadora-calorias-macros/", "/herramientas/calculadora-proteina/", "/herramientas/calculadora-creatina/", "/herramientas/grasa-corporal-ffmi/", "/herramientas/cuanto-musculo-puedo-ganar/", "/herramientas/cuando-llegare-a-mi-peso/", "/herramientas/test-que-rutina-hacer/", "/herramientas/generador-de-rutina/", "/herramientas/cuaderno-de-entreno/", "/herramientas/sustituto-de-ejercicio/", "/herramientas/volumen-semanal/", "/herramientas/recuperacion-heavy-duty/", "/herramientas/cronometro-descansos/", "/herramientas/tempo-repeticiones/", "/404.html", "/herramientas/estilos.css?v=be89bc0ba4", "/herramientas/app.js?v=79321888c8", "/img/logo.svg", "/favicon.svg", "/manifest.webmanifest", "/difunde.js?v=08652011d6"];
 
