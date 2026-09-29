@@ -61,6 +61,10 @@ def og_imagen(h):
     return con_version("/img/og-herramientas.png")
 
 
+# Herramientas que ya no están en ArnoldWork → a dónde se ha ido cada una.
+RETIRADAS = {"recuperacion-heavy-duty": "https://heavywork.arnoldwork.com/"}
+
+
 def indice(enlace, sin=None):
     """Índice por grupos. enlace(h) devuelve el href de cada herramienta; sin, una que no se lista."""
     bloques = []
@@ -270,6 +274,12 @@ def generar():
     assert len(set(slugs)) == len(slugs), "Hay dos herramientas con la misma dirección"
     for h in HERRAMIENTAS:
         salida[f"herramientas/{h['slug']}/index.html"] = individual(h, v_css, v_js)
+    # Herramientas retiradas: su dirección antigua (quizá ya en Google) lleva a su sitio nuevo.
+    for slug, destino in RETIRADAS.items():
+        salida[f"herramientas/{slug}/index.html"] = (
+            '<!doctype html>\n<html lang="es"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
+            f'<link rel="canonical" href="{destino}"><meta http-equiv="refresh" content="0; url={destino}">'
+            f'<title>Se ha mudado</title></head><body><p>Esta herramienta ahora está en <a href="{destino}">{destino}</a>.</p></body></html>\n')
 
     paginas = ["/", "/herramientas/"] + [f"/herramientas/{s}/" for s in slugs]
     precache = paginas + ["/404.html", f"/herramientas/estilos.css?v={v_css}", f"/herramientas/app.js?v={v_js}",

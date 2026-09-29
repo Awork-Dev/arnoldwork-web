@@ -123,14 +123,14 @@ HERRAMIENTAS = [
         "grupo": "fuerza",
         "nombre": "Series de aproximación",
         "titulo": "Series de aproximación: calcula tu calentamiento con pesas",
-        "descripcion": "Dime el peso de tu serie efectiva y te preparo las series de aproximación con los discos de cada una. Para hipertrofia y para Heavy Duty.",
+        "descripcion": "Dime el peso de tu serie efectiva y te preparo las series de aproximación con los discos de cada una. Para hipertrofia y para fuerza.",
         "h1": "Series de aproximación",
         "intro": "Dime el peso de tu serie efectiva y te preparo el calentamiento, serie a serie, con los discos que tienes que poner en cada una.",
         "articulo": """
 <h2>Para qué sirven</h2>
 <p>Las series de aproximación preparan las articulaciones, afinan la técnica y te avisan si hoy el peso se mueve bien o mal, <strong>sin cansarte</strong> para la serie que cuenta. Por eso ninguna se acerca al fallo.</p>
 <h2>Cómo se reparten</h2>
-<p>Se empieza con la barra sola y se sube por escalones, bajando las repeticiones a medida que el peso se acerca al de trabajo. Para hipertrofia bastan dos o tres aproximaciones. Si entrenas fuerza o <a href="/herramientas/recuperacion-heavy-duty/">Heavy Duty</a>, con una sola serie muy pesada, conviene hacer más escalones y más cortos.</p>
+<p>Se empieza con la barra sola y se sube por escalones, bajando las repeticiones a medida que el peso se acerca al de trabajo. Para hipertrofia bastan dos o tres aproximaciones. Si entrenas fuerza, con una serie muy pesada, conviene hacer más escalones y más cortos.</p>
 <p>Entre aproximaciones, un minuto como mucho. Antes de la serie efectiva, dos o tres.</p>
 """,
         "faq": [
@@ -205,35 +205,9 @@ HERRAMIENTAS = [
 <p>Un ejercicio compuesto trabaja más de un músculo. Una forma sencilla de contar: el press banca suma una serie a pecho y media a tríceps y hombro.</p>
 <h2>El rango de referencia</h2>
 <p>Para ganar músculo, la mayoría de la gente responde bien con <strong>10 a 20 series por músculo y semana</strong>, repartidas en dos o más sesiones. Por debajo de 6 series, sobre todo mantienes. Por encima de 20, cuidado con la recuperación.</p>
-<p>Si entrenas Heavy Duty, este rango no es tu medida: allí una o dos series al fallo por músculo y sesión son el plan.</p>
 """,
         "faq": [
             ("¿Cuántas series por músculo a la semana para hipertrofia?", "Entre 10 y 20 series efectivas es el rango en el que crece la mayoría de la gente. Empieza por abajo y sube si dejas de progresar."),
-        ],
-    },
-    {
-        "pieza": "recuperacion",
-        "slug": "recuperacion-heavy-duty",
-        "grupo": "entreno",
-        "nombre": "Recuperación Heavy Duty",
-        "titulo": "Recuperación Heavy Duty: qué rutina toca y cuándo volver a entrenar",
-        "descripcion": "Marca tus sesiones de Heavy Duty (rotación A, B, C y D) y te digo qué rutina toca y cuántos días te faltan para estar recuperado.",
-        "h1": "Recuperación Heavy Duty",
-        "intro": "La rotación de HeavyWork: A, B, C y D, con días de descanso entre sesiones. Marca el día que entrenas y te digo qué toca y cuándo estás listo para volver.",
-        "articulo": """
-<h2>Por qué tanto descanso</h2>
-<p>En el Heavy Duty de Mike Mentzer cada serie va <strong>al fallo absoluto</strong>. Es un estímulo tan fuerte que el cuerpo necesita varios días para recuperarse y crecer. Volver antes de tiempo es entrenar sobre un músculo que todavía no se ha reparado.</p>
-<h2>La rotación</h2>
-<ul>
-<li><strong>A:</strong> pecho y espalda.</li>
-<li><strong>B:</strong> piernas.</li>
-<li><strong>C:</strong> hombros y brazos.</li>
-<li><strong>D:</strong> piernas.</li>
-</ul>
-<p>Empieza con cuatro días de descanso entre sesiones. Si al volver no has superado lo de la última vez, prueba a descansar uno más. El método completo está explicado en <a href="https://heavywork.arnoldwork.com" target="_blank" rel="noopener">HeavyWork</a>.</p>
-""",
-        "faq": [
-            ("¿Cuántos días hay que descansar en Heavy Duty?", "Entre 3 y 7 días entre sesiones, según cómo te recuperes. Si no mejoras de una sesión a la siguiente, alarga el descanso antes de cambiar nada más."),
         ],
     },
     {
@@ -522,7 +496,7 @@ HERRAMIENTAS += [
 
 _ORDEN = ["rm", "rpe", "subir", "nivel", "puntos", "discos", "calentamiento",
           "macros", "proteina", "creatina", "grasa", "musculo", "fecha",
-          "test", "rutina", "cuaderno", "sustituto", "volumen", "recuperacion", "descansos", "tempo"]
+          "test", "rutina", "cuaderno", "sustituto", "volumen", "descansos", "tempo"]
 assert sorted(_ORDEN) == sorted(h["pieza"] for h in HERRAMIENTAS)
 HERRAMIENTAS.sort(key=lambda h: _ORDEN.index(h["pieza"]))
 
@@ -545,7 +519,6 @@ _CORTOS = {'rm': '1RM',
             'cuaderno': 'Cuaderno',
             'sustituto': 'Sustitutos',
             'volumen': 'Volumen semanal',
-            'recuperacion': 'Recuperación HD',
             'descansos': 'Descansos',
             'tempo': 'Tempo'}
 for _h in HERRAMIENTAS:

@@ -487,7 +487,7 @@
       prev = t;
     });
     var m = montar((W - bar) / 2);
-    fila('Efectiva', kg(W), tipo === 'hd' ? 'al fallo' : 'tu rango', m.sobra > 0.001 ? lado(W) + ' (no exacto)' : lado(W), 'eff');
+    fila('Efectiva', kg(W), tipo === 'hd' ? 'serie pesada' : 'tu rango', m.sobra > 0.001 ? lado(W) + ' (no exacto)' : lado(W), 'eff');
   }
   reg(calcCalent, ['cPeso', 'cBarra', 'cTipo']);
 
@@ -658,60 +658,9 @@
   function guardaVol(){ sset('vol', JSON.stringify(vol)); pintaVol(); }
   on('vReset', 'click', function(){ vol = MUSC.map(function(){ return 0; }); guardaVol(); });
 
-  /* ---------- recuperación Heavy Duty ---------- */
-  var ROT = [ { k: 'A', n: 'Pecho y espalda' }, { k: 'B', n: 'Piernas' }, { k: 'C', n: 'Hombros y brazos' }, { k: 'D', n: 'Piernas' } ];
-  var hdLog = (function(){ try{ var a = JSON.parse(sget('hd') || '[]'); return Array.isArray(a) ? a : []; }catch(e){ return []; } })();
+  /* ---------- fechas (las usan el cuaderno y otras herramientas) ---------- */
   var hoyISO = function(){ var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
   var partes = function(s){ var p = s.split('-'); return [+p[0], +p[1] - 1, +p[2]]; };
-  var dias = function(a, b){ var x = partes(a), y = partes(b); return Math.round((Date.UTC(y[0], y[1], y[2]) - Date.UTC(x[0], x[1], x[2])) / 864e5); };
-  var suma = function(s, n){ var x = partes(s); return new Date(x[0], x[1], x[2] + n); };
-  var hace = function(n){ return n === 0 ? 'hoy' : n === 1 ? 'ayer' : 'hace ' + n + ' días'; };
-  function calcHD(){
-    var hoy = hoyISO(), rest = parseInt($('hDesc').value, 10);
-    var ult = hdLog.length ? hdLog[hdLog.length - 1] : null;
-    var sig = ult ? ROT[(ROT.map(function(r){ return r.k; }).indexOf(ult.k) + 1) % 4] : ROT[0];
-    var grid = $('hGrid'); grid.innerHTML = '';
-    ROT.forEach(function(r){
-      var last = null;
-      for(var i = hdLog.length - 1; i >= 0; i--){ if(hdLog[i].k === r.k){ last = hdLog[i]; break; } }
-      var c = document.createElement('div'); c.className = 'hd-c' + (r.k === sig.k ? ' next' : '');
-      c.innerHTML = '<b>' + r.k + '</b><small>' + r.n + '</small><span class="when">' + (last ? 'Última: ' + hace(dias(last.d, hoy)) : 'Sin hacer todavía') + '</span>';
-      var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Hoy he hecho la ' + r.k;
-      b.addEventListener('click', function(){
-        var u = hdLog[hdLog.length - 1];
-        if(u && u.k === r.k && u.d === hoy) return;
-        hdLog.push({ k: r.k, d: hoy }); if(hdLog.length > 60) hdLog = hdLog.slice(-60);
-        sset('hd', JSON.stringify(hdLog)); calcHD();
-      });
-      c.appendChild(b); grid.appendChild(c);
-    });
-    var tag = $('hTag'), big = $('hBig'), txt = $('hTxt');
-    if(!ult){
-      tag.textContent = 'EMPIEZA'; tag.className = 'vtag up'; big.textContent = 'Rutina A';
-      txt.innerHTML = 'Todavía no has marcado ninguna sesión. Empieza por la A (' + ROT[0].n.toLowerCase() + ') y márcala aquí al terminar.';
-      return;
-    }
-    var since = dias(ult.d, hoy);
-    if(since >= rest){
-      tag.textContent = 'LISTO'; tag.className = 'vtag up'; big.textContent = 'Hoy toca la ' + sig.k;
-      txt.innerHTML = 'Tu última sesión fue la ' + ult.k + ', ' + hace(since) + '. Ya has descansado los ' + rest + ' días que te marcaste: toca <strong>' + sig.n.toLowerCase() + '</strong>.';
-    } else {
-      var f = suma(ult.d, rest), q = rest - since;
-      tag.textContent = 'DESCANSA'; tag.className = 'vtag hold';
-      big.textContent = q === 1 ? 'Falta 1 día' : 'Faltan ' + q + ' días';
-      txt.innerHTML = (since === 0 ? 'Hoy ya has entrenado la ' + ult.k + '. ' : '') +
-        'La siguiente es la <strong>' + sig.k + ' (' + sig.n.toLowerCase() + ')</strong>, el ' +
-        f.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) +
-        '. El músculo crece mientras descansas, no mientras entrenas.';
-    }
-  }
-  reg(calcHD, ['hDesc']);
-  on('hUndo', 'click', function(){ if(!hdLog.length) return; hdLog.pop(); sset('hd', JSON.stringify(hdLog)); calcHD(); });
-  on('hReset', 'click', function(){
-    if(!hdLog.length) return;
-    if(!window.confirm('¿Borrar todas las sesiones marcadas?')) return;
-    hdLog = []; sset('hd', '[]'); calcHD();
-  });
 
   /* ---------- cronómetro ---------- */
   var total = 90, queda = 90, id = null;
