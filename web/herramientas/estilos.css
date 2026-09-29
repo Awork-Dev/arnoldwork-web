@@ -371,6 +371,11 @@
   .cta-line a:hover{text-decoration:underline}
   .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
   .cu-export{scroll-margin-top:90px}
+  .cu-sugs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .cu-sugs button{font:inherit;font-size:.85rem;background:var(--ink-3);color:var(--chalk);border:1px solid var(--rule-strong);padding:8px 10px;min-height:38px;cursor:pointer}
+  .cu-sugs button.on,.cu-sugs button:hover{border-color:var(--amber);color:#fff}
+  .field input.cu-falta{outline:2px solid var(--amber);outline-offset:1px}
+  .cu-ok{margin:12px 0 0;color:#7cc454;font-weight:700;font-size:.95rem;min-height:1.2em}
   .cu-export h3{margin:0 0 6px;font-size:1.15rem}
   .cu-cal-t{margin-top:28px!important;padding-top:20px;border-top:1px dashed var(--rule)}
   .cu-nota{margin:12px 0 0;color:var(--chalk-dim);font-size:.85rem;max-width:68ch}

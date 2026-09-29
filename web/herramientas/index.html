@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/herramientas/estilos.css?v=67a45d4a6c">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=5b9a5941f7">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Herramientas gratis de gimnasio","url":"https://arnoldwork.com/herramientas/","inLanguage":"es","hasPart":[{"@type":"WebApplication","name":"Calculadora de 1RM","url":"https://arnoldwork.com/herramientas/calculadora-1rm/"},{"@type":"WebApplication","name":"Calculadora de RIR y RPE","url":"https://arnoldwork.com/herramientas/calculadora-rpe-rir/"},{"@type":"WebApplication","name":"¿Cuándo subir peso?","url":"https://arnoldwork.com/herramientas/cuando-subir-peso/"},{"@type":"WebApplication","name":"¿Cómo de fuerte soy?","url":"https://arnoldwork.com/herramientas/nivel-de-fuerza/"},{"@type":"WebApplication","name":"Calculadora de puntos DOTS y Wilks","url":"https://arnoldwork.com/herramientas/calculadora-dots-wilks/"},{"@type":"WebApplication","name":"Qué discos pongo en la barra","url":"https://arnoldwork.com/herramientas/calculadora-discos/"},{"@type":"WebApplication","name":"Series de aproximación","url":"https://arnoldwork.com/herramientas/series-de-aproximacion/"},{"@type":"WebApplication","name":"Calculadora de calorías y macros","url":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/"},{"@type":"WebApplication","name":"Calculadora de proteína diaria","url":"https://arnoldwork.com/herramientas/calculadora-proteina/"},{"@type":"WebApplication","name":"Calculadora de creatina","url":"https://arnoldwork.com/herramientas/calculadora-creatina/"},{"@type":"WebApplication","name":"Grasa corporal y FFMI","url":"https://arnoldwork.com/herramientas/grasa-corporal-ffmi/"},{"@type":"WebApplication","name":"¿Cuánto músculo puedo ganar?","url":"https://arnoldwork.com/herramientas/cuanto-musculo-puedo-ganar/"},{"@type":"WebApplication","name":"¿Cuándo llegaré a mi peso?","url":"https://arnoldwork.com/herramientas/cuando-llegare-a-mi-peso/"},{"@type":"WebApplication","name":"¿Qué rutina es para ti?","url":"https://arnoldwork.com/herramientas/test-que-rutina-hacer/"},{"@type":"WebApplication","name":"Generador de rutina","url":"https://arnoldwork.com/herramientas/generador-de-rutina/"},{"@type":"WebApplication","name":"Cuaderno de entreno","url":"https://arnoldwork.com/herramientas/cuaderno-de-entreno/"},{"@type":"WebApplication","name":"Sustituto de ejercicio","url":"https://arnoldwork.com/herramientas/sustituto-de-ejercicio/"},{"@type":"WebApplication","name":"Volumen semanal por músculo","url":"https://arnoldwork.com/herramientas/volumen-semanal/"},{"@type":"WebApplication","name":"Recuperación Heavy Duty","url":"https://arnoldwork.com/herramientas/recuperacion-heavy-duty/"},{"@type":"WebApplication","name":"Cronómetro de descansos","url":"https://arnoldwork.com/herramientas/cronometro-descansos/"},{"@type":"WebApplication","name":"Tempo de las repeticiones","url":"https://arnoldwork.com/herramientas/tempo-repeticiones/"}]}</script>
 </head>
 <body>
@@ -666,7 +666,8 @@
         </div>
         <div class="field wide">
           <label for="cuEj">Ejercicio</label>
-          <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Press banca" maxlength="60">
+          <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Escribe o toca uno de abajo" maxlength="60">
+          <div class="cu-sugs" id="cuSugs" aria-label="Ejercicios del grupo"></div>
           <datalist id="cuLista"></datalist>
         </div>
         <div class="field">
@@ -677,11 +678,11 @@
       <div class="fields" style="margin-top:14px">
         <div class="field">
           <label for="cuPeso">Peso (kg)</label>
-          <input id="cuPeso" type="number" inputmode="decimal" min="0" max="500" step="0.5" placeholder="60">
+          <input id="cuPeso" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Ej.: 60 (0 sin peso)">
         </div>
         <div class="field">
           <label for="cuReps">Repeticiones</label>
-          <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
+          <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="Ej.: 10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
         </div>
         <div class="field">
           <label for="cuSeries">Series</label>
@@ -691,6 +692,7 @@
       </div>
       <p class="cu-nota" id="cuRepsAyuda">Repeticiones: un número (10) si todas las series son iguales, o una por serie separadas por guiones (10-8-6-4). En ese caso, las series se cuentan solas.</p>
       <p class="warn" id="cuWarn" hidden></p>
+      <p class="cu-ok" id="cuOk" role="status" aria-live="polite"></p>
       <div class="out">
         <div class="fields">
           <div class="field wide">
@@ -887,7 +889,7 @@
   </div>
 </footer>
 
-<script src="/herramientas/app.js?v=81ae827af7"></script>
+<script src="/herramientas/app.js?v=cdefeac2bf"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 <script>

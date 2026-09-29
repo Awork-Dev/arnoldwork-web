@@ -9,7 +9,8 @@
     </div>
     <div class="field wide">
       <label for="cuEj">Ejercicio</label>
-      <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Press banca" maxlength="60">
+      <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Escribe o toca uno de abajo" maxlength="60">
+      <div class="cu-sugs" id="cuSugs" aria-label="Ejercicios del grupo"></div>
       <datalist id="cuLista"></datalist>
     </div>
     <div class="field">
@@ -20,11 +21,11 @@
   <div class="fields" style="margin-top:14px">
     <div class="field">
       <label for="cuPeso">Peso (kg)</label>
-      <input id="cuPeso" type="number" inputmode="decimal" min="0" max="500" step="0.5" placeholder="60">
+      <input id="cuPeso" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Ej.: 60 (0 sin peso)">
     </div>
     <div class="field">
       <label for="cuReps">Repeticiones</label>
-      <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
+      <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="Ej.: 10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
     </div>
     <div class="field">
       <label for="cuSeries">Series</label>
@@ -34,6 +35,7 @@
   </div>
   <p class="cu-nota" id="cuRepsAyuda">Repeticiones: un número (10) si todas las series son iguales, o una por serie separadas por guiones (10-8-6-4). En ese caso, las series se cuentan solas.</p>
   <p class="warn" id="cuWarn" hidden></p>
+  <p class="cu-ok" id="cuOk" role="status" aria-live="polite"></p>
   <div class="out">
     <div class="fields">
       <div class="field wide">

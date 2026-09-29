@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/herramientas/estilos.css?v=67a45d4a6c">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=5b9a5941f7">
 <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Cuaderno de entreno","url":"https://arnoldwork.com/herramientas/cuaderno-de-entreno/","description":"Apunta tus series por grupo muscular, mira tu progreso en una gráfica y expórtalo en PDF, TXT o Excel con tu peso máximo. Se guarda en tu móvil, sin registro.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Cuaderno de entreno","item":"https://arnoldwork.com/herramientas/cuaderno-de-entreno/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Dónde se guardan mis datos?","acceptedAnswer":{"@type":"Answer","text":"Solo en tu móvil o tu ordenador, en el navegador. No se envían a ningún sitio y nadie más puede verlos."}},{"@type":"Question","name":"¿Puedo sacar mi cuaderno en PDF?","acceptedAnswer":{"@type":"Answer","text":"Sí. En «Exportar» elige el periodo y los grupos musculares y pulsa «Descargar PDF». También puedes descargarlo en TXT o en Excel (CSV), y en el móvil, compartirlo directamente."}},{"@type":"Question","name":"¿Puedo pasar mis datos a Excel?","acceptedAnswer":{"@type":"Answer","text":"Sí, con el botón «Excel (CSV)» tienes lo que elijas en una hoja, con fecha, ejercicio, grupo, peso, repeticiones y series."}}]}]</script>
 </head>
 <body>
@@ -74,7 +74,8 @@
         </div>
         <div class="field wide">
           <label for="cuEj">Ejercicio</label>
-          <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Press banca" maxlength="60">
+          <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Escribe o toca uno de abajo" maxlength="60">
+          <div class="cu-sugs" id="cuSugs" aria-label="Ejercicios del grupo"></div>
           <datalist id="cuLista"></datalist>
         </div>
         <div class="field">
@@ -85,11 +86,11 @@
       <div class="fields" style="margin-top:14px">
         <div class="field">
           <label for="cuPeso">Peso (kg)</label>
-          <input id="cuPeso" type="number" inputmode="decimal" min="0" max="500" step="0.5" placeholder="60">
+          <input id="cuPeso" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Ej.: 60 (0 sin peso)">
         </div>
         <div class="field">
           <label for="cuReps">Repeticiones</label>
-          <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
+          <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="Ej.: 10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
         </div>
         <div class="field">
           <label for="cuSeries">Series</label>
@@ -99,6 +100,7 @@
       </div>
       <p class="cu-nota" id="cuRepsAyuda">Repeticiones: un número (10) si todas las series son iguales, o una por serie separadas por guiones (10-8-6-4). En ese caso, las series se cuentan solas.</p>
       <p class="warn" id="cuWarn" hidden></p>
+      <p class="cu-ok" id="cuOk" role="status" aria-live="polite"></p>
       <div class="out">
         <div class="fields">
           <div class="field wide">
@@ -246,7 +248,7 @@
   </div>
 </footer>
 
-<script src="/herramientas/app.js?v=81ae827af7"></script>
+<script src="/herramientas/app.js?v=cdefeac2bf"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 <script>

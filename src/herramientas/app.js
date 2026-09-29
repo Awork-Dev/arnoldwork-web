@@ -1034,6 +1034,24 @@
     tabla.hidden = false;
     pintaGraf(regs);
   }
+  // Botones con los ejercicios del grupo elegido (primero los tuyos): un toque y queda escrito.
+  function pintaSugs(){
+    var caja = $('cuSugs'); if(!caja) return;
+    var g = $('cuGrupo').value, propios = ejercicios().filter(function(e){ return !g || grupoDe(e) === g; });
+    var base = g ? (GRUPOS_EJ.filter(function(x){ return x[0] === g; })[0] || [0, []])[1] : ['Press banca', 'Sentadilla', 'Peso muerto', 'Dominadas', 'Press militar', 'Remo con barra'];
+    var lista = propios.concat(base.filter(function(b){ return propios.map(clave).indexOf(clave(b)) < 0; })).slice(0, 10);
+    caja.innerHTML = '';
+    lista.forEach(function(e){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = e;
+      b.addEventListener('click', function(){
+        $('cuEj').value = e; $('cuEj').classList.remove('cu-falta'); $('cuWarn').hidden = true;
+        if(!$('cuGrupo').value) $('cuGrupo').value = grupoDe(e);
+        [].forEach.call(caja.children, function(x){ x.classList.toggle('on', x === b); });
+        $('cuPeso').focus();
+      });
+      caja.appendChild(b);
+    });
+  }
   /* Exportar: lo apuntado en el periodo y grupos elegidos, agrupado por grupo y ejercicio. */
   var PERIODOS = { '1': 'Hoy', '7': 'Últimos 7 días', '30': 'Últimos 30 días', '90': 'Últimos 3 meses', '0': 'Todo el historial' };
   function datosExport(silencio){
@@ -1227,7 +1245,7 @@
         l.appendChild(c); l.appendChild(document.createTextNode(' ' + g)); fs.appendChild(l);
       });
     })();
-    on('cuGrupo', 'change', function(){ sset('cuGrupo', $('cuGrupo').value); pintaCuad(); });
+    on('cuGrupo', 'change', function(){ sset('cuGrupo', $('cuGrupo').value); pintaCuad(); pintaSugs(); });
     // Al elegir un ejercicio conocido, se pone solo su grupo.
     on('cuEj', 'change', function(){ var e = normal($('cuEj').value); if(e && (ejercicios().concat(BASE_EJ).some(function(x){ return clave(x) === clave(e); }))) $('cuGrupo').value = grupoDe(e); });
     on('cuPeriodo', 'change', resumenExport);
@@ -1238,12 +1256,19 @@
     });
     on('cuVer', 'change', function(){ sset('cuVer', $('cuVer').value); pintaCuad(); });
     on('cuAdd', 'click', function(){
-      var e = normal($('cuEj').value), w = num('cuPeso'), ra = leeReps($('cuReps').value), s = ent('cuSeries') || 1, d = $('cuFecha').value || hoyISO();
+      var pesoTxt0 = $('cuPeso').value.trim().replace(',', '.');
+      var e = normal($('cuEj').value), w = pesoTxt0 === '' ? NaN : Number(pesoTxt0), ra = leeReps($('cuReps').value), s = ent('cuSeries') || 1, d = $('cuFecha').value || hoyISO();
       // Con varias cifras (10-8-6-4), cada una es una serie; con una sola, se repite en las series indicadas.
       var r = ra ? Math.max.apply(null, ra) : NaN;
       if(ra && ra.length > 1) s = ra.length;
       var warn = $('cuWarn'); warn.hidden = true;
-      if(!e || !(w >= 0) || isNaN(w) || !(r >= 1)){ warn.hidden = false; warn.textContent = 'Escribe el ejercicio, el peso y las repeticiones: un número (10) o una por serie (10-8-6-4), de 1 a 50.'; return; }
+      $('cuOk').textContent = '';
+      ['cuEj', 'cuPeso', 'cuReps'].forEach(function(id){ $(id).classList.remove('cu-falta'); });
+      // Se dice exactamente qué falta y se lleva el dedo a ese campo.
+      var falta = !e ? ['cuEj', 'Falta el ejercicio: escríbelo o toca uno de los de debajo.']
+        : !(w >= 0 && w <= 500) ? ['cuPeso', 'Falta el peso en kg (pon 0 si es sin peso, como dominadas o fondos).']
+        : !(r >= 1) ? ['cuReps', 'Faltan las repeticiones: un número (10) o una por serie (10-8-6-4), de 1 a 50.'] : null;
+      if(falta){ warn.hidden = false; warn.textContent = falta[1]; $(falta[0]).classList.add('cu-falta'); $(falta[0]).focus(); return; }
       var igual = ejercicios().filter(function(x){ return clave(x) === clave(e); })[0];
       var reg = { id: Date.now(), e: igual || e, g: $('cuGrupo').value || grupoDe(igual || e), d: d, w: w, r: r, s: Math.max(1, Math.min(20, s)) };
       if(ra.length > 1) reg.rs = ra;
@@ -1252,7 +1277,8 @@
       guardaCuad();
       $('cuVer').value = igual || e; sset('cuVer', igual || e);
       $('cuReps').value = ''; $('cuSeries').disabled = false;
-      pintaCuad(); resumenExport();
+      pintaCuad(); resumenExport(); pintaSugs();
+      $('cuOk').textContent = '✓ Apuntado: ' + reg.e + ' · ' + serieTxt(reg) + ' · ' + fechaTxt(reg.d);
       var b = $('cuAdd'); b.textContent = 'Apuntado ✓'; setTimeout(function(){ b.textContent = 'Apuntar'; }, 1500);
     });
     on('cuPdf', 'click', function(){ var x = datosExport(); if(x) descargar(new Blob([pdfCuaderno(x)], { type: 'application/pdf' }), x.nombre + '.pdf'); });
@@ -1284,6 +1310,7 @@
       descargar(new Blob(['﻿' + filas.map(function(f){ return f.map(esc).join(';'); }).join('\n')], { type: 'text/csv;charset=utf-8' }), x.nombre + '.csv');
     });
     pintaCuad();
+    pintaSugs();
     resumenExport();
   }
 
