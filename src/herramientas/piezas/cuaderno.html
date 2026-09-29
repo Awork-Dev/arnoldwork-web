@@ -24,7 +24,7 @@
     </div>
     <div class="field">
       <label for="cuReps">Repeticiones</label>
-      <input id="cuReps" type="number" inputmode="numeric" min="1" max="50" step="1" placeholder="10">
+      <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
     </div>
     <div class="field">
       <label for="cuSeries">Series</label>
@@ -32,6 +32,7 @@
     </div>
     <button type="button" class="btn" id="cuAdd">Apuntar</button>
   </div>
+  <p class="cu-nota" id="cuRepsAyuda">Repeticiones: un número (10) si todas las series son iguales, o una por serie separadas por guiones (10-8-6-4). En ese caso, las series se cuentan solas.</p>
   <p class="warn" id="cuWarn" hidden></p>
   <div class="out">
     <div class="fields">

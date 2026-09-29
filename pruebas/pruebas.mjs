@@ -158,12 +158,17 @@ if (QUE === 'web') {
     await p.selectOption('#cuGrupo', 'Pecho');
     await p.fill('#cuEj', 'Press banca'); await p.fill('#cuPeso', '80'); await p.fill('#cuReps', '8'); await p.fill('#cuSeries', '3');
     await p.click('#cuAdd');
+    await p.selectOption('#cuGrupo', 'Hombros');
+    await p.fill('#cuEj', 'Press militar'); await p.fill('#cuPeso', '40'); await p.fill('#cuReps', '10-8-6-4');
+    const seriesAuto = await p.inputValue('#cuSeries'), bloqueada = await p.isDisabled('#cuSeries');
+    await p.click('#cuAdd');
     await p.selectOption('#cuGrupo', 'Espalda');
     await p.fill('#cuEj', 'Dominadas'); await p.fill('#cuPeso', '0'); await p.fill('#cuReps', '10'); await p.fill('#cuSeries', '2');
     await p.click('#cuAdd');
     const resumen = await p.textContent('#cuResumen');
     const bajar = async id => { const [d] = await Promise.all([p.waitForEvent('download'), p.click(id)]); return fs.readFileSync(await d.path()); };
     const txt = (await bajar('#cuTxt')).toString('utf8'), pdf = await bajar('#cuPdf'), csv = (await bajar('#cuCsv')).toString('utf8');
+    const okPiramide = seriesAuto === '4' && bloqueada && /10-8-6-4 reps · 40 kg/.test(txt) && /4 series, 28 repeticiones/.test(txt) && /Press militar;Hombros;40;10-8-6-4;4/.test(csv);
     const okTxt = /PECHO/.test(txt) && /Peso máximo: 80 kg/.test(txt) && /3 × 8 reps · 80 kg/.test(txt) && /peso corporal/.test(txt);
     const okPdf = pdf.subarray(0, 8).toString('latin1') === '%PDF-1.4' && pdf.subarray(-5).toString('latin1') === '%%EOF' && pdf.includes(Buffer.from('Press banca'));
     const okCsv = /;Grupo;/.test(csv) && /Press banca;Pecho;80;8;3/.test(csv);
@@ -172,9 +177,9 @@ if (QUE === 'web') {
       && ics.split('\r\n').every(l => Buffer.byteLength(l) <= 75);
     await p.uncheck('#cuGrupos input[value="Pecho"]');
     const sinPecho = !/Pecho/.test(await p.textContent('#cuResumen'));
-    okTxt && okPdf && okCsv && okIcs && sinPecho && /2 series|5 series/.test(resumen) && !errores.length
+    okTxt && okPdf && okCsv && okIcs && okPiramide && sinPecho && /9 series/.test(resumen) && !errores.length
       ? bien('apunta por grupo y exporta PDF, TXT, CSV y calendario (.ics) con series, repeticiones y peso máximo')
-      : mal('/herramientas/cuaderno-de-entreno/', `exportar: txt=${okTxt} pdf=${okPdf} csv=${okCsv} ics=${okIcs} filtro=${sinPecho} resumen=«${resumen}» ${errores.join(' | ')}`);
+      : mal('/herramientas/cuaderno-de-entreno/', `exportar: pirámide=${okPiramide} (series ${seriesAuto}) txt=${okTxt} pdf=${okPdf} csv=${okCsv} ics=${okIcs} filtro=${sinPecho} resumen=«${resumen}» ${errores.join(' | ')}`);
     await p.close();
   }
 
