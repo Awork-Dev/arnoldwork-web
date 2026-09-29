@@ -153,6 +153,7 @@ button,input,a{font:inherit;color:inherit}
 .sol-juego .btn{min-height:42px;font-size:9px;box-shadow:none}
 .sol-juego-pri{background:linear-gradient(90deg,#9945FF,#14F195);border-color:#14F195;color:#120d1c}
 .sol-juego-sec{background:#231935;border-color:#9945FF;color:#F5F5FA}
+.btn-sol{width:100%;margin-top:8px;min-height:40px;font-size:9px;background:linear-gradient(90deg,#9945FF,#14F195);border-color:#14F195;color:#120d1c;box-shadow:0 3px 0 #000}
 .btn-dona{background:#fff;border-color:#fff;color:#b31d1d}
 .btn-dona .corazon{color:var(--rojo)}
 .deuda .btn{margin-top:10px}
@@ -278,6 +279,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <div class="nota" id="deudaPartidas">…</div>
       <p class="nota" data-t="deudaNota">Deuda simbólica: cada partida suma 0,10 $. Nadie tiene que pagarla.</p>
       <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="pagarDeuda">PAGAR LA DEUDA (DONAR)</span></a>
+      <button type="button" class="btn btn-sol" data-abrir="pDonar"><span aria-hidden="true">◎</span> <span data-t="donarSol">O DONA EN SOL</span></button>
     </div>
 
     <p class="top3-tit" id="top3Tit" hidden></p>
@@ -369,6 +371,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
         <button type="button" class="btn" id="btnMenu" data-t="menu">MENU</button>
       </div>
       <a class="btn btn-dona" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="donar">DONAR AL DESARROLLADOR</span></a>
+      <button type="button" class="btn btn-sol" data-abrir="pDonar"><span aria-hidden="true">◎</span> <span data-t="donarSol">O DONA EN SOL</span></button>
       <button type="button" class="btn" data-abrir="pFeedback" data-t="enviarOpinion">ENVIAR OPINION</button>
     </div>
     <div class="cajita">
@@ -540,7 +543,7 @@ const TXT = {
     nombre:'NOMBRE', puntos:'PUNTOS', volver:'VOLVER', apoya:'APOYA LA CUEVA',
     donarTxt1:'CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.',
     donarTxt2:'Cada partida suma 0,10 $ de deuda simbólica al contador. Nadie tiene que pagarla. Pero si te lo has pasado bien y quieres más juegos y herramientas gratis, puedes invitar al desarrollador a un batido.',
-    solRed:'O EN SOL · RED SOLANA', solAbrir:'ABRIR CARTERA', solCopiar:'COPIAR', solCopiado:'¡COPIADA!',
+    donarSol:'O DONA EN SOL', solRed:'O EN SOL · RED SOLANA', solAbrir:'ABRIR CARTERA', solCopiar:'COPIAR', solCopiado:'¡COPIADA!',
     donarPaypal:'DONAR CON PAYPAL', donarNota:'Las donaciones son voluntarias y no desbloquean nada. ¡Gracias!',
     opinionTit:'ENVÍA TU OPINIÓN', opinionTxt:'Ideas, fallos, dinos que te gustaría aplastar... Tu mensaje le llega en privado al desarrollador. No se publica.',
     tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
@@ -620,7 +623,7 @@ const TXT = {
     nombre:'NAME', puntos:'SCORE', volver:'BACK', apoya:'SUPPORT THE CAVE',
     donarTxt1:'CaveWork is free. Forever. It\'s made for the ArnoldWork community, like the rest of our training tools.',
     donarTxt2:'Every game adds $0.10 of symbolic debt to the counter. Nobody has to pay it. But if you had fun and want more free games and tools, you can buy the developer a protein shake.',
-    solRed:'OR IN SOL · SOLANA NETWORK', solAbrir:'OPEN WALLET', solCopiar:'COPY', solCopiado:'COPIED!',
+    donarSol:'OR DONATE IN SOL', solRed:'OR IN SOL · SOLANA NETWORK', solAbrir:'OPEN WALLET', solCopiar:'COPY', solCopiado:'COPIED!',
     donarPaypal:'DONATE WITH PAYPAL', donarNota:'Donations are voluntary and don\'t unlock anything. Thank you!',
     opinionTit:'SEND FEEDBACK', opinionTxt:'Ideas, bugs, new enemies you\'d like to smash... Your message goes privately to the developer. It won\'t be published.',
     tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',

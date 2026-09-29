@@ -66,8 +66,9 @@ jobs:
           wranglerVersion: "4"
           command: deploy
 
+      # Dependabot no tiene acceso a los secretos: sus cambios solo pasan las pruebas, sin vista previa.
       - name: Subir vista previa
-        if: github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
