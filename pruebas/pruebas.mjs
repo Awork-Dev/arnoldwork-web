@@ -3,6 +3,7 @@
 //
 //   node pruebas.mjs web         → arnoldwork.com (carpeta web/)
 //   node pruebas.mjs heavywork   → heavywork.arnoldwork.com y CaveWork (carpeta heavywork/web/)
+//   node pruebas.mjs cavework    → la app de CaveWork para Google Play (carpeta cavework-app/web/)
 //
 // Qué comprueba: que cada página cargue sin errores de JavaScript, que ningún enlace interno esté roto,
 // que las herramientas no den resultados absurdos (NaN, undefined…), el chat de contacto y el juego.
@@ -14,8 +15,8 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const QUE = process.argv[2] || 'web';
-const RAIZ = path.resolve(import.meta.dirname, '..', QUE === 'web' ? 'web' : 'heavywork/web');
-const DOMINIO = QUE === 'web' ? 'https://arnoldwork.com' : 'https://heavywork.arnoldwork.com';
+const RAIZ = path.resolve(import.meta.dirname, '..', {web:'web', heavywork:'heavywork/web', cavework:'cavework-app/web'}[QUE]);
+const DOMINIO = {web:'https://arnoldwork.com', heavywork:'https://heavywork.arnoldwork.com', cavework:'https://cavework.arnoldwork.com'}[QUE];
 const TIPOS = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.xml': 'application/xml', '.txt': 'text/plain', '.woff2': 'font/woff2' };
 
 let fallos = 0;
@@ -96,6 +97,7 @@ const rutas = new Set(['/', '/404.html']);
 const mapa = path.join(RAIZ, 'sitemap.xml');
 if (fs.existsSync(mapa)) for (const m of fs.readFileSync(mapa, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)) rutas.add(new URL(m[1]).pathname);
 if (QUE === 'heavywork') rutas.add('/game/');
+if (QUE === 'cavework') rutas.add('/privacidad/');
 
 console.log(`\n▶ ${rutas.size} páginas de ${QUE}`);
 const enlaces = new Map();   // ruta enlazada → página donde aparece
@@ -322,6 +324,71 @@ if (QUE === 'heavywork') {
   for (const e of d.errores || []) mal('/game/', e);
   jefe === 'mamut' ? bien('el mamut aparece y se le puede derrotar') : mal('/game/', `el segundo jefe es «${jefe}»`);
   await d.close();
+}
+
+// 5) La app de CaveWork para Google Play: sin donaciones, mundos, botón atrás y el juego de siempre
+if (QUE === 'cavework') {
+  console.log('\n▶ CaveWork app: normas de Google Play');
+  {
+    const { p, errores } = await abrir('/');
+    const visibles = await p.evaluate(() => [...document.querySelectorAll('.deuda, [data-paypal], .btn-sol, .dev-juego, [data-abrir="pDonar"]')].filter(el => el.offsetParent !== null).length);
+    const priv = await p.locator('a[href="/privacidad/"]').count();
+    visibles === 0 && priv >= 1 && !errores.length ? bien('sin botones de donar ni de negocio, y con enlace a la política de privacidad') : mal('/', `visibles=${visibles}, privacidad=${priv}, errores=${errores.join(' | ')}`);
+    await p.click('[data-abrir=pManual]'); await p.waitForTimeout(300);
+    const n = await p.locator('#manualTxt h3').count(), mundos = await p.locator('#manualTxt').innerText();
+    await p.click('#pManual [data-volver]');
+    const menu = await p.locator('#pMenu').isVisible();
+    n >= 15 && menu && /MUNDOS|WORLDS/.test(mundos) && !/deuda del desarrollador|developer's debt/i.test(mundos) ? bien(`el manual (${n} secciones) explica los mundos y vuelve al menú`) : mal('/', `manual: ${n} secciones, menú=${menu}`);
+    await p.close();
+  }
+  console.log('\n▶ CaveWork app: mundos');
+  {
+    const { p, errores } = await abrir('/');
+    await p.evaluate(() => { store.tut = true; store.maxNivel = 1; saveStore(); });
+    await p.click('#btnJugar'); await p.waitForTimeout(1200);
+    const vistos = [];
+    for (let i = 0; i < 10; i++){
+      const r = await p.evaluate(() => { G.inv = 99; G.hearts = 5; if (G.level > 1 || G.t > 0) { levelUp(); G.boss = null; G.bossIn = 0; }
+        const v = MUNDO().peligro; if (v) G.entities.push(nuevoPeligro(v, 200));
+        G.entities.push({type:'ptero', x:220, y:110, baseY:110, vx:20, hp:1, t:0, flash:0}, {type:'boulder', x:260, y:GROUND, vx:50, hp:99, t:0, flash:0, rot:0});
+        return [G.level, MUNDO().id]; });
+      await p.waitForTimeout(700);
+      vistos.push(r[1]);
+    }
+    const datos = await p.evaluate(() => [vueltaDe(G.level), store.maxNivel, !!store.ach.mOli, !!store.ach.vuelta]);
+    for (const e of errores) mal('/', `error de JavaScript en los mundos: ${e}`);
+    new Set(vistos).size === 9 && datos[0] === 2 && datos[1] >= 10 && datos[2] ? bien(`se recorren los 9 mundos con sus peligros y empieza la vuelta 2 (${vistos.join(' → ')})`) : mal('/', `mundos: ${vistos.join(',')} · ${JSON.stringify(datos)}`);
+    await p.evaluate(() => { G.inv = 0; G.hearts = 1; G.fx.shield = false; G.fx.pre = 0; hurt('raptor'); });
+    await p.waitForTimeout(1800);
+    const fin = await p.locator('#finMundo').innerText().catch(() => '');
+    fin.includes('🌍') ? bien('la pantalla final dice a qué mundo llegaste') : mal('/', `fin sin mundo: «${fin}»`);
+    await p.click('#btnMenu'); await p.waitForTimeout(400);
+    const boton = await p.locator('#btnMundos').innerText();
+    await p.click('#btnMundos'); await p.waitForTimeout(500);
+    const cartas = await p.locator('#mundosGrid .mundo-carta').count(), cerradas = await p.locator('#mundosGrid .cerrado').count();
+    cartas === 9 && cerradas === 0 && /9\/9/.test(boton) ? bien('MUNDOS enseña los 9 mundos descubiertos') : mal('/', `panel de mundos: ${cartas} cartas, ${cerradas} cerradas, botón «${boton}»`);
+    await p.close();
+  }
+  console.log('\n▶ CaveWork app: botón atrás y partida');
+  {
+    const { p, errores } = await abrir('/');
+    await p.evaluate(() => { store.tut = true; saveStore(); });
+    await p.click('#btnJugar'); await p.waitForTimeout(1500);
+    await p.evaluate(() => history.back()); await p.waitForTimeout(500);
+    const pausa = await p.evaluate(() => G.state);
+    await p.evaluate(() => history.back()); await p.waitForTimeout(500);
+    const menu = await p.evaluate(() => G.state);
+    pausa === 'paused' && menu === 'menu' ? bien('«atrás» pausa la partida y luego vuelve al menú, sin salir de la app') : mal('/', `atrás: ${pausa} → ${menu}`);
+    await p.click('#btnJugar'); await p.waitForTimeout(1500);
+    await p.evaluate(() => { G.score = 1234; G.hearts = 1; G.inv = 0; G.fx.shield = false; hurt('raptor'); });
+    await p.waitForTimeout(1800);
+    const fin = await p.locator('#pFin').isVisible();
+    await p.click('#pFin [data-abrir="pTop"]'); await p.waitForTimeout(400);
+    const filas = await p.locator('#topCuerpo tr').count();
+    for (const e of errores) mal('/', `error de JavaScript jugando: ${e}`);
+    fin && filas ? bien('se juega, termina y el ranking se muestra') : mal('/', `fin=${fin}, filas del ranking=${filas}`);
+    await p.close();
+  }
 }
 
 await navegador.close();

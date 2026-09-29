@@ -44,6 +44,8 @@ const API_ANTIGUA = "https://cavework-api.arnoldwork.workers.dev/state";
 const ORIGENES = [
   /^https:\/\/heavywork\.arnoldwork\.com$/,
   /^https:\/\/[a-z0-9-]+-heavywork\.arnoldwork\.workers\.dev$/,   // vistas previas
+  /^https:\/\/cavework\.arnoldwork\.com$/,                        // la app de Google Play
+  /^https:\/\/([a-z0-9-]+-)?cavework\.arnoldwork\.workers\.dev$/,   // la app en workers.dev y sus vistas previas
   /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/,                   // pruebas en local
 ];
 const BLOQUEADOS = ["ASS","FUK","FCK","FUC","SEX","KKK","NAZ","CUM","DIK","DIC","TIT","PIS","FAG","NIG","GAY","WTF","XXX","PUT","PTA","CUL","MRD","POL","PEN","VAG","ANO","JOD","HDP","KYS"];

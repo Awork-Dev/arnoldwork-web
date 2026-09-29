@@ -1,0 +1,70 @@
+# Publica la app de CaveWork para Google Play (cavework-app/web) en el Worker "cavework" (cavework.arnoldwork.com).
+# - Push a main: publica en cavework.arnoldwork.com.
+# - Push a otra rama: vista previa en https://<rama>-cavework.arnoldwork.workers.dev
+# Antes de publicar pasa las pruebas de la app: si alguna falla, no se publica nada.
+# Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
+
+name: Desplegar CaveWork (app)
+
+on:
+  push:
+    paths:
+      - "cavework-app/**"
+      - "pruebas/**"
+      - ".github/workflows/cavework-app.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: cavework-app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar el navegador de pruebas
+        working-directory: pruebas
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Pasar las pruebas (app de CaveWork)
+        working-directory: pruebas
+        run: node pruebas.mjs cavework
+
+  desplegar:
+    needs: pruebas
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fecha de la versión (para «Buscar actualización»)
+        run: printf '{"version":"%s","fecha":"%s"}\n' "$(git rev-parse --short HEAD)" "$(git log -1 --format=%cI)" > cavework-app/web/version.json
+
+      - name: Nombre de la vista previa
+        id: alias
+        run: echo "alias=$(echo '${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-30 | sed 's/-*$//')" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar en cavework.arnoldwork.com
+        if: github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: cavework-app
+          command: deploy
+
+      # Dependabot no tiene acceso a los secretos: sus cambios solo pasan las pruebas, sin vista previa.
+      - name: Subir vista previa
+        if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: cavework-app
+          command: versions upload --preview-alias ${{ steps.alias.outputs.alias }}

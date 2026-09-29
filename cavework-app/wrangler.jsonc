@@ -1,0 +1,11 @@
+// Worker «cavework»: la versión de CaveWork para Google Play (app Android), en cavework.arnoldwork.com.
+// Es un proyecto aparte del juego de HeavyWork (heavywork.arnoldwork.com/game/), que no se toca.
+{
+  "name": "cavework",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "compatibility_date": "2026-09-29",
+  "assets": { "directory": "./web", "not_found_handling": "404-page" },
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [{ "pattern": "cavework.arnoldwork.com", "custom_domain": true }]
+}

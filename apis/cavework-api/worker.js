@@ -4,6 +4,8 @@
 const ALLOWED_ORIGINS = [
     'https://heavywork.arnoldwork.workers.dev',
     'https://heavywork.arnoldwork.com',
+    'https://cavework.arnoldwork.com',
+    'https://cavework.arnoldwork.workers.dev',
     'https://arnoldwork.com',
     'https://www.arnoldwork.com',
 ];

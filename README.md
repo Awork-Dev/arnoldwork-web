@@ -3,6 +3,8 @@
 - `web/` — arnoldwork.com (Worker `arnoldwork-v11`, `wrangler.jsonc`).
   Las páginas de herramientas se generan con `python3 build.py` a partir de `src/`.
 - `heavywork/web/` — heavywork.arnoldwork.com (Worker `heavywork`, `heavywork/wrangler.jsonc`), con el juego CaveWork en `/game/`.
+- `cavework-app/web/` — cavework.arnoldwork.com (Worker `cavework`, `cavework-app/wrangler.jsonc`): la versión de CaveWork para Google Play,
+  aparte del juego de HeavyWork: 9 mundos, sin donaciones, botón atrás de Android y política de privacidad en `/privacidad/`.
 - `cavework/` — Worker `cavework-ranking`: ranking mundial de CaveWork (Top 50, campeón de la semana, reto diario, ligas y temporadas mensuales).
 - `vigilante/` — Worker `vigilante`, los automatismos:
   - cada 30 min revisa webs y APIs (caídas y lentitud) y avisa por Telegram, también de un nuevo nº 1 en CaveWork;

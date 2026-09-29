@@ -1,0 +1,19 @@
+{
+  "name": "CaveWork",
+  "short_name": "CaveWork",
+  "description": "Juego retro arcade: aplasta dinosaurios, come proteína, levanta más peso y descubre nuevos mundos.",
+  "lang": "es",
+  "id": "/",
+  "start_url": "/?app=1",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["games"],
+  "icons": [
+    { "src": "/cavework-icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/cavework-icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/cavework-icono-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
