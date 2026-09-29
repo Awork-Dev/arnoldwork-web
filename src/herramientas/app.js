@@ -324,7 +324,8 @@
   var DISCOS = [25, 20, 15, 10, 5, 2.5, 1.25];
   var DISCOS_LB = [45, 35, 25, 10, 5, 2.5];   // los de un gimnasio americano
   var LB = 0.45359237;
-  var enLb = function(){ return $('dUnidad') && $('dUnidad').value === 'lb'; };
+  var unidad = function(){ return $('dUnidad') ? $('dUnidad').value : 'kg'; };
+  var enLb = function(){ return unidad() !== 'kg'; };   // discos en libras (en «lb» y en «mixto»)
   var lb = function(n){ return String(Math.round(n * 100) / 100).replace('.', ',') + ' lb'; };
 
   function montar(porLado){
@@ -337,6 +338,7 @@
 
   function calcDiscos(){
     var total = parseFloat($('dTotal').value);
+    if(unidad() === 'mix') return calcMixto(total);
     var L = enLb(), u = L ? lb : kg;
     var barra = parseFloat($(L ? 'dBarraLb' : 'dBarra').value);
     var out = $('dOut'), sub = $('dSub'), cont = $('dPlates'), warn = $('dWarn');
@@ -379,17 +381,41 @@
       warn.textContent = 'Con discos normales no sale exacto: lo más cerca son ' + u(real) + ' en total.';
     } else { warn.hidden = true; }
   }
+  // Mixto: se piensa en kilos (total y barra) pero los discos son de libras. No suele salir exacto:
+  // se busca la combinación de discos que más se acerca al total pedido.
+  function calcMixto(total){
+    var barra = parseFloat($('dBarra').value), out = $('dOut'), sub = $('dSub'), cont = $('dPlates'), warn = $('dWarn');
+    cont.innerHTML = ''; warn.hidden = true;
+    if(!(total > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Por lado'; return; }
+    var ladoKg = barra === 0 ? total : (total - barra) / 2;
+    if(ladoKg < 0){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Por lado'; warn.hidden = false; warn.textContent = 'La barra sola ya pesa ' + kg(barra) + '. Sube el peso total.'; return; }
+    var obj = ladoKg / LB, a = montar(Math.floor(obj / 2.5) * 2.5), b = montar(Math.ceil(obj / 2.5) * 2.5);
+    var suma = function(m){ return m.usados.reduce(function(x, y){ return x + y; }, 0); };
+    var m = Math.abs(suma(b) - obj) < Math.abs(suma(a) - obj) ? b : a, lado = suma(m);
+    var real = Math.round((barra + (barra === 0 ? 1 : 2) * lado * LB) * 10) / 10;
+    out.textContent = lb(lado); out.appendChild(sub);
+    sub.textContent = 'Por lado (' + kg(lado * LB) + ')' + (barra ? ', más la barra de ' + kg(barra) : '') + ' · total ' + kg(real);
+    if(!m.usados.length) cont.textContent = 'Solo la barra.';
+    m.usados.forEach(function(d){
+      var el = document.createElement('div'), dk = d * LB;
+      el.className = 'disc' + (dk < 5 ? ' s' : ''); el.style.height = (28 + Math.min(25, dk) * 1.6) + 'px';
+      el.textContent = String(d).replace('.', ','); el.title = d + ' lb'; cont.appendChild(el);
+    });
+    // Menos de 1 kg de diferencia no se nota en la sala: solo se avisa si es más.
+    if(Math.abs(real - total) > 1){ warn.hidden = false; warn.textContent = 'Con discos en libras no sale exacto: lo más cerca son ' + kg(real) + ' en total (pediste ' + kg(total) + ').'; }
+  }
   // Cambiar de unidad convierte el peso escrito (redondeado a lo que se puede montar) y cambia las barras.
   function unidadDiscos(convertir){
-    var L = enLb(), t = parseFloat($('dTotal').value);
+    // El total y la barra van en libras solo en «lb»; en «kg» y en «mixto», en kilos.
+    var L = unidad() === 'lb', t = parseFloat($('dTotal').value), antes = sget('dUnidad') === 'lb';
     $('dBarra').hidden = L; $('dBarraLb').hidden = !L;
     $('dTotalL').textContent = 'Peso total (' + (L ? 'lb' : 'kg') + ')';
     $('dBarra').parentNode.querySelector('label').setAttribute('for', L ? 'dBarraLb' : 'dBarra');
-    if(convertir && t > 0) $('dTotal').value = L ? Math.round(t / LB / 5) * 5 : Math.round(t * LB / 2.5) * 2.5;
+    if(convertir && t > 0 && L !== antes) $('dTotal').value = L ? Math.round(t / LB / 5) * 5 : Math.round(t * LB / 2.5) * 2.5;
     sset('dUnidad', $('dUnidad').value);
   }
   if($('dUnidad')){
-    if(sget('dUnidad') === 'lb'){ $('dUnidad').value = 'lb'; unidadDiscos(false); }
+    if(sget('dUnidad') === 'lb' || sget('dUnidad') === 'mix'){ $('dUnidad').value = sget('dUnidad'); unidadDiscos(false); }
     on('dUnidad', 'change', function(){ unidadDiscos(true); calcDiscos(); });
   }
   reg(calcDiscos, ['dTotal', 'dBarra', 'dBarraLb']);

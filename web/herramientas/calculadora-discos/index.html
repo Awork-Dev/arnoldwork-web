@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/herramientas/estilos.css?v=bca870bffc">
-<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Qué discos pongo en la barra","url":"https://arnoldwork.com/herramientas/calculadora-discos/","description":"Escribe el peso total y te digo qué discos poner en cada lado de la barra olímpica, de 15 kg, Z o sin barra. En kilos o en libras.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Discos en la barra","item":"https://arnoldwork.com/herramientas/calculadora-discos/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Funciona en libras?","acceptedAnswer":{"@type":"Answer","text":"Sí. Elige «Libras (lb)» en Unidad y usa los discos de un gimnasio americano (45, 35, 25, 10, 5 y 2,5 lb) y barras de 45, 35, 25 o 15 lb. Te dice también cuánto es en kilos."}},{"@type":"Question","name":"¿Cuánto pesa la barra del gimnasio?","acceptedAnswer":{"@type":"Answer","text":"La barra olímpica de hombre pesa 20 kg y la de mujer 15 kg. Las barras cortas y las Z varían: mira si llevan el peso marcado."}}]}]</script>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Qué discos pongo en la barra","url":"https://arnoldwork.com/herramientas/calculadora-discos/","description":"Escribe el peso total y te digo qué discos poner en cada lado de la barra olímpica, de 15 kg, Z o sin barra. En kilos o en libras.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Discos en la barra","item":"https://arnoldwork.com/herramientas/calculadora-discos/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Funciona en libras?","acceptedAnswer":{"@type":"Answer","text":"Sí. Elige «Libras (lb)» en Unidad y usa los discos de un gimnasio americano (45, 35, 25, 10, 5 y 2,5 lb) y barras de 45, 35, 25 o 15 lb. Te dice también cuánto es en kilos."}},{"@type":"Question","name":"¿Y si la barra es de kilos y los discos de libras?","acceptedAnswer":{"@type":"Answer","text":"Elige «Mixto: barra en kg, discos en lb». Escribes el total en kilos y te digo qué discos de libras poner en cada lado y cuánto pesa de verdad la barra cargada."}},{"@type":"Question","name":"¿Cuánto pesa la barra del gimnasio?","acceptedAnswer":{"@type":"Answer","text":"La barra olímpica de hombre pesa 20 kg y la de mujer 15 kg. Las barras cortas y las Z varían: mira si llevan el peso marcado."}}]}]</script>
 </head>
 <body>
 
@@ -72,6 +72,7 @@
           <select id="dUnidad">
             <option value="kg">Kilos (kg)</option>
             <option value="lb">Libras (lb)</option>
+            <option value="mix">Mixto: barra en kg, discos en lb</option>
           </select>
         </div>
         <div class="field">
@@ -116,6 +117,10 @@
       <details>
         <summary>¿Funciona en libras?</summary>
         <p>Sí. Elige «Libras (lb)» en Unidad y usa los discos de un gimnasio americano (45, 35, 25, 10, 5 y 2,5 lb) y barras de 45, 35, 25 o 15 lb. Te dice también cuánto es en kilos.</p>
+      </details>
+      <details>
+        <summary>¿Y si la barra es de kilos y los discos de libras?</summary>
+        <p>Elige «Mixto: barra en kg, discos en lb». Escribes el total en kilos y te digo qué discos de libras poner en cada lado y cuánto pesa de verdad la barra cargada.</p>
       </details>
       <details>
         <summary>¿Cuánto pesa la barra del gimnasio?</summary>
@@ -199,7 +204,7 @@
   </div>
 </footer>
 
-<script src="/herramientas/app.js?v=2a9ae833e3"></script>
+<script src="/herramientas/app.js?v=5b8fb2641d"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 <script>
