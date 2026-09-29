@@ -370,6 +370,13 @@
   .cta-line a{color:var(--amber);font-weight:600;text-decoration:none}
   .cta-line a:hover{text-decoration:underline}
   .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .cu-export h3{margin:0 0 6px;font-size:1.15rem}
+  .cu-grupos{border:0;padding:0;margin:16px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+  .cu-grupos legend{font-size:.82rem;font-weight:600;color:var(--chalk-dim);letter-spacing:.02em;margin-bottom:8px;padding:0}
+  .cu-grupos label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule-strong);background:var(--ink-3);padding:8px 12px;font-size:.9rem;cursor:pointer;min-height:40px}
+  .cu-grupos input{accent-color:var(--amber);width:18px;height:18px;margin:0}
+  .cu-resumen{margin:14px 0 0;color:var(--chalk-dim);font-size:.92rem;min-height:1.3em}
+  .acts .btn:disabled{opacity:.45;cursor:not-allowed}
   .vtxt{font-size:.93rem;color:var(--chalk-dim);margin:14px 0 0;max-width:68ch}
   .vtxt strong{color:var(--chalk)}
   .linkbtn{background:none;border:0;padding:0;color:var(--amber);font:inherit;text-decoration:underline;cursor:pointer}

@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/herramientas/estilos.css?v=be89bc0ba4">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=1c582012dd">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Herramientas gratis de gimnasio","url":"https://arnoldwork.com/herramientas/","inLanguage":"es","hasPart":[{"@type":"WebApplication","name":"Calculadora de 1RM","url":"https://arnoldwork.com/herramientas/calculadora-1rm/"},{"@type":"WebApplication","name":"Calculadora de RIR y RPE","url":"https://arnoldwork.com/herramientas/calculadora-rpe-rir/"},{"@type":"WebApplication","name":"¿Cuándo subir peso?","url":"https://arnoldwork.com/herramientas/cuando-subir-peso/"},{"@type":"WebApplication","name":"¿Cómo de fuerte soy?","url":"https://arnoldwork.com/herramientas/nivel-de-fuerza/"},{"@type":"WebApplication","name":"Calculadora de puntos DOTS y Wilks","url":"https://arnoldwork.com/herramientas/calculadora-dots-wilks/"},{"@type":"WebApplication","name":"Qué discos pongo en la barra","url":"https://arnoldwork.com/herramientas/calculadora-discos/"},{"@type":"WebApplication","name":"Series de aproximación","url":"https://arnoldwork.com/herramientas/series-de-aproximacion/"},{"@type":"WebApplication","name":"Calculadora de calorías y macros","url":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/"},{"@type":"WebApplication","name":"Calculadora de proteína diaria","url":"https://arnoldwork.com/herramientas/calculadora-proteina/"},{"@type":"WebApplication","name":"Calculadora de creatina","url":"https://arnoldwork.com/herramientas/calculadora-creatina/"},{"@type":"WebApplication","name":"Grasa corporal y FFMI","url":"https://arnoldwork.com/herramientas/grasa-corporal-ffmi/"},{"@type":"WebApplication","name":"¿Cuánto músculo puedo ganar?","url":"https://arnoldwork.com/herramientas/cuanto-musculo-puedo-ganar/"},{"@type":"WebApplication","name":"¿Cuándo llegaré a mi peso?","url":"https://arnoldwork.com/herramientas/cuando-llegare-a-mi-peso/"},{"@type":"WebApplication","name":"¿Qué rutina es para ti?","url":"https://arnoldwork.com/herramientas/test-que-rutina-hacer/"},{"@type":"WebApplication","name":"Generador de rutina","url":"https://arnoldwork.com/herramientas/generador-de-rutina/"},{"@type":"WebApplication","name":"Cuaderno de entreno","url":"https://arnoldwork.com/herramientas/cuaderno-de-entreno/"},{"@type":"WebApplication","name":"Sustituto de ejercicio","url":"https://arnoldwork.com/herramientas/sustituto-de-ejercicio/"},{"@type":"WebApplication","name":"Volumen semanal por músculo","url":"https://arnoldwork.com/herramientas/volumen-semanal/"},{"@type":"WebApplication","name":"Recuperación Heavy Duty","url":"https://arnoldwork.com/herramientas/recuperacion-heavy-duty/"},{"@type":"WebApplication","name":"Cronómetro de descansos","url":"https://arnoldwork.com/herramientas/cronometro-descansos/"},{"@type":"WebApplication","name":"Tempo de las repeticiones","url":"https://arnoldwork.com/herramientas/tempo-repeticiones/"}]}</script>
 </head>
 <body>
@@ -654,6 +654,10 @@
       <h2><a href="/herramientas/cuaderno-de-entreno/">Cuaderno de entreno</a></h2>
       <p class="hint">Apunta tus series y mira cómo sube cada ejercicio. Se guarda solo en tu móvil: nadie más lo ve y no hace falta registrarse.</p>
       <div class="fields">
+        <div class="field">
+          <label for="cuGrupo">Grupo muscular</label>
+          <select id="cuGrupo"></select>
+        </div>
         <div class="field wide">
           <label for="cuEj">Ejercicio</label>
           <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Press banca" maxlength="60">
@@ -693,8 +697,29 @@
           <thead><tr><th scope="col">Fecha</th><th scope="col">Serie</th><th scope="col">1RM est.</th><th scope="col"><span class="sr">Borrar</span></th></tr></thead>
           <tbody></tbody>
         </table>
+      </div>
+      <div class="out cu-export" id="cuExport">
+        <h3>Exportar tu cuaderno</h3>
+        <p class="hint">Elige qué quieres sacar y en qué formato. Por cada ejercicio salen tus series y repeticiones de cada día, tu peso máximo y tu mejor marca, ordenados por grupo muscular.</p>
+        <div class="fields">
+          <div class="field">
+            <label for="cuPeriodo">Periodo</label>
+            <select id="cuPeriodo">
+              <option value="1">Hoy</option>
+              <option value="7">Últimos 7 días</option>
+              <option value="30" selected>Últimos 30 días</option>
+              <option value="90">Últimos 3 meses</option>
+              <option value="0">Todo</option>
+            </select>
+          </div>
+        </div>
+        <fieldset class="cu-grupos" id="cuGrupos"><legend>Grupos</legend></fieldset>
+        <p class="cu-resumen" id="cuResumen" aria-live="polite"></p>
         <div class="acts">
-          <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Descargar en Excel (CSV)</button>
+          <button type="button" class="btn btn-sm" id="cuPdf">Descargar PDF</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="cuTxt">Descargar TXT</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Excel (CSV)</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="cuShare" hidden>Compartir</button>
         </div>
         <p class="cta-line">¿No sabes si toca subir? Mételo en <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a></p>
       </div>
@@ -848,7 +873,7 @@
   </div>
 </footer>
 
-<script src="/herramientas/app.js?v=79321888c8"></script>
+<script src="/herramientas/app.js?v=02bfe03691"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 <script>

@@ -152,6 +152,29 @@ if (QUE === 'web') {
     await p.close();
   }
 
+  console.log('\n▶ Cuaderno: exportar');
+  {
+    const { p, errores } = await abrir('/herramientas/cuaderno-de-entreno/');
+    await p.selectOption('#cuGrupo', 'Pecho');
+    await p.fill('#cuEj', 'Press banca'); await p.fill('#cuPeso', '80'); await p.fill('#cuReps', '8'); await p.fill('#cuSeries', '3');
+    await p.click('#cuAdd');
+    await p.selectOption('#cuGrupo', 'Espalda');
+    await p.fill('#cuEj', 'Dominadas'); await p.fill('#cuPeso', '0'); await p.fill('#cuReps', '10'); await p.fill('#cuSeries', '2');
+    await p.click('#cuAdd');
+    const resumen = await p.textContent('#cuResumen');
+    const bajar = async id => { const [d] = await Promise.all([p.waitForEvent('download'), p.click(id)]); return fs.readFileSync(await d.path()); };
+    const txt = (await bajar('#cuTxt')).toString('utf8'), pdf = await bajar('#cuPdf'), csv = (await bajar('#cuCsv')).toString('utf8');
+    const okTxt = /PECHO/.test(txt) && /Peso máximo: 80 kg/.test(txt) && /3 × 8 reps · 80 kg/.test(txt) && /peso corporal/.test(txt);
+    const okPdf = pdf.subarray(0, 8).toString('latin1') === '%PDF-1.4' && pdf.subarray(-5).toString('latin1') === '%%EOF' && pdf.includes(Buffer.from('Press banca'));
+    const okCsv = /;Grupo;/.test(csv) && /Press banca;Pecho;80;8;3/.test(csv);
+    await p.uncheck('#cuGrupos input[value="Pecho"]');
+    const sinPecho = !/Pecho/.test(await p.textContent('#cuResumen'));
+    okTxt && okPdf && okCsv && sinPecho && /2 series|5 series/.test(resumen) && !errores.length
+      ? bien('apunta por grupo y exporta PDF, TXT y CSV con series, repeticiones y peso máximo')
+      : mal('/herramientas/cuaderno-de-entreno/', `exportar: txt=${okTxt} pdf=${okPdf} csv=${okCsv} filtro=${sinPecho} resumen=«${resumen}» ${errores.join(' | ')}`);
+    await p.close();
+  }
+
   console.log('\n▶ Ciencia del músculo');
   {
     const { p } = await abrir('/#t=ciencia');   // en el móvil, Ciencia es su propia pestaña

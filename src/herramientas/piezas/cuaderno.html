@@ -2,6 +2,10 @@
   <h2>Cuaderno de entreno</h2>
   <p class="hint">Apunta tus series y mira cómo sube cada ejercicio. Se guarda solo en tu móvil: nadie más lo ve y no hace falta registrarse.</p>
   <div class="fields">
+    <div class="field">
+      <label for="cuGrupo">Grupo muscular</label>
+      <select id="cuGrupo"></select>
+    </div>
     <div class="field wide">
       <label for="cuEj">Ejercicio</label>
       <input id="cuEj" type="text" list="cuLista" autocomplete="off" placeholder="Press banca" maxlength="60">
@@ -41,8 +45,29 @@
       <thead><tr><th scope="col">Fecha</th><th scope="col">Serie</th><th scope="col">1RM est.</th><th scope="col"><span class="sr">Borrar</span></th></tr></thead>
       <tbody></tbody>
     </table>
+  </div>
+  <div class="out cu-export" id="cuExport">
+    <h3>Exportar tu cuaderno</h3>
+    <p class="hint">Elige qué quieres sacar y en qué formato. Por cada ejercicio salen tus series y repeticiones de cada día, tu peso máximo y tu mejor marca, ordenados por grupo muscular.</p>
+    <div class="fields">
+      <div class="field">
+        <label for="cuPeriodo">Periodo</label>
+        <select id="cuPeriodo">
+          <option value="1">Hoy</option>
+          <option value="7">Últimos 7 días</option>
+          <option value="30" selected>Últimos 30 días</option>
+          <option value="90">Últimos 3 meses</option>
+          <option value="0">Todo</option>
+        </select>
+      </div>
+    </div>
+    <fieldset class="cu-grupos" id="cuGrupos"><legend>Grupos</legend></fieldset>
+    <p class="cu-resumen" id="cuResumen" aria-live="polite"></p>
     <div class="acts">
-      <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Descargar en Excel (CSV)</button>
+      <button type="button" class="btn btn-sm" id="cuPdf">Descargar PDF</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="cuTxt">Descargar TXT</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Excel (CSV)</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="cuShare" hidden>Compartir</button>
     </div>
     <p class="cta-line">¿No sabes si toca subir? Mételo en <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a></p>
   </div>

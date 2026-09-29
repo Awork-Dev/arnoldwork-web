@@ -382,7 +382,7 @@ HERRAMIENTAS += [
         "grupo": "entreno",
         "nombre": "Cuaderno de entreno",
         "titulo": "Cuaderno de entreno online gratis: apunta tus pesos",
-        "descripcion": "Apunta tus series, mira tu progreso en una gráfica por ejercicio y descárgalo en Excel. Se guarda en tu móvil, sin registro.",
+        "descripcion": "Apunta tus series por grupo muscular, mira tu progreso en una gráfica y expórtalo en PDF, TXT o Excel con tu peso máximo. Se guarda en tu móvil, sin registro.",
         "h1": "Cuaderno de entreno",
         "intro": "Lo que no se mide, no sube. Apunta cada serie y mira cómo progresa cada ejercicio en una gráfica. Todo se queda en tu móvil: sin cuentas, sin anuncios.",
         "articulo": """
@@ -392,13 +392,15 @@ HERRAMIENTAS += [
 <ul>
 <li>Apunta tu <strong>serie más dura</strong> de cada ejercicio, o todas si te gusta el detalle.</li>
 <li>La gráfica muestra el <strong>1RM estimado</strong> de cada día. Así puedes comparar una serie de 5 con una de 10.</li>
-<li>Descarga el historial en CSV para abrirlo en Excel o Google Sheets.</li>
+<li>Elige el <strong>grupo muscular</strong> al apuntar: las sugerencias de ejercicios se adaptan y el informe sale ordenado por grupos.</li>
+<li>En <strong>Exportar</strong> eliges el periodo (hoy, la semana, el mes o todo) y los grupos, y lo descargas en <strong>PDF</strong> para imprimir o enviar, en <strong>TXT</strong> o en Excel (CSV). Por cada ejercicio salen tus series y repeticiones de cada día, tu peso máximo y tu mejor marca.</li>
 </ul>
 <p>Los datos se guardan en el navegador de tu móvil. Si borras los datos del navegador o cambias de teléfono, se pierden: descárgalos de vez en cuando como copia.</p>
 """,
         "faq": [
             ("¿Dónde se guardan mis datos?", "Solo en tu móvil o tu ordenador, en el navegador. No se envían a ningún sitio y nadie más puede verlos."),
-            ("¿Puedo pasar mis datos a Excel?", "Sí, con el botón «Descargar en Excel (CSV)» tienes todo el historial en una hoja."),
+            ("¿Puedo sacar mi cuaderno en PDF?", "Sí. En «Exportar» elige el periodo y los grupos musculares y pulsa «Descargar PDF». También puedes descargarlo en TXT o en Excel (CSV), y en el móvil, compartirlo directamente."),
+            ("¿Puedo pasar mis datos a Excel?", "Sí, con el botón «Excel (CSV)» tienes lo que elijas en una hoja, con fecha, ejercicio, grupo, peso, repeticiones y series."),
         ],
     },
     {
