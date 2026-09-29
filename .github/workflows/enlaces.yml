@@ -1,0 +1,65 @@
+# Revisión semanal de enlaces rotos en arnoldwork.com y HeavyWork (con lychee, gratis).
+# - Cada domingo por la mañana, y a mano desde Actions → «Revisar enlaces» → Run workflow.
+# - Revisa los enlaces internos (páginas, imágenes, herramientas) y los externos (Ko-fi, PayPal, Telegram…).
+# - Deja el resultado en el resumen de la ejecución y, si hay algo roto, avisa por Telegram
+#   (solo si el secreto de GitHub TELEGRAM_TOKEN está puesto; si no, la ejecución sale en rojo).
+# Lo que no se revisa está en .lycheeignore.
+
+name: Revisar enlaces
+
+on:
+  schedule:
+    - cron: "40 6 * * 0"
+  workflow_dispatch:
+
+jobs:
+  enlaces:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enlaces de arnoldwork.com
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --root-dir ${{ github.workspace }}/web
+            --no-progress --max-concurrency 8 --max-retries 3
+            --accept 200..=299,403,429
+            'web/**/*.html'
+          format: json
+          output: lychee/web.json
+          fail: false
+
+      - name: Enlaces de HeavyWork
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --root-dir ${{ github.workspace }}/heavywork/web
+            --no-progress --max-concurrency 8 --max-retries 3
+            --accept 200..=299,403,429
+            'heavywork/web/**/*.html'
+          format: json
+          output: lychee/heavywork.json
+          fail: false
+
+      - name: Resumen y aviso
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        run: |
+          rotos=$(jq -s '[.[].error_map | to_entries[] | .value[]] | length' lychee/*.json)
+          lista=$(jq -rs '[.[].error_map | to_entries[] | .key as $f | .value[] | "• \(.url | sub("^file://.*/web/"; "/")) (en \($f | sub("^.*/web/"; "")))"] | unique | .[:25] | join("\n")' lychee/*.json)
+          {
+            echo "## Enlaces rotos: $rotos"
+            [ "$rotos" -gt 0 ] && printf '%s\n' "$lista" | sed 's/^• /- /'
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$rotos" -eq 0 ] && { echo "Todo en orden"; exit 0; }
+          if [ -n "$TELEGRAM_TOKEN" ]; then
+            texto=$(printf '🔗 Revisión semanal: %s enlace(s) roto(s)\n\n%s\n\nDetalle: %s' "$rotos" "$lista" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID")
+            curl -sf -o /dev/null "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+              --data-urlencode chat_id=288460670 --data-urlencode "text=$texto" --data-urlencode disable_web_page_preview=true
+          else
+            echo "::error::Hay $rotos enlace(s) roto(s). Pon el secreto TELEGRAM_TOKEN para recibir el aviso por Telegram."
+            exit 1
+          fi

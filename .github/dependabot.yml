@@ -1,0 +1,18 @@
+# Dependabot (gratis, de GitHub): una vez al mes propone actualizar las acciones de los flujos
+# y las librerías de las pruebas. Llega como Pull Request: no cambia nada hasta que lo apruebas.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      acciones:
+        patterns: ["*"]
+  - package-ecosystem: npm
+    directory: /pruebas
+    schedule:
+      interval: monthly
+    groups:
+      pruebas:
+        patterns: ["*"]
