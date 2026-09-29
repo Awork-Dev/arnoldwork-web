@@ -113,7 +113,7 @@ HERRAMIENTAS = [
 """,
         "faq": [
             ("¿Funciona en libras?", "Sí. Elige «Libras (lb)» en Unidad y usa los discos de un gimnasio americano (45, 35, 25, 10, 5 y 2,5 lb) y barras de 45, 35, 25 o 15 lb. Te dice también cuánto es en kilos."),
-            ("¿Y si la barra es de kilos y los discos de libras?", "Elige «Mixto: barra en kg, discos en lb». Escribes el total en kilos y te digo qué discos de libras poner en cada lado y cuánto pesa de verdad la barra cargada."),
+            ("¿Y si en mi gimnasio hay discos en kilos y en libras mezclados?", "Elige «Mixto: discos en kg y en lb» y marca los discos que tiene tu gimnasio. Escribes el total en kilos y te digo la combinación que más se acerca, mezclando los dos tipos, y cuánto pesa de verdad la barra cargada."),
             ("¿Cuánto pesa la barra del gimnasio?", "La barra olímpica de hombre pesa 20 kg y la de mujer 15 kg. Las barras cortas y las Z varían: mira si llevan el peso marcado."),
         ],
     },

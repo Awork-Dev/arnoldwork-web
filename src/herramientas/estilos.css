@@ -336,6 +336,11 @@
   .disc{display:flex;align-items:center;justify-content:center;background:var(--amber);color:#0A0A0A;
     font-weight:700;font-size:.82rem;width:38px;border-radius:2px}
   .disc.s{background:var(--chalk);font-size:.74rem}
+  .disc{flex-direction:column;line-height:1.05}
+  .disc small{font-size:.6rem;font-weight:700;opacity:.75}
+  .disc.lb{background:#0A0A0A;color:var(--chalk);border:3px solid var(--amber)}
+  .disc.lb.s{border-color:var(--chalk)}
+  .d-hay{margin-top:16px}
   .timer{font-family:'Archivo Black';font-size:4.2rem;line-height:1;font-variant-numeric:tabular-nums}
   .presets{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
   .presets button{background:var(--ink-3);color:var(--chalk-dim);border:1px solid var(--rule-strong);

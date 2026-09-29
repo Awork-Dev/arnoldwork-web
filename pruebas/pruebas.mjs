@@ -152,6 +152,23 @@ if (QUE === 'web') {
     await p.close();
   }
 
+  console.log('\n▶ Discos: libras y mixto');
+  {
+    const { p, errores } = await abrir('/herramientas/calculadora-discos/');
+    const pon = async v => { await p.fill('#dTotal', v); await p.dispatchEvent('#dTotal', 'input'); await p.waitForTimeout(100); };
+    await p.selectOption('#dUnidad', 'lb'); await pon('315');
+    const lb = await p.$$eval('#dPlates .disc', d => d.map(x => x.title).join('+'));
+    await p.selectOption('#dUnidad', 'mix');
+    await p.selectOption('#dBarra', '20');
+    for (const c of ['25kg', '20kg', '15kg', '10kg', '5kg', '10lb', '5lb', '2.5lb']) await p.uncheck(`#dHay input[value="${c}"]`);
+    await pon('100');
+    const mix = await p.$$eval('#dPlates .disc', d => d.map(x => x.title).join('+')), sub = await p.textContent('#dSub');
+    lb === '45 lb+45 lb+45 lb' && mix === '45 lb+35 lb+2.5 kg+1.25 kg' && /total 100,1 kg/.test(sub) && !errores.length
+      ? bien('315 lb = 3 discos de 45 por lado; mixto con discos de kg y lb da la combinación más cercana')
+      : mal('/herramientas/calculadora-discos/', `lb=«${lb}» mixto=«${mix}» «${sub}» ${errores.join(' | ')}`);
+    await p.close();
+  }
+
   console.log('\n▶ Cuaderno: exportar');
   {
     const { p, errores } = await abrir('/herramientas/cuaderno-de-entreno/');

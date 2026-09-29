@@ -381,25 +381,57 @@
       warn.textContent = 'Con discos normales no sale exacto: lo más cerca son ' + u(real) + ' en total.';
     } else { warn.hidden = true; }
   }
-  // Mixto: se piensa en kilos (total y barra) pero los discos son de libras. No suele salir exacto:
-  // se busca la combinación de discos que más se acerca al total pedido.
+  // Mixto: total y barra en kilos; los discos, los que haya en el gimnasio, de kilos y de libras mezclados.
+  // Se busca la combinación que más se acerca al peso pedido (y, a igualdad, la de menos discos).
+  var HAY = [['kg', 25], ['kg', 20], ['kg', 15], ['kg', 10], ['kg', 5], ['kg', 2.5], ['kg', 1.25],
+    ['lb', 45], ['lb', 35], ['lb', 25], ['lb', 10], ['lb', 5], ['lb', 2.5]];
+  var claveHay = function(h){ return h[1] + h[0]; };
+  function hayMarcados(){
+    return HAY.filter(function(h){ var c = document.querySelector('#dHay input[value="' + claveHay(h) + '"]'); return c && c.checked; });
+  }
+  function mejorCombinacion(objKg, discos){
+    // Mochila en decenas de gramos: para cada suma posible, el menor número de discos que la consigue.
+    var pesos = discos.map(function(h){ return Math.round((h[0] === 'lb' ? h[1] * LB : h[1]) * 100); });
+    var obj = Math.round(objKg * 100), tope = obj + Math.max.apply(null, pesos.concat([0]));
+    var n = new Array(tope + 1).fill(Infinity), de = new Array(tope + 1).fill(-1); n[0] = 0;
+    for(var s = 1; s <= tope; s++) pesos.forEach(function(p, i){
+      if(p <= s && n[s - p] + 1 < n[s]){ n[s] = n[s - p] + 1; de[s] = i; }
+    });
+    // Como en la sala: dentro de ±0,5 kg por lado (1 kg en total), la de menos discos; si nada cae tan cerca, la más cercana.
+    var mejor = -1, cerca = 50;
+    for(s = 0; s <= tope; s++) if(n[s] < Infinity && Math.abs(s - obj) <= cerca){
+      if(mejor < 0 || n[s] < n[mejor] || (n[s] === n[mejor] && Math.abs(s - obj) < Math.abs(mejor - obj))) mejor = s;
+    }
+    if(mejor < 0){
+      mejor = 0;
+      for(s = 0; s <= tope; s++) if(n[s] < Infinity){
+        var d = Math.abs(s - obj), dm = Math.abs(mejor - obj);
+        if(d < dm || (d === dm && n[s] < n[mejor])) mejor = s;
+      }
+    }
+    var usados = [];
+    for(s = mejor; s > 0; s -= pesos[de[s]]) usados.push(discos[de[s]]);
+    return usados.sort(function(a, b){ return (b[0] === 'lb' ? b[1] * LB : b[1]) - (a[0] === 'lb' ? a[1] * LB : a[1]); });
+  }
   function calcMixto(total){
     var barra = parseFloat($('dBarra').value), out = $('dOut'), sub = $('dSub'), cont = $('dPlates'), warn = $('dWarn');
     cont.innerHTML = ''; warn.hidden = true;
     if(!(total > 0)){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Por lado'; return; }
     var ladoKg = barra === 0 ? total : (total - barra) / 2;
     if(ladoKg < 0){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Por lado'; warn.hidden = false; warn.textContent = 'La barra sola ya pesa ' + kg(barra) + '. Sube el peso total.'; return; }
-    var obj = ladoKg / LB, a = montar(Math.floor(obj / 2.5) * 2.5), b = montar(Math.ceil(obj / 2.5) * 2.5);
-    var suma = function(m){ return m.usados.reduce(function(x, y){ return x + y; }, 0); };
-    var m = Math.abs(suma(b) - obj) < Math.abs(suma(a) - obj) ? b : a, lado = suma(m);
-    var real = Math.round((barra + (barra === 0 ? 1 : 2) * lado * LB) * 10) / 10;
-    out.textContent = lb(lado); out.appendChild(sub);
-    sub.textContent = 'Por lado (' + kg(lado * LB) + ')' + (barra ? ', más la barra de ' + kg(barra) : '') + ' · total ' + kg(real);
-    if(!m.usados.length) cont.textContent = 'Solo la barra.';
-    m.usados.forEach(function(d){
-      var el = document.createElement('div'), dk = d * LB;
-      el.className = 'disc' + (dk < 5 ? ' s' : ''); el.style.height = (28 + Math.min(25, dk) * 1.6) + 'px';
-      el.textContent = String(d).replace('.', ','); el.title = d + ' lb'; cont.appendChild(el);
+    var discos = hayMarcados();
+    if(!discos.length){ out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Por lado'; warn.hidden = false; warn.textContent = 'Marca arriba los discos que hay en tu gimnasio.'; return; }
+    var usados = mejorCombinacion(ladoKg, discos);
+    var aKg = function(h){ return h[0] === 'lb' ? h[1] * LB : h[1]; };
+    var lado = usados.reduce(function(t, h){ return t + aKg(h); }, 0);
+    var real = Math.round((barra + (barra === 0 ? 1 : 2) * lado) * 10) / 10;
+    out.textContent = kg(Math.round(lado * 10) / 10); out.appendChild(sub);
+    sub.textContent = 'Por lado' + (barra ? ', más la barra de ' + kg(barra) : '') + ' · total ' + kg(real) + ' · los de libras van marcados con «lb»';
+    if(!usados.length) cont.textContent = 'Solo la barra.';
+    usados.forEach(function(h){
+      var el = document.createElement('div'), dk = aKg(h);
+      el.className = 'disc' + (dk < 5 ? ' s' : '') + (h[0] === 'lb' ? ' lb' : ''); el.style.height = (28 + Math.min(25, dk) * 1.6) + 'px';
+      el.innerHTML = String(h[1]).replace('.', ',') + '<small>' + h[0] + '</small>'; el.title = h[1] + ' ' + h[0]; cont.appendChild(el);
     });
     // Menos de 1 kg de diferencia no se nota en la sala: solo se avisa si es más.
     if(Math.abs(real - total) > 1){ warn.hidden = false; warn.textContent = 'Con discos en libras no sale exacto: lo más cerca son ' + kg(real) + ' en total (pediste ' + kg(total) + ').'; }
@@ -408,11 +440,21 @@
   function unidadDiscos(convertir){
     // El total y la barra van en libras solo en «lb»; en «kg» y en «mixto», en kilos.
     var L = unidad() === 'lb', t = parseFloat($('dTotal').value), antes = sget('dUnidad') === 'lb';
-    $('dBarra').hidden = L; $('dBarraLb').hidden = !L;
+    $('dBarra').hidden = L; $('dBarraLb').hidden = !L; $('dHay').hidden = unidad() !== 'mix';
     $('dTotalL').textContent = 'Peso total (' + (L ? 'lb' : 'kg') + ')';
     $('dBarra').parentNode.querySelector('label').setAttribute('for', L ? 'dBarraLb' : 'dBarra');
     if(convertir && t > 0 && L !== antes) $('dTotal').value = L ? Math.round(t / LB / 5) * 5 : Math.round(t * LB / 2.5) * 2.5;
     sset('dUnidad', $('dUnidad').value);
+  }
+  if($('dHay')){
+    // Qué discos hay: se recuerda en este móvil. Por defecto, todos.
+    var guardados = (sget('dHay') || '').split(',').filter(Boolean);
+    HAY.forEach(function(h){
+      var l = document.createElement('label'), c = document.createElement('input');
+      c.type = 'checkbox'; c.value = claveHay(h); c.checked = !guardados.length || guardados.indexOf(c.value) >= 0;
+      c.addEventListener('change', function(){ sset('dHay', hayMarcados().map(claveHay).join(',') || 'ninguno'); calcDiscos(); });
+      l.appendChild(c); l.appendChild(document.createTextNode(' ' + String(h[1]).replace('.', ',') + ' ' + h[0])); $('dHay').appendChild(l);
+    });
   }
   if($('dUnidad')){
     if(sget('dUnidad') === 'lb' || sget('dUnidad') === 'mix'){ $('dUnidad').value = sget('dUnidad'); unidadDiscos(false); }
