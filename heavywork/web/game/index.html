@@ -130,6 +130,10 @@ button,input,a{font:inherit;color:inherit}
 .deuda .cifra{font-size:clamp(20px,7vw,30px);color:var(--rojo);margin:6px 0;line-height:1.2;font-variant-numeric:tabular-nums}
 .deuda .nota{font-size:8px;color:var(--gris);margin:0}
 .deuda .modo{font-size:8px;color:var(--oro)}
+.compartir-juego{margin-top:14px;border-top:2px solid var(--borde);padding-top:12px}
+.compartir-juego .tit{font-size:9px;color:var(--oro);margin:0 0 10px}
+.compartir-juego .dif{font-size:8px;line-height:1.5;min-height:44px;padding:8px 10px;border-width:2px}
+.compartir-juego .dif svg{width:18px;height:18px}
 .cajita{font-size:9px;color:var(--gris);border-top:2px solid var(--borde);padding-top:10px;margin-top:12px}
 .cajita b{color:var(--tiza);font-weight:400}
 
@@ -307,6 +311,10 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <p data-t-html="ayuda2"></p>
       <p data-t-html="ayuda3"></p>
       <p style="margin:0" data-t-html="ayuda4"></p>
+    </div>
+    <div class="compartir-juego">
+      <p class="tit" data-t="compartirJuego">COMPÁRTELO CON TU GENTE DEL GIMNASIO</p>
+      <div data-difunde data-texto="🦖 CaveWork: el juego retro de HeavyWork. Aplasta dinos, come proteína y levanta más peso. Gratis, sin registro y con ranking mundial. ¿Me superas?" data-url="https://heavywork.arnoldwork.com/game/" data-asunto="CaveWork · Levanta. Aplasta. Repite."></div>
     </div>
     <a class="enlace-volver" href="/" data-t="volverHW">← Volver a HeavyWork</a>
     <a class="casa" href="https://arnoldwork.com" rel="noopener" aria-label="CaveWork es de la casa de ARNOLD. Levanta. Aplasta. Repite." style="margin:14px 0 0">
@@ -511,7 +519,7 @@ const TXT = {
   es: {
     aCanvas:'Pantalla del juego CaveWork', aVidas:'Vidas', aPausa:'Pausa', aIniciales:'Tus iniciales, 3 letras',
     proteina:'PROTEÍNA', saltar:'SALTAR', golpear:'GOLPE',
-    subtitulo:'El juego gratis de HeavyWork', manual:'MANUAL', manualTit:'MANUAL DE CAVEWORK',
+    subtitulo:'El juego gratis de HeavyWork', compartirJuego:'COMPÁRTELO CON TU GENTE DEL GIMNASIO', manual:'MANUAL', manualTit:'MANUAL DE CAVEWORK',
     deudaTit:'LOS JUGADORES LE DEBEN AL DESARROLLADOR', deudaNota:'Deuda simbólica: cada partida suma 0,10 $. Nadie tiene que pagarla.',
     pagarDeuda:'PAGAR LA DEUDA (DONAR)', jugar:'JUGAR', logros:'LOGROS', opinion:'OPINIÓN', idioma:'ENGLISH',
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
@@ -590,7 +598,7 @@ const TXT = {
   en: {
     aCanvas:'CaveWork game screen', aVidas:'Lives', aPausa:'Pause', aIniciales:'Your initials, 3 letters',
     proteina:'PROTEIN', saltar:'JUMP', golpear:'SMASH',
-    subtitulo:'The free HeavyWork game', manual:'MANUAL', manualTit:'CAVEWORK MANUAL',
+    subtitulo:'The free HeavyWork game', compartirJuego:'SHARE IT WITH YOUR GYM CREW', manual:'MANUAL', manualTit:'CAVEWORK MANUAL',
     deudaTit:'PLAYERS OWE THE DEVELOPER', deudaNota:'Symbolic debt: every game adds $0.10. Nobody has to pay it.',
     pagarDeuda:'PAY THE DEBT (DONATE)', jugar:'PLAY', logros:'ACHIEVEMENTS', opinion:'FEEDBACK', idioma:'Español',
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
@@ -2745,6 +2753,7 @@ requestAnimationFrame(frame);
 refreshState();
 (document.fonts && document.fonts.ready || Promise.resolve()).then(() => layout());
 </script>
+<script src="/difunde.js" defer></script>
 <script src="/version.js" defer></script>
 </body>
 </html>
