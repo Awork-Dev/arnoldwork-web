@@ -101,7 +101,7 @@ HERRAMIENTAS = [
         "grupo": "fuerza",
         "nombre": "Discos en la barra",
         "titulo": "Calculadora de discos: qué discos poner en la barra",
-        "descripcion": "Escribe el peso total y te digo qué discos poner en cada lado de la barra olímpica, de 15 kg, Z o sin barra.",
+        "descripcion": "Escribe el peso total y te digo qué discos poner en cada lado de la barra olímpica, de 15 kg, Z o sin barra. En kilos o en libras.",
         "h1": "Qué discos pongo en la barra",
         "intro": "Escribe el peso total que quieres levantar y te digo los discos de cada lado, del más grande al más pequeño. Sin hacer cuentas con la barra cargada delante.",
         "articulo": """
@@ -112,6 +112,7 @@ HERRAMIENTAS = [
 <p>Pon siempre los discos grandes por dentro y los pequeños por fuera, y usa cierres. Y al acabar, ya sabes: recoge los discos.</p>
 """,
         "faq": [
+            ("¿Funciona en libras?", "Sí. Elige «Libras (lb)» en Unidad y usa los discos de un gimnasio americano (45, 35, 25, 10, 5 y 2,5 lb) y barras de 45, 35, 25 o 15 lb. Te dice también cuánto es en kilos."),
             ("¿Cuánto pesa la barra del gimnasio?", "La barra olímpica de hombre pesa 20 kg y la de mujer 15 kg. Las barras cortas y las Z varían: mira si llevan el peso marcado."),
         ],
     },

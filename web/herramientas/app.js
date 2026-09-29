@@ -322,10 +322,14 @@
 
   /* ---------- discos ---------- */
   var DISCOS = [25, 20, 15, 10, 5, 2.5, 1.25];
+  var DISCOS_LB = [45, 35, 25, 10, 5, 2.5];   // los de un gimnasio americano
+  var LB = 0.45359237;
+  var enLb = function(){ return $('dUnidad') && $('dUnidad').value === 'lb'; };
+  var lb = function(n){ return String(Math.round(n * 100) / 100).replace('.', ',') + ' lb'; };
 
   function montar(porLado){
     var quedan = porLado, usados = [];
-    DISCOS.forEach(function(d){
+    (enLb() ? DISCOS_LB : DISCOS).forEach(function(d){
       while(quedan >= d - 0.001){ usados.push(d); quedan = Math.round((quedan - d) * 1000) / 1000; }
     });
     return { usados: usados, sobra: quedan };
@@ -333,7 +337,8 @@
 
   function calcDiscos(){
     var total = parseFloat($('dTotal').value);
-    var barra = parseFloat($('dBarra').value);
+    var L = enLb(), u = L ? lb : kg;
+    var barra = parseFloat($(L ? 'dBarraLb' : 'dBarra').value);
     var out = $('dOut'), sub = $('dSub'), cont = $('dPlates'), warn = $('dWarn');
     cont.innerHTML = '';
     if(!(total > 0)){
@@ -345,34 +350,49 @@
       out.textContent = '—'; out.appendChild(sub);
       sub.textContent = 'Por lado';
       warn.hidden = false;
-      warn.textContent = 'La barra sola ya pesa ' + kg(barra) + '. Sube el peso total.';
+      warn.textContent = 'La barra sola ya pesa ' + u(barra) + '. Sube el peso total.';
       return;
     }
     var m = montar(porLado);
     var real = barra + (barra === 0 ? m.usados.reduce(function(a,b){return a+b;},0)
                                     : m.usados.reduce(function(a,b){return a+b;},0) * 2);
-    out.textContent = kg(porLado - m.sobra);
+    out.textContent = u(porLado - m.sobra);
     out.appendChild(sub);
-    sub.textContent = barra === 0 ? 'Discos por lado' : 'Por lado, más la barra de ' + kg(barra);
+    sub.textContent = (barra === 0 ? 'Discos por lado' : 'Por lado, más la barra de ' + u(barra)) +
+      (L ? ' · total ' + lb(real) + ' ≈ ' + kg(real * LB) : '');
 
     if(!m.usados.length){
       cont.textContent = 'Solo la barra.';
     } else {
       m.usados.forEach(function(d){
         var el = document.createElement('div');
-        el.className = 'disc' + (d < 5 ? ' s' : '');
-        el.style.height = (28 + d * 1.6) + 'px';
+        var dk = L ? d * LB : d;   // el tamaño del dibujo, según lo que pesa de verdad
+        el.className = 'disc' + (dk < 5 ? ' s' : '');
+        el.style.height = (28 + Math.min(25, dk) * 1.6) + 'px';
         el.textContent = String(d).replace('.', ',');
-        el.title = d + ' kg';
+        el.title = d + (L ? ' lb' : ' kg');
         cont.appendChild(el);
       });
     }
     if(m.sobra > 0.001){
       warn.hidden = false;
-      warn.textContent = 'Con discos normales no sale exacto: lo más cerca son ' + kg(real) + ' en total.';
+      warn.textContent = 'Con discos normales no sale exacto: lo más cerca son ' + u(real) + ' en total.';
     } else { warn.hidden = true; }
   }
-  reg(calcDiscos, ['dTotal', 'dBarra']);
+  // Cambiar de unidad convierte el peso escrito (redondeado a lo que se puede montar) y cambia las barras.
+  function unidadDiscos(convertir){
+    var L = enLb(), t = parseFloat($('dTotal').value);
+    $('dBarra').hidden = L; $('dBarraLb').hidden = !L;
+    $('dTotalL').textContent = 'Peso total (' + (L ? 'lb' : 'kg') + ')';
+    $('dBarra').parentNode.querySelector('label').setAttribute('for', L ? 'dBarraLb' : 'dBarra');
+    if(convertir && t > 0) $('dTotal').value = L ? Math.round(t / LB / 5) * 5 : Math.round(t * LB / 2.5) * 2.5;
+    sset('dUnidad', $('dUnidad').value);
+  }
+  if($('dUnidad')){
+    if(sget('dUnidad') === 'lb'){ $('dUnidad').value = 'lb'; unidadDiscos(false); }
+    on('dUnidad', 'change', function(){ unidadDiscos(true); calcDiscos(); });
+  }
+  reg(calcDiscos, ['dTotal', 'dBarra', 'dBarraLb']);
 
   /* ---------- series de aproximación ---------- */
   var PLAN_WU = {
