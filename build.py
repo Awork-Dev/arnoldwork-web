@@ -111,18 +111,9 @@ def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css,
 
 def portada(v_css, v_js):
     n = len(HERRAMIENTAS)
-    cuerpo = []
-    for gid, gnombre in GRUPOS:
-        hs = [h for h in HERRAMIENTAS if h["grupo"] == gid]
-        if not hs:
-            continue
-        cuerpo.append(f'    <p class="grp">{gnombre}</p>\n')
-        for h in hs:
-            bloque = pieza(h)
-            # El título de cada herramienta enlaza a su página propia.
-            ini, fin = bloque.index("<h2>") + 4, bloque.index("</h2>")
-            bloque = bloque[:ini] + f'<a href="/herramientas/{h["slug"]}/">' + bloque[ini:fin] + "</a>" + bloque[fin:]
-            cuerpo.append("\n".join("    " + l if l else l for l in bloque.split("\n")))
+    # La página es solo el índice: cada herramienta vive en su propia página.
+    # Los enlaces antiguos a /herramientas/#pieza llevan a esa página.
+    viejos = json.dumps({h["pieza"]: f'/herramientas/{h["slug"]}/' for h in HERRAMIENTAS}, ensure_ascii=False)
     contenido = f"""
 <section class="tools-hero">
   <div class="wrap">
@@ -134,7 +125,7 @@ def portada(v_css, v_js):
       <span class="go" aria-hidden="true">→</span>
     </a>
     <nav class="idx" aria-label="Índice de herramientas">
-{indice(lambda h: "#" + h["pieza"])}
+{indice(lambda h: "/herramientas/" + h["slug"] + "/")}
     </nav>
   </div>
 </section>
@@ -142,7 +133,7 @@ def portada(v_css, v_js):
 <section>
   <div class="wrap">
 
-{"".join(cuerpo)}
+<script>(function(){{var m={viejos},h=location.hash.slice(1);if(m[h])location.replace(m[h]);}})();</script>
 {difunde("💪 Herramientas de gimnasio gratis: 1RM, rutina, calorías, discos, cuaderno y más. Sin registro y desde el móvil.", DOMINIO + "/herramientas/", "Herramientas gratis de gimnasio · ArnoldWork", "¿Te sirven? Pásaselas a tu gente del gimnasio")}
     {lee(SRC, "herramientas", "piezas", "_pie.html").strip()}
 
