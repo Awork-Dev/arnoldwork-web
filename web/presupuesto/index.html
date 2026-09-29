@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presupuesto al momento · ArnoldWork Dev</title>
+<meta name="description" content="Calcula en un minuto cuánto cuesta tu web, tu chat de clientes, tus reservas online o tus automatismos. Precio cerrado, sin llamadas comerciales, y una oferta nueva cada quincena.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://arnoldwork.com/presupuesto/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0A0A">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://arnoldwork.com/presupuesto/">
+<meta property="og:title" content="¿Cuánto cuesta la web de tu negocio? Míralo en 1 minuto">
+<meta property="og:description" content="Web, chat de clientes al móvil, reservas y automatismos con precio cerrado. Oferta nueva cada quincena.">
+<meta property="og:image" content="https://arnoldwork.com/img/trabajos/arnoldwork.jpg">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0A0A;--panel:#141414;--chalk:#F4F2EF;--chalk-dim:#B4B4B4;--amber:#E24848;--rule:rgba(244,242,239,.14);--ok:#6FCF8E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--chalk);font-family:Archivo,system-ui,sans-serif;line-height:1.55}
+a{color:inherit}
+header{border-bottom:1px solid var(--rule);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:'Archivo Black',Impact,sans-serif;font-size:1.25rem;text-decoration:none;letter-spacing:-.02em;white-space:nowrap}
+.brand img{display:inline-block;height:26px;width:auto;margin-right:9px;vertical-align:-5px}
+.brand span{color:var(--amber)}
+header nav a{color:var(--chalk-dim);text-decoration:none;font-size:.95rem;margin-left:18px}
+header nav a:hover{color:var(--chalk)}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.hero{padding-top:44px;padding-bottom:8px}
+.k{font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-size:.85rem}
+h1{font-family:'Archivo Black',Impact,sans-serif;font-weight:400;font-size:clamp(2.1rem,7vw,3.4rem);line-height:1.02;letter-spacing:-.02em;margin:12px 0 0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--amber)}
+.lede{color:var(--chalk-dim);font-size:1.08rem;margin:18px 0 0;max-width:58ch}
+
+/* Oferta de la quincena */
+.oferta{margin:28px 0 0;border:2px solid var(--amber);background:linear-gradient(135deg,rgba(226,72,72,.16),rgba(226,72,72,.04));padding:18px;display:grid;gap:10px;position:relative}
+.oferta .tag{position:absolute;top:-12px;left:14px;background:var(--amber);color:var(--ink);font:700 .75rem Archivo,sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px}
+.oferta h2{font-family:'Archivo Black',Impact,sans-serif;font-weight:400;font-size:clamp(1.4rem,5vw,1.9rem);line-height:1.08;margin:4px 0 0}
+.oferta p{margin:0;color:var(--chalk-dim)}
+.cuenta{display:flex;gap:8px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.cuenta div{background:var(--ink);border:1px solid var(--rule);padding:6px 10px;min-width:64px;text-align:center}
+.cuenta b{display:block;font-family:'Archivo Black',Impact,sans-serif;font-weight:400;font-size:1.5rem;line-height:1.1}
+.cuenta span{font-size:.72rem;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.1em}
+.prox{font-size:.9rem;color:var(--chalk-dim)}
+.prox b{color:var(--chalk)}
+
+section.paso{padding:30px 0;border-bottom:1px solid var(--rule);display:grid;gap:14px}
+.paso h2{font-size:.85rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk-dim);margin:0;display:flex;gap:10px;align-items:baseline}
+.paso h2 span{color:var(--amber);font-family:'Archivo Black',Impact,sans-serif}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:1px solid var(--rule);background:var(--panel);color:var(--chalk);font:600 .95rem Archivo,sans-serif;padding:9px 14px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--chalk);color:var(--ink);border-color:var(--chalk)}
+.packs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:600px){.packs{grid-template-columns:1fr}}
+.pack{appearance:none;text-align:left;border:1px solid var(--rule);background:var(--panel);color:var(--chalk);padding:14px;cursor:pointer;display:grid;gap:3px;font:inherit}
+.pack[aria-pressed="true"]{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
+.pack strong{font-family:'Archivo Black',Impact,sans-serif;font-weight:400;font-size:1.1rem;text-transform:uppercase}
+.pack .p{font-weight:700;font-size:1.35rem;font-variant-numeric:tabular-nums}
+.pack small{color:var(--chalk-dim);font-size:.85rem}
+.items{border-top:1px solid var(--rule)}
+.item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:13px 2px;border-bottom:1px solid var(--rule);cursor:pointer}
+.item input{width:22px;height:22px;accent-color:var(--amber);margin:2px 0 0}
+.item .t{font-weight:700}
+.item .d{color:var(--chalk-dim);font-size:.9rem}
+.item .p{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.item .p s{display:block;color:var(--chalk-dim);font-weight:400;font-size:.85rem}
+.item .regalo{color:var(--ok)}
+.qty{display:inline-flex;align-items:center;gap:6px;margin-top:6px}
+.qty button{width:30px;height:30px;border:1px solid var(--rule);background:var(--ink);color:var(--chalk);font:700 1rem Archivo,sans-serif;cursor:pointer}
+.qty output{min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+.nota{color:var(--chalk-dim);font-size:.85rem;margin:0}
+label.campo{display:grid;gap:6px;font-size:.9rem;color:var(--chalk-dim)}
+input[type=text],textarea{width:100%;background:var(--panel);border:1px solid var(--rule);color:var(--chalk);font:1rem Archivo,sans-serif;padding:11px 12px}
+textarea{min-height:84px;resize:vertical}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.resumen{display:grid;gap:6px;font-variant-numeric:tabular-nums}
+.resumen div{display:flex;justify-content:space-between;gap:12px}
+.resumen .dim{color:var(--chalk-dim)}
+.resumen .desc{color:var(--ok)}
+.resumen .tot{font-weight:700;border-top:1px solid var(--rule);padding-top:8px;font-size:1.1rem}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{appearance:none;border:0;cursor:pointer;display:inline-block;background:var(--amber);color:#0A0A0A;font:700 1rem Archivo,sans-serif;padding:14px 26px;text-decoration:none;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%)}
+.btn:hover{background:#B32B2B}
+.btn[disabled]{opacity:.6;cursor:wait}
+.btn-ghost{background:transparent;color:var(--chalk);border:1px solid rgba(244,242,239,.30);clip-path:none;font-weight:600}
+.btn-ghost:hover{background:rgba(245,244,240,.07)}
+.estado{min-height:1.3em;margin:0}
+.estado.ok{color:var(--ok)} .estado.err{color:var(--amber)}
+.msg{white-space:pre-wrap;background:var(--panel);border:1px solid var(--rule);padding:12px;font-size:.88rem;overflow-wrap:anywhere}
+.barra{position:fixed;left:0;right:0;bottom:0;background:rgba(10,10,10,.95);backdrop-filter:blur(8px);border-top:1px solid var(--rule);padding:10px 20px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.barra .in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.barra .big{font-family:'Archivo Black',Impact,sans-serif;font-size:clamp(1.6rem,6vw,2.1rem);line-height:1;font-variant-numeric:tabular-nums}
+.barra .big s{font-family:Archivo,sans-serif;font-size:.9rem;color:var(--chalk-dim);margin-left:8px}
+.barra small{display:block;color:var(--chalk-dim);font-size:.8rem}
+.barra a{font-size:.9rem;padding:10px 16px}
+footer{border-top:1px solid var(--rule);padding:24px 20px 120px;color:var(--chalk-dim);font-size:.9rem;text-align:center}
+footer a{color:var(--chalk)}
+.casa{display:flex;align-items:center;gap:18px;background:#000;color:#fff;text-decoration:none;padding:22px 24px;margin:0 auto 22px;border:3px solid #16181B;max-width:460px;box-sizing:border-box;text-align:left}
+.casa svg{width:64px;height:auto;flex:none}
+.casa-txt{display:flex;flex-direction:column;gap:4px}
+.casa-pre{font-size:.9rem;color:#d6d8db}
+.casa-arnold{font-family:Montserrat,system-ui,sans-serif;font-weight:500;font-size:1.9rem;letter-spacing:.32em;line-height:1}
+.casa-lema{font-family:Montserrat,system-ui,sans-serif;font-size:.95rem;letter-spacing:.04em;color:#E24848}
+@media (max-width:380px){.casa{gap:14px;padding:18px}.casa svg{width:52px}.casa-arnold{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="/"><img src="/img/logo.svg" alt="" width="26" height="34">Arnold<span>Work</span> Dev</a>
+  <nav><a href="/trabajos/">Trabajos</a><a href="#pedir">Pedir presupuesto</a></nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="k">Presupuesto · ArnoldWork Dev</div>
+    <h1>¿Cuánto cuesta la web de tu negocio? <em>Míralo en 1 minuto.</em></h1>
+    <p class="lede">Marca lo que necesitas y verás el precio cerrado al momento. Sin llamadas comerciales: nos lo mandas desde aquí y te contestamos personalmente.</p>
+
+    <div class="oferta" id="oferta" aria-live="polite">
+      <span class="tag">Oferta de esta quincena</span>
+      <h2 id="ofTitulo">Chat de clientes al móvil, de regalo</h2>
+      <p id="ofTexto">Con cualquier web: cada cliente nuevo te llega a Telegram en segundos.</p>
+      <div class="cuenta" id="cuenta" aria-label="Tiempo que queda de oferta">
+        <div><b id="cD">–</b><span>días</span></div><div><b id="cH">–</b><span>horas</span></div><div><b id="cM">–</b><span>min</span></div><div><b id="cS">–</b><span>seg</span></div>
+      </div>
+      <p class="prox" id="prox"></p>
+    </div>
+  </section>
+
+  <section class="paso" aria-labelledby="p1">
+    <h2 id="p1"><span>1</span> Tu negocio</h2>
+    <div class="chips" id="negocio" role="group" aria-label="Tipo de negocio"></div>
+  </section>
+
+  <section class="paso" aria-labelledby="p2">
+    <h2 id="p2"><span>2</span> Empieza por un pack</h2>
+    <div class="packs" id="packs"></div>
+    <p class="nota">Luego afínalo abajo: marca o quita lo que quieras.</p>
+  </section>
+
+  <section class="paso" aria-labelledby="p3">
+    <h2 id="p3"><span>3</span> Qué incluye</h2>
+    <div class="items" id="items"></div>
+  </section>
+
+  <section class="paso" aria-labelledby="p4">
+    <h2 id="p4"><span>4</span> Plazo y mantenimiento</h2>
+    <div class="chips" id="plazo" role="group" aria-label="Plazo de entrega"></div>
+    <div class="chips" id="mant" role="group" aria-label="Mantenimiento"></div>
+    <p class="nota" id="mantNota"></p>
+  </section>
+
+  <section class="paso" id="pedir" aria-labelledby="p5">
+    <h2 id="p5"><span>5</span> Pide tu presupuesto</h2>
+    <div class="resumen" id="resumen"></div>
+    <form id="form" novalidate>
+      <div style="display:grid;gap:12px">
+        <label class="campo" for="fNombre">Tu nombre y el de tu negocio
+          <input type="text" id="fNombre" autocomplete="name" placeholder="Ej.: Marta · Gimnasio Sa Punta" required>
+        </label>
+        <label class="campo" for="fContacto">Teléfono, correo o Telegram para contestarte
+          <input type="text" id="fContacto" autocomplete="email" placeholder="Ej.: 600 000 000 o marta@correo.com" required>
+        </label>
+        <label class="campo" for="fNotas">Cuéntanos algo más (opcional)
+          <textarea id="fNotas" placeholder="Qué haces, qué te quita tiempo, si ya tienes dominio…"></textarea>
+        </label>
+        <div class="cta">
+          <button class="btn" id="enviar" type="submit">Enviar y reservar la oferta</button>
+          <a class="btn btn-ghost" href="https://t.me/AWorks81" target="_blank" rel="noopener">Prefiero Telegram</a>
+        </div>
+        <p class="estado" id="estado" role="status"></p>
+      </div>
+    </form>
+    <p class="nota">La oferta vale para los presupuestos que nos lleguen antes de que acabe la quincena, aunque el proyecto empiece después. Precios orientativos, IVA no incluido; el precio definitivo te lo cerramos por escrito antes de empezar. El dominio (unos 12 €/año) va a tu nombre.</p>
+    <details>
+      <summary class="nota" style="cursor:pointer">Ver el resumen que se envía</summary>
+      <div class="msg" id="msg"></div>
+    </details>
+  </section>
+</main>
+
+<div class="barra">
+  <div class="in">
+    <div>
+      <small>Total estimado</small>
+      <div class="big"><span id="total">0 €</span><s id="antes" hidden></s></div>
+      <small id="mantTxt"></small>
+    </div>
+    <a class="btn" href="#pedir">Pedir</a>
+  </div>
+</div>
+
+<footer><a class="casa" href="https://arnoldwork.com" rel="noopener" aria-label="ArnoldWork es de la casa de ARNOLD. Entrena y transfórmate">
+      <svg viewBox="0 0 651 846" aria-hidden="true"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#fff"/><polygon points="333,0 333,231 441,439 489,415" fill="#DE3A3A"/><polygon points="507,462 469,492 650,839" fill="#DE3A3A"/></svg>
+      <span class="casa-txt"><span class="casa-pre">ArnoldWork es de la casa de</span><span class="casa-arnold">ARNOLD</span><span class="casa-lema">Entrena y transfórmate</span></span>
+    </a><a href="/">ArnoldWork</a> · <a href="/trabajos/">Nuestros trabajos</a> · Made with love from Mallorca</footer>
+
+<script>
+// ─── Precios y ofertas: se cambian aquí ──────────────────────────────────────
+const NEGOCIOS = ["Gimnasio","Entrenador personal","Tienda","Clínica o fisio","Restaurante","Otro"];
+const MODULOS = [
+  {id:"web",   t:"Web a medida",                 d:"Hasta 5 secciones, pensada para el móvil y preparada para Google. Con tu marca.", p:390},
+  {id:"pag",   t:"Página extra",                 d:"Servicios, tarifas, equipo, galería… cada una con su enlace para Google.", p:60, qty:true},
+  {id:"chat",  t:"Chat de clientes al móvil",    d:"Cada cliente nuevo te llega a Telegram en segundos, con copia de seguridad.", p:150},
+  {id:"res",   t:"Reservas y citas online",      d:"Tus clientes eligen hora y a ti te llega el aviso. Adiós al ir y venir de mensajes.", p:250},
+  {id:"tool",  t:"Herramienta a medida",         d:"Calculadora, test o simulador con tu marca que la gente usa y comparte.", p:180, qty:true},
+  {id:"venta", t:"Avisos de ventas y pagos",     d:"Cada venta o pago (Ko-fi, Stripe, tienda online) te llega al instante.", p:120},
+  {id:"vig",   t:"Vigilante 24/7",               d:"Revisa la web cada 30 minutos y te avisa si algo falla, antes que tus clientes.", p:120},
+  {id:"juego", t:"Juego con ranking y tu marca", d:"Para que la gente vuelva y te comparta. Como CaveWork, pero tuyo.", p:450},
+];
+const PACKS = [
+  {id:"base",  t:"Arranque",   d:"Web lista para que te encuentren.",         sel:{web:1}},
+  {id:"capta", t:"Captación",  d:"Web y clientes nuevos directos al móvil.",  sel:{web:1,pag:2,chat:1,vig:1}},
+  {id:"auto",  t:"Automático", d:"El negocio trabaja solo mientras tú atiendes.", sel:{web:1,pag:3,chat:1,res:1,tool:1,vig:1}},
+];
+const PLAZOS = [{id:"normal",t:"2–3 semanas",f:0},{id:"rapido",t:"Urgente · 1 semana",f:.2}];
+const MANT = [
+  {id:"no",   t:"Sin mantenimiento",    p:0,  d:"La web es tuya y funciona sola. Los cambios futuros se presupuestan aparte."},
+  {id:"basic",t:"Tranquilo · 19 €/mes", p:19, d:"Vigilancia, copias de seguridad y pequeños cambios de texto o fotos."},
+  {id:"pro",  t:"Crecer · 39 €/mes",    p:39, d:"Todo lo anterior y una mejora al mes: una página, una herramienta o un ajuste."},
+];
+// Una oferta por quincena (del 1 al 15 y del 16 a fin de mes, hora de España), en este orden y en bucle.
+// Cada una recibe las líneas del presupuesto y devuelve el descuento en euros (0 si no aplica) y un aviso.
+const OFERTAS = [
+  {t:"Chat de clientes al móvil, de regalo", x:"Con cualquier web: cada cliente nuevo te llega a Telegram en segundos. Valor: 150 €.",
+   aplica:s=>s.sel.web&&s.sel.chat ? {eur:150} : {eur:0, falta:"Marca «Web a medida» y «Chat de clientes al móvil» para llevártelo gratis."},
+   regalo:"chat"},
+  {t:"−20 % en proyectos desde 900 €", x:"Si tu presupuesto pasa de 900 €, te quitamos un 20 % de golpe.",
+   aplica:s=>s.base>=900 ? {eur:Math.round(s.base*.2)} : {eur:0, falta:`Te faltan ${eur(900-s.base)} para el −20 %.`}},
+  {t:"3 meses de mantenimiento gratis", x:"Elige mantenimiento y los tres primeros meses corren de nuestra cuenta.",
+   aplica:s=>s.mant.p ? {eur:s.mant.p*3} : {eur:0, falta:"Elige un plan de mantenimiento para no pagar los 3 primeros meses."}},
+  {t:"Vigilante 24/7 de regalo", x:"Te avisamos si tu web falla antes de que se entere nadie. Valor: 120 €.",
+   aplica:s=>s.sel.web&&s.sel.vig ? {eur:120} : {eur:0, falta:"Marca «Web a medida» y «Vigilante 24/7» para llevártelo gratis."},
+   regalo:"vig"},
+  {t:"Entrega urgente sin recargo", x:"Tu web en una semana al precio normal.",
+   aplica:s=>s.recargo ? {eur:s.recargo} : {eur:0, falta:"Elige «Urgente · 1 semana» y no pagarás el recargo."}},
+];
+// ─────────────────────────────────────────────────────────────────────────────
+
+function eur(n){ return n.toLocaleString("es-ES") + " €"; }
+const $ = id => document.getElementById(id);
+const ordenado = o => Object.fromEntries(Object.entries(o).sort());
+PACKS.forEach(p=>p.sel=ordenado(p.sel));
+const st = {negocio:"Gimnasio", pack:"capta", sel:{...PACKS[1].sel}, plazo:"normal", mant:"basic"};
+
+// Quincena actual en hora de España, sin depender de la zona horaria del visitante.
+function horaEspana(d){
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Madrid",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric",second:"numeric",hourCycle:"h23"})
+    .formatToParts(d).filter(x=>x.type!=="literal").map(x=>[x.type,+x.value]));
+  return p;
+}
+function quincena(ahora){
+  const e = horaEspana(ahora);
+  const segunda = e.day > 15;
+  const indice = (e.year*12 + (e.month-1))*2 + (segunda?1:0);
+  // Fin: día 16 a las 00:00 o día 1 del mes siguiente a las 00:00, hora de España.
+  const finY = segunda && e.month===12 ? e.year+1 : e.year;
+  const finM = segunda ? (e.month % 12) + 1 : e.month;
+  const finD = segunda ? 1 : 16;
+  const local = Date.UTC(e.year,e.month-1,e.day,e.hour,e.minute,e.second);
+  const desfase = local - Math.floor(ahora.getTime()/1000)*1000;   // España − UTC
+  const fin = new Date(Date.UTC(finY,finM-1,finD) - desfase);
+  return {indice, fin, finTxt: `${finD===16?15:new Date(Date.UTC(e.year,e.month,0)).getUTCDate()}/${e.month}`};
+}
+let Q = quincena(new Date());
+const oferta = () => OFERTAS[Q.indice % OFERTAS.length];
+
+function calcular(){
+  const lineas = MODULOS.filter(m=>st.sel[m.id]).map(m=>({id:m.id,t:m.t,q:st.sel[m.id],sub:m.p*st.sel[m.id],qty:m.qty}));
+  const base = lineas.reduce((s,l)=>s+l.sub,0);
+  const plazo = PLAZOS.find(p=>p.id===st.plazo), mant = MANT.find(m=>m.id===st.mant);
+  const recargo = Math.round(base*plazo.f);
+  const of = oferta().aplica({sel:st.sel, base, recargo, mant});
+  return {lineas, base, plazo, mant, recargo, of, total: base + recargo - (of.eur||0)};
+}
+
+function chips(el, lista, key){
+  el.innerHTML = "";
+  for (const o of lista){
+    const id = typeof o === "string" ? o : o.id, txt = typeof o === "string" ? o : o.t;
+    const b = document.createElement("button");
+    b.type="button"; b.className="chip"; b.textContent=txt; b.id=key+"-"+id.normalize("NFD").replace(/[^\w]+/g,"-");
+    b.setAttribute("aria-pressed", String(st[key]===id));
+    b.onclick = ()=>{ st[key]=id; pintar(); };
+    el.appendChild(b);
+  }
+}
+
+function pintar(){
+  chips($("negocio"), NEGOCIOS, "negocio");
+  chips($("plazo"), PLAZOS, "plazo");
+  chips($("mant"), MANT, "mant");
+  const ofe = oferta();
+
+  $("packs").innerHTML = "";
+  for (const p of PACKS){
+    const precio = Object.entries(p.sel).reduce((s,[k,q])=>s+MODULOS.find(m=>m.id===k).p*q,0);
+    const b = document.createElement("button");
+    b.type="button"; b.className="pack"; b.id="pack-"+p.id;
+    b.setAttribute("aria-pressed", String(st.pack===p.id));
+    b.innerHTML = `<strong>${p.t}</strong><span class="p">${eur(precio)}</span><small>${p.d}</small>`;
+    b.onclick = ()=>{ st.pack=p.id; st.sel={...p.sel}; pintar(); };
+    $("packs").appendChild(b);
+  }
+
+  $("items").innerHTML = "";
+  for (const m of MODULOS){
+    const q = st.sel[m.id]||0;
+    const regalo = ofe.regalo===m.id;
+    const row = document.createElement("label");
+    row.className="item"; row.htmlFor="m-"+m.id;
+    row.innerHTML = `<input type="checkbox" id="m-${m.id}" ${q?"checked":""}>
+      <div><div class="t">${m.t}</div><div class="d">${m.d}</div>
+      ${m.qty&&q?`<div class="qty"><button type="button" data-d="-1" aria-label="Una menos">−</button><output>${q}</output><button type="button" data-d="1" aria-label="Una más">+</button></div>`:""}</div>
+      <div class="p">${regalo?`<span class="regalo">Gratis</span><s>${eur(m.p)}</s>`:(m.qty?eur(m.p)+" c/u":eur(m.p))}</div>`;
+    row.querySelector("input").onchange = e=>{
+      if(e.target.checked) st.sel[m.id]=1; else delete st.sel[m.id];
+      st.sel = ordenado(st.sel);
+      st.pack = PACKS.find(p=>JSON.stringify(p.sel)===JSON.stringify(st.sel))?.id || null;
+      pintar();
+    };
+    row.querySelectorAll(".qty button").forEach(b=>b.onclick=e=>{
+      e.preventDefault();
+      st.sel[m.id] = Math.max(1, Math.min(20, q + Number(b.dataset.d))); st.pack=null; pintar();
+    });
+    $("items").appendChild(row);
+  }
+
+  const c = calcular();
+  $("ofTitulo").textContent = ofe.t;
+  $("ofTexto").textContent = c.of.eur ? `${ofe.x} Ya aplicada en tu presupuesto: −${eur(c.of.eur)}.` : `${ofe.x} ${c.of.falta||""}`;
+  const sig = OFERTAS[(Q.indice+1) % OFERTAS.length];
+  $("prox").innerHTML = `Termina el <b>${Q.finTxt}</b> a medianoche. Después llega: <b>${sig.t}</b>.`;
+
+  $("total").textContent = eur(c.total);
+  const antes = $("antes"); antes.hidden = !c.of.eur; antes.textContent = eur(c.base + c.recargo);
+  $("mantTxt").textContent = c.mant.p ? `+ ${c.mant.p} €/mes · ${c.plazo.t.replace("Urgente · ","")}` : `Sin cuota · ${c.plazo.t.replace("Urgente · ","")}`;
+  $("mantNota").textContent = c.mant.d;
+
+  $("resumen").innerHTML = c.lineas.map(l=>`<div><span>${l.t}${l.qty?` ×${l.q}`:""}</span><span>${eur(l.sub)}</span></div>`).join("")
+    + (c.recargo?`<div class="dim"><span>Entrega urgente (+20 %)</span><span>${eur(c.recargo)}</span></div>`:"")
+    + (c.of.eur?`<div class="desc"><span>Oferta: ${ofe.t}</span><span>−${eur(c.of.eur)}</span></div>`:"")
+    + `<div class="tot"><span>Total</span><span>${eur(c.total)}</span></div>`
+    + (c.mant.p?`<div class="dim"><span>Mantenimiento</span><span>${c.mant.p} €/mes</span></div>`:"");
+
+  $("msg").textContent = texto(c);
+}
+
+function texto(c){
+  const n = $("fNombre").value.trim(), ct = $("fContacto").value.trim(), notas = $("fNotas").value.trim();
+  return `Presupuesto desde arnoldwork.com/presupuesto
+Negocio: ${st.negocio}${n?` · ${n}`:""}
+Incluye: ${c.lineas.map(l=>l.t+(l.qty?` ×${l.q}`:"")).join(", ")||"(nada marcado)"}
+Plazo: ${c.plazo.t} · Mantenimiento: ${c.mant.t}
+Oferta: ${c.of.eur?`${oferta().t} (−${eur(c.of.eur)}), válida hasta el ${Q.finTxt}`:"no aplica"}
+TOTAL: ${eur(c.total)} (IVA aparte)${ct?`\nContacto: ${ct}`:""}${notas?`\nMás info: ${notas}`:""}`;
+}
+
+function cuenta(){
+  let ms = Q.fin - Date.now();
+  if (ms <= 0){ Q = quincena(new Date()); pintar(); ms = Q.fin - Date.now(); }
+  const s = Math.floor(ms/1000);
+  $("cD").textContent = Math.floor(s/86400);
+  $("cH").textContent = String(Math.floor(s%86400/3600)).padStart(2,"0");
+  $("cM").textContent = String(Math.floor(s%3600/60)).padStart(2,"0");
+  $("cS").textContent = String(s%60).padStart(2,"0");
+}
+
+const LEAD_URL = "https://arnoldwork-api.arnoldwork.workers.dev/lead";
+const COPIA_URL = "https://vigilante.arnoldwork.workers.dev/contacto";
+const MOTIVO = "Web o automatización para mi negocio";
+
+$("form").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const est = $("estado"), btn = $("enviar");
+  const nombre = $("fNombre").value.trim(), contacto = $("fContacto").value.trim();
+  if (!nombre){ est.className="estado err"; est.textContent="Escribe tu nombre para saber a quién contestar."; $("fNombre").focus(); return; }
+  if (contacto.length < 6){ est.className="estado err"; est.textContent="Déjanos un teléfono, correo o usuario de Telegram para contestarte."; $("fContacto").focus(); return; }
+  const c = calcular(), mensaje = texto(c);
+  const envio = {
+    tipo:"contacto", nombre,
+    objetivo:`💼 PRESUPUESTO DEV: ${eur(c.total)}${c.mant.p?` + ${c.mant.p} €/mes`:""}`,
+    nivel:`${st.negocio} · ${c.lineas.map(l=>l.t+(l.qty?` ×${l.q}`:"")).join(", ")}`,
+    frecuencia:`${c.plazo.t} · ${c.mant.t}`,
+    contacto,
+    planSugerido: c.of.eur ? `Oferta: ${oferta().t} (−${eur(c.of.eur)}, hasta el ${Q.finTxt})` : "Sin oferta",
+    mensaje, motivo: MOTIVO, origen: location.href, fecha: new Date().toLocaleString("es-ES"),
+  };
+  btn.disabled = true; est.className="estado"; est.textContent="Enviando…";
+  try{
+    const r = await fetch(LEAD_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(envio)}).catch(()=>null);
+    const principalOk = !!(r && r.ok);
+    const copia = fetch(COPIA_URL,{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({...envio,principalOk})}).then(x=>x.ok).catch(()=>false);
+    if (!principalOk && !(await copia)) throw new Error("fallo");
+    est.className="estado ok";
+    est.textContent = `¡Recibido, ${nombre.split(/[ ·]/)[0]}! Te contestamos muy pronto con el precio cerrado.${c.of.eur?" La oferta queda reservada a tu nombre.":""}`;
+    $("form").reset(); pintar();
+  }catch{
+    est.className="estado err";
+    est.textContent="No ha salido el mensaje. Escríbenos por Telegram a @AWorks81 o a arnoldwork4you@gmail.com y lo vemos.";
+  }finally{ btn.disabled = false; }
+});
+["fNombre","fContacto","fNotas"].forEach(id=>$(id).addEventListener("input",()=>{ $("msg").textContent = texto(calcular()); }));
+
+pintar(); cuenta(); setInterval(cuenta, 1000);
+</script>
+</body>
+</html>

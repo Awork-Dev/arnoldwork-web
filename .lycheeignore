@@ -1,0 +1,17 @@
+# Enlaces que la revisión semanal de enlaces (lychee) no comprueba.
+# Uno por línea, como expresión regular.
+
+# Datos estructurados y espacios de nombres: no son enlaces que se visiten.
+^https?://schema\.org
+^https?://www\.w3\.org
+
+# Conexiones previas a Google Fonts (el dominio a secas da 404 aunque todo funcione).
+^https://fonts\.(googleapis|gstatic)\.com/?$
+
+# Redes y botones de compartir: bloquean a los robots y darían falsos «rotos».
+^https://(www\.)?tiktok\.com
+^https://api\.whatsapp\.com
+^https://t\.me/share
+
+# Las APIs ya las vigila el Worker «vigilante» cada 30 minutos.
+^https://[a-z0-9-]+\.arnoldwork\.workers\.dev
