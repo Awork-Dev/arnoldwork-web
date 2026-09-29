@@ -1,6 +1,7 @@
 <div class="tool" id="cuaderno">
   <h2>Cuaderno de entreno</h2>
   <p class="hint">Apunta tus series y mira cómo sube cada ejercicio. Se guarda solo en tu móvil: nadie más lo ve y no hace falta registrarse.</p>
+  <a class="cu-saltar" href="#cuExport">📄 Exportar en PDF o pasar al calendario ↓</a>
   <div class="fields">
     <div class="field">
       <label for="cuGrupo">Grupo muscular</label>
@@ -47,7 +48,7 @@
     </table>
   </div>
   <div class="out cu-export" id="cuExport">
-    <h3>Exportar tu cuaderno</h3>
+    <h3>📄 Exportar tu cuaderno</h3>
     <p class="hint">Elige qué quieres sacar y en qué formato. Por cada ejercicio salen tus series y repeticiones de cada día, tu peso máximo y tu mejor marca, ordenados por grupo muscular.</p>
     <div class="fields">
       <div class="field">
@@ -69,6 +70,13 @@
       <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Excel (CSV)</button>
       <button type="button" class="btn btn-ghost btn-sm" id="cuShare" hidden>Compartir</button>
     </div>
+    <h3 class="cu-cal-t">📅 Pasarlo a tu calendario</h3>
+    <p class="hint">Crea un evento en cada día que entrenaste, con los ejercicios, series, repeticiones y pesos de ese día. Usa el periodo y los grupos de arriba.</p>
+    <div class="acts">
+      <button type="button" class="btn btn-sm" id="cuIcs">Calendario del iPhone u Outlook</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="cuGcal">Google Calendar</button>
+    </div>
+    <p class="cu-nota" id="cuCalNota">En el iPhone, abre el archivo y pulsa «Añadir todo». Google Calendar abre el último día entrenado; para meter todos los días de golpe, descarga el archivo con «Calendario del iPhone u Outlook» e impórtalo en calendar.google.com → Ajustes → Importar.</p>
     <p class="cta-line">¿No sabes si toca subir? Mételo en <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a></p>
   </div>
 </div>

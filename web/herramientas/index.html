@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/herramientas/estilos.css?v=1c582012dd">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=67a45d4a6c">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Herramientas gratis de gimnasio","url":"https://arnoldwork.com/herramientas/","inLanguage":"es","hasPart":[{"@type":"WebApplication","name":"Calculadora de 1RM","url":"https://arnoldwork.com/herramientas/calculadora-1rm/"},{"@type":"WebApplication","name":"Calculadora de RIR y RPE","url":"https://arnoldwork.com/herramientas/calculadora-rpe-rir/"},{"@type":"WebApplication","name":"¿Cuándo subir peso?","url":"https://arnoldwork.com/herramientas/cuando-subir-peso/"},{"@type":"WebApplication","name":"¿Cómo de fuerte soy?","url":"https://arnoldwork.com/herramientas/nivel-de-fuerza/"},{"@type":"WebApplication","name":"Calculadora de puntos DOTS y Wilks","url":"https://arnoldwork.com/herramientas/calculadora-dots-wilks/"},{"@type":"WebApplication","name":"Qué discos pongo en la barra","url":"https://arnoldwork.com/herramientas/calculadora-discos/"},{"@type":"WebApplication","name":"Series de aproximación","url":"https://arnoldwork.com/herramientas/series-de-aproximacion/"},{"@type":"WebApplication","name":"Calculadora de calorías y macros","url":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/"},{"@type":"WebApplication","name":"Calculadora de proteína diaria","url":"https://arnoldwork.com/herramientas/calculadora-proteina/"},{"@type":"WebApplication","name":"Calculadora de creatina","url":"https://arnoldwork.com/herramientas/calculadora-creatina/"},{"@type":"WebApplication","name":"Grasa corporal y FFMI","url":"https://arnoldwork.com/herramientas/grasa-corporal-ffmi/"},{"@type":"WebApplication","name":"¿Cuánto músculo puedo ganar?","url":"https://arnoldwork.com/herramientas/cuanto-musculo-puedo-ganar/"},{"@type":"WebApplication","name":"¿Cuándo llegaré a mi peso?","url":"https://arnoldwork.com/herramientas/cuando-llegare-a-mi-peso/"},{"@type":"WebApplication","name":"¿Qué rutina es para ti?","url":"https://arnoldwork.com/herramientas/test-que-rutina-hacer/"},{"@type":"WebApplication","name":"Generador de rutina","url":"https://arnoldwork.com/herramientas/generador-de-rutina/"},{"@type":"WebApplication","name":"Cuaderno de entreno","url":"https://arnoldwork.com/herramientas/cuaderno-de-entreno/"},{"@type":"WebApplication","name":"Sustituto de ejercicio","url":"https://arnoldwork.com/herramientas/sustituto-de-ejercicio/"},{"@type":"WebApplication","name":"Volumen semanal por músculo","url":"https://arnoldwork.com/herramientas/volumen-semanal/"},{"@type":"WebApplication","name":"Recuperación Heavy Duty","url":"https://arnoldwork.com/herramientas/recuperacion-heavy-duty/"},{"@type":"WebApplication","name":"Cronómetro de descansos","url":"https://arnoldwork.com/herramientas/cronometro-descansos/"},{"@type":"WebApplication","name":"Tempo de las repeticiones","url":"https://arnoldwork.com/herramientas/tempo-repeticiones/"}]}</script>
 </head>
 <body>
@@ -57,6 +57,11 @@
   <div class="wrap">
     <h1>Herramientas <em>gratis</em></h1>
     <p class="lede" style="margin-top:20px">21 herramientas para lo que se pregunta cada día en la sala de pesas, hechas por un usuario del gimnasio para todos los demás. Sin registro, sin correo y sin pagar nada: abre, usa y cierra. Funcionan desde el móvil, con el teléfono apoyado en el banco, y lo que escribes se queda en tu teléfono.</p>
+    <a class="destacado-cu" href="/herramientas/cuaderno-de-entreno/">
+      <span class="ico" aria-hidden="true">📓</span>
+      <span class="txt"><b>Tu cuaderno de entreno</b>Apunta tus series por grupo muscular y sácalas en PDF o pásalas a tu calendario.</span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
     <nav class="idx" aria-label="Índice de herramientas">
       <div class="idx-g">
         <span class="idx-t">Fuerza</span>
@@ -653,6 +658,7 @@
     <div class="tool" id="cuaderno">
       <h2><a href="/herramientas/cuaderno-de-entreno/">Cuaderno de entreno</a></h2>
       <p class="hint">Apunta tus series y mira cómo sube cada ejercicio. Se guarda solo en tu móvil: nadie más lo ve y no hace falta registrarse.</p>
+      <a class="cu-saltar" href="#cuExport">📄 Exportar en PDF o pasar al calendario ↓</a>
       <div class="fields">
         <div class="field">
           <label for="cuGrupo">Grupo muscular</label>
@@ -699,7 +705,7 @@
         </table>
       </div>
       <div class="out cu-export" id="cuExport">
-        <h3>Exportar tu cuaderno</h3>
+        <h3>📄 Exportar tu cuaderno</h3>
         <p class="hint">Elige qué quieres sacar y en qué formato. Por cada ejercicio salen tus series y repeticiones de cada día, tu peso máximo y tu mejor marca, ordenados por grupo muscular.</p>
         <div class="fields">
           <div class="field">
@@ -721,6 +727,13 @@
           <button type="button" class="btn btn-ghost btn-sm" id="cuCsv">Excel (CSV)</button>
           <button type="button" class="btn btn-ghost btn-sm" id="cuShare" hidden>Compartir</button>
         </div>
+        <h3 class="cu-cal-t">📅 Pasarlo a tu calendario</h3>
+        <p class="hint">Crea un evento en cada día que entrenaste, con los ejercicios, series, repeticiones y pesos de ese día. Usa el periodo y los grupos de arriba.</p>
+        <div class="acts">
+          <button type="button" class="btn btn-sm" id="cuIcs">Calendario del iPhone u Outlook</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="cuGcal">Google Calendar</button>
+        </div>
+        <p class="cu-nota" id="cuCalNota">En el iPhone, abre el archivo y pulsa «Añadir todo». Google Calendar abre el último día entrenado; para meter todos los días de golpe, descarga el archivo con «Calendario del iPhone u Outlook» e impórtalo en calendar.google.com → Ajustes → Importar.</p>
         <p class="cta-line">¿No sabes si toca subir? Mételo en <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a></p>
       </div>
     </div>
@@ -873,7 +886,7 @@
   </div>
 </footer>
 
-<script src="/herramientas/app.js?v=02bfe03691"></script>
+<script src="/herramientas/app.js?v=4f2d97a7b3"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 <script>

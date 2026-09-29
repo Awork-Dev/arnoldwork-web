@@ -370,7 +370,18 @@
   .cta-line a{color:var(--amber);font-weight:600;text-decoration:none}
   .cta-line a:hover{text-decoration:underline}
   .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .cu-export{scroll-margin-top:90px}
   .cu-export h3{margin:0 0 6px;font-size:1.15rem}
+  .cu-cal-t{margin-top:28px!important;padding-top:20px;border-top:1px dashed var(--rule)}
+  .cu-nota{margin:12px 0 0;color:var(--chalk-dim);font-size:.85rem;max-width:68ch}
+  .cu-saltar{display:inline-block;margin:6px 0 18px;padding:10px 14px;border:1px solid var(--amber);color:var(--chalk);font-weight:700;font-size:.92rem;text-decoration:none}
+  .cu-saltar:hover{background:rgba(222,58,58,.12)}
+  .destacado-cu{display:flex;align-items:center;gap:14px;margin:24px 0 4px;padding:16px 18px;border:2px solid var(--amber);background:rgba(222,58,58,.08);color:var(--chalk);text-decoration:none;max-width:640px}
+  .destacado-cu .ico{font-size:1.8rem;line-height:1}
+  .destacado-cu .txt{display:flex;flex-direction:column;gap:3px;font-size:.92rem;color:var(--chalk-dim);flex:1}
+  .destacado-cu .txt b{color:var(--chalk);font-size:1.05rem}
+  .destacado-cu .go{font-size:1.4rem;color:var(--amber);font-weight:700}
+  .destacado-cu:hover{background:rgba(222,58,58,.16)}
   .cu-grupos{border:0;padding:0;margin:16px 0 0;display:flex;flex-wrap:wrap;gap:8px}
   .cu-grupos legend{font-size:.82rem;font-weight:600;color:var(--chalk-dim);letter-spacing:.02em;margin-bottom:8px;padding:0}
   .cu-grupos label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule-strong);background:var(--ink-3);padding:8px 12px;font-size:.9rem;cursor:pointer;min-height:40px}

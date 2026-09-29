@@ -1059,7 +1059,7 @@
   function resumenExport(){
     if(!$('cuResumen')) return;
     var x = datosExport(true), w = $('cuResumen');
-    ['cuPdf', 'cuTxt', 'cuCsv', 'cuShare'].forEach(function(id){ $(id).disabled = !x; });
+    ['cuPdf', 'cuTxt', 'cuCsv', 'cuShare', 'cuIcs', 'cuGcal'].forEach(function(id){ $(id).disabled = !x; });
     w.textContent = x ? x.dias + (x.dias === 1 ? ' día' : ' días') + ' · ' + x.series + ' series · ' + x.grupos.map(function(g){ return g.g; }).join(', ')
       : (cuad.length ? 'No hay nada apuntado en ese periodo y esos grupos.' : 'Cuando apuntes tus series, podrás exportarlas aquí.');
   }
@@ -1095,6 +1095,47 @@
     });
     out.push('', '', 'Hecho con el cuaderno gratis de arnoldwork.com');
     return out.join('\n') + '\n';
+  }
+  /* Calendario: un evento de día completo por cada día entrenado, con lo que se hizo ese día. */
+  function diasEntreno(x){
+    var porDia = {};
+    x.regs.forEach(function(r){ (porDia[r.d] = porDia[r.d] || []).push(r); });
+    return Object.keys(porDia).sort().map(function(d){
+      var rs = porDia[d], grupos = [];
+      rs.forEach(function(r){ var g = grupoDe(r.e); if(grupos.indexOf(g) < 0) grupos.push(g); });
+      return { d: d, titulo: '💪 Entreno: ' + grupos.join(', '),
+        texto: rs.map(function(r){ return r.e + ': ' + serieTxt(r); }).join('\n') + '\n\nApuntado en el cuaderno de arnoldwork.com' };
+    });
+  }
+  var compacta = function(d){ return d.replace(/-/g, ''); };
+  var diaSig = function(d){ var p = partes(d), t = new Date(Date.UTC(p[0], p[1], p[2] + 1)); return t.toISOString().slice(0, 10).replace(/-/g, ''); };
+  function icsCuaderno(x){
+    var esc = function(t){ return String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); };
+    // Las líneas de un .ics no pueden pasar de 75 bytes: se parten y la continuación empieza con un espacio.
+    var doblar = function(l){
+      var out = [], cur = '', n = 0;
+      Array.from(l).forEach(function(ch){
+        var b = unescape(encodeURIComponent(ch)).length;
+        if(n + b > (out.length ? 74 : 75)){ out.push(cur); cur = ''; n = 0; }
+        cur += ch; n += b;
+      });
+      out.push(cur);
+      return out.join('\r\n ');
+    };
+    var ahora = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ArnoldWork//Cuaderno de entreno//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Entrenos ArnoldWork'];
+    diasEntreno(x).forEach(function(e){
+      L.push('BEGIN:VEVENT', 'UID:cuaderno-' + compacta(e.d) + '@arnoldwork.com', 'DTSTAMP:' + ahora,
+        'DTSTART;VALUE=DATE:' + compacta(e.d), 'DTEND;VALUE=DATE:' + diaSig(e.d),
+        'SUMMARY:' + esc(e.titulo), 'DESCRIPTION:' + esc(e.texto), 'TRANSP:TRANSPARENT', 'END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    return L.map(doblar).join('\r\n') + '\r\n';
+  }
+  function googleCal(x){
+    var dias = diasEntreno(x), e = dias[dias.length - 1];
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.titulo) +
+      '&dates=' + compacta(e.d) + '/' + diaSig(e.d) + '&details=' + encodeURIComponent(e.texto.slice(0, 1500));
   }
   // PDF de verdad, sin librerías: texto en Helvetica (WinAnsi, admite tildes, ñ, × y ·), A4, con salto de página.
   function pdfCuaderno(x){
@@ -1196,6 +1237,14 @@
       var b = $('cuAdd'); b.textContent = 'Apuntado ✓'; setTimeout(function(){ b.textContent = 'Apuntar'; }, 1500);
     });
     on('cuPdf', 'click', function(){ var x = datosExport(); if(x) descargar(new Blob([pdfCuaderno(x)], { type: 'application/pdf' }), x.nombre + '.pdf'); });
+    on('cuIcs', 'click', function(){
+      var x = datosExport(); if(!x) return;
+      var blob = new Blob([icsCuaderno(x)], { type: 'text/calendar;charset=utf-8' });
+      // En el iPhone, abrir el archivo (en vez de guardarlo) hace que Calendario ofrezca «Añadir todo».
+      if(/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) location.href = URL.createObjectURL(blob);
+      else descargar(blob, 'entrenos-arnoldwork.ics');
+    });
+    on('cuGcal', 'click', function(){ var x = datosExport(); if(x) window.open(googleCal(x), '_blank', 'noopener'); });
     on('cuTxt', 'click', function(){ var x = datosExport(); if(x) descargar(new Blob([txtCuaderno(x)], { type: 'text/plain;charset=utf-8' }), x.nombre + '.txt'); });
     if(navigator.canShare && window.File && navigator.canShare({ files: [new File(['x'], 'x.pdf', { type: 'application/pdf' })] })){
       $('cuShare').hidden = false;

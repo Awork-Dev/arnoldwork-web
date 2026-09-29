@@ -123,6 +123,11 @@ def portada(v_css, v_js):
   <div class="wrap">
     <h1>Herramientas <em>gratis</em></h1>
     <p class="lede" style="margin-top:20px">{NUMEROS.get(n, str(n)).capitalize()} herramientas para lo que se pregunta cada día en la sala de pesas, hechas por un usuario del gimnasio para todos los demás. Sin registro, sin correo y sin pagar nada: abre, usa y cierra. Funcionan desde el móvil, con el teléfono apoyado en el banco, y lo que escribes se queda en tu teléfono.</p>
+    <a class="destacado-cu" href="/herramientas/cuaderno-de-entreno/">
+      <span class="ico" aria-hidden="true">📓</span>
+      <span class="txt"><b>Tu cuaderno de entreno</b>Apunta tus series por grupo muscular y sácalas en PDF o pásalas a tu calendario.</span>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
     <nav class="idx" aria-label="Índice de herramientas">
 {indice(lambda h: "#" + h["pieza"])}
     </nav>
