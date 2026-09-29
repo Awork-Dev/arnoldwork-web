@@ -1288,7 +1288,7 @@
     (function(){
       var sg = $('cuGrupo'), o = document.createElement('option'); o.value = ''; o.textContent = 'Todos'; sg.appendChild(o);
       GRUPOS.forEach(function(g){ var op = document.createElement('option'); op.value = g; op.textContent = g; sg.appendChild(op); });
-      sg.value = sget('cuGrupo') || '';
+      sg.value = '';   // siempre empieza en «Todos»: el grupo lo elige cada uno
       var fs = $('cuGrupos');
       GRUPOS.forEach(function(g){
         var l = document.createElement('label'), c = document.createElement('input');
@@ -1296,7 +1296,7 @@
         l.appendChild(c); l.appendChild(document.createTextNode(' ' + g)); fs.appendChild(l);
       });
     })();
-    on('cuGrupo', 'change', function(){ sset('cuGrupo', $('cuGrupo').value); pintaCuad(); pintaSugs(); });
+    on('cuGrupo', 'change', function(){ pintaCuad(); pintaSugs(); });
     // Al elegir un ejercicio conocido, se pone solo su grupo.
     on('cuEj', 'change', function(){ var e = normal($('cuEj').value); if(e && (ejercicios().concat(BASE_EJ).some(function(x){ return clave(x) === clave(e); }))) $('cuGrupo').value = grupoDe(e); });
     $('cuDia').value = hoyISO();
