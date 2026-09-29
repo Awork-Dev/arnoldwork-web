@@ -24,6 +24,10 @@
       <input id="cuPeso" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Ej.: 60 (0 sin peso)">
     </div>
     <div class="field">
+      <label for="cuPesoUlt">Peso última serie (kg)</label>
+      <input id="cuPesoUlt" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Opcional: si subiste">
+    </div>
+    <div class="field">
       <label for="cuReps">Repeticiones</label>
       <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="Ej.: 10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
     </div>
@@ -45,6 +49,7 @@
     </div>
     <div class="big" id="cuOut" style="margin-top:18px">—<small id="cuSub">Todavía no has apuntado nada</small></div>
     <canvas class="graf" id="cuGraf" width="800" height="260" hidden aria-label="Gráfica de tu progreso"></canvas>
+    <p class="cu-nota"><button type="button" class="linkbtn" id="cuBorrarTodo">Borrar todo el cuaderno</button> (por ejemplo, después de hacer pruebas)</p>
     <table class="pct hist" id="cuTabla" hidden>
       <thead><tr><th scope="col">Fecha</th><th scope="col">Serie</th><th scope="col">1RM est.</th><th scope="col"><span class="sr">Borrar</span></th></tr></thead>
       <tbody></tbody>
@@ -57,9 +62,9 @@
       <div class="field">
         <label for="cuPeriodo">Periodo</label>
         <select id="cuPeriodo">
-          <option value="1">Hoy</option>
+          <option value="1" selected>Hoy</option>
           <option value="7">Últimos 7 días</option>
-          <option value="30" selected>Últimos 30 días</option>
+          <option value="30">Últimos 30 días</option>
           <option value="90">Últimos 3 meses</option>
           <option value="0">Todo</option>
         </select>

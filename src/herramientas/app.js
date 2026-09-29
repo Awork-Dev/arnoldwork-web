@@ -1046,6 +1046,16 @@
     if(n.length > 20 || n.some(function(v){ return v < 1 || v > 50; })) return null;
     return n;
   }
+  // La mejor serie de un apunte: con el mismo peso, la de más repeticiones; si subió el peso en la última serie,
+  // también cuenta esa (peso de la última × sus repeticiones). Devuelve {w, r, e} con e = 1RM estimado.
+  function mejorSerie(x){
+    var a = { w: x.w, r: x.r, e: est(x.w, Math.min(x.r, 12)) };
+    if(x.wu > x.w){
+      var ru = x.rs ? x.rs[x.rs.length - 1] : x.r, b = { w: x.wu, r: ru, e: est(x.wu, Math.min(ru, 12)) };
+      if(b.e >= a.e) return b;
+    }
+    return a;
+  }
   var totalReps = function(x){ return x.rs ? x.rs.reduce(function(t, v){ return t + v; }, 0) : x.s * x.r; };
   // Grupo de un ejercicio: el que se eligió al apuntarlo o, si es de los habituales, el suyo.
   function grupoDe(nombre){
@@ -1057,7 +1067,7 @@
   function pintaGraf(regs){
     var c = $('cuGraf'), x = c.getContext('2d');
     var dias = {}, orden = [];
-    regs.forEach(function(r){ var v = est(r.w, Math.min(r.r, 12)); if(!(r.d in dias)){ dias[r.d] = v; orden.push(r.d); } else dias[r.d] = Math.max(dias[r.d], v); });
+    regs.forEach(function(r){ var v = mejorSerie(r).e; if(!(r.d in dias)){ dias[r.d] = v; orden.push(r.d); } else dias[r.d] = Math.max(dias[r.d], v); });
     orden.sort();
     c.hidden = orden.length < 2;
     if(orden.length < 2) return;
@@ -1100,15 +1110,15 @@
       out.textContent = '—'; out.appendChild(sub); sub.textContent = 'Todavía no has apuntado nada'; tabla.hidden = true; $('cuGraf').hidden = true; return;
     }
     var ordenados = regs.slice().sort(function(a, b){ return a.d < b.d ? 1 : a.d > b.d ? -1 : b.id - a.id; });
-    var mejor = regs.reduce(function(m, x){ return est(x.w, Math.min(x.r, 12)) > est(m.w, Math.min(m.r, 12)) ? x : m; });
+    var mejor = mejorSerie(regs.reduce(function(m, x){ return mejorSerie(x).e > mejorSerie(m).e ? x : m; }));
     var primero = regs.slice().sort(function(a, b){ return a.d < b.d ? -1 : a.d > b.d ? 1 : a.id - b.id; })[0];
-    var eM = est(mejor.w, Math.min(mejor.r, 12)), eP = est(primero.w, Math.min(primero.r, 12));
+    var eM = mejor.e, eP = mejorSerie(primero).e;
     out.textContent = kg(r05(eM)); out.appendChild(sub);
     var sube = eP > 0 ? Math.round((eM / eP - 1) * 100) : 0;
     sub.textContent = 'Tu mejor marca: ' + kg(mejor.w) + ' × ' + mejor.r + ' (1RM estimado)' + (sube > 0 ? ' · +' + sube + ' % desde el ' + fechaTxt(primero.d) : '');
     ordenados.slice(0, 40).forEach(function(x){
       var tr = document.createElement('tr');
-      [fechaTxt(x.d), kg(x.w) + ' × ' + (x.rs ? x.rs.join('-') : x.r) + (x.s > 1 ? ' · ' + x.s + ' series' : ''), kg(r05(est(x.w, Math.min(x.r, 12))))].forEach(function(v){
+      [fechaTxt(x.d), kg(x.w) + (x.wu ? ' → ' + kg(x.wu) : '') + ' × ' + (x.rs ? x.rs.join('-') : x.r) + (x.s > 1 ? ' · ' + x.s + ' series' : ''), kg(r05(mejorSerie(x).e))].forEach(function(v){
         var td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
       });
       var td = document.createElement('td'), b = document.createElement('button');
@@ -1160,9 +1170,9 @@
       delG.forEach(function(x){ if(nombres.map(clave).indexOf(clave(x.e)) < 0) nombres.push(x.e); });
       grupos.push({ g: g, ejercicios: nombres.map(function(n){
         var rs = delG.filter(function(x){ return clave(x.e) === clave(n); });
-        var max = rs.reduce(function(m, x){ return Math.max(m, x.w); }, 0);
-        var mejor = rs.reduce(function(m, x){ return est(x.w, Math.min(x.r, 12)) > est(m.w, Math.min(m.r, 12)) ? x : m; });
-        return { nombre: n, regs: rs, max: max, mejor: mejor, rm: r05(est(mejor.w, Math.min(mejor.r, 12))),
+        var max = rs.reduce(function(m, x){ return Math.max(m, x.wu || 0, x.w); }, 0);
+        var mejor = mejorSerie(rs.reduce(function(m, x){ return mejorSerie(x).e > mejorSerie(m).e ? x : m; }));
+        return { nombre: n, regs: rs, max: max, mejor: mejor, rm: r05(mejor.e),
           series: rs.reduce(function(t, x){ return t + x.s; }, 0), reps: rs.reduce(function(t, x){ return t + totalReps(x); }, 0) };
       }) });
     });
@@ -1180,7 +1190,7 @@
   }
   // Con 0 kg es un ejercicio con el propio cuerpo (dominadas, fondos, plancha…).
   var pesoTxt = function(w){ return w > 0 ? kg(w) : 'peso corporal'; };
-  var serieTxt = function(x){ return (x.rs ? x.rs.join('-') : (x.s > 1 ? x.s + ' × ' : '') + x.r) + ' reps · ' + pesoTxt(x.w); };
+  var serieTxt = function(x){ return (x.rs ? x.rs.join('-') : (x.s > 1 ? x.s + ' × ' : '') + x.r) + ' reps · ' + pesoTxt(x.w) + (x.wu ? ' (última serie: ' + kg(x.wu) + ')' : ''); };
   function lineasCuaderno(x){
     // [tipo, texto]: t = título, s = subtítulo, g = grupo, e = ejercicio, l = línea normal, n = nota
     var L = [['t', 'Cuaderno de entreno'], ['s', x.periodo + ' · del ' + fechaTxt(x.desde) + ' al ' + fechaTxt(x.hasta)],
@@ -1337,6 +1347,11 @@
     // Al elegir un ejercicio conocido, se pone solo su grupo.
     on('cuEj', 'change', function(){ var e = normal($('cuEj').value); if(e && (ejercicios().concat(BASE_EJ).some(function(x){ return clave(x) === clave(e); }))) $('cuGrupo').value = grupoDe(e); });
     on('cuPeriodo', 'change', resumenExport);
+    on('cuBorrarTodo', 'click', function(){
+      if(!cuad.length){ window.alert('El cuaderno ya está vacío.'); return; }
+      if(!window.confirm('¿Borrar todo lo apuntado en el cuaderno? No se puede deshacer. Si quieres guardarlo antes, expórtalo.')) return;
+      cuad = []; guardaCuad(); $('cuOk').textContent = ''; pintaCuad(); pintaSugs(); resumenExport();
+    });
     on('cuReps', 'input', function(){
       var ra = leeReps($('cuReps').value), sr = $('cuSeries'), varias = !!(ra && ra.length > 1);
       if(varias) sr.value = ra.length;
@@ -1360,11 +1375,13 @@
       var igual = ejercicios().filter(function(x){ return clave(x) === clave(e); })[0];
       var reg = { id: Date.now(), e: igual || e, g: $('cuGrupo').value || grupoDe(igual || e), d: d, w: w, r: r, s: Math.max(1, Math.min(20, s)) };
       if(ra.length > 1) reg.rs = ra;
+      var ult = $('cuPesoUlt').value.trim().replace(',', '.');
+      if(ult !== '' && Number(ult) > w && Number(ult) <= 500) reg.wu = Number(ult);
       cuad.push(reg);
       if(cuad.length > 3000) cuad = cuad.slice(-3000);
       guardaCuad();
       $('cuVer').value = igual || e; sset('cuVer', igual || e);
-      $('cuReps').value = ''; $('cuSeries').disabled = false;
+      $('cuReps').value = ''; $('cuPesoUlt').value = ''; $('cuSeries').disabled = false;
       pintaCuad(); resumenExport(); pintaSugs();
       $('cuOk').textContent = '✓ Apuntado: ' + reg.e + ' · ' + serieTxt(reg) + ' · ' + fechaTxt(reg.d);
       var b = $('cuAdd'); b.textContent = 'Apuntado ✓'; setTimeout(function(){ b.textContent = 'Apuntar'; }, 1500);
@@ -1392,9 +1409,9 @@
       var esc = function(v){ v = String(v); return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
       var filas = [['Fecha', 'Ejercicio', 'Peso (kg)', 'Repeticiones', 'Series', '1RM estimado (kg)']].concat(
         x.regs.map(function(x){
-          return [x.d, x.e, grupoDe(x.e), String(x.w).replace('.', ','), x.rs ? x.rs.join('-') : x.r, x.s, String(r05(est(x.w, Math.min(x.r, 12)))).replace('.', ',')];
+          return [x.d, x.e, grupoDe(x.e), String(x.w).replace('.', ','), x.wu ? String(x.wu).replace('.', ',') : '', x.rs ? x.rs.join('-') : x.r, x.s, String(r05(mejorSerie(x).e)).replace('.', ',')];
         }));
-      filas[0].splice(2, 0, 'Grupo');
+      filas[0].splice(2, 0, 'Grupo'); filas[0].splice(4, 0, 'Peso última serie (kg)');
       descargar(new Blob(['﻿' + filas.map(function(f){ return f.map(esc).join(';'); }).join('\n')], { type: 'text/csv;charset=utf-8' }), x.nombre + '.csv');
     });
     pintaCuad();
