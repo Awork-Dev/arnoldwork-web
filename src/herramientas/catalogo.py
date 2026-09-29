@@ -9,6 +9,13 @@ GRUPOS = [
     ("entreno", "Organiza el entreno"),
 ]
 
+# Icono y frase de cada grupo (el recuadro del índice).
+GRUPOS_INFO = {
+    "fuerza": ("🏋️", "Cuánto levantas, con qué peso entrenar hoy y cuándo toca subir."),
+    "cuerpo": ("🥩", "Qué comer, cuánta proteína y creatina, y hasta dónde puede cambiar tu cuerpo."),
+    "entreno": ("🗓️", "Qué rutina hacer, cómo apuntarla y cuánto descansar entre series y entrenos."),
+}
+
 HERRAMIENTAS = [
     {
         "pieza": "rm",

@@ -25,7 +25,7 @@ DOMINIO = "https://arnoldwork.com"
 AMOR = "Made with love from Mallorca"   # firma de las tarjetas al compartir
 
 sys.path.insert(0, os.path.join(SRC, "herramientas"))
-from catalogo import GRUPOS, HERRAMIENTAS  # noqa: E402
+from catalogo import GRUPOS, GRUPOS_INFO, HERRAMIENTAS  # noqa: E402
 
 NUMEROS = {n: p for n, p in enumerate(
     "cero una dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince "
@@ -68,8 +68,13 @@ def indice(enlace, sin=None):
         hs = [h for h in HERRAMIENTAS if h["grupo"] == gid and h is not sin]
         if not hs:
             continue
-        enlaces = "\n".join(f'        <a href="{enlace(h)}">{h["nombre"]}</a>' for h in hs)
-        bloques.append(f'      <div class="idx-g">\n        <span class="idx-t">{gnombre}</span>\n{enlaces}\n      </div>')
+        ico, desc = GRUPOS_INFO[gid]
+        enlaces = "\n".join(f'          <a href="{enlace(h)}">{h["nombre"]}</a>' for h in hs)
+        bloques.append(
+            f'      <div class="idx-g">\n'
+            f'        <div class="idx-cab"><span class="idx-ico" aria-hidden="true">{ico}</span>'
+            f'<span class="idx-txt"><span class="idx-t">{gnombre}</span><span class="idx-d">{desc}</span></span></div>\n'
+            f'        <div class="idx-l">\n{enlaces}\n        </div>\n      </div>')
     return "\n".join(bloques)
 
 
