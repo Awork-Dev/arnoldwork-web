@@ -284,12 +284,22 @@ async function resumenDiario(env) {
 
 // Noticias y estudios de la semana: dos mensajes a Telegram (hipertrofia y Heavy Duty, sin repetir
 // lo ya enviado) y lo mismo, actualizado, para las webs (GET /noticias.json).
-async function noticiasSemana(env, enviar = true) {
+// Si alguna fuente no responde, no se manda nada todavía: se vuelve a intentar cada media hora (hasta 4 intentos
+// en total) y solo el último se envía como esté, avisando de lo que faltó.
+const NOTICIAS_INTENTOS = 4;
+async function noticiasSemana(env, enviar = true, intento = 1) {
   const m = memoria(env);
   const datos = await recoger();
   const vistas = (m && await m.leer("noticiasVistas")) || [];
   const { mensajes, nuevas } = mensajesTelegram(datos, vistas);
   if (m) await m.guardar("noticiasWeb", paraWeb(datos, (await m.leer("noticiasWeb")) || {}));
+  if (enviar && m) {
+    if (datos.errores.length && intento < NOTICIAS_INTENTOS) {
+      await m.guardar("noticiasPendiente", { intento: intento + 1, desde: Date.now() });
+      return [];
+    }
+    await m.guardar("noticiasPendiente", null);
+  }
   if (enviar) {
     for (const t of mensajes) await enviarTelegram(env, t, "HTML");
     if (m) {
@@ -455,6 +465,12 @@ export default {
       return;
     }
     if (event.cron === "30 7 * * 1") return resumenSemanal(env);
+    // ¿Quedaron noticias de la semana sin mandar porque alguna fuente no respondió? Se reintentan aparte,
+    // para no retrasar la revisión de las webs.
+    ctx.waitUntil((async () => {
+      const m = memoria(env), pendiente = m && await m.leer("noticiasPendiente");
+      if (pendiente) await noticiasSemana(env, true, pendiente.intento);
+    })().catch(e => console.log("noticias (reintento): " + e.message)));
     return revisionCadaMediaHora(env);
   },
 

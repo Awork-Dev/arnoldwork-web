@@ -45,12 +45,30 @@ export const BLOQUES = [
 const MAX_ESTUDIOS = 4, MAX_NOTICIAS = 4;
 
 const espera = ms => new Promise(r => setTimeout(r, ms));
+// Pide una URL con paciencia: si la fuente está saturada (429, 5xx) o no contesta, espera cada vez más
+// (2, 5 y 12 s, o lo que pida en Retry-After, hasta 20 s) y lo vuelve a intentar, hasta 4 veces.
+export const PAUSAS = [2000, 5000, 12000];
+async function pedir(url, headers, nombre) {
+  let ultimo = "";
+  for (let i = 0; i <= PAUSAS.length; i++) {
+    try {
+      const r = await fetch(url, { headers, signal: AbortSignal.timeout(10000) });
+      if (r.ok) return r;
+      ultimo = `${r.status} en ${nombre}`;
+      if (r.status !== 429 && r.status < 500) break;   // un 404 o un 400 no se arregla esperando
+      const pide = Number(r.headers.get("Retry-After")) * 1000;
+      if (i < PAUSAS.length) await espera(Math.min(20000, pide > 0 ? pide : PAUSAS[i]));
+    } catch (e) {
+      ultimo = `${e && e.name === "TimeoutError" ? "sin respuesta" : "error de red"} en ${nombre}`;
+      if (i < PAUSAS.length) await espera(PAUSAS[i]);
+    }
+  }
+  throw new Error(ultimo);
+}
 // PubMed admite 3 peticiones por segundo sin clave: se hacen de una en una y con pausa.
 async function json(url) {
   await espera(450);
-  const r = await fetch(url, { headers: { "User-Agent": "ArnoldWork-vigilante/1.0" }, signal: AbortSignal.timeout(10000) });
-  if (!r.ok) throw new Error(`${r.status} en ${new URL(url).host}`);
-  return r.json();
+  return (await pedir(url, { "User-Agent": "ArnoldWork-vigilante/1.0" }, new URL(url).host)).json();
 }
 
 // Estudios publicados en PubMed en las dos últimas semanas (los ya enviados no se repiten), los más relevantes primero.
@@ -71,13 +89,8 @@ async function estudios(termino) {
 async function noticias({ q, idioma }) {
   const pais = idioma === "es" ? "hl=es&gl=ES&ceid=ES:es" : "hl=en-US&gl=US&ceid=US:en";
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q + " when:7d")}&${pais}`;
-  let r;
-  for (let intento = 0; intento < 2; intento++) {   // Google a veces responde 429/503: se reintenta una vez
-    await espera(intento ? 1500 : 300);
-    r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; ArnoldWork-vigilante/1.0)", "Accept": "application/rss+xml, application/xml" }, signal: AbortSignal.timeout(10000) });
-    if (r.ok) break;
-  }
-  if (!r.ok) throw new Error(`${r.status} en Google Noticias`);
+  await espera(300);
+  const r = await pedir(url, { "User-Agent": "Mozilla/5.0 (compatible; ArnoldWork-vigilante/1.0)", "Accept": "application/rss+xml, application/xml" }, "Google Noticias");
   const xml = await r.text();
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, it]) => {
     const campo = n => limpia((it.match(new RegExp(`<${n}[^>]*>([\\s\\S]*?)</${n}>`)) || [])[1] || "");
@@ -111,13 +124,15 @@ const clave = t => t.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "").sl
 // Busca en todas las fuentes. Devuelve, por sección, los estudios y noticias más recientes (sin filtrar).
 export async function recoger() {
   const secciones = [], errores = [];
+  // Todo de una en una (no a la vez): así ninguna fuente recibe ráfagas y es más difícil que diga «demasiadas peticiones».
   for (const b of BLOQUES) {
-    const [est, not] = await Promise.all([
-      estudios(b.estudios).catch(e => { errores.push("PubMed: " + e.message); return []; }),
-      (async () => { const l = []; for (const n of b.noticias) l.push(...await noticias(n).catch(e => { errores.push("Noticias: " + e.message); return []; })); return l; })(),
-    ]);
+    const fallos = [];
+    const est = await estudios(b.estudios).catch(e => { fallos.push("PubMed: " + e.message); return []; });
+    const not = [];
+    for (const n of b.noticias) not.push(...await noticias(n).catch(e => { fallos.push("Noticias: " + e.message); return []; }));
     const unicos = lista => { const v = new Set(); return lista.filter(x => !v.has(x.id) && v.add(x.id)); };
-    secciones.push({ clave: b.clave, titulo: b.titulo, estudios: unicos(est), noticias: distintas(unicos(not)) });
+    secciones.push({ clave: b.clave, titulo: b.titulo, estudios: unicos(est), noticias: distintas(unicos(not)), fallos: [...new Set(fallos)] });
+    errores.push(...fallos);
   }
   return { secciones, errores: [...new Set(errores)] };
 }
@@ -133,13 +148,14 @@ export function mensajesTelegram({ secciones, errores }, vistas = []) {
     const l = [`<b>📰 ${html(b.titulo)}</b>`, "Noticias y estudios de la semana"];
     if (e.length) { l.push("", "<b>Estudios nuevos</b> (en inglés):"); e.forEach(x => l.push(enlace(x))); }
     if (n.length) { l.push("", "<b>En los medios:</b>"); n.forEach(x => l.push(enlace(x))); }
-    if (!e.length && !n.length) l.push("", "Esta semana no hay nada nuevo.");
+    const fallos = b.fallos || [];
+    if (!e.length && !n.length) l.push("", fallos.length ? "No se ha podido consultar todo: faltan fuentes por responder." : "Esta semana no hay nada nuevo.");
+    if (fallos.length) l.push("", "⚠️ No respondió: " + html(fallos.join("; ")));
     l.push("", b.clave === "hipertrofia" ? "🌐 También en arnoldwork.com" : "🌐 También en heavywork.arnoldwork.com");
     let t = l.join("\n");
     while (t.length > 4000 && t.includes("\n•")) t = t.slice(0, t.lastIndexOf("\n•"));   // límite de Telegram
     mensajes.push(t);
   }
-  if (errores.length) mensajes[mensajes.length - 1] += "\n\n⚠️ Alguna fuente no respondió: " + html(errores.join("; "));
   return { mensajes, nuevas: nuevas.map(x => x.id) };
 }
 
