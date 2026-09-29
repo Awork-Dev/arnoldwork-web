@@ -266,18 +266,19 @@ HERRAMIENTAS = [
         "grupo": "entreno",
         "nombre": "Tempo",
         "titulo": "Metrónomo de tempo para las repeticiones (4-0-4 y más)",
-        "descripcion": "Marca el ritmo de cada repetición con pitidos: segundos al bajar, pausa y subir. Ideal para Heavy Duty (4 segundos arriba y 4 abajo).",
+        "descripcion": "Marca el ritmo de cada repetición con pitidos: segundos al bajar, pausa y subir. Para que cada serie sea controlada y comparable de una sesión a otra.",
         "h1": "Tempo de las repeticiones",
         "intro": "Te marca el ritmo de cada repetición con pitidos, para que no aceleres cuando quema. Configura los segundos de bajada, pausa y subida.",
         "articulo": """
 <h2>Qué es el tempo</h2>
 <p>El tempo es la velocidad a la que haces cada fase de la repetición. Se escribe con números: <strong>4-0-4</strong> significa cuatro segundos bajando, sin pausa y cuatro subiendo.</p>
 <p>Controlar el tempo evita que el peso lo mueva la inercia y hace que la serie sea comparable de una sesión a otra: si un día subes más rápido, no has mejorado, has hecho trampa.</p>
-<h2>Heavy Duty</h2>
-<p>En Heavy Duty se trabaja a 4 segundos arriba y 4 abajo, hasta el fallo. Si llegas al fallo antes de acabar las repeticiones, dale a parar: eso es exactamente lo que buscas.</p>
+<h2>Cómo usarlo</h2>
+<p>Elige los segundos de cada fase y las repeticiones, dale a empezar y sigue los pitidos. Para ganar músculo, un buen punto de partida es <strong>2 a 3 segundos bajando</strong> y subir con fuerza pero sin tirones. Si en la serie te pasas de las repeticiones con facilidad, el peso se te ha quedado corto: súbelo la próxima vez.</p>
 """,
         "faq": [
             ("¿Qué tempo es mejor para hipertrofia?", "Cualquier tempo controlado entre 2 y 4 segundos por fase funciona. Lo importante es no dejar caer el peso y mantener el mismo ritmo cada sesión."),
+            ("¿Más lento es mejor?", "No necesariamente. Ir muy lento obliga a bajar tanto el peso que el músculo recibe menos estímulo. Controla la bajada y sube con decisión: más lento no es más músculo."),
         ],
     },
 ]
