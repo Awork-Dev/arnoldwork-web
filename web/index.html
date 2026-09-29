@@ -492,13 +492,20 @@
   .typing span:nth-child(2){animation-delay:.2s}
   .typing span:nth-child(3){animation-delay:.4s}
   @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
-.sol{margin-top:18px;border:2px solid currentColor;padding:14px;display:grid;gap:10px;max-width:560px}
-.sol-cab{display:grid;gap:2px}.sol-cab b{font-size:1.05rem}.sol-cab span{font-size:.92rem;opacity:.8}
-.sol-dir{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;overflow-wrap:anywhere;word-break:break-all;padding:8px;border:1px dashed currentColor;user-select:all}
-.sol-btns{display:flex;flex-wrap:wrap;gap:8px}
-.sol-btns button,.sol-btns a{font:inherit;font-weight:700;font-size:.92rem;padding:9px 14px;border:2px solid currentColor;background:transparent;color:inherit;cursor:pointer;text-decoration:none}
-.sol-btns button:hover,.sol-btns a:hover{background:rgba(128,128,128,.15)}
-.sol-nota{margin:0;font-size:.82rem;opacity:.8}
+.sol{--sol-bg:#0E0E16;--sol-fg:#F5F5FA;--sol-dim:#A3A3B8;margin-top:22px;max-width:560px;display:grid;gap:14px;padding:18px;color:var(--sol-fg);text-align:left;
+  background:linear-gradient(var(--sol-bg),var(--sol-bg)) padding-box,linear-gradient(135deg,#9945FF,#14F195) border-box;border:2px solid transparent;border-radius:16px;box-shadow:0 10px 30px rgba(153,69,255,.25)}
+.sol-cab{display:flex;align-items:center;gap:12px}.sol-logo{width:38px;height:auto;flex:none}
+.sol-cab b{display:block;font-size:1.15rem;letter-spacing:-.01em;color:var(--sol-fg)}.sol-cab span{display:block;font-size:.9rem;color:var(--sol-dim);line-height:1.4}
+.sol-dirbox{display:grid;gap:4px;background:#191926;border-radius:10px;padding:10px 12px}
+.sol-red{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#14F195}
+.sol-dir{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;color:var(--sol-fg);word-break:break-all;user-select:all;background:none;padding:0}
+.sol-btns{display:flex;flex-wrap:wrap;gap:10px}
+.sol-btns a,.sol-btns button{flex:1 1 150px;display:inline-flex;justify-content:center;align-items:center;min-height:46px;padding:0 16px;border-radius:999px;font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;text-decoration:none;border:0}
+.sol-pri{background:linear-gradient(90deg,#9945FF,#14F195);color:#0E0E16}
+.sol-sec{background:#23233A;color:var(--sol-fg)}
+.sol-pri:hover{filter:brightness(1.08)}.sol-sec:hover{background:#2E2E4A}
+.sol-btns a:focus-visible,.sol-btns button:focus-visible{outline:2px solid #14F195;outline-offset:2px}
+.sol-nota{margin:0;font-size:.8rem;color:var(--sol-dim)}
 </style>
 <style>
   /* ================= v10 · comunidad ================= */
@@ -986,17 +993,17 @@
           <a class="free-amt" href="https://paypal.me/Xarlyds" target="_blank" rel="noopener" data-batido><b>Lo que tú quieras</b><span>tú eliges</span></a>
         </div>
         <div class="sol" id="sol">
-          <div class="sol-cab"><b>◎ Invita en SOL</b><span>¿Prefieres cripto? Mándalo desde tu cartera de Solana.</span></div>
-          <code class="sol-dir" id="solDir">A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd</code>
+          <div class="sol-cab"><svg class="sol-logo" viewBox="0 0 398 312" aria-hidden="true"><defs><linearGradient id="solG" x1="360" y1="-37" x2="141" y2="383" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00FFA3"/><stop offset="1" stop-color="#DC1FFF"/></linearGradient></defs><path fill="url(#solG)" d="M64.6 237.9a13 13 0 0 1 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7a13 13 0 0 1-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1zM64.6 3.8A13.4 13.4 0 0 1 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7a13 13 0 0 1-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1zM333.1 120.1a13 13 0 0 0-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7a13 13 0 0 0 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1z"/></svg><div><b>Invita en SOL</b><span>¿Prefieres cripto? Mándalo desde tu cartera de Solana.</span></div></div>
+          <div class="sol-dirbox"><span class="sol-red">Red Solana</span><code class="sol-dir" id="solDir">A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd</code></div>
           <div class="sol-btns">
-            <button type="button" id="solCopiar">Copiar dirección</button>
-            <a href="solana:A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd?label=ArnoldWork&amp;message=Un%20batido%20para%20ArnoldWork">Abrir mi cartera</a>
+            <a class="sol-pri" href="solana:A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd?label=ArnoldWork&amp;message=Un%20batido%20para%20ArnoldWork">Abrir mi cartera</a>
+            <button type="button" class="sol-sec" id="solCopiar">Copiar dirección</button>
           </div>
-          <p class="sol-nota" id="solMsg" aria-live="polite">Red Solana. Envía solo SOL a esta dirección.</p>
+          <p class="sol-nota" id="solMsg" aria-live="polite">Phantom, Solflare o Backpack. Envía solo SOL a esta dirección.</p>
         </div>
         <script>
         (()=>{const b=document.getElementById('solCopiar'),d=document.getElementById('solDir'),m=document.getElementById('solMsg');
-        b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(d.textContent.trim());m.textContent='Dirección copiada. ¡Gracias por el batido!';}
+        b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(d.textContent.trim());b.textContent='¡Copiada!';m.textContent='Dirección copiada. ¡Gracias por el batido!';setTimeout(()=>b.textContent='Copiar dirección',2500);}
         catch(e){const r=document.createRange();r.selectNodeContents(d);const s=getSelection();s.removeAllRanges();s.addRange(r);m.textContent='Dirección seleccionada: cópiala con el menú.';}});})();
         </script>
         <p class="shake-note">El pago se hace en PayPal o en SOL. No desbloquea nada: todo sigue siendo gratis para todo el mundo.</p>

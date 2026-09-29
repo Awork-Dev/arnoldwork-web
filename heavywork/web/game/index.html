@@ -146,6 +146,13 @@ button,input,a{font:inherit;color:inherit}
 .iniciales{display:flex;gap:8px;align-items:stretch;margin-bottom:8px}
 .iniciales input{width:100%;min-width:0;height:56px;background:#000;border:3px solid var(--oro);color:var(--oro);font-size:24px;text-align:center;letter-spacing:10px;text-transform:uppercase;-webkit-user-select:text;user-select:text}
 .error{color:#ff7a70;font-size:9px;min-height:1.4em;margin:0 0 8px}
+.sol-juego{display:grid;gap:8px;padding:12px;border:3px solid transparent;background:linear-gradient(#120d1c,#120d1c) padding-box,linear-gradient(135deg,#9945FF,#14F195) border-box;box-shadow:0 4px 0 #000}
+.sol-juego-red{font-size:8px;color:#14F195;text-align:center}
+.sol-juego-dir{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#F5F5FA;word-break:break-all;text-align:center;-webkit-user-select:all;user-select:all}
+.sol-juego-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sol-juego .btn{min-height:42px;font-size:9px;box-shadow:none}
+.sol-juego-pri{background:linear-gradient(90deg,#9945FF,#14F195);border-color:#14F195;color:#120d1c}
+.sol-juego-sec{background:#231935;border-color:#9945FF;color:#F5F5FA}
 .btn-dona{background:#fff;border-color:#fff;color:#b31d1d}
 .btn-dona .corazon{color:var(--rojo)}
 .deuda .btn{margin-top:10px}
@@ -444,6 +451,14 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
     <p class="suave" data-t="donarTxt2">Cada partida suma 0,10 $ de deuda simbólica al contador. Nadie tiene que pagarla. Pero si te lo has pasado bien y quieres más juegos y herramientas gratis, puedes invitar al desarrollador a un batido.</p>
     <div class="pila">
       <a class="btn btn-dona btn-grande" data-paypal href="#" target="_blank" rel="noopener"><span class="corazon">♥</span> <span data-t="donarPaypal">DONAR CON PAYPAL</span></a>
+      <div class="sol-juego">
+        <span class="sol-juego-red" data-t="solRed">O EN SOL · RED SOLANA</span>
+        <code class="sol-juego-dir" id="solDirJuego">A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd</code>
+        <div class="sol-juego-btns">
+          <a class="btn sol-juego-pri" href="solana:A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd?label=CaveWork&amp;message=Un%20batido%20para%20el%20desarrollador" data-t="solAbrir">ABRIR CARTERA</a>
+          <button type="button" class="btn sol-juego-sec" id="solCopiarJuego" data-t="solCopiar">COPIAR</button>
+        </div>
+      </div>
       <button type="button" class="btn" data-volver data-t="volver">VOLVER</button>
     </div>
     <p class="suave" style="font-size:8px;margin:12px 0 0" data-t="donarNota">Las donaciones son voluntarias y no desbloquean nada. ¡Gracias!</p>
@@ -525,6 +540,7 @@ const TXT = {
     nombre:'NOMBRE', puntos:'PUNTOS', volver:'VOLVER', apoya:'APOYA LA CUEVA',
     donarTxt1:'CaveWork es gratis. Para siempre. Está hecho para la comunidad de ArnoldWork, como el resto de herramientas de entrenamiento.',
     donarTxt2:'Cada partida suma 0,10 $ de deuda simbólica al contador. Nadie tiene que pagarla. Pero si te lo has pasado bien y quieres más juegos y herramientas gratis, puedes invitar al desarrollador a un batido.',
+    solRed:'O EN SOL · RED SOLANA', solAbrir:'ABRIR CARTERA', solCopiar:'COPIAR', solCopiado:'¡COPIADA!',
     donarPaypal:'DONAR CON PAYPAL', donarNota:'Las donaciones son voluntarias y no desbloquean nada. ¡Gracias!',
     opinionTit:'ENVÍA TU OPINIÓN', opinionTxt:'Ideas, fallos, dinos que te gustaría aplastar... Tu mensaje le llega en privado al desarrollador. No se publica.',
     tuMensaje:'TU MENSAJE', inicialesOpc:'INICIALES (OPCIONAL)', enviar:'ENVIAR', enviando:'ENVIANDO...',
@@ -604,6 +620,7 @@ const TXT = {
     nombre:'NAME', puntos:'SCORE', volver:'BACK', apoya:'SUPPORT THE CAVE',
     donarTxt1:'CaveWork is free. Forever. It\'s made for the ArnoldWork community, like the rest of our training tools.',
     donarTxt2:'Every game adds $0.10 of symbolic debt to the counter. Nobody has to pay it. But if you had fun and want more free games and tools, you can buy the developer a protein shake.',
+    solRed:'OR IN SOL · SOLANA NETWORK', solAbrir:'OPEN WALLET', solCopiar:'COPY', solCopiado:'COPIED!',
     donarPaypal:'DONATE WITH PAYPAL', donarNota:'Donations are voluntary and don\'t unlock anything. Thank you!',
     opinionTit:'SEND FEEDBACK', opinionTxt:'Ideas, bugs, new enemies you\'d like to smash... Your message goes privately to the developer. It won\'t be published.',
     tuMensaje:'YOUR MESSAGE', inicialesOpc:'INITIALS (OPTIONAL)', enviar:'SEND', enviando:'SENDING...',
@@ -2684,6 +2701,13 @@ $('#btnIdioma').addEventListener('click', () => { SFX.play('ui'); lang = lang ==
 $$('[data-paypal]').forEach(a => {
   if (PAYPAL_URL) { a.href = PAYPAL_URL; a.addEventListener('click', () => SFX.play('chaching')); }
   else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
+});
+
+$('#solCopiarJuego').addEventListener('click', async ev => {
+  const b = ev.currentTarget, d = $('#solDirJuego');
+  try { await navigator.clipboard.writeText(d.textContent.trim()); b.textContent = T('solCopiado'); SFX.play('chaching'); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(d); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  setTimeout(() => { b.textContent = T('solCopiar'); }, 2500);
 });
 
 /* ================= OPINIÓN ================= */
