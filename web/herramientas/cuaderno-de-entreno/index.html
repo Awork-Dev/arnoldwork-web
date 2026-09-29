@@ -89,10 +89,6 @@
           <input id="cuPeso" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Ej.: 60 (0 sin peso)">
         </div>
         <div class="field">
-          <label for="cuPesoUlt">Peso última serie (kg)</label>
-          <input id="cuPesoUlt" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Opcional: si subiste">
-        </div>
-        <div class="field">
           <label for="cuReps">Repeticiones</label>
           <input id="cuReps" type="text" autocomplete="off" maxlength="60" placeholder="Ej.: 10 o 10-8-6-4" aria-describedby="cuRepsAyuda">
         </div>
@@ -100,8 +96,19 @@
           <label for="cuSeries">Series</label>
           <input id="cuSeries" type="number" inputmode="numeric" min="1" max="20" step="1" value="1">
         </div>
-        <button type="button" class="btn" id="cuAdd">Apuntar</button>
       </div>
+      <div class="fields" style="margin-top:14px">
+        <div class="field">
+          <label for="cuTopW">Serie máxima · peso (kg)</label>
+          <input id="cuTopW" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder="Opcional">
+        </div>
+        <div class="field">
+          <label for="cuTopR">Serie máxima · reps</label>
+          <input id="cuTopR" type="text" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="Opcional">
+        </div>
+      </div>
+      <p class="cu-nota">Serie máxima: si en alguna serie subiste el peso (por ejemplo, la última a 100 kg × 6), apúntala aquí. Cuenta para tu peso máximo y tu mejor marca.</p>
+      <div class="acts"><button type="button" class="btn" id="cuAdd">Apuntar</button></div>
       <p class="cu-nota" id="cuRepsAyuda">Repeticiones: un número (10) si todas las series son iguales, o una por serie separadas por guiones (10-8-6-4). En ese caso, las series se cuentan solas.</p>
       <p class="warn" id="cuWarn" hidden></p>
       <p class="cu-ok" id="cuOk" role="status" aria-live="polite"></p>
@@ -114,7 +121,7 @@
         </div>
         <div class="big" id="cuOut" style="margin-top:18px">—<small id="cuSub">Todavía no has apuntado nada</small></div>
         <canvas class="graf" id="cuGraf" width="800" height="260" hidden aria-label="Gráfica de tu progreso"></canvas>
-        <p class="cu-nota"><button type="button" class="linkbtn" id="cuBorrarTodo">Borrar todo el cuaderno</button> (por ejemplo, después de hacer pruebas)</p>
+        <p class="cu-nota"><button type="button" class="linkbtn" id="cuBorrarHoy">Borrar lo apuntado hoy</button> · <button type="button" class="linkbtn" id="cuBorrarTodo">Borrar todo el cuaderno</button></p>
         <table class="pct hist" id="cuTabla" hidden>
           <thead><tr><th scope="col">Fecha</th><th scope="col">Serie</th><th scope="col">1RM est.</th><th scope="col"><span class="sr">Borrar</span></th></tr></thead>
           <tbody></tbody>
@@ -122,17 +129,11 @@
       </div>
       <div class="out cu-export" id="cuExport">
         <h3>📄 Exportar tu cuaderno</h3>
-        <p class="hint">Elige qué quieres sacar y en qué formato. Por cada ejercicio salen tus series y repeticiones de cada día, tu peso máximo y tu mejor marca, ordenados por grupo muscular.</p>
+        <p class="hint">Se exporta día a día: el entreno de hoy, o el día que elijas. Por cada ejercicio salen tus series y repeticiones, tu serie máxima y tu mejor marca, ordenados por grupo muscular.</p>
         <div class="fields">
           <div class="field">
-            <label for="cuPeriodo">Periodo</label>
-            <select id="cuPeriodo">
-              <option value="1" selected>Hoy</option>
-              <option value="7">Últimos 7 días</option>
-              <option value="30">Últimos 30 días</option>
-              <option value="90">Últimos 3 meses</option>
-              <option value="0">Todo</option>
-            </select>
+            <label for="cuDia">Día</label>
+            <input id="cuDia" type="date">
           </div>
         </div>
         <fieldset class="cu-grupos" id="cuGrupos"><legend>Grupos</legend></fieldset>
@@ -144,12 +145,12 @@
           <button type="button" class="btn btn-ghost btn-sm" id="cuShare" hidden>Compartir</button>
         </div>
         <h3 class="cu-cal-t">📅 Pasarlo a tu calendario</h3>
-        <p class="hint">Crea un evento en cada día que entrenaste, con los ejercicios, series, repeticiones y pesos de ese día. Usa el periodo y los grupos de arriba.</p>
+        <p class="hint">Crea un evento en ese día con los ejercicios, series, repeticiones y pesos. Usa el día y los grupos de arriba.</p>
         <div class="acts">
           <button type="button" class="btn btn-sm" id="cuIcs">Calendario del iPhone u Outlook</button>
           <button type="button" class="btn btn-ghost btn-sm" id="cuGcal">Google Calendar</button>
         </div>
-        <p class="cu-nota" id="cuCalNota">En el iPhone, abre el archivo y pulsa «Añadir todo». Google Calendar abre el último día entrenado; para meter todos los días de golpe, descarga el archivo con «Calendario del iPhone u Outlook» e impórtalo en calendar.google.com → Ajustes → Importar.</p>
+        <p class="cu-nota" id="cuCalNota">En el iPhone, abre el archivo y pulsa «Añadir». En Google Calendar se abre el evento ya relleno: solo tienes que guardarlo.</p>
         <p class="cta-line">¿No sabes si toca subir? Mételo en <a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a></p>
       </div>
     </div>
@@ -259,7 +260,7 @@
   </div>
 </footer>
 
-<script src="/herramientas/app.js?v=666c3e9a1c"></script>
+<script src="/herramientas/app.js?v=efeb88ff39"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=53b2765519" defer></script>
 <script>

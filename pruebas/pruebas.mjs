@@ -177,7 +177,7 @@ if (QUE === 'web') {
     await p.click('#cuAdd');
     await p.selectOption('#cuGrupo', 'Hombros');
     await p.fill('#cuEj', 'Press militar'); await p.fill('#cuPeso', '40'); await p.fill('#cuReps', '10-8-6-4');
-    await p.fill('#cuPesoUlt', '50');
+    await p.fill('#cuTopW', '50'); await p.fill('#cuTopR', '4');
     const seriesAuto = await p.inputValue('#cuSeries'), bloqueada = await p.isDisabled('#cuSeries');
     await p.click('#cuAdd');
     await p.selectOption('#cuGrupo', 'Espalda');
@@ -186,10 +186,10 @@ if (QUE === 'web') {
     const resumen = await p.textContent('#cuResumen');
     const bajar = async id => { const [d] = await Promise.all([p.waitForEvent('download'), p.click(id)]); return fs.readFileSync(await d.path()); };
     const txt = (await bajar('#cuTxt')).toString('utf8'), pdf = await bajar('#cuPdf'), csv = (await bajar('#cuCsv')).toString('utf8');
-    const okPiramide = seriesAuto === '4' && bloqueada && /10-8-6-4 reps · 40 kg/.test(txt) && /4 series, 28 repeticiones/.test(txt) && /Press militar;Hombros;40;50;10-8-6-4;4/.test(csv) && /(última serie: 50 kg)/.test(txt) && /Peso máximo: 50 kg · Mejor serie: 50 kg × 4/.test(txt);
+    const okPiramide = seriesAuto === '4' && bloqueada && /10-8-6-4 reps · 40 kg/.test(txt) && /4 series, 28 repeticiones/.test(txt) && /Press militar;Hombros;40;50;4;10-8-6-4;4/.test(csv) && /serie máxima: 50 kg × 4/.test(txt) && /Peso máximo: 50 kg · Mejor serie: 50 kg × 4/.test(txt);
     const okTxt = /PECHO/.test(txt) && /Peso máximo: 80 kg/.test(txt) && /3 × 8 reps · 80 kg/.test(txt) && /peso corporal/.test(txt);
     const okPdf = pdf.subarray(0, 8).toString('latin1') === '%PDF-1.4' && pdf.subarray(-5).toString('latin1') === '%%EOF' && pdf.includes(Buffer.from('Press banca'));
-    const okCsv = /;Grupo;/.test(csv) && /Press banca;Pecho;80;;8;3/.test(csv);
+    const okCsv = /;Grupo;/.test(csv) && /Press banca;Pecho;80;;;8;3/.test(csv);
     const ics = (await bajar('#cuIcs')).toString('utf8');
     const okIcs = /BEGIN:VCALENDAR/.test(ics) && (ics.match(/BEGIN:VEVENT/g) || []).length === 1 && /DTSTART;VALUE=DATE:\d{8}/.test(ics) && /Press banca: 3 × 8 reps · 80 kg/.test(ics.replace(/\r\n /g, ''))
       && ics.split('\r\n').every(l => Buffer.byteLength(l) <= 75);
