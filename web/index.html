@@ -492,6 +492,13 @@
   .typing span:nth-child(2){animation-delay:.2s}
   .typing span:nth-child(3){animation-delay:.4s}
   @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+.sol{margin-top:18px;border:2px solid currentColor;padding:14px;display:grid;gap:10px;max-width:560px}
+.sol-cab{display:grid;gap:2px}.sol-cab b{font-size:1.05rem}.sol-cab span{font-size:.92rem;opacity:.8}
+.sol-dir{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;overflow-wrap:anywhere;word-break:break-all;padding:8px;border:1px dashed currentColor;user-select:all}
+.sol-btns{display:flex;flex-wrap:wrap;gap:8px}
+.sol-btns button,.sol-btns a{font:inherit;font-weight:700;font-size:.92rem;padding:9px 14px;border:2px solid currentColor;background:transparent;color:inherit;cursor:pointer;text-decoration:none}
+.sol-btns button:hover,.sol-btns a:hover{background:rgba(128,128,128,.15)}
+.sol-nota{margin:0;font-size:.82rem;opacity:.8}
 </style>
 <style>
   /* ================= v10 · comunidad ================= */
@@ -978,7 +985,21 @@
           <a href="https://paypal.me/Xarlyds/10EUR" target="_blank" rel="noopener" data-batido><b>🍌 Con plátano y avena</b><span>10 €</span></a>
           <a class="free-amt" href="https://paypal.me/Xarlyds" target="_blank" rel="noopener" data-batido><b>Lo que tú quieras</b><span>tú eliges</span></a>
         </div>
-        <p class="shake-note">El pago se hace en PayPal. No desbloquea nada: todo sigue siendo gratis para todo el mundo.</p>
+        <div class="sol" id="sol">
+          <div class="sol-cab"><b>◎ Invita en SOL</b><span>¿Prefieres cripto? Mándalo desde tu cartera de Solana.</span></div>
+          <code class="sol-dir" id="solDir">A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd</code>
+          <div class="sol-btns">
+            <button type="button" id="solCopiar">Copiar dirección</button>
+            <a href="solana:A7VfKbF7g1EpvhbFq9kuF41QybsUZSfU4rV1AWkJYrNd?label=ArnoldWork&amp;message=Un%20batido%20para%20ArnoldWork">Abrir mi cartera</a>
+          </div>
+          <p class="sol-nota" id="solMsg" aria-live="polite">Red Solana. Envía solo SOL a esta dirección.</p>
+        </div>
+        <script>
+        (()=>{const b=document.getElementById('solCopiar'),d=document.getElementById('solDir'),m=document.getElementById('solMsg');
+        b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(d.textContent.trim());m.textContent='Dirección copiada. ¡Gracias por el batido!';}
+        catch(e){const r=document.createRange();r.selectNodeContents(d);const s=getSelection();s.removeAllRanges();s.addRange(r);m.textContent='Dirección seleccionada: cópiala con el menú.';}});})();
+        </script>
+        <p class="shake-note">El pago se hace en PayPal o en SOL. No desbloquea nada: todo sigue siendo gratis para todo el mundo.</p>
         <div class="hero-cta" style="margin-top:18px">
           <a class="btn btn-ghost" href="#difunde" id="compartir" style="color:#0A0A0A;border-color:#0A0A0A">Compartir ArnoldWork con un colega</a>
         </div>
