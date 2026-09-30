@@ -519,6 +519,20 @@
 .sol-pri:hover{filter:brightness(1.08)}.sol-sec:hover{background:#2E2E4A}
 .sol-btns a:focus-visible,.sol-btns button:focus-visible{outline:2px solid #14F195;outline-offset:2px}
 .sol-nota{margin:0;font-size:.8rem;color:var(--sol-dim)}
+
+  /* Pósters pegados en la pared, como en el gimnasio de siempre (fotos libres de Eugen Sandow) */
+  .pared{display:flex;justify-content:center;align-items:flex-start;gap:clamp(14px,4vw,34px);margin:26px 0 30px;flex-wrap:nowrap}
+  .poster{position:relative;flex:0 1 210px;min-width:0;margin:0;background:#efe6d2;padding:7px 7px 0;box-shadow:0 10px 24px rgba(0,0,0,.55),0 2px 0 rgba(0,0,0,.4)}
+  .poster img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%}
+  .poster figcaption{font-family:'Archivo Black',Impact,sans-serif;color:#1b140d;text-align:center;font-size:clamp(.62rem,2.4vw,.9rem);letter-spacing:.05em;padding:7px 2px 8px;line-height:1.15;text-transform:uppercase}
+  .poster figcaption small{display:block;font-family:Archivo,sans-serif;font-weight:700;font-size:.72em;letter-spacing:.1em;color:#6b5a44;margin-top:3px}
+  .poster::before,.poster::after{content:'';position:absolute;top:-9px;width:clamp(34px,9vw,56px);height:clamp(14px,3.5vw,20px);background:rgba(236,226,196,.72);box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .poster::before{left:-10px;transform:rotate(-32deg)}
+  .poster::after{right:-10px;transform:rotate(30deg)}
+  .poster:nth-child(1){transform:rotate(-3deg)}
+  .poster:nth-child(2){transform:rotate(3deg);margin-top:16px}
+  .creditos-poster{font-size:.7rem;color:var(--chalk-dim);text-align:center;margin:-10px 0 24px}
+  @media(max-width:560px){.poster{flex-basis:44%}}
 </style>
 <style>
   /* ================= v10 · comunidad ================= */
@@ -714,6 +728,11 @@
     <article class="letter">
       <div class="kick">Antes de nada</div>
       <h2>Por qué existe ArnoldWork, y por qué es gratis</h2>
+      <div class="pared" aria-label="Pósters de Eugen Sandow, el padre del culturismo">
+        <figure class="poster"><img src="/img/posters/sandow-brazos.jpg" width="640" height="592" alt="Eugen Sandow, el padre del culturismo, con los brazos detrás de la cabeza" loading="lazy"><figcaption>Fuerza y belleza<small>Sandow · 1867 – 1925</small></figcaption></figure>
+        <figure class="poster"><img src="/img/posters/sandow-maza.jpg" width="640" height="880" alt="Eugen Sandow posando con una maza" loading="lazy"><figcaption>El trofeo del Olympia<small>Es una estatuilla de Sandow</small></figcaption></figure>
+      </div>
+      <p class="creditos-poster">Fotos de Eugen Sandow: Wellcome Collection (CC BY 4.0).</p>
       <p class="first">Llegué a las pesas de rebote. Tenía catorce o quince años, entrenaba jiujitsu en un gimnasio pequeño y la cuota daba derecho también a la sala de musculación: cuatro máquinas, unas barras y unos hierros. Allí no me esperaba nadie. Un día crucé la puerta por curiosidad y ya no salí.</p>
       <p>Era 1996. En casa casi nadie tenía internet, y no había vídeos que te explicaran una sentadilla ni artículos sobre volumen semanal. Aprendías mirando a los que llevaban años, copiando lo que hacían y preguntando. Y casi siempre alguien te echaba una mano.</p>
       <button type="button" class="seguir-leyendo" onclick="this.closest('.letter').classList.add('abierta')">Seguir leyendo ↓</button>
