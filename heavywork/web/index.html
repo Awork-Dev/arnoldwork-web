@@ -237,6 +237,8 @@ p{margin:0 0 1em;max-width:60ch}
 .insignia.si .ico{filter:none;opacity:1}
 .nueva-insignia{background:#ffd23c;color:var(--tinta);font-weight:900;padding:.3em .7em;display:inline-block;margin:0 auto}
 .modo-top-btns{display:flex;gap:8px}
+.modo-aviso-voz{margin:8px 0 0;padding:8px 12px;background:#2a2e33;border-left:4px solid #f3c316;color:var(--papel);font-size:.95rem;line-height:1.35}
+.modo-aviso-voz[hidden]{display:none}
 .modo-top button[aria-pressed="false"]{opacity:.6}
 .copia-caja{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .copia-msg{width:100%;margin:0;font-weight:700;min-height:1.2em}
@@ -691,10 +693,11 @@ main{overflow-x:clip}
   <div class="modo-top">
     <span id="modoTitulo"></span>
     <div class="modo-top-btns">
-      <button type="button" id="modoVoz" aria-pressed="true">🔊 Voz</button>
+      <button type="button" id="modoVoz" aria-pressed="true" title="Cuenta las repeticiones en voz alta">🔊 Voz</button>
       <button type="button" id="modoSalir">Salir</button>
     </div>
   </div>
+  <p class="modo-aviso-voz" id="modoAvisoVoz" role="status" hidden></p>
   <div class="pasos" id="modoPasos"></div>
   <div class="modo-cuerpo" id="modoCuerpo" aria-live="polite"></div>
   <div class="modo-acciones" id="modoAcciones"></div>
@@ -1241,15 +1244,29 @@ const ejActual = () => ENTRENOS[M.letra].ejercicios[M.i];
 
 /* ===== Voz: cuenta las repeticiones en voz alta, para no mirar el móvil en plena serie ===== */
 const hayVoz = 'speechSynthesis' in window;
+let vozEs = null;
+function buscarVoz(){ try { const v = speechSynthesis.getVoices(); vozEs = v.find(x => /^es[-_]ES/i.test(x.lang)) || v.find(x => /^es/i.test(x.lang)) || null; } catch {} }
+if (hayVoz){ buscarVoz(); try { speechSynthesis.addEventListener('voiceschanged', buscarVoz); } catch {} }
 function hablar(t){
   try {
     if (!hayVoz || leer().voz === false) return;
-    const u = new SpeechSynthesisUtterance(t); u.lang = 'es-ES'; u.rate = 1.1;
-    speechSynthesis.cancel(); speechSynthesis.speak(u);
+    const u = new SpeechSynthesisUtterance(t); u.lang = 'es-ES'; u.rate = 1.1; u.volume = 1;
+    if (vozEs) u.voice = vozEs;
+    // Safari se traga lo que se dice justo después de cancelar: solo se corta si ya estaba hablando, y con un respiro.
+    if (speechSynthesis.speaking || speechSynthesis.pending){ speechSynthesis.cancel(); setTimeout(() => speechSynthesis.speak(u), 60); }
+    else { try { speechSynthesis.resume(); } catch {} speechSynthesis.speak(u); }
   } catch {}
 }
 function pintarVoz(){ const b = $('#modoVoz'), on = hayVoz && leer().voz !== false; b.hidden = !hayVoz; b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '🔊 Voz' : '🔇 Voz'; }
-$('#modoVoz').addEventListener('click', () => { const d = leer(); d.voz = d.voz === false; guardar(d); pintarVoz(); if (d.voz) hablar('Voz activada'); });
+function avisoVoz(t){
+  const el = $('#modoAvisoVoz'); el.textContent = t; el.hidden = false;
+  clearTimeout(avisoVoz.t); avisoVoz.t = setTimeout(() => { el.hidden = true; }, 6000);
+}
+$('#modoVoz').addEventListener('click', () => {
+  const d = leer(); d.voz = d.voz === false; guardar(d); pintarVoz();
+  if (d.voz){ hablar('Voz activada. Contaré tus repeticiones.'); avisoVoz('La voz cuenta tus repeticiones en voz alta durante la serie y te avisa en el descanso. ¿No oyes nada? Quita el modo silencio del móvil y sube el volumen.'); }
+  else avisoVoz('Voz apagada: solo oirás los pitidos.');
+});
 
 function abrirModo(letra){
   Object.assign(M, { letra, i:0, fase:'preparar', reps:0, resultados:[], nuevas:[], tarjeta:null, antes:new Set(ganadas(leer())) });
