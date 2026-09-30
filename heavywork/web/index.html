@@ -182,7 +182,23 @@ p{margin:0 0 1em;max-width:60ch}
 .extras button{min-height:44px;padding:.2em .9em;border:2px solid #555b62;background:transparent;color:var(--papel);font-weight:800;cursor:pointer}
 .extras button[aria-pressed="true"]{background:#ffd23c;border-color:#ffd23c;color:var(--tinta)}
 .extra-marca{display:block;font-size:.85rem;font-weight:800;color:var(--peligro-osc)}
-.avanzado{margin-top:24px;border:3px solid var(--tinta);background:var(--papel);padding:18px}
+.avanzado{margin-top:24px;border:3px solid var(--tinta);background:var(--papel);padding:18px;display:block}
+/* Plegables: en el móvil empiezan cerrados; en el ordenador, abiertos */
+.plegable-movil>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.plegable-movil>summary::-webkit-details-marker{display:none}
+.plegable-movil>summary h3{margin:0}
+.plegable-movil>summary::after{content:'+';font-family:var(--stencil);font-size:1.8rem;line-height:1;color:var(--peligro)}
+.plegable-movil[open]>summary::after{content:'−'}
+.plegable-movil[open]>summary{margin-bottom:12px}
+@media (max-width:820px){
+  .principios{grid-template-columns:1fr 1fr}
+  .principio{padding:12px 12px 6px;border-right:3px solid var(--tinta)}
+  .principio:nth-child(2n){border-right:0}
+  .principio h3{font-size:1.05rem}
+  .principio p{font-size:.9rem;line-height:1.4}
+  .con-pestanas .lema{padding:18px 16px 4px}
+  .con-pestanas .lema span{font-size:clamp(1.8rem,9vw,3rem)}
+}
 .avanzado dl{margin:0 0 10px}
 .avanzado dt{font-weight:800;margin-top:8px}
 .avanzado dd{margin:2px 0 0}
@@ -461,8 +477,8 @@ p{margin:0 0 1em;max-width:60ch}
         <div class="principio"><h3>Control total</h3><p>Repeticiones lentas, sin rebotes ni impulso, con todo el recorrido.</p></div>
         <div class="principio"><h3>Progresión y registro</h3><p>Cada entreno, una repetición más o algo más de peso. Sin cuaderno no sabes si mejoras.</p></div>
       </div>
-      <div class="avanzado">
-        <h3>Más allá del fallo</h3>
+      <details class="avanzado plegable-movil" open>
+        <summary><h3>Más allá del fallo</h3></summary>
         <p>Llegar al fallo no es el final. Mentzer llevaba la serie aún más lejos con estas técnicas para sumar intensidad: más intensidad, más estímulo. Como exigen más recuperación, descansa un día más después de usarlas. Con barras pesadas, siempre con compañero o barras de seguridad.</p>
         <dl>
           <dt>Repeticiones forzadas</dt><dd>Al llegar al fallo, un compañero te ayuda lo justo para sacar 1 o 2 repeticiones más.</dd>
@@ -470,7 +486,7 @@ p{margin:0 0 1em;max-width:60ch}
           <dt>Rest-pause</dt><dd>Al llegar al fallo, sueltas el peso 10–15 segundos y sacas 1 o 2 repeticiones más. Se puede repetir una vez.</dd>
         </dl>
         <p class="suave" style="margin:0">En el modo serie puedes apuntar si usaste alguna; el cuaderno lo marca.</p>
-      </div>
+      </details>
       <h3 style="margin-top:28px">Herramientas gratis para el método</h3>
       <div class="herramientas">
         <a href="https://arnoldwork.com/herramientas/tempo-repeticiones/">Tempo de repeticiones</a>
@@ -861,8 +877,12 @@ const INSIGNIAS = [
 const ganadas = d => INSIGNIAS.filter(i => i[4](d)).map(i => i[0]);
 function pintarInsignias(){
   const d = leer(), si = new Set(ganadas(d));
-  $('#insignias').replaceChildren(
-    h('h3', {text:`Insignias · ${si.size} de ${INSIGNIAS.length}`}),
+  const caja = $('#insignias'), antes = caja.querySelector('details');
+  const det = h('details', {class:'plegable-movil', 'data-tocado':'1'});
+  det.open = antes ? antes.open : !matchMedia('(max-width:820px)').matches;
+  caja.replaceChildren(det);
+  det.append(
+    h('summary', {}, h('h3', {text:`Insignias · ${si.size} de ${INSIGNIAS.length}`})),
     h('div', {class:'insignias'}, INSIGNIAS.map(([id, ico, n, t]) => h('div', {class:'insignia' + (si.has(id) ? ' si' : ''), title:t},
       h('span', {class:'ico', 'aria-hidden':'true', text:ico}), h('b', {text:n}), h('small', {text: si.has(id) ? t : `🔒 ${t}`})))));
 }
@@ -1123,6 +1143,7 @@ const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
   function ir(hash){
     if (!mq.matches) return;
     raiz.classList.add('con-pestanas');
+    document.querySelectorAll('details.plegable-movil[open]:not([data-tocado])').forEach(dd => { dd.open = false; dd.dataset.tocado = '1'; });
     let t = 'inicio', el = null; const m = /^#t=(\w+)$/.exec(hash || '');
     if (m && GRUPOS[m[1]]) t = m[1];
     else if (hash && hash.length > 1 && (el = document.getElementById(hash.slice(1)))) { const b = bloques.find(([x]) => x.contains(el)); t = b ? b[1] : 'inicio'; }
