@@ -241,6 +241,13 @@ p{margin:0 0 1em;max-width:60ch}
 .entreno-cab{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:3px solid var(--tinta)}
 .entreno-cab .letra{font-family:var(--stencil);font-size:4.2rem;line-height:.8}
 .entreno-cab h3{font-size:1.5rem}
+.ver-entreno{display:none;font-size:.9rem;font-weight:800;color:var(--peligro);margin-top:4px}
+@media (max-width:820px){
+  .entreno:not(.toca) .entreno-cab{cursor:pointer}
+  .entreno:not(.toca) .ver-entreno{display:inline-block}
+  .entreno:not(.abierto) ol,.entreno:not(.abierto) .pie{display:none}
+  .entreno:not(.abierto) .entreno-cab{border-bottom:0}
+}
 .entreno-cab .toca-marca{font-size:.9rem;font-weight:800;color:#fff;background:var(--peligro);padding:.1em .5em;display:inline-block;margin-top:4px}
 .entreno ol{list-style:none;margin:0;padding:6px 16px 10px;flex:1}
 .entreno li{padding:9px 0;border-bottom:1px solid var(--hormigon-osc);display:flex;justify-content:space-between;gap:10px}
@@ -990,6 +997,8 @@ function cambiarPrograma(p){
   if (p === 'consolidada' && d.descanso < 6) d.descanso = 7;   // Mentzer: una vez por semana, más o menos
   guardar(d); pintarTodo();
 }
+// En el móvil, solo el entreno que toca va abierto; los demás se abren al tocar su cabecera.
+const entrenosAbiertos = new Set();
 function pintarEntrenos(){
   const d = leer();
   const toca = siguienteLetra(d);
@@ -999,10 +1008,13 @@ function pintarEntrenos(){
     : 'La rutina ideal de Mentzer: pecho y espalda, pierna, hombros y brazos, y otra vez pierna. Una sola serie efectiva por ejercicio, después de calentar. La línea roja une los ejercicios que se hacen seguidos, sin descanso: primero el aislado para pre-agotar el músculo y luego el compuesto.';
   $('#listaEntrenos').replaceChildren(...ROTACION.map(L => {
     const e = ENTRENOS[L];
-    return h('article', {class:'entreno cinta' + (L === toca ? ' toca' : '')},
-      h('div', {class:'entreno-cab'},
+    const abierto = L === toca || entrenosAbiertos.has(L);
+    return h('article', {class:'entreno cinta' + (L === toca ? ' toca' : '') + (abierto ? ' abierto' : '')},
+      h('div', {class:'entreno-cab', role:'button', tabindex:'0', 'aria-expanded':String(abierto),
+          onclick:() => { if (L === toca) return; entrenosAbiertos.has(L) ? entrenosAbiertos.delete(L) : entrenosAbiertos.add(L); pintarEntrenos(); },
+          onkeydown:ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ev.currentTarget.click(); } }},
         h('span', {class:'letra', 'aria-hidden':'true', text:L}),
-        h('div', {}, h('h3', {text:`Entreno ${L}: ${e.nombre}`}), L === toca ? h('span', {class:'toca-marca', text:'Te toca'}) : null)),
+        h('div', {}, h('h3', {text:`Entreno ${L}: ${e.nombre}`}), L === toca ? h('span', {class:'toca-marca', text:'Te toca'}) : h('span', {class:'ver-entreno', text: abierto ? 'Ocultar ↑' : 'Ver ejercicios ↓'}))),
       h('ol', {}, e.ejercicios.map((x, i) => {
         const prevSin = i > 0 && e.ejercicios[i-1].sinDescanso;
         const reg = d.cuaderno[x.id] || [], ultimo = reg[reg.length-1], o = objetivo(x, reg);

@@ -65,6 +65,10 @@ def og_imagen(h):
 RETIRADAS = {"recuperacion-heavy-duty": "https://heavywork.arnoldwork.com/"}
 
 
+# Título de «otras herramientas» al pie de cada página, según su grupo.
+OTRAS_TITULO = {"fuerza": "Más herramientas de fuerza", "cuerpo": "Más de nutrición y cuerpo", "entreno": "Más para organizar tu entreno"}
+
+
 def indice(enlace, sin=None):
     """Índice por grupos. enlace(h) devuelve el href de cada herramienta; sin, una que no se lista."""
     bloques = []
@@ -179,6 +183,8 @@ def individual(h, v_css, v_js):
   <div class="wrap">
 
 {bloque}
+    <details class="saber-mas">
+      <summary>📖 Saber más: cómo funciona{" y preguntas frecuentes" if faq else ""}</summary>
     <div class="articulo">
 {h["articulo"].strip()}
     </div>
@@ -187,12 +193,15 @@ def individual(h, v_css, v_js):
       <h2>Preguntas frecuentes</h2>
 {faq}
     </div>
-""" if faq else "") + difunde(f"💪 {h['h1']}: gratis, sin registro y desde el móvil. Te va a servir en el gimnasio.", url(h), f"{h['h1']} · ArnoldWork", "¿Te ha servido? Pásasela a tu compañero de banco") + f"""
+""" if faq else "") + """
+    </details>
+""" + difunde(f"💪 {h['h1']}: gratis, sin registro y desde el móvil. Te va a servir en el gimnasio.", url(h), f"{h['h1']} · ArnoldWork", "¿Te ha servido? Pásasela a tu compañero de banco") + f"""
     <div class="otras">
-      <h2>Más herramientas gratis</h2>
-      <nav class="idx" aria-label="Otras herramientas">
-{indice(lambda o: "/herramientas/" + o["slug"] + "/", sin=h)}
+      <h2>{GRUPOS_INFO[h["grupo"]][0]} {OTRAS_TITULO[h["grupo"]]}</h2>
+      <nav class="otras-l" aria-label="Otras herramientas del grupo">
+{chr(10).join(f'        <a href="/herramientas/{o["slug"]}/">{o["nombre"]}</a>' for o in HERRAMIENTAS if o["grupo"] == h["grupo"] and o is not h)}
       </nav>
+      <a class="btn btn-ghost btn-sm otras-todas" href="/herramientas/">Ver las {len(HERRAMIENTAS)} herramientas →</a>
     </div>
 
     {lee(SRC, "herramientas", "piezas", "_pie.html").strip()}
