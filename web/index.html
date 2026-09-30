@@ -448,7 +448,7 @@
     .con-pestanas .negocio-corto{display:block}
     .con-pestanas .proy-nota{display:none}   /* justo debajo va el bloque de webs para negocios */
     /* La historia, resumida: dos párrafos y «Seguir leyendo» */
-    .con-pestanas #porque .letter:not(.abierta) > :is(p:not(.first):not(:nth-of-type(2)),.sign,.ia){display:none}
+    .con-pestanas #porque .letter:not(.abierta) > :is(p:not(.first):not(.first + p):not(.creditos-poster),.sign,.ia){display:none}
     .con-pestanas #porque .letter:not(.abierta) .seguir-leyendo{display:inline-flex}
     /* Con pestañas sobran los enlaces que llevan a otra pestaña: ya están abajo */
     .con-pestanas .hero .hero-cta,.con-pestanas #gratis,.con-pestanas #porque .sign .btn,
@@ -530,8 +530,28 @@
   .poster::after{right:-10px;transform:rotate(30deg)}
   .poster:nth-child(1){transform:rotate(-3deg)}
   .poster:nth-child(2){transform:rotate(3deg);margin-top:16px}
-  .creditos-poster{font-size:.7rem;color:var(--chalk-dim);text-align:center;margin:-10px 0 24px}
+  .creditos-poster,.letter p.creditos-poster{font-size:.7rem;line-height:1.4;color:var(--chalk-dim);text-align:center;margin:-10px 0 24px}
   @media(max-width:560px){.poster{flex-basis:44%}}
+  /* Siluetas «¿Quién es?»: dibujos propios que se dan la vuelta al tocarlos */
+  .quienes{margin-top:0}
+  .quienes .poster{flex-basis:170px}
+  button.poster{font:inherit;color:inherit;border:0;cursor:pointer;text-align:center;display:block}
+  .poster .pie{display:block;font-family:'Archivo Black',Impact,sans-serif;color:#1b140d;font-size:clamp(.62rem,2.4vw,.9rem);letter-spacing:.05em;padding:7px 2px 8px;line-height:1.15;text-transform:uppercase}
+  .poster .pie small{display:block;font-family:Archivo,sans-serif;font-weight:700;font-size:.72em;letter-spacing:.1em;color:#6b5a44;margin-top:3px}
+  .marco{position:relative;display:block;aspect-ratio:4/5;perspective:700px}
+  .cara,.dorso{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+  .cara{background:radial-gradient(circle at 50% 38%,#ecd08a,#b8863a 62%,#5e3f17)}
+  .cara .sil{width:100%;height:100%;display:block}
+  .dorso{transform:rotateY(180deg);background:#1b140d;color:#efe6d2;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:8px;font-size:clamp(.62rem,2.3vw,.85rem);line-height:1.3}
+  .dorso b{font-family:'Archivo Black',Impact,sans-serif;color:#e0b44a;text-transform:uppercase;letter-spacing:.03em;font-weight:400;font-size:1.05em;line-height:1.1}
+  .quien[aria-pressed="true"] .cara{transform:rotateY(-180deg)}
+  .quien[aria-pressed="true"] .dorso{transform:rotateY(0)}
+  .quien:focus-visible{outline:3px solid #e0b44a;outline-offset:4px}
+  .quienes .poster:nth-child(1){transform:rotate(2deg)}
+  .quienes .poster:nth-child(2){transform:rotate(-2.5deg);margin-top:10px}
+  .quienes .poster:nth-child(3){transform:rotate(3deg);margin-top:2px}
+  @media(max-width:560px){.quienes .poster{flex-basis:31%}}
+  @media(prefers-reduced-motion:reduce){.cara,.dorso{transition:none}}
 </style>
 <style>
   /* ================= v10 · comunidad ================= */
@@ -648,6 +668,7 @@
   /* v10 · menú y hero */
   .nav-links a{white-space:nowrap}
   .btn-batido{white-space:nowrap}
+  @media(min-width:1181px) and (max-width:1400px){.nav-links{gap:16px;font-size:.9rem}}
   @media(min-width:821px) and (max-width:1180px){
     .nav-in{flex-wrap:wrap;gap:12px 18px;padding-bottom:10px}
     .nav-links{order:3;width:100%;margin-left:0;gap:20px;font-size:.88rem;overflow-x:auto;scrollbar-width:none}
@@ -731,7 +752,12 @@
         <figure class="poster"><img src="/img/posters/sandow-brazos.jpg" width="640" height="592" alt="Eugen Sandow, el padre del culturismo, con los brazos detrás de la cabeza" loading="lazy"><figcaption>Fuerza y belleza<small>Sandow · 1867 – 1925</small></figcaption></figure>
         <figure class="poster"><img src="/img/posters/sandow-maza.jpg" width="640" height="880" alt="Eugen Sandow posando con una maza" loading="lazy"><figcaption>El trofeo del Olympia<small>Es una estatuilla de Sandow</small></figcaption></figure>
       </div>
-      <p class="creditos-poster">Fotos de Eugen Sandow: Wellcome Collection (CC BY 4.0).</p>
+      <div class="pared quienes" aria-label="Pósters de siluetas: ¿quién es?">
+        <button type="button" class="poster quien" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')!=='true')"><span class="marco"><span class="cara"><svg class="sil" viewBox="0 0 200 250" role="img" aria-label="Silueta en pose de doble bíceps de frente"><g fill="#15110c" stroke="#15110c" stroke-linecap="round" stroke-linejoin="round"><circle cx="100" cy="44" r="13"/><path d="M91 54h18l4 12H87z"/><path d="M58 70Q100 58 142 70L148 90Q136 120 118 150H82Q64 120 52 90Z"/><circle cx="62" cy="77" r="15"/><path d="M60 80L32 82" stroke-width="21" fill="none"/><ellipse cx="46" cy="70" rx="12" ry="11"/><path d="M24 86L28 50L40 50L38 88Z"/><circle cx="33" cy="40" r="10"/><path d="M76 152C65 172 61 180 71 204C63 216 66 224 72 240L80 240C85 224 88 214 84 204C90 182 103 166 101 152Z"/><path d="M68 246h18l-2-7h-13z"/><path d="M100 150H78l-4 14h26z"/><g transform="matrix(-1 0 0 1 200 0)"><circle cx="62" cy="77" r="15"/><path d="M60 80L32 82" stroke-width="21" fill="none"/><ellipse cx="46" cy="70" rx="12" ry="11"/><path d="M24 86L28 50L40 50L38 88Z"/><circle cx="33" cy="40" r="10"/><path d="M76 152C65 172 61 180 71 204C63 216 66 224 72 240L80 240C85 224 88 214 84 204C90 182 103 166 101 152Z"/><path d="M68 246h18l-2-7h-13z"/><path d="M100 150H78l-4 14h26z"/></g></g></svg></span><span class="dorso"><b>Doble bíceps de frente</b>Codos a la altura de los hombros, puños cerrados y aprieta.</span></span><span class="pie">¿Quién es?<small>Toca y descubre la pose</small></span></button>
+        <button type="button" class="poster quien" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')!=='true')"><span class="marco"><span class="cara"><svg class="sil" viewBox="0 0 200 250" role="img" aria-label="Silueta en pose de most muscular"><g fill="#15110c" stroke="#15110c" stroke-linecap="round" stroke-linejoin="round"><circle cx="100" cy="46" r="12"/><path d="M93 54h14l6 26H87z"/><path d="M62 74Q100 64 138 74L142 100Q132 128 118 152H82Q68 128 58 100Z"/><path d="M92 50Q72 60 60 80L100 82Z"/><circle cx="58" cy="86" r="17"/><path d="M52 94L42 122" stroke-width="22" fill="none"/><path d="M42 124L90 144" stroke-width="16" fill="none"/><circle cx="94" cy="144" r="10"/><path d="M75 152C64 172 55 180 65 204C57 216 58 224 64 240L72 240C77 224 82 214 78 204C84 182 102 166 100 152Z"/><path d="M60 246h18l-2-7h-13z"/><path d="M100 150H78l-6 14h28z"/><g transform="matrix(-1 0 0 1 200 0)"><path d="M92 50Q72 60 60 80L100 82Z"/><circle cx="58" cy="86" r="17"/><path d="M52 94L42 122" stroke-width="22" fill="none"/><path d="M42 124L90 144" stroke-width="16" fill="none"/><circle cx="94" cy="144" r="10"/><path d="M75 152C64 172 55 180 65 204C57 216 58 224 64 240L72 240C77 224 82 214 78 204C84 182 102 166 100 152Z"/><path d="M60 246h18l-2-7h-13z"/><path d="M100 150H78l-6 14h28z"/></g></g></svg></span><span class="dorso"><b>Most muscular</b>Puños juntos delante de la cintura y aprieta todo a la vez.</span></span><span class="pie">¿Quién es?<small>Toca y descubre la pose</small></span></button>
+        <button type="button" class="poster quien" aria-pressed="false" onclick="this.setAttribute('aria-pressed',this.getAttribute('aria-pressed')!=='true')"><span class="marco"><span class="cara"><svg class="sil" viewBox="0 0 200 250" role="img" aria-label="Silueta en pose de vacío abdominal"><g fill="#15110c" stroke="#15110c" stroke-linecap="round" stroke-linejoin="round"><path d="M66 72L46 42" stroke-width="20" fill="none"/><path d="M154 42L134 72" stroke-width="20" fill="none"/><path d="M46 40L86 32" stroke-width="15" fill="none"/><path d="M154 40L114 32" stroke-width="15" fill="none"/><circle cx="100" cy="42" r="14"/><path d="M92 54h16l3 12H89z"/><path d="M60 70Q100 60 140 70L146 92Q136 110 116 126Q110 136 116 152H84Q90 136 84 126Q64 110 54 92Z"/><circle cx="64" cy="76" r="13"/><circle cx="136" cy="76" r="13"/><path d="M84 150h32l4 14H80z"/><path d="M78 152C67 172 69 180 79 204C71 216 76 224 82 240L90 240C95 224 96 214 92 204C98 182 105 166 103 152Z"/><path d="M78 246h18l-2-7h-13z"/><g transform="matrix(-1 0 0 1 200 0) rotate(-10 91 152)"><path d="M78 152C67 172 63 180 73 204C65 216 72 224 78 240L86 240C91 224 90 214 86 204C92 182 105 166 103 152Z"/><path d="M74 246h18l-2-7h-13z"/></g></g></svg></span><span class="dorso"><b>Vacío abdominal</b>Manos tras la cabeza, suelta el aire y mete el ombligo.</span></span><span class="pie">¿Quién es?<small>Toca y descubre la pose</small></span></button>
+      </div>
+      <p class="creditos-poster">Fotos de Eugen Sandow: Wellcome Collection (CC BY 4.0). Siluetas dibujadas por ArnoldWork: te recordarán a alguien, pero no son nadie.</p>
       <p class="first">Llegué a las pesas de rebote. Tenía catorce o quince años, entrenaba jiujitsu en un gimnasio pequeño y la cuota daba derecho también a la sala de musculación: cuatro máquinas, unas barras y unos hierros. Allí no me esperaba nadie. Un día crucé la puerta por curiosidad y ya no salí.</p>
       <p>Era 1996. En casa casi nadie tenía internet, y no había vídeos que te explicaran una sentadilla ni artículos sobre volumen semanal. Aprendías mirando a los que llevaban años, copiando lo que hacían y preguntando. Y casi siempre alguien te echaba una mano.</p>
       <button type="button" class="seguir-leyendo" onclick="this.closest('.letter').classList.add('abierta')">Seguir leyendo ↓</button>
