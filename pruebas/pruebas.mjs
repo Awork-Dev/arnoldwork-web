@@ -95,7 +95,7 @@ async function abrir(ruta) {
 const rutas = new Set(['/', '/404.html']);
 const mapa = path.join(RAIZ, 'sitemap.xml');
 if (fs.existsSync(mapa)) for (const m of fs.readFileSync(mapa, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)) rutas.add(new URL(m[1]).pathname);
-if (QUE === 'heavywork') rutas.add('/game/');
+if (QUE === 'heavywork') { rutas.add('/game/'); rutas.add('/app/'); rutas.add('/app/privacidad/'); }
 
 console.log(`\n▶ ${rutas.size} páginas de ${QUE}`);
 const enlaces = new Map();   // ruta enlazada → página donde aparece
