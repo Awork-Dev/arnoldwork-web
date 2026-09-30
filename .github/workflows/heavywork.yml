@@ -11,6 +11,7 @@ on:
     paths:
       - "heavywork/**"
       - "pruebas/**"
+      - "analitica.py"
       - ".github/workflows/heavywork.yml"
   workflow_dispatch:
 
@@ -45,6 +46,9 @@ jobs:
 
       - name: Fecha de la versión (para «Buscar actualización»)
         run: printf '{"version":"%s","fecha":"%s"}\n' "$(git rev-parse --short HEAD)" "$(git log -1 --format=%cI)" > heavywork/web/version.json
+
+      - name: Contador de visitas (Cloudflare Web Analytics)
+        run: python3 analitica.py heavywork/web
 
       - name: Nombre de la vista previa
         id: alias
