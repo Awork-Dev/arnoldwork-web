@@ -22,10 +22,10 @@ jobs:
       matrix:
         api: [arnoldwork-api, cavework-api]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Comprobar que el código no tiene errores de sintaxis
         run: node --check apis/${{ matrix.api }}/worker.js
-      - uses: cloudflare/wrangler-action@v3
+      - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "4"
