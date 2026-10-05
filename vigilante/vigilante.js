@@ -56,6 +56,7 @@ const COMPROBACIONES = [
   { nombre: "Generador de rutina", url: "https://arnoldwork.com/herramientas/generador-de-rutina/", texto: "ArnoldWork" },
   { nombre: "HeavyWork",         url: "https://heavywork.arnoldwork.com/",    texto: "HeavyWork" },
   { nombre: "CaveWork",          url: "https://heavywork.arnoldwork.com/game/", texto: "CaveWork" },
+  { nombre: "CaveWork (Google Play)", url: "https://heavywork.arnoldwork.com/app/", texto: "CaveWork" },
   { nombre: "API contacto",      url: "https://arnoldwork-api.arnoldwork.workers.dev/" },
   { nombre: "API CaveWork",      url: "https://cavework-api.arnoldwork.workers.dev/" },
   { nombre: "Ranking CaveWork",  url: "https://cavework-ranking.arnoldwork.workers.dev/top", texto: "top" },
