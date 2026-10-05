@@ -88,6 +88,7 @@ fieldset.turno input[type=color]{padding:2px;height:42px;cursor:pointer}
 .hoy small{display:block;color:#6b6688;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
 .hoy b{font:700 1.35rem/1.25 var(--display);display:block;margin-top:6px}
 .hoy .man{color:#6b6688;font-size:.86rem;font-weight:600}
+@media (max-width:700px){.cab:not(.app) .envoltura>div:first-child{flex:1 1 100%}.cab:not(.app) .hoy{flex:1 1 100%;min-width:0}}
 /* Cabecera de app (Pro): barra compacta y fija arriba con la fecha y el turno de hoy */
 .fecha-app{display:none}
 .cab.app{position:sticky;top:0;z-index:35;box-shadow:0 6px 20px rgba(20,10,60,.18)}
@@ -284,6 +285,12 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <span><b>💡 Eres Pro: si quieres una función, pídela</b><br><span class="nota">Escríbenos en el buzón de mejoras. Las ideas de los usuarios Pro son las primeras que hacemos.</span></span>
     <span class="boton primario">Pedir una función</span>
   </a>
+  <section class="tarjeta no-imprimir" id="caja-entreno">
+    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <span id="entreno-res"><b>💪 Entrena según tus turnos</b></span>
+      <span style="display:flex;gap:6px;flex-wrap:wrap"><a class="boton primario" href="https://arnoldwork.com/herramientas/generador-de-rutina/" target="_blank" rel="noopener">Rutina gratis</a><a class="boton" href="https://heavywork.arnoldwork.com/" target="_blank" rel="noopener">HeavyWork</a><a class="boton" href="https://heavywork.arnoldwork.com/game/" target="_blank" rel="noopener">🦖 Juego</a></span>
+    </div>
+  </section>
   <section class="ganchos no-imprimir" id="ganchos" aria-label="Lo que puedes hacer con TurnoWork Pro">
     <button class="gancho" data-ir-pro><q>Los martes, piscina de la peque de 17:15 a 18:00</q><span>Lo pones una vez y sale todas las semanas, también en el calendario del móvil.</span><b>PRO</b></button>
     <button class="gancho" data-ir-pro><q>¿Qué días libramos los dos?</q><span>Compara tu cuadrante con el de tu pareja o un compañero y mira vuestros libres en común.</span><b>PRO</b></button>
@@ -316,16 +323,16 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     </div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-semana">
+    <p class="titulo" style="margin:0">🗓️ Mi semana</p>
+    <div class="semana" id="semana"></div>
+  </section>
+
   <section class="tarjeta no-imprimir" id="caja-compartir">
     <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
       <span><b>📤 ¿Conoces a alguien que trabaja a turnos?</b><br><span class="nota">Pásale TurnoWork: es gratis y no pide registro.</span></span>
       <span class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><a class="boton primario" id="compartir-wa" target="_blank" rel="noopener">WhatsApp</a><button class="boton" id="compartir-mas">Compartir</button></span>
     </div>
-  </section>
-
-  <section class="tarjeta no-imprimir" id="caja-semana">
-    <p class="titulo" style="margin:0">🗓️ Mi semana</p>
-    <div class="semana" id="semana"></div>
   </section>
 
   <details class="tarjeta no-imprimir" id="ajustes">
@@ -784,8 +791,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         ${fe?`<span class="extra">★ ${esc(fe)}</span>`:""}${ns.map(n=>`<span class="extra">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}${m?`<span class="extra">🌸 ${m==="regla"?"Regla":"Regla prevista"}</span>`:""}<span><span class="entreno">${entreno(d)[0]} ${entreno(d)[1]}</span></span></div></div>`;
     }
     const fuertes=[0,1,2,3,4,5,6].filter(i=>entreno(new Date(base.getFullYear(),base.getMonth(),base.getDate()+i))[2]==="fuerte").length;
-    html+=`<div class="aviso-pro" style="justify-content:space-between"><span>💪 Esta semana tienes <b>${fuertes} ${fuertes===1?"día bueno":"días buenos"}</b> para entrenar fuerte.</span>
-      <span class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><a class="boton" href="https://arnoldwork.com/herramientas/generador-de-rutina/" target="_blank" rel="noopener">Rutina gratis</a><a class="boton" href="https://heavywork.arnoldwork.com/" target="_blank" rel="noopener">HeavyWork</a></span></div>`;
+    $("entreno-res").innerHTML=`<b>💪 Esta semana tienes ${fuertes} ${fuertes===1?"día bueno":"días buenos"} para entrenar fuerte</b><br><span class="nota">Mira en cada día de «Mi semana» qué te toca.</span>`;
     $("semana").innerHTML=html;
   }
 
@@ -1076,11 +1082,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   });
 
   // ===== Pestañas =====
-  const PESTANAS={hoy:["pide-funcion","ganchos","instalar","caja-semana","caja-compartir"],
+  const PESTANAS={hoy:["caja-entreno","ganchos","instalar","caja-semana","caja-compartir"],
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
     mas:["caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
-    pro:["pro","mejoras"]};
+    pro:["pide-funcion","pro","mejoras"]};
   Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
   let pesActual=null;
   function verPestana(p,destino){
