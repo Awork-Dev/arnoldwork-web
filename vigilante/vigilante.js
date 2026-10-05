@@ -65,6 +65,8 @@ const PRO_KOFI = {
 // Licencias de la casa (huella del correo, nunca el correo en claro: este repositorio es público).
 const PRO_CASA = new Set([
   "81dc043b89f78dc1ba5654908eacc5331b5dedc8f7435d4aa4b6cc2629260916",   // Carlos
+  "96dcf2605a911e62f4fe4a6fa3016801a77fe2f55848fb8ff9fefc6f8f8e15a1",   // familia
+  "cdb83425a212eececc036a9a271a70b46cd584e5809883a9e3c5243cb1250801",   // familia
 ]);
 const MAX_DISPOSITIVOS = 3;
 const NOMBRE_PRO = { turnos: "Turnos Pro", calas: "Calas Hoy Pro" };
