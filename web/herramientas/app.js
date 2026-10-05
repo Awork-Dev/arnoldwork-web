@@ -1349,6 +1349,24 @@
       var b = $('cuAdd'); b.textContent = 'Apuntado ✓'; setTimeout(function(){ b.textContent = 'Apuntar'; }, 1500);
     });
     on('cuPdf', 'click', function(){ var x = datosExport(); if(x) descargar(new Blob([pdfCuaderno(x)], { type: 'application/pdf' }), x.nombre + '.pdf'); });
+    // Llevar a TurnoWork: los últimos 6 meses, un resumen por día, en un enlace (también se copia).
+    on('cuTw', 'click', function(){
+      if(!cuad.length){ window.alert('Todavía no has apuntado nada en el cuaderno.'); return; }
+      var dd = new Date(); dd.setDate(dd.getDate() - 183);
+      var lim = dd.getFullYear() + '-' + String(dd.getMonth() + 1).padStart(2, '0') + '-' + String(dd.getDate()).padStart(2, '0');
+      var dias = {}, d = {};
+      cuad.forEach(function(x){
+        if(!x.d || x.d < lim) return;
+        var t = x.e + ' ' + (x.rs ? x.rs.join('-') : (x.s > 1 ? x.s + '×' : '') + x.r) + (x.w > 0 ? ' · ' + String(x.w).replace('.', ',') + ' kg' : '');
+        (dias[x.d] = dias[x.d] || []).push(t);
+      });
+      Object.keys(dias).forEach(function(k){ d[k] = dias[k].join('; ').slice(0, 500); });
+      var json = JSON.stringify({ o: 'arnoldwork', d: d });
+      var url = 'https://turnos.arnoldwork.com/#entrenos=' + btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      try{ navigator.clipboard.writeText(url).catch(function(){}); }catch(e){}
+      $('cuTwNota').textContent = Object.keys(d).length + ' días de entreno enviados. Si usas TurnoWork instalada en el móvil, ábrela y pulsa «📋 Pegar entrenos»: el enlace ya está copiado.';
+      window.open(url, '_blank', 'noopener');
+    });
     on('cuIcs', 'click', function(){
       var x = datosExport(); if(!x) return;
       var blob = new Blob([icsCuaderno(x)], { type: 'text/calendar;charset=utf-8' });
