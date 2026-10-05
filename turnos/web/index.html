@@ -11,130 +11,150 @@
 <meta property="og:title" content="TurnoWork · Tu cuadrante de turnos para todo el año">
 <meta property="og:description" content="Pon tu ciclo una vez y ve todo tu año: turnos, festivos, horas y cambios con compañeros. Gratis.">
 <meta property="og:url" content="https://turnos.arnoldwork.com/">
-<meta name="theme-color" content="#141a33">
+<meta name="theme-color" content="#ff6f91">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icono.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;600;700;800&display=swap">
 <style>
-/* Layout: app de una columna; cabecera nocturna con el turno de hoy, ajustes plegables, el año en rejilla de meses y las funciones Pro marcadas con candado */
+/* Layout: app de una columna; cabecera con degradado del amanecer a la noche (los turnos del día), tarjetas blancas con sombra suave, el año en rejilla de meses y lo Pro con borde dorado */
 :root{
-  --noche:#141a33; --noche-2:#1f2750;
-  --fondo:#f5f6fa; --panel:#ffffff; --tinta:#161b2e; --suave:#5b6380; --linea:#dfe2ec;
-  --acento:#4f5bd5; --acento-suave:#e8eafb; --oro:#c9930f; --rojo:#d64545;
-  --tM:#ffe58a; --tT:#ffc38a; --tN:#b9bdf5; --tD:#a8e0f5; --tG:#f5aaa8;
-  --tV:#b6ecc7; --tAP:#a8e8de; --tB:#f6b9b9; --tF:#bcd3fb; --tC:#d5dae4;
+  --fondo:#faf8ff; --panel:#ffffff; --tinta:#1d1838; --suave:#6b6688; --linea:#ebe7f5;
+  --acento:#6c4cf1; --acento-2:#ff6b8b; --acento-suave:#f1edff; --oro:#ffb020; --rojo:#e5484d; --verde:#2f9e6b;
+  --sombra:0 1px 2px rgba(29,24,56,.06),0 10px 28px rgba(29,24,56,.07);
+  --tM:#ffe066; --tT:#ffa94d; --tN:#a99bff; --tD:#66d4ff; --tG:#ff8fa3;
+  --tV:#69db7c; --tAP:#38d9a9; --tB:#ff8787; --tF:#74c0fc; --tC:#d0d4e4; --tinta-celda:#1d1838;
   --display:"Unbounded", "Avenir Next", system-ui, sans-serif;
   --texto:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
-  --fondo:#0d1122; --panel:#161c36; --tinta:#e9ebf5; --suave:#9aa1c0; --linea:#2a3157;
-  --acento:#8f99ff; --acento-suave:#232a55; --oro:#f0c04a; --rojo:#ff7b7b;
-  --tM:#6b5a12; --tT:#6e4416; --tN:#3a3f8f; --tD:#1d5a70; --tG:#7a2d2b;
-  --tV:#21603a; --tAP:#1d5e55; --tB:#6e2a2a; --tF:#2b4a80; --tC:#3a4157;
+  --fondo:#110e22; --panel:#1b1733; --tinta:#efecff; --suave:#a7a1c8; --linea:#2c2650;
+  --acento:#9d86ff; --acento-2:#ff8aa3; --acento-suave:#251f47; --oro:#ffc44d; --rojo:#ff7b80; --verde:#5fd39b;
+  --sombra:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
+  --tM:#f5d23d; --tT:#f99a3a; --tN:#9283ff; --tD:#45c3f2; --tG:#ff7a92;
+  --tV:#4fcf66; --tAP:#20c997; --tB:#ff6b6b; --tF:#5aaef5; --tC:#9aa0b8;
   color-scheme:dark;}}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--fondo);color:var(--tinta);font:15px/1.5 var(--texto);-webkit-font-smoothing:antialiased}
+body{background:var(--fondo);color:var(--tinta);font:15px/1.55 var(--texto);-webkit-font-smoothing:antialiased}
 .envoltura{max-width:1080px;margin:0 auto;padding-inline:16px}
-button,input,select{font:inherit;color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--acento)}
 /* Cabecera */
-.cab{background:linear-gradient(160deg,var(--noche),var(--noche-2));color:#eef0ff;padding-top:env(safe-area-inset-top,0px)}
-.cab .envoltura{padding-block:22px 26px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-end;justify-content:space-between}
-.marca{font:800 1.05rem/1 var(--display);letter-spacing:.01em}
-.marca span{color:#ffd45c}
-.cab h1{font:600 clamp(1.5rem,5vw,2.2rem)/1.15 var(--display);margin:.5em 0 .3em;max-width:22ch;text-wrap:balance}
-.cab p{margin:0;color:#c3c8ee;max-width:52ch}
-.hoy{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:14px 16px;min-width:200px}
-.hoy small{display:block;color:#aab0e0;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700}
-.hoy b{font:800 1.4rem/1.2 var(--display);display:block;margin-top:4px}
-.hoy .man{color:#aab0e0;font-size:.85rem}
+.cab{background:linear-gradient(120deg,#ffb35c 0%,#ff6f91 42%,#7b5cff 100%);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.cab .envoltura{padding-block:24px 30px;display:flex;flex-wrap:wrap;gap:20px 28px;align-items:flex-end;justify-content:space-between}
+.marca{font:800 1.1rem/1 var(--display);display:flex;align-items:center;gap:10px}
+.marca img{width:34px;height:34px;border-radius:9px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.cab h1{font:600 clamp(1.6rem,5.2vw,2.4rem)/1.12 var(--display);margin:.55em 0 .35em;max-width:20ch;text-wrap:balance;text-shadow:0 2px 14px rgba(60,20,90,.18)}
+.cab p{margin:0;color:rgba(255,255,255,.92);max-width:52ch;font-weight:600}
+.ventajas{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ventajas span{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 11px;font-size:.78rem;font-weight:800}
+.hoy{background:rgba(255,255,255,.95);color:var(--tinta-celda);border-radius:20px;padding:16px 18px;min-width:220px;box-shadow:0 14px 34px rgba(60,20,90,.25)}
+.hoy small{display:block;color:#6b6688;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+.hoy b{font:700 1.35rem/1.25 var(--display);display:block;margin-top:6px}
+.hoy .man{color:#6b6688;font-size:.86rem;font-weight:600}
 /* Tarjetas y formularios */
-main{padding-block:18px 40px}
-.tarjeta{background:var(--panel);border:1px solid var(--linea);border-radius:14px;padding:14px 16px;margin-block:12px}
-details.tarjeta>summary{cursor:pointer;font-weight:800;list-style:none;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+main{padding-block:20px 40px}
+.tarjeta{background:var(--panel);border:1px solid var(--linea);border-radius:18px;padding:16px 18px;margin-block:14px;box-shadow:var(--sombra)}
+.tarjeta>b:first-child,.titulo{font:600 1rem/1.3 var(--display)}
+details.tarjeta>summary{cursor:pointer;font:600 1rem/1.3 var(--display);list-style:none;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 details.tarjeta>summary::-webkit-details-marker{display:none}
-details.tarjeta>summary::before{content:"▸";color:var(--suave)}
-details.tarjeta[open]>summary::before{content:"▾"}
+details.tarjeta>summary::before{content:"";width:8px;height:8px;border-right:2.5px solid var(--acento);border-bottom:2.5px solid var(--acento);transform:rotate(-45deg);align-self:center;transition:transform .2s}
+details.tarjeta[open]>summary::before{transform:rotate(45deg)}
 .nota{color:var(--suave);font-size:.88rem;font-weight:500}
-.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
-.form label{display:grid;gap:5px;font-size:.8rem;font-weight:700;color:var(--suave)}
-input,select{background:var(--fondo);border:1px solid var(--linea);border-radius:10px;padding:10px;min-width:0;width:100%;font-weight:600;color:var(--tinta)}
-input:focus-visible,select:focus-visible,button:focus-visible,.dia:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
-fieldset.turno{border:1px solid var(--linea);border-radius:12px;padding:8px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;min-width:0}
-fieldset.turno legend{font-weight:800;padding:0 4px}
-.boton{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);background:var(--panel);border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;color:var(--tinta)}
-.boton.primario{background:var(--acento);border-color:var(--acento);color:#fff}
-@media (prefers-color-scheme:dark){.boton.primario{color:#0d1122}}
-.boton.pro::after{content:"PRO";font:800 .6rem/1 var(--texto);letter-spacing:.08em;background:var(--oro);color:#1b1400;border-radius:5px;padding:3px 5px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.form label{display:grid;gap:6px;font-size:.8rem;font-weight:700;color:var(--suave)}
+input,select,textarea{background:var(--fondo);border:1.5px solid var(--linea);border-radius:12px;padding:11px 12px;min-width:0;width:100%;font-weight:600;color:var(--tinta)}
+input:focus,select:focus,textarea:focus{border-color:var(--acento);outline:none;box-shadow:0 0 0 4px var(--acento-suave)}
+button:focus-visible,.dia:focus-visible,a:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
+fieldset.turno{border:1.5px solid var(--linea);border-radius:14px;padding:10px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;min-width:0;background:var(--fondo)}
+fieldset.turno legend{font-weight:800;padding:0 6px;display:flex;align-items:center;gap:6px}
+fieldset.turno .dur{grid-column:1/-1;font-size:.8rem;color:var(--suave);font-weight:700}
+.boton{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--linea);background:var(--panel);border-radius:12px;padding:10px 15px;font-weight:800;cursor:pointer;color:var(--tinta);transition:transform .12s,box-shadow .12s}
+.boton:hover{transform:translateY(-1px);box-shadow:var(--sombra)}
+.boton.primario{background:linear-gradient(120deg,var(--acento),var(--acento-2));border-color:transparent;color:#fff}
+.boton.pro::after{content:"PRO";font:800 .6rem/1 var(--texto);letter-spacing:.08em;background:var(--oro);color:#2b1a00;border-radius:6px;padding:3px 6px}
 .boton.pro.desbloqueado::after{display:none}
-.acciones{display:flex;flex-wrap:wrap;gap:8px;margin-block:14px}
+.acciones{display:flex;flex-wrap:wrap;gap:8px;margin-block:16px}
 /* Barra del año */
-.barra{display:flex;gap:8px;align-items:center;margin-top:16px}
-.barra input{max-width:110px;text-align:center;font-size:1.1rem;font-weight:800}
+.barra{display:flex;gap:8px;align-items:center;margin-top:18px}
+.barra input{max-width:120px;text-align:center;font:600 1.15rem/1 var(--display);padding:9px}
+.barra .boton{font-size:1.2rem;padding:8px 16px}
 /* Resumen */
-.resumen{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-block:12px}
-.resumen div{background:var(--panel);border:1px solid var(--linea);border-radius:12px;padding:10px 12px;min-width:0}
-.resumen small{display:block;color:var(--suave);font-size:.75rem;font-weight:700}
-.resumen b{font-size:1.2rem;font-variant-numeric:tabular-nums}
+.resumen{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-block:14px}
+.resumen div{background:var(--panel);border:1px solid var(--linea);border-radius:16px;padding:12px 14px;min-width:0;box-shadow:var(--sombra)}
+.resumen small{display:block;color:var(--suave);font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.resumen b{font:600 1.2rem/1.3 var(--display);font-variant-numeric:tabular-nums}
 /* Códigos de turno */
-.c{display:inline-grid;place-items:center;min-width:26px;height:24px;padding:0 4px;border-radius:6px;font-weight:800;font-size:.78rem;border:1px solid var(--linea);color:var(--tinta);vertical-align:middle}
-.t-M{background:var(--tM)} .t-T{background:var(--tT)} .t-N{background:var(--tN)} .t-D{background:var(--tD)} .t-G{background:var(--tG)}
-.t-V{background:var(--tV)} .t-AP{background:var(--tAP)} .t-B{background:var(--tB)} .t-F{background:var(--tF)} .t-C{background:var(--tC)}
-.t-L{color:var(--suave);font-weight:600}
+.c{display:inline-grid;place-items:center;min-width:28px;height:26px;padding:0 5px;border-radius:8px;font-weight:800;font-size:.78rem;color:var(--tinta-celda);vertical-align:middle;background:var(--tC)}
+.t-M{background:var(--tM);color:var(--tinta-celda)} .t-T{background:var(--tT);color:var(--tinta-celda)} .t-N{background:var(--tN);color:var(--tinta-celda)}
+.t-D{background:var(--tD);color:var(--tinta-celda)} .t-G{background:var(--tG);color:var(--tinta-celda)}
+.t-V{background:var(--tV);color:var(--tinta-celda)} .t-AP{background:var(--tAP);color:var(--tinta-celda)} .t-B{background:var(--tB);color:var(--tinta-celda)}
+.t-F{background:var(--tF);color:var(--tinta-celda)} .t-C{background:var(--tC);color:var(--tinta-celda)}
+.t-L{background:transparent;color:var(--suave);font-weight:600}
+.c.t-L{border:1.5px dashed var(--linea)}
 /* Año */
-.anio{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-block:14px}
-.mes{background:var(--panel);border:1px solid var(--linea);border-radius:14px;padding:10px}
-.mes h3{margin:0 0 6px;font:600 .9rem/1.2 var(--display);text-transform:capitalize}
-.sem,.dias{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.sem span{font-size:.65rem;color:var(--suave);text-align:center;font-weight:700}
-.dia{position:relative;aspect-ratio:1;display:grid;place-items:center;border:1px solid var(--linea);border-radius:7px;font-weight:800;font-size:.78rem;cursor:pointer;line-height:1;min-width:0}
-.dia small{position:absolute;top:2px;left:3px;font-size:.55rem;font-weight:600;color:var(--suave)}
-.dia.finde small{color:var(--acento);font-weight:800}
-.dia.fest small{color:var(--rojo);font-weight:800}
-.dia.fest::after{content:"★";position:absolute;top:1px;right:3px;font-size:.55rem;color:var(--rojo)}
-.dia.hoy{box-shadow:0 0 0 2px var(--acento);z-index:1}
+.anio{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-block:16px}
+.mes{background:var(--panel);border:1px solid var(--linea);border-radius:18px;padding:12px;box-shadow:var(--sombra)}
+.mes h3{margin:0 0 8px;font:600 .9rem/1.2 var(--display);text-transform:capitalize;display:flex;align-items:center;gap:8px}
+.mes h3::before{content:"";width:8px;height:8px;border-radius:50%;background:linear-gradient(120deg,var(--acento),var(--acento-2))}
+.sem,.dias{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.sem span{font-size:.65rem;color:var(--suave);text-align:center;font-weight:800}
+.dia{position:relative;aspect-ratio:1;display:grid;place-items:center;border-radius:9px;font-weight:800;font-size:.78rem;cursor:pointer;line-height:1;min-width:0;transition:transform .1s}
+.dia:hover{transform:scale(1.08);z-index:2}
+.dia.t-L{border:1px solid var(--linea)}
+.dia small{position:absolute;top:2px;left:4px;font-size:.55rem;font-weight:700;opacity:.7}
+.dia.finde small{opacity:1;font-weight:900}
+.dia.fest::after{content:"★";position:absolute;top:1px;right:3px;font-size:.6rem;color:var(--rojo)}
+.dia.hoy{box-shadow:0 0 0 2.5px var(--acento),0 4px 12px rgba(108,76,241,.35);z-index:1}
 .dia.man{box-shadow:inset 0 0 0 2px var(--tinta)}
 .dia.corto{outline:2px dashed var(--rojo);outline-offset:-3px}
-.leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--suave);margin-block:8px}
+.leyenda{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.82rem;color:var(--suave);margin-block:10px;font-weight:600}
 .leyenda>span{display:inline-flex;align-items:center;gap:6px}
-.alerta{flex-basis:100%;margin:6px 0 0;color:var(--rojo);font-weight:700}
+.alerta{flex-basis:100%;margin:6px 0 0;color:var(--rojo);font-weight:800}
 /* Menú de un día */
-.menu{position:absolute;z-index:50;background:var(--panel);border:1px solid var(--linea);border-radius:14px;padding:10px;box-shadow:0 14px 34px rgba(10,14,40,.3);max-width:290px;display:grid;gap:8px}
-.menu small{color:var(--suave);font-weight:700}
+.menu{position:absolute;z-index:50;background:var(--panel);border:1px solid var(--linea);border-radius:16px;padding:12px;box-shadow:0 18px 40px rgba(29,24,56,.25);max-width:300px;display:grid;gap:8px}
+.menu small{color:var(--suave);font-weight:800}
 .menu .fila{display:flex;flex-wrap:wrap;gap:6px}
-.menu .c{min-width:42px;height:36px;cursor:pointer;font:inherit;font-weight:800}
+.menu .c{min-width:42px;height:38px;cursor:pointer;font:inherit;font-weight:800;border:0}
+.menu .c.t-L{border:1.5px dashed var(--linea)}
 .menu label{display:grid;gap:4px;font-size:.8rem;color:var(--suave);font-weight:700}
 .chk{display:flex!important;gap:8px;align-items:center;grid-template-columns:none!important}
 .chk input{width:auto}
 /* Tablas */
 .tabla{overflow-x:auto;margin-top:10px}
 .tabla table{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.85rem;min-width:100%}
-.tabla th,.tabla td{border-bottom:1px solid var(--linea);padding:6px 8px;text-align:right}
+.tabla th,.tabla td{border-bottom:1px solid var(--linea);padding:7px 9px;text-align:right}
 .tabla th:first-child{text-align:left;text-transform:capitalize}
+.tabla tfoot th,.tabla tfoot td{font-weight:800;border-bottom:0}
 /* Propuesta de cambio y Pro */
 .aviso{border-color:var(--acento);background:var(--acento-suave)}
 .aviso ul{margin:8px 0 12px;padding-left:18px;display:grid;gap:6px}
-.pro-caja{border:2px solid var(--oro)}
-.pro-caja h2{font:600 1.15rem/1.2 var(--display);margin:0 0 6px}
-.pro-caja ul{margin:8px 0;padding-left:18px}
+.pro-caja{border:2px solid transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,linear-gradient(120deg,var(--oro),var(--acento-2),var(--acento)) border-box}
+.pro-caja h2{font:600 1.2rem/1.25 var(--display);margin:0 0 6px}
+.pro-caja h2 em{font-style:normal;background:linear-gradient(120deg,var(--acento),var(--acento-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pro-lista{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.pro-lista li{display:flex;gap:10px;align-items:flex-start;background:var(--fondo);border-radius:12px;padding:10px 12px;font-size:.9rem}
+.pro-lista li span{font-size:1.2rem;line-height:1}
 .pro-fila{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .pro-fila input{flex:1 1 220px}
 .bloqueado{position:relative}
 .bloqueado .contenido{filter:blur(5px);pointer-events:none;user-select:none}
 .bloqueado .velo{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:12px}
+.aviso-pro{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--acento-suave);font-size:.86rem;font-weight:600}
+textarea{min-height:110px;resize:vertical}
 footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--suave);font-size:.85rem}
 .solo-imprimir{display:none}
+@media (prefers-reduced-motion:reduce){.boton,.dia,details.tarjeta>summary::before{transition:none}}
 @media print{
   .cab,.no-imprimir,footer,.menu{display:none!important}
   .solo-imprimir{display:block}
   body{background:#fff;color:#000}
   .anio{grid-template-columns:repeat(4,1fr);gap:6px}
-  .mes{padding:4px;break-inside:avoid;border-color:#999}
-  .dia{font-size:6.5pt;border-color:#999;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .mes{padding:4px;break-inside:avoid;box-shadow:none;border-color:#999}
+  .dia{font-size:6.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .dia small{font-size:4.5pt}
 }
 </style>
@@ -143,9 +163,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 <header class="cab">
   <div class="envoltura">
     <div>
-      <div class="marca">Turno<span>Work</span></div>
+      <div class="marca"><img src="icono.svg" alt="" width="34" height="34">TurnoWork</div>
       <h1>Tu cuadrante de turnos para todo el año</h1>
-      <p>Pon tu ciclo una vez y ve cada día del año: mañanas, tardes, noches, guardias, festivos y horas. Para sanitarios, bomberos, seguridad, fábricas, hostelería… Gratis y sin registrarte.</p>
+      <p>Pon tu ciclo una vez y ve cada día del año: mañanas, tardes, noches, guardias, festivos y horas. Para sanitarios, bomberos, seguridad, fábricas, hostelería… </p>
+      <div class="ventajas"><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos no salen del móvil</span></div>
     </div>
     <div class="hoy" id="hoy"></div>
   </div>
@@ -164,7 +185,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <label>Tu comunidad (festivos)<select id="comunidad"></select></label>
     </div>
     <p class="nota">Códigos: <b>M</b> mañana, <b>T</b> tarde, <b>N</b> noche, <b>D</b> día de 12 h, <b>G</b> guardia de 24 h, <b>L</b> libre. Con un solo día que sepas (por ejemplo, «el 1 de enero hice la primera mañana»), el ciclo se calcula hacia delante y hacia atrás.</p>
+    <p class="titulo" style="margin:16px 0 0">Horario de cada turno</p>
     <div class="form" id="turnos"></div>
+    <div id="aviso-minutos"></div>
   </details>
 
   <div class="barra no-imprimir">
@@ -203,14 +226,21 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   </div>
 
   <section class="tarjeta pro-caja no-imprimir" id="pro">
-    <h2>TurnoWork Pro · 2,99 €, pago único</h2>
+    <h2>TurnoWork <em>Pro</em> · 2,99 €, pago único</h2>
     <p class="nota" style="margin:0">El cuadrante es gratis para siempre. Pro es para quien quiere sacarle todo el jugo, y ayuda a mantener la web sin anuncios.</p>
-    <ul>
-      <li><b>Tus turnos en el calendario del móvil</b> (Google, iPhone, Outlook), con su hora de inicio y fin.</li>
-      <li><b>Saldo de horas</b> frente a tu jornada anual y <b>resumen mes a mes</b>.</li>
-      <li><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</li>
+    <ul class="pro-lista">
+      <li><span>⏱️</span><div><b>Horarios con minutos.</b> Entras a las 6:50 y sales a las 15:10: tus horas se cuentan al minuto.</div></li>
+      <li><span>📅</span><div><b>Tus turnos en el calendario del móvil</b> (Google, iPhone, Outlook), con su hora de entrada y salida.</div></li>
+      <li><span>⚖️</span><div><b>Saldo de horas</b> frente a tu jornada anual y <b>resumen mes a mes</b>.</div></li>
+      <li><span>📤</span><div><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</div></li>
+      <li><span>💡</span><div><b>Buzón de mejoras.</b> Pide lo que te falte: las ideas de los usuarios Pro son las primeras que hacemos.</div></li>
     </ul>
     <div id="pro-estado"></div>
+  </section>
+
+  <section class="tarjeta no-imprimir" id="mejoras">
+    <p class="titulo" style="margin:0">💡 Buzón de mejoras</p>
+    <div id="mejoras-cont"></div>
   </section>
 
   <footer>
@@ -305,11 +335,15 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const c=ciclo(); if(Y.pos>=c.length) Y.pos=0;
     $("pos").innerHTML=c.map((t,i)=>`<option value="${i}"${i===+Y.pos?" selected":""}>Día ${i+1} del ciclo · ${esc(nombre(t))}</option>`).join("");
   }
+  // Horas en decimal ↔ «06:50». Las horas con minutos son de Pro: sin Pro se redondea a la hora en punto.
+  const aHHMM=v=>{const m=Math.round((((v%24)+24)%24)*60);return `${p2(Math.floor(m/60)%24)}:${p2(m%60)}`;};
+  const deHHMM=t=>{const [h,m]=String(t).split(":").map(Number);return (h||0)+(m||0)/60;};
   function pintarTurnos(){
     $("turnos").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `
       <fieldset class="turno"><legend><span class="c t-${k}">${k}</span> ${esc(t.n)}</legend>
-        <label>Empieza (h)<input type="number" min="0" max="23" data-t="${k}" data-k="ini" value="${t.ini}"></label>
-        <label>Horas<input type="number" min="1" max="24" step="0.5" data-t="${k}" data-k="h" value="${t.h}"></label>
+        <label>Entras<input type="time" step="${PRO?60:3600}" data-t="${k}" data-k="ini" value="${aHHMM(t.ini)}"></label>
+        <label>Sales<input type="time" step="${PRO?60:3600}" data-t="${k}" data-k="fin" value="${aHHMM(t.ini+t.h)}"></label>
+        <span class="dur" data-dur="${k}">${durTxt(t.h)}</span>
       </fieldset>`;}).join("");
   }
   function pintarAjustes(){
@@ -325,7 +359,17 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   $("fecha").addEventListener("input",e=>{if(e.target.value){Y.ref=e.target.value;cambio();}});
   $("pos").addEventListener("change",e=>{Y.pos=+e.target.value;cambio();});
   $("comunidad").addEventListener("change",e=>{Y.comunidad=e.target.value;cambio();});
-  $("turnos").addEventListener("input",e=>{const i=e.target.closest("[data-t]");if(!i)return;Y.turnos[i.dataset.t][i.dataset.k]=+i.value||0;cambio();});
+  $("turnos").addEventListener("change",e=>{
+    const i=e.target.closest("[data-t]"); if(!i||!i.value) return;
+    const t=Y.turnos[i.dataset.t]; let v=deHHMM(i.value);
+    if(!PRO&&v%1){ v=Math.round(v); i.value=aHHMM(v);
+      $("aviso-minutos").innerHTML=`<div class="aviso-pro">⏱️ Los horarios con minutos (como 6:50) son de Pro. Sin Pro se cuenta la hora en punto.<button class="boton primario" data-ir-pro>Ver Pro</button></div>`; }
+    const fin=i.dataset.k==="fin"?v:t.ini+t.h, ini=i.dataset.k==="ini"?v:t.ini;
+    let h=((fin-ini)%24+24)%24; if(h===0) h=24;
+    t.ini=Math.round(ini*60)/60; t.h=Math.round(h*60)/60;
+    const d=$("turnos").querySelector(`[data-dur="${i.dataset.t}"]`); if(d) d.textContent=durTxt(t.h);
+    cambio();
+  });
 
   // ===== Año =====
   $("anio-sel").value=Y.anio;
@@ -348,6 +392,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     return {dias,total:suma(dias),meses:MESES.map((n,i)=>({n,...suma(dias.filter(x=>x.d.getMonth()===i))}))};
   }
   const num=v=>v.toLocaleString("es-ES",{maximumFractionDigits:1});
+  // 1642,33 → «1.642 h 20 min»
+  const horasTxt=v=>{const m=Math.round(Math.abs(v)*60),h=Math.floor(m/60),r=m%60;return `${h.toLocaleString("es-ES")} h${r?` ${r} min`:""}`;};
+  function durTxt(h){return `Duración: ${horasTxt(h)}${h>=24?" (guardia)":""}`;}
   const hora=v=>`${p2(Math.floor(v%24))}:${p2(Math.round((v%1)*60))}`;
 
   function pintarHoy(){
@@ -368,7 +415,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div><small>Empiezas el año (1 ene)</small><b><span class="c t-${esc(pri.t)}">${esc(pri.t)}</span> ${esc(nombre(pri.t))}</b></div>
       <div><small>Acabas el año (31 dic)</small><b><span class="c t-${esc(ult.t)}">${esc(ult.t)}</span> ${esc(nombre(ult.t))}</b></div>
       <div><small>Días de trabajo</small><b>${total.trab}</b></div>
-      <div><small>Horas de turno</small><b>${num(total.horas)}</b></div>
+      <div><small>Horas de turno</small><b>${horasTxt(total.horas)}</b></div>
       <div><small>Noches</small><b>${total.noches}</b></div>
       <div><small>Días de finde trabajados</small><b>${total.findes}</b></div>
       <div><small>Libres</small><b>${total.libres}</b></div>
@@ -393,32 +440,48 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   function pintarMeses(meses,total){
     const manK=Object.keys(MANUALES).filter(k=>meses.some(x=>x.man[k]));
     $("meses").innerHTML=velo(`<div class="tabla"><table><thead><tr><th>Mes</th><th>Días</th><th>Horas</th><th>Noches</th><th>Findes</th><th>Libres</th><th title="Festivos trabajados">Fest.</th>${manK.map(k=>`<th title="${esc(MANUALES[k])}">${k}</th>`).join("")}</tr></thead>
-      <tbody>${meses.map(x=>`<tr><th>${x.n}</th><td>${x.trab}</td><td>${num(x.horas)}</td><td>${x.noches}</td><td>${x.findes}</td><td>${x.libres}</td><td>${x.festTrab||""}</td>${manK.map(k=>`<td>${x.man[k]||""}</td>`).join("")}</tr>`).join("")}</tbody>
-      <tfoot><tr><th>Total</th><td>${total.trab}</td><td>${num(total.horas)}</td><td>${total.noches}</td><td>${total.findes}</td><td>${total.libres}</td><td>${total.festTrab}</td>${manK.map(k=>`<td>${total.man[k]||""}</td>`).join("")}</tr></tfoot></table></div>`);
+      <tbody>${meses.map(x=>`<tr><th>${x.n}</th><td>${x.trab}</td><td>${horasTxt(x.horas)}</td><td>${x.noches}</td><td>${x.findes}</td><td>${x.libres}</td><td>${x.festTrab||""}</td>${manK.map(k=>`<td>${x.man[k]||""}</td>`).join("")}</tr>`).join("")}</tbody>
+      <tfoot><tr><th>Total</th><td>${total.trab}</td><td>${horasTxt(total.horas)}</td><td>${total.noches}</td><td>${total.findes}</td><td>${total.libres}</td><td>${total.festTrab}</td>${manK.map(k=>`<td>${total.man[k]||""}</td>`).join("")}</tr></tfoot></table></div>`);
   }
   $("jornada").value=Y.saldo.jornada||""; $("haus").value=Y.saldo.haus;
   $("jornada").addEventListener("input",e=>{Y.saldo.jornada=+e.target.value||0;cambio();});
   $("haus").addEventListener("input",e=>{Y.saldo.haus=+e.target.value||0;cambio();});
-  const signo=v=>(v>0?"+":v<0?"−":"")+num(Math.abs(v));
+  const signo=v=>(v>0?"+":v<0?"−":"")+horasTxt(v);
   function pintarSaldo(dias,total){
     const J=+Y.saldo.jornada||0, ha=+Y.saldo.haus||0, comp=total.horas+total.aus*ha;
-    if(!PRO){$("saldo-desc").textContent="";$("saldo").innerHTML=`<p class="nota">Horas computadas este año: <b>${num(comp)} h</b>. Con Pro ves si te sobran o te faltan horas frente a tu jornada, también a día de hoy.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`;return;}
-    if(!J){$("saldo").innerHTML=`<p class="nota">Pon tu jornada anual para ver el saldo. Horas computadas este año: <b>${num(comp)} h</b>.</p>`;$("saldo-desc").textContent="";return;}
+    if(!PRO){$("saldo-desc").textContent="";$("saldo").innerHTML=`<p class="nota">Horas computadas este año: <b>${horasTxt(comp)}</b>. Con Pro ves si te sobran o te faltan horas frente a tu jornada, también a día de hoy.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`;return;}
+    if(!J){$("saldo").innerHTML=`<p class="nota">Pon tu jornada anual para ver el saldo. Horas computadas este año: <b>${horasTxt(comp)}</b>.</p>`;$("saldo-desc").textContent="";return;}
     const hasta=dias.filter(x=>x.d<=hoy), enCurso=+Y.anio===hoy.getFullYear();
     const compHoy=hasta.reduce((s,x)=>s+(esTrabajo(x.t)?Y.turnos[x.t].h:AUSENCIAS.includes(x.t)?ha:0),0);
     const jHoy=J*hasta.length/dias.length, saldo=comp-J, saldoHoy=compHoy-jHoy;
-    $("saldo-desc").textContent=`· ${signo(saldo)} h en el año`;
+    $("saldo-desc").textContent=`· ${signo(saldo)} en el año`;
     $("saldo").innerHTML=`<div class="resumen">
-      <div><small>Saldo del año</small><b style="color:${saldo<0?"var(--rojo)":"inherit"}">${signo(saldo)} h</b></div>
-      <div><small>Horas computadas</small><b>${num(comp)}</b></div>
-      <div><small>Jornada anual</small><b>${num(J)}</b></div>
-      ${enCurso?`<div><small>Saldo a día de hoy</small><b>${signo(saldoHoy)} h</b></div>`:""}</div>
-      <p class="nota">${saldo>0?`Te salen <b>${num(saldo)} horas de más</b> en el año`:saldo<0?`Te faltan <b>${num(-saldo)} horas</b> para la jornada del año`:"Cuadra exacto con la jornada"}: ${num(total.horas)} h de turnos${total.aus?` + ${total.aus} días de ausencia × ${num(ha)} h`:""}.</p>`;
+      <div><small>Saldo del año</small><b style="color:${saldo<0?"var(--rojo)":"var(--verde)"}">${signo(saldo)}</b></div>
+      <div><small>Horas computadas</small><b>${horasTxt(comp)}</b></div>
+      <div><small>Jornada anual</small><b>${horasTxt(J)}</b></div>
+      ${enCurso?`<div><small>Saldo a día de hoy</small><b>${signo(saldoHoy)}</b></div>`:""}</div>
+      <p class="nota">${saldo>0?`Te salen <b>${horasTxt(saldo)} de más</b> en el año`:saldo<0?`Te faltan <b>${horasTxt(-saldo)}</b> para la jornada del año`:"Cuadra exacto con la jornada"}: ${horasTxt(total.horas)} de turnos${total.aus?` + ${total.aus} días de ausencia × ${num(ha)} h`:""}.</p>`;
   }
 
+  function pintarMejoras(){
+    if(!PRO){ $("mejoras-cont").innerHTML=`<p class="nota">¿Echas algo en falta? Los usuarios Pro pueden pedir mejoras directamente al equipo, y sus ideas son las primeras que hacemos.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    $("mejoras-cont").innerHTML=`<p class="nota">Cuéntanos qué te falta o qué cambiarías. Lo leemos todo y, si hace falta, te contestamos a <b>${esc(PRO.email)}</b>.</p>
+      <form id="mejora-form" style="display:grid;gap:10px"><textarea id="mejora-txt" maxlength="1500" required placeholder="Por ejemplo: me gustaría poder poner dos turnos el mismo día…"></textarea>
+      <div><button class="boton primario" type="submit">Enviar mejora</button></div><p class="nota" id="mejora-msg" role="status" style="margin:0"></p></form>`;
+    $("mejora-form").addEventListener("submit",async e=>{
+      e.preventDefault(); const msg=$("mejora-msg"), texto=$("mejora-txt").value.trim(); if(!texto) return;
+      msg.textContent="Enviando…";
+      try{
+        const r=await fetch(VIGILANTE+"/mejora",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:PRO.email,producto:"turnos",texto})});
+        const j=await r.json().catch(()=>({}));
+        if(r.ok&&j.ok){$("mejora-txt").value="";msg.textContent="✅ ¡Recibido! Gracias por ayudarnos a mejorar TurnoWork.";}
+        else msg.textContent=j.error||"No se ha podido enviar. Prueba de nuevo en un rato.";
+      }catch(x){msg.textContent="Sin conexión: conéctate a internet y vuelve a probar.";}
+    });
+  }
   function pintarPro(){
+    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML="";
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
-    $("saldo-cont").classList.toggle("bloqueado",false);
     $("jornada").disabled=$("haus").disabled=!PRO;
     if(PRO){ $("pro-estado").innerHTML=`<p class="nota">✅ Pro activado con <b>${esc(PRO.email)}</b>. ¡Gracias por apoyar TurnoWork!</p>`; return; }
     $("pro-estado").innerHTML=`

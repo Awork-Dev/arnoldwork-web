@@ -9,6 +9,7 @@
 // En cualquier momento:
 //   POST /kofi      Ko-fi avisa de cada venta o batido → mensaje a Telegram.
 //   POST /pro       las webs de pago (Turnos…) preguntan si un correo ha comprado su versión Pro en Ko-fi.
+//   POST /mejora    buzón de mejoras de las webs de pago: solo para quien tiene el Pro → mensaje a Telegram.
 //   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
@@ -491,6 +492,23 @@ async function pro(req, env) {
   return new Response(JSON.stringify({ ok: r }), { headers: h });
 }
 
+// Buzón de mejoras: solo para usuarios Pro (se comprueba la licencia, con el mismo límite de intentos).
+async function mejora(req, env) {
+  const h = { "Content-Type": "application/json", "Cache-Control": "no-store", ...cors(req) };
+  if (!h["Access-Control-Allow-Origin"]) return new Response('{"error":"Origen no permitido"}', { status: 403, headers: h });
+  const b = await req.json().catch(() => null);
+  const email = String(b?.email || "").trim(), producto = String(b?.producto || ""), texto = String(b?.texto || "").trim().slice(0, 1500);
+  if (!email.includes("@") || !NOMBRE_PRO[producto] || !texto) return new Response('{"error":"Escribe tu mejora antes de enviarla"}', { status: 400, headers: h });
+  const m = memoria(env);
+  if (!m) return new Response('{"error":"Sin memoria"}', { status: 503, headers: h });
+  const ip = await huellaCorreo((req.headers.get("CF-Connecting-IP") || "") + "#ip");
+  const r = await m.comprobarLicencia(await huellaCorreo(email), producto, ip.slice(0, 16));
+  if (r === null) return new Response('{"error":"Has enviado muchas seguidas: prueba dentro de una hora"}', { status: 429, headers: h });
+  if (!r) return new Response('{"error":"El buzón de mejoras es para usuarios Pro"}', { status: 403, headers: h });
+  await enviarTelegram(env, `💡 Mejora para ${NOMBRE_PRO[producto]}\n\n📮 ${recorta(email, 120)}\n\n${texto}`);
+  return new Response('{"ok":true}', { headers: h });
+}
+
 async function contacto(req, env) {
   const h = { "Content-Type": "application/json", ...cors(req) };
   if (!h["Access-Control-Allow-Origin"]) return new Response('{"error":"Origen no permitido"}', { status: 403, headers: h });
@@ -546,6 +564,7 @@ export default {
     if (req.method === "POST" && url.pathname === "/kofi") return kofi(req, env);
     if (req.method === "POST" && url.pathname === "/contacto") return contacto(req, env);
     if (req.method === "POST" && url.pathname === "/pro") return pro(req, env);
+    if (req.method === "POST" && url.pathname === "/mejora") return mejora(req, env);
     if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
 
     if (url.pathname === "/diagnostico") {
