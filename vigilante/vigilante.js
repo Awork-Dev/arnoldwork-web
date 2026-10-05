@@ -49,11 +49,12 @@ const PRODUCTOS_KOFI = {
   "933c0fd088": "Ficha: Perder grasa sin perder el músculo",
   "8850046986": "Ficha: Estar en forma para la vida",
   "833e551486": "Pack completo: libro + las tres fichas",
+  "d1bb163587": "TurnoWork Pro",
 };
 // Productos de Ko-fi que desbloquean la versión Pro de una web (código del enlace ko-fi.com/s/<código> → producto).
 // Al comprarlos, el correo del comprador queda guardado (cifrado) y la web se desbloquea con ese correo.
 const PRO_KOFI = {
-  // "xxxxxxxxxx": "turnos",
+  "d1bb163587": "turnos",
 };
 const NOMBRE_PRO = { turnos: "Turnos Pro", calas: "Calas Hoy Pro" };
 // Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
