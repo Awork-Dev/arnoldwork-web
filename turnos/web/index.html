@@ -43,6 +43,7 @@
   color-scheme:dark;}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+.fuera-pes{display:none!important}
 html,body{margin:0}
 body{background:var(--fondo);color:var(--tinta);font:15px/1.55 var(--texto);-webkit-font-smoothing:antialiased}
 .envoltura{max-width:1080px;margin:0 auto;padding-inline:16px}
@@ -209,11 +210,20 @@ textarea{min-height:110px;resize:vertical}
 .pasos li::before{content:counter(paso);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.8rem;color:#fff;background:linear-gradient(120deg,var(--acento),var(--acento-2))}
 .pasos svg{width:18px;height:18px;vertical-align:-4px;stroke:var(--acento)}
 .cerrar{border:0;background:transparent;color:var(--suave);font-weight:800;cursor:pointer;padding:6px}
+/* Pestañas de abajo: la app se reparte en secciones para no hacer scroll largo */
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+.pestanas-app{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--linea);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.pestanas-app button{flex:1;max-width:120px;display:grid;justify-items:center;gap:2px;border:0;background:transparent;border-radius:12px;padding:6px 2px;font:800 .7rem/1.1 var(--texto);color:var(--suave);cursor:pointer}
+.pestanas-app button span{font-size:1.25rem;line-height:1.1;filter:grayscale(.6);opacity:.75}
+.pestanas-app button[aria-current="page"]{color:var(--acento);background:var(--acento-suave)}
+.pestanas-app button[aria-current="page"] span{filter:none;opacity:1}
+.pes-titulo{font:600 1.3rem/1.2 var(--display);margin:6px 0 4px}
 footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--suave);font-size:.85rem}
 .solo-imprimir{display:none}
 @media (prefers-reduced-motion:reduce){.boton,.dia,details.tarjeta>summary::before{transition:none}}
 @media print{
-  .cab,.no-imprimir,footer,.menu{display:none!important}
+  .cab,.no-imprimir,footer,.menu,.pestanas-app{display:none!important}
+  body{padding-bottom:0}
   .solo-imprimir{display:block}
   body{background:#fff;color:#000}
   .anio{grid-template-columns:repeat(4,1fr);gap:6px}
@@ -242,7 +252,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <button class="boton primario" id="actualizar-ya">Actualizar ahora</button>
   </div>
   <div id="propuesta"></div>
-  <a class="tarjeta no-imprimir" id="pide-funcion" href="#mejoras" hidden style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;text-decoration:none;color:inherit">
+  <a class="tarjeta no-imprimir" id="pide-funcion" href="#mejoras" data-ir="pro" hidden style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;text-decoration:none;color:inherit">
     <span><b>💡 Eres Pro: si quieres una función, pídela</b><br><span class="nota">Escríbenos en el buzón de mejoras. Las ideas de los usuarios Pro son las primeras que hacemos.</span></span>
     <span class="boton primario">Pedir una función</span>
   </a>
@@ -300,14 +310,14 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div class="temas" id="temas" role="group" aria-label="Tema de colores"></div>
   </details>
 
-  <div class="barra no-imprimir">
+  <div class="barra no-imprimir" id="barra-anio">
     <button class="boton" id="ant" aria-label="Año anterior">‹</button>
     <input id="anio-sel" type="number" min="2000" max="2100" inputmode="numeric" aria-label="Año">
     <button class="boton" id="sig" aria-label="Año siguiente">›</button>
   </div>
   <h2 class="solo-imprimir" id="titulo-imp"></h2>
   <div class="resumen" id="resumen"></div>
-  <p class="nota no-imprimir">Toca un día para cambiarlo (vacaciones, baja, asuntos propios…), apuntar una nota, marcar un festivo local o proponer un cambio de turno a un compañero.</p>
+  <p class="nota no-imprimir" id="nota-anio">Toca un día para cambiarlo (vacaciones, baja, asuntos propios…), apuntar una nota, marcar un festivo local o proponer un cambio de turno a un compañero.</p>
   <div class="anio" id="anio"></div>
   <div class="leyenda" id="leyenda"></div>
 
@@ -364,7 +374,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="pareja"></div>
   </section>
 
-  <div class="acciones no-imprimir">
+  <div class="acciones no-imprimir" id="acciones-export">
     <button class="boton pro" id="ics">📅 Al calendario del móvil</button>
     <label class="nota" id="aviso-turno-caja" style="display:inline-flex;gap:6px;align-items:center">Aviso antes del turno
       <select id="aviso-turno" style="width:auto;padding:8px"><option value="0">Sin aviso</option><option value="30">30 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="720">La noche antes (12 h)</option></select></label>
@@ -407,12 +417,19 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="mejoras-cont"></div>
   </section>
 
-  <footer>
+  <footer id="pie">
     <p>Festivos nacionales y de tu comunidad calculados de forma orientativa (cada año los fija un decreto): añade los locales o los que cambien tocando el día. Comprueba siempre con el cuadrante oficial de tu empresa y tu convenio.</p>
     <p>Tus datos se guardan solo en este dispositivo: nadie más los ve. Solo si activas la sincronización de Pro se guarda una copia de tu cuadrante en nuestro servidor, protegida con tu código, para verlo en tus otros dispositivos y en tu calendario; puedes borrarla cuando quieras. El ciclo menstrual nunca sale del móvil. Pro se activa con el correo con el que pagaste en Ko-fi.</p>
     <p><a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · <a href="#" id="buscar-act">🔄 Buscar actualización</a> <span id="version-txt"></span> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
   </footer>
 </main>
+<nav class="pestanas-app no-imprimir" id="pestanas-app" aria-label="Secciones">
+  <button data-pes="hoy"><span>🏠</span>Hoy</button>
+  <button data-pes="anio"><span>📅</span>Año</button>
+  <button data-pes="horas"><span>⏱️</span>Horas</button>
+  <button data-pes="mas"><span>🧰</span>Más</button>
+  <button data-pes="pro"><span>⭐</span>Pro</button>
+</nav>
 
 <script>
 (function(){
@@ -683,7 +700,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div class="acciones"><button class="boton primario" id="par-si">Guardar para comparar</button><button class="boton" id="par-no">Ahora no</button></div></div>`;
     $("par-si").addEventListener("click",()=>{Y.pareja={nombre:String(d.nombre||"").slice(0,40),patron:String(d.patron),ref:d.ref,pos:+d.pos||0,turnos:d.turnos||{},cambios:d.cambios||{}};guardar();cerrar();pintar();
       $("propuesta").innerHTML=`<p class="nota">✓ Guardado. ${PRO?"Tus días libres en común salen con borde verde.":"Con Pro verás vuestros días libres en común."}</p>`;
-      $("caja-pareja").scrollIntoView({behavior:"smooth",block:"center"});});
+      verPestana("mas","caja-pareja");});
     $("par-no").addEventListener("click",()=>{$("propuesta").innerHTML="";cerrar();});
     return true;
   }
@@ -930,8 +947,27 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       }catch(x){msg.textContent="Sin conexión: conéctate a internet y vuelve a probar.";}
     });
   }
-  document.addEventListener("click",e=>{if(e.target.closest("[data-ir-pro]")){$("pro").scrollIntoView({behavior:"smooth",block:"center"});}});
-  const exigePro=fn=>e=>{ if(!PRO){ $("pro").scrollIntoView({behavior:"smooth",block:"center"}); return; } fn(e); };
+  // ===== Pestañas =====
+  const PESTANAS={hoy:["pide-funcion","ganchos","instalar","caja-semana"],
+    anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
+    horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
+    mas:["caja-plan","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
+    pro:["pro","mejoras"]};
+  Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
+  let pesActual=null;
+  function verPestana(p,destino){
+    if(!PESTANAS[p]) p="hoy"; pesActual=p; escribir("tw_pestana",p);
+    document.querySelectorAll("[data-pestana]").forEach(el=>el.classList.toggle("fuera-pes",el.dataset.pestana!==p));
+    document.querySelectorAll("[data-pes]").forEach(b=>b.setAttribute("aria-current",b.dataset.pes===p?"page":"false"));
+    cerrarMenu&&cerrarMenu();
+    if(destino&&$(destino)) $(destino).scrollIntoView({behavior:"smooth",block:"start"}); else scrollTo({top:0,behavior:"smooth"});
+  }
+  $("pestanas-app").addEventListener("click",e=>{const b=e.target.closest("[data-pes]"); if(b) verPestana(b.dataset.pes);});
+  document.addEventListener("click",e=>{
+    if(e.target.closest("[data-ir-pro]")){ e.preventDefault(); verPestana("pro","pro"); return; }
+    const a=e.target.closest("[data-ir]"); if(a){ e.preventDefault(); verPestana(a.dataset.ir,a.getAttribute("href")?.slice(1)); }
+  });
+  const exigePro=fn=>e=>{ if(!PRO){ verPestana("pro","pro"); return; } fn(e); };
 
   // ===== Exportar (Pro) =====
   const SEMANA=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
@@ -951,7 +987,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const csv="﻿"+filas().map(r=>r.map(c=>/[;"\n]/.test(String(c))?`"${String(c).replace(/"/g,'""')}"`:c).join(";")).join("\r\n");
     descargar(`turnos-${Y.anio}.csv`,csv,"text/csv;charset=utf-8");
   }));
-  $("imprimir").addEventListener("click",exigePro(()=>print()));
+  $("imprimir").addEventListener("click",exigePro(()=>{ verPestana("anio"); setTimeout(()=>print(),300); }));
   // Calendario (.ics): textos escapados y líneas de nota (con hora: evento de 1 h con aviso 30 min antes; sin hora: todo el día).
   const icsTxt=t=>String(t).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");
   const fmtICS=(d,h)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,Math.round(h*60));return `${x.getFullYear()}${p2(x.getMonth()+1)}${p2(x.getDate())}T${p2(x.getHours())}${p2(x.getMinutes())}00`;};
@@ -1079,7 +1115,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     menu.querySelectorAll("[data-cal-repe]").forEach(x=>x.addEventListener("click",()=>{
       const r=Y.repes.find(z=>z.id===x.dataset.calRepe); if(r){bajar(eventoRepe(r,selloICS()),`nota-${r.id}.ics`);cerrarMenu();}}));
     menu.querySelector("#nt-cal").addEventListener("click",()=>{
-      if(!PRO){cerrarMenu();$("pro").scrollIntoView({behavior:"smooth",block:"center"});return;}
+      if(!PRO){cerrarMenu();verPestana("pro","pro");return;}
       const g=guardarNota(); if(!g){txt.focus();return;}
       bajar(g.repe?eventoRepe(g.repe,selloICS()):eventoNota(f,selloICS()),`nota-${g.repe?g.repe.id:f}.ics`); cerrarMenu();
     });
@@ -1163,6 +1199,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   function cambio(){guardar(); pintar();}
   if(primeraVez&&!/^#(importar|pareja)=/.test(location.hash)) $("ajustes").open=true;
   pintarAjustes(); pintarPro(); pintar(); if(!importar()&&!recibirPareja()) propuesta();
+  verPestana(primeraVez&&!/^#(importar|pareja|cambio)=/.test(location.hash)?"anio":(leer("tw_pestana",null)||"hoy"));
   addEventListener("hashchange",propuesta);
   // ===== Instalar en el móvil =====
   const instalada=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
@@ -1180,7 +1217,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   if(!instalada&&!leer("tw_instalar_no",false)) mostrarInstalar(false);
   $("instalar-como").addEventListener("click",()=>verPasos($("instalar-pasos").hidden));
   $("instalar-cerrar").addEventListener("click",()=>{$("instalar").hidden=true;escribir("tw_instalar_no",true);});
-  $("ver-instalar").addEventListener("click",e=>{e.preventDefault();mostrarInstalar(true);$("instalar").scrollIntoView({behavior:"smooth",block:"center"});});
+  $("ver-instalar").addEventListener("click",e=>{e.preventDefault();mostrarInstalar(true);verPestana("hoy","instalar");});
   let avisoInstalar=null;
   addEventListener("beforeinstallprompt",e=>{e.preventDefault();avisoInstalar=e;$("instalar-ya").hidden=false;});
   $("instalar-ya").addEventListener("click",async()=>{if(!avisoInstalar)return;avisoInstalar.prompt();
