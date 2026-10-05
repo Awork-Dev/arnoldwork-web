@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TurnoWork · Tu cuadrante de turnos para todo el año</title>
-<meta name="description" content="Pon tu ciclo de turnos una vez y ve todo tu año: mañanas, tardes, noches, guardias de 24 h, festivos de tu comunidad, horas y cambios con compañeros por WhatsApp. Gratis.">
+<meta name="description" content="Pon tu ciclo de turnos una vez y ve todo tu año: mañanas, tardes, noches, guardias de 24 h, festivos de tu comunidad, horas y cambios con compañeros por WhatsApp. Mira qué días libráis tú y tu pareja y apunta lo de cada semana. Gratis.">
 <link rel="canonical" href="https://turnos.arnoldwork.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TurnoWork">
@@ -159,6 +159,12 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .aviso-pro{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--acento-suave);font-size:.86rem;font-weight:600}
 textarea{min-height:110px;resize:vertical}
 /* Instalar en el móvil */
+.ganchos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-block:14px}
+.gancho{background:var(--panel);border:1px solid var(--linea);border-radius:18px;padding:14px 16px;box-shadow:var(--sombra);display:grid;gap:6px;text-align:left;cursor:pointer;color:var(--tinta);font:inherit}
+.gancho:hover{transform:translateY(-1px)}
+.gancho q{font:600 1rem/1.3 var(--display);quotes:"«" "»"}
+.gancho span{color:var(--suave);font-size:.86rem;font-weight:600}
+.gancho b{justify-self:start;font:800 .62rem/1 var(--texto);letter-spacing:.08em;background:var(--oro);color:#2b1a00;border-radius:6px;padding:4px 7px}
 .instalar{display:grid;gap:12px}
 .instalar-cab{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .instalar-cab div{display:flex;gap:12px;align-items:center}
@@ -204,6 +210,12 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <button class="boton primario" id="actualizar-ya">Actualizar ahora</button>
   </div>
   <div id="propuesta"></div>
+  <section class="ganchos no-imprimir" id="ganchos" aria-label="Lo que puedes hacer con TurnoWork Pro">
+    <button class="gancho" data-ir-pro><q>Los martes, piscina de la peque de 17:15 a 18:00</q><span>Lo pones una vez y sale todas las semanas, también en el calendario del móvil.</span><b>PRO</b></button>
+    <button class="gancho" data-ir-pro><q>¿Qué días libramos los dos?</q><span>Compara tu cuadrante con el de tu pareja o un compañero y mira vuestros libres en común.</span><b>PRO</b></button>
+    <button class="gancho" data-ir-pro><q>¿Cuántas vacaciones me quedan?</q><span>Pon tu cupo de vacaciones y asuntos propios y te lo cuenta solo.</span><b>PRO</b></button>
+    <button class="gancho" data-ir-pro><q>Entro a las 6:50 y salgo a las 15:10</q><span>Horarios al minuto y los factores de tu convenio para noches y festivos.</span><b>PRO</b></button>
+  </section>
 
   <section class="tarjeta instalar no-imprimir" id="instalar" hidden>
     <div class="instalar-cab">
@@ -676,7 +688,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO;
+    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     $("aviso-turno-caja").hidden=!PRO;
