@@ -12,6 +12,7 @@
 //   POST /mejora    buzón de mejoras de las webs de pago: solo para quien tiene el Pro → mensaje a Telegram.
 //   POST /api/sync  TurnoWork Pro: sincronizar el cuadrante entre dispositivos (turnos-sync.js).
 //   GET  /cal/<token>.ics  TurnoWork Pro: calendario suscrito que se actualiza solo.
+//   GET  /pro/liberar?clave=<PRUEBA_CLAVE>&email=…  libera los dispositivos de una compra (cambio de móvil).
 //   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
@@ -63,6 +64,7 @@ const PRO_KOFI = {
 const PRO_CASA = new Set([
   "81dc043b89f78dc1ba5654908eacc5331b5dedc8f7435d4aa4b6cc2629260916",   // Carlos
 ]);
+const MAX_DISPOSITIVOS = 3;
 const NOMBRE_PRO = { turnos: "Turnos Pro", calas: "Calas Hoy Pro" };
 // Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
 const KOFI_PRUEBA = "00000000-1111-2222-3333-444444444444";
@@ -93,6 +95,8 @@ export class Memoria extends DurableObject {
     // Licencias Pro: el correo se guarda como huella (SHA-256), nunca en claro.
     this.sql.exec(`CREATE TABLE IF NOT EXISTS licencias (huella TEXT, producto TEXT, fecha INTEGER, venta TEXT, PRIMARY KEY (huella, producto))`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS intentos (ip TEXT, fecha INTEGER)`);
+    // Dispositivos donde se ha activado cada licencia Pro (máximo MAX_DISPOSITIVOS por compra).
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS dispositivos (huella TEXT, producto TEXT, disp TEXT, fecha INTEGER, PRIMARY KEY (huella, producto, disp))`);
     // TurnoWork: cuadrantes sincronizados (huella del correo, huella del código, datos, fecha y token del calendario).
     this.sql.exec(`CREATE TABLE IF NOT EXISTS sync (huella TEXT PRIMARY KEY, codigo TEXT, datos TEXT, t INTEGER, cal TEXT UNIQUE, creado INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS incidencias (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, detalle TEXT)`);
@@ -147,6 +151,17 @@ export class Memoria extends DurableObject {
   syncGuardar(huella, datos, t) { this.sql.exec(`UPDATE sync SET datos = ?, t = ? WHERE huella = ?`, datos, t, huella); }
   syncBorrar(huella) { this.sql.exec(`DELETE FROM sync WHERE huella = ?`, huella); }
   syncPorCal(cal) { return this.sql.exec(`SELECT datos FROM sync WHERE cal = ?`, cal).toArray()[0] || null; }
+
+  // true = puede usar Pro en ese dispositivo; false = ya tiene el máximo en otros dispositivos.
+  activarDispositivo(huella, producto, disp, max) {
+    const ya = this.sql.exec(`SELECT COUNT(*) AS n FROM dispositivos WHERE huella = ? AND producto = ? AND disp = ?`, huella, producto, disp).one().n;
+    if (ya) { this.sql.exec(`UPDATE dispositivos SET fecha = ? WHERE huella = ? AND producto = ? AND disp = ?`, Date.now(), huella, producto, disp); return true; }
+    const n = this.sql.exec(`SELECT COUNT(*) AS n FROM dispositivos WHERE huella = ? AND producto = ?`, huella, producto).one().n;
+    if (n >= max) return false;
+    this.sql.exec(`INSERT INTO dispositivos (huella, producto, disp, fecha) VALUES (?, ?, ?, ?)`, huella, producto, disp, Date.now());
+    return true;
+  }
+  liberarDispositivos(huella, producto) { this.sql.exec(`DELETE FROM dispositivos WHERE huella = ? AND producto = ?`, huella, producto); }
 
   licenciasDesde(desde) {
     return this.sql.exec(`SELECT producto, COUNT(*) AS n FROM licencias WHERE fecha >= ? GROUP BY producto`, desde).toArray();
@@ -509,6 +524,12 @@ async function pro(req, env) {
   if (PRO_CASA.has(hu)) return new Response('{"ok":true}', { headers: h });
   const r = await m.comprobarLicencia(hu, producto, ip.slice(0, 16));
   if (r === null) return new Response('{"error":"Demasiados intentos, prueba dentro de una hora"}', { status: 429, headers: h });
+  if (r) {
+    const disp = String(b?.dispositivo || "").replace(/[^a-z0-9]/gi, "").slice(0, 40);
+    if (disp.length < 12) return new Response('{"error":"Actualiza TurnoWork (botón «Buscar actualización») y vuelve a probar"}', { status: 400, headers: h });
+    if (!(await m.activarDispositivo(hu, producto, disp, MAX_DISPOSITIVOS)))
+      return new Response(JSON.stringify({ ok: false, limite: true, error: `Este Pro ya está activado en ${MAX_DISPOSITIVOS} dispositivos, el máximo por compra. Si has cambiado de móvil, escríbenos por Ko-fi y lo liberamos.` }), { status: 403, headers: h });
+  }
   return new Response(JSON.stringify({ ok: r }), { headers: h });
 }
 
@@ -625,6 +646,14 @@ export default {
 
     const clave = url.searchParams.get("clave") || url.searchParams.get("prueba");
     const autorizado = clave && env.PRUEBA_CLAVE && clave === env.PRUEBA_CLAVE;
+
+    if (url.pathname === "/pro/liberar") {
+      if (!autorizado) return new Response("No autorizado", { status: 403 });
+      const email = url.searchParams.get("email") || "", producto = url.searchParams.get("producto") || "turnos";
+      if (!email.includes("@") || !NOMBRE_PRO[producto]) return new Response("Falta email", { status: 400 });
+      await memoria(env).liberarDispositivos(await huellaCorreo(email), producto);
+      return new Response(`✅ Dispositivos de ${NOMBRE_PRO[producto]} liberados para ${email}: puede activarlo de nuevo en ${MAX_DISPOSITIVOS}.`, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    }
 
     if (url.pathname === "/pro/dar") {
       if (!autorizado) return new Response("No autorizado", { status: 403 });

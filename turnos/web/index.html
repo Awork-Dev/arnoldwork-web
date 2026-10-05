@@ -493,6 +493,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     if(!Y.notas) Y.notas={}; if(!Y.repes) Y.repes=[]; if(!Y.cupos) Y.cupos={V:0,AP:0}; if(Y.avisoTurno==null) Y.avisoTurno=0;
   }
   let PRO=leer("tw_pro",null);
+  // Identificador aleatorio de este dispositivo: cada compra de Pro vale para 3.
+  function idDispositivo(){ let d=leer("tw_disp",null); if(!d){ d=[...crypto.getRandomValues(new Uint8Array(12))].map(x=>x.toString(16).padStart(2,"0")).join(""); escribir("tw_disp",d); } return d; }
 
   function festivo(f){const k=fechaISO(f);if(Y.fest.extra[k])return Y.fest.extra[k];if(Y.fest.quita.includes(k))return null;return festivosAuto(f.getFullYear())[k]||null;}
   const ciclo=()=>Y.patron.toUpperCase().split(/[\s,;]+/).filter(Boolean);
@@ -914,13 +916,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     if(PRO){ $("pro-estado").innerHTML=`<div class="pro-fila" style="justify-content:space-between"><span><b>✅ TurnoWork Pro activado</b><br><span class="nota">${esc(PRO.email)} · ¡Gracias por apoyar TurnoWork!</span></span></div>`; return; }
     $("pro-estado").innerHTML=`
       <div class="pro-fila">${KOFI_PRO?`<a class="boton primario" href="${KOFI_PRO}" target="_blank" rel="noopener">Comprar Pro en Ko-fi</a>`:`<span class="nota"><b>Muy pronto a la venta.</b></span>`}</div>
-      <p class="nota" style="margin:12px 0 6px">¿Ya lo has comprado? Escribe el correo con el que pagaste en Ko-fi:</p>
+      <p class="nota" style="margin:12px 0 6px">¿Ya lo has comprado? Escribe el correo con el que pagaste en Ko-fi (cada compra vale para 3 dispositivos):</p>
       <form class="pro-fila" id="pro-form"><input id="pro-email" type="email" autocomplete="email" placeholder="tu@correo.com" required><button class="boton" type="submit">Activar Pro</button></form>
       <p class="nota" id="pro-msg" role="status"></p>`;
     $("pro-form").addEventListener("submit",async e=>{
       e.preventDefault(); const email=$("pro-email").value.trim(), msg=$("pro-msg"); msg.textContent="Comprobando…";
       try{
-        const r=await fetch(VIGILANTE+"/pro",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,producto:"turnos"})});
+        const r=await fetch(VIGILANTE+"/pro",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,producto:"turnos",dispositivo:idDispositivo()})});
         const j=await r.json().catch(()=>({}));
         if(r.ok&&j.ok){PRO={email,fecha:Date.now()};escribir("tw_pro",PRO);pintarPro();pintar();}
         else if(r.ok) msg.textContent="No encontramos una compra con ese correo. Usa el mismo que pusiste en Ko-fi; si acabas de pagar, espera un minuto y vuelve a probar.";
@@ -1111,7 +1113,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div class="acciones"><button class="boton primario" id="imp-si">Traer mi cuadrante</button><button class="boton" id="imp-no">Ahora no</button></div></div>`;
     $("imp-si").addEventListener("click",()=>{
       Y.patron=String(d.patron); Y.ref=d.ref||Y.ref; Y.pos=+d.pos||0;
-      if(d.turnos) Object.entries(d.turnos).forEach(([k,t])=>{ if(!Y.turnos[k]) Y.turnos[k]={n:t.n||k,ini:8,h:8}; Y.turnos[k].ini=+t.ini||0; Y.turnos[k].h=+t.h||8; if(t.n) Y.turnos[k].n=t.n; });
+      if(d.turnos) Object.entries(d.turnos).forEach(([k,t])=>{ if(!Y.turnos[k]) Y.turnos[k]={n:t.n||k,ini:8,h:8}; Y.turnos[k].ini=PRO?(+t.ini||0):Math.round(+t.ini||0); Y.turnos[k].h=PRO?(+t.h||8):Math.max(1,Math.round(+t.h||8)); if(t.n) Y.turnos[k].n=t.n; });
       Y.cambios=d.cambios||{}; if(d.fest) Y.fest={extra:d.fest.extra||{},quita:d.fest.quita||[]};
       if(d.saldo){ Y.saldo.jornada=+d.saldo.jornada||0; Y.saldo.haus=+d.saldo.haus||8; }
       Y.comunidad="BAL"; guardar(); cerrar();

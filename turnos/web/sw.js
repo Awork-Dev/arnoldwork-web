@@ -1,5 +1,5 @@
 // TurnoWork funciona sin conexión: primero la red, y si no hay, lo último guardado.
-const CACHE = "turnowork-v13";
+const CACHE = "turnowork-v14";
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./", "icono.svg", "icono-192.png", "manifest.webmanifest"]))); });
 self.addEventListener("activate", e => e.waitUntil(clients.claim()));
 self.addEventListener("fetch", e => {
