@@ -1,4 +1,4 @@
-# Prueba puntual de la API de TurnoWork (se puede lanzar a mano).
+# Prueba de punta a punta de la sincronización de TurnoWork (se lanza a mano). Deja todo borrado al acabar.
 name: Probar API de TurnoWork
 on:
   workflow_dispatch:
@@ -6,13 +6,20 @@ jobs:
   probar:
     runs-on: ubuntu-latest
     steps:
-      - name: Llamar a la API
+      - name: Crear, subir, bajar, calendario y borrar
         run: |
-          a=$(curl -s -w ' [%{http_code}]' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"bajar","email":"prueba@example.com","codigo":"MALO"}')
-          b=$(curl -s -w ' [%{http_code}]' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"crear","email":"prueba@example.com"}')
-          c=$(curl -s -w ' [%{http_code}]' https://turnos.arnoldwork.com/cal/abcdefghijkmnpqrstuvwxyz2345.ics)
-          d=$(curl -s -o /dev/null -w '[%{http_code}]' https://turnos.arnoldwork.com/)
-          echo "::notice title=bajar::$a"
-          echo "::notice title=crear::$b"
-          echo "::notice title=cal::$c"
-          echo "::notice title=web::$d"
+          A=https://turnos.arnoldwork.com/api/sync; H='Content-Type: application/json'; E="${{ secrets.PRUEBA_SYNC_EMAIL }}"
+          [ -z "$E" ] && E=xarlyds@gmail.com
+          c=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"crear\",\"email\":\"$E\"}")
+          echo "::notice title=crear::$(echo "$c" | sed 's/"codigo":"[^"]*"/"codigo":"***"/; s/"cal":"[^"]*"/"cal":"***"/')"
+          COD=$(echo "$c" | jq -r .codigo); CAL=$(echo "$c" | jq -r .cal)
+          D='{"patron":"M M T T N N L L L L","ref":"2026-10-01","pos":0,"turnos":{"M":{"n":"Mañana","ini":6.8333,"h":8.3333},"T":{"n":"Tarde","ini":15,"h":8},"N":{"n":"Noche","ini":23,"h":8}},"cambios":{},"notas":{"2026-10-20":{"t":"Prueba, con coma; y punto y coma","h":"09:30","hf":"10:15"}},"repes":[{"id":"abc","t":"Piscina","h":"17:15","hf":"18:00","tipo":"semana","desde":"2026-10-06","hasta":""}],"avisoTurno":30}'
+          s=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"subir\",\"email\":\"$E\",\"codigo\":\"$COD\",\"t\":$(date +%s)000,\"datos\":$D}")
+          echo "::notice title=subir::$(echo "$s" | sed 's/"cal":"[^"]*"/"cal":"***"/')"
+          b=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"bajar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
+          echo "::notice title=bajar::$(echo "$b" | jq -c '{ok,t,patron:.datos.patron,repes:(.datos.repes|length)}')"
+          ics=$(curl -s https://turnos.arnoldwork.com/cal/$CAL.ics)
+          echo "::notice title=cal::$(echo "$ics" | grep -c BEGIN:VEVENT) eventos; $(echo "$ics" | grep -m1 'DTSTART:2026100' ); $(echo "$ics" | grep -m1 RRULE); $(echo "$ics" | grep -m1 'SUMMARY:📝 Prueba')"
+          r=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"borrar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
+          echo "::notice title=borrar::$r"
+          echo "::notice title=cal-borrado::$(curl -s -o /dev/null -w '%{http_code}' https://turnos.arnoldwork.com/cal/$CAL.ics)"
