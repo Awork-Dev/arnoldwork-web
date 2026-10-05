@@ -175,6 +175,8 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .sem-info .linea{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:700}
 .sem-info .extra{color:var(--suave);font-size:.86rem;font-weight:600;overflow-wrap:anywhere}
 .planes{display:grid;gap:10px;margin-top:12px}
+.viaje{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px;margin-top:6px}
+.viaje .boton{justify-content:center;padding:9px 6px;font-size:.84rem;text-decoration:none}
 .tres-botones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
 .tres-botones .boton{justify-content:center;padding:10px 4px;font-size:.84rem;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
 .entreno{display:inline-flex;gap:5px;align-items:center;font-size:.8rem;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--panel);border:1px solid var(--linea);color:var(--tinta)}
@@ -829,6 +831,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     for(const c of C){ if(elegidos.some(e=>!(c.b<e.a||c.a>e.b))) continue; elegidos.push(c); if(elegidos.length===3) break; }
     return elegidos;
   }
+  // Lo demás del viaje (programas de Travelpayouts; el código de Drive los convierte en enlaces de afiliado).
+  const VIAJE=[
+    ["🚗","Coche","https://localrent.com/es/"],
+    ["🚕","Traslado","https://kiwitaxi.com/es"],
+    ["🎟️","Qué ver",(d)=>`https://www.tiqets.com/es/search?q=${encodeURIComponent(d)}`],
+    ["📶","eSIM","https://saily.com/es/"],
+  ];
   // Ciudades frecuentes → código de aeropuerto o de ciudad (para buscar vuelos).
   const CIUDADES={"roma":"ROM","londres":"LON","parís":"PAR","paris":"PAR","madrid":"MAD","barcelona":"BCN","lisboa":"LIS","oporto":"OPO","ámsterdam":"AMS","amsterdam":"AMS","berlín":"BER","berlin":"BER","milán":"MIL","milan":"MIL","nápoles":"NAP","venecia":"VCE","florencia":"FLR","sevilla":"SVQ","málaga":"AGP","malaga":"AGP","valencia":"VLC","bilbao":"BIO","ibiza":"IBZ","menorca":"MAH","tenerife":"TCI","gran canaria":"LPA","granada":"GRX","santiago":"SCQ","dublín":"DUB","dublin":"DUB","edimburgo":"EDI","praga":"PRG","viena":"VIE","budapest":"BUD","cracovia":"KRK","atenas":"ATH","estambul":"IST","marrakech":"RAK","bruselas":"BRU","copenhague":"CPH","estocolmo":"STO","oslo":"OSL","zúrich":"ZRH","zurich":"ZRH","ginebra":"GVA","múnich":"MUC","munich":"MUC","niza":"NCE","malta":"MLA","nueva york":"NYC","cancún":"CUN","cancun":"CUN","tokio":"TYO"};
   function codigoDestino(t){ const k=String(t||"").trim().toLowerCase(); if(!k) return ""; if(CIUDADES[k]) return CIUDADES[k]; return /^[a-z]{3}$/.test(k)?k.toUpperCase():""; }
@@ -842,7 +851,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         <label>Desde<input type="date" id="pl-desde" value="${P.desde}"></label>
         <label>Hasta<input type="date" id="pl-hasta" value="${P.hasta}"></label>
         <label>Tu aeropuerto (código)<input id="pl-aero" value="${esc(P.aero)}" maxlength="3" autocapitalize="characters" placeholder="PMI"></label>
-        <label>¿A dónde? (opcional)<input id="pl-dest" value="${esc(P.dest)}" placeholder="Roma, Londres, FCO… o vacío = a cualquier sitio" list="pl-ciudades"></label>
+        <label>¿A dónde? (opcional: pon la ciudad para ver hotel, coche, traslado, qué ver y eSIM)<input id="pl-dest" value="${esc(P.dest)}" placeholder="Roma, Londres, FCO… o vacío = a cualquier sitio" list="pl-ciudades"></label>
         <datalist id="pl-ciudades">${Object.keys(CIUDADES).map(c=>`<option value="${c[0].toUpperCase()+c.slice(1)}">`).join("")}</datalist>
       </div><div class="acciones" style="margin:12px 0 0"><button class="boton primario" id="pl-ir">Buscar los mejores días</button></div><div class="planes" id="pl-res"></div>
       <p class="nota" style="margin:8px 0 0">Cuenta como vacaciones solo tus días de turno: los libres que quedan en medio no gastan días.</p>`;
@@ -859,7 +868,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         <span>Pide del <b>${fc(c.s)}</b> al <b>${fc(c.ult)}</b> (${P.n} días de turno).</span><span class="nota">Descansas del ${fc(c.a)} al ${fc(c.b)}.</span>
         <div class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button>
         <a class="boton primario" href="${vuelos(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">✈️ ${destIATA?"Vuelos a "+esc(P.dest):"¿A dónde barato?"}</a>
-        ${P.dest?`<a class="boton" href="${hoteles(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">🏨 Hoteles</a><a class="boton" href="https://www.economybookings.com/es" target="_blank" rel="noopener">🚗 Coche</a>`:""}</div></div>`).join("")
+        </div>
+        ${P.dest?`<div class="viaje">${VIAJE.map(([ic,nom,url])=>`<a class="boton" href="${typeof url==="function"?url(P.dest,fechaISO(c.a),fechaISO(c.b)):url}" target="_blank" rel="noopener">${ic} ${nom}</a>`).join("")}<a class="boton" href="${hoteles(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">🏨 Hoteles</a></div>`:""}</div>`).join("")
         :`<p class="nota">No caben ${P.n} días de turno entre esas fechas. Amplía el «Hasta» o pide menos días.</p>`;
     });
     $("pl-res").addEventListener("click",e=>{const b=e.target.closest("[data-marcar]"); if(!b) return;
