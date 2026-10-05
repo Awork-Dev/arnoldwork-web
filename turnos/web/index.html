@@ -123,7 +123,15 @@ fieldset.turno input[type=color]{padding:2px;height:42px;cursor:pointer}
 .cab.app .marca img{width:30px;height:30px;border-radius:8px}
 .cab.app .fecha-app{display:block;margin-top:4px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.88)}
 .cab.app .hoy{min-width:0;flex:0 1 auto;padding:8px 12px;border-radius:14px;box-shadow:0 6px 16px rgba(20,10,60,.2);text-align:right}
+.hoy{display:grid;gap:3px;align-content:start}
+.hoy .hoy-mini{display:block;color:#5b5678;font-size:.82rem;font-weight:700;line-height:1.3}
+.hoy .hoy-turno .c{margin-right:4px}
 .cab.app .hoy small{display:none}
+.cab.app .envoltura{flex-wrap:wrap}
+.cab.app .hoy{order:3;flex:1 1 100%;max-width:none;text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:8px 12px}
+.cab.app .hoy .hoy-turno{font-size:.95rem}
+.cab.app .hoy .hoy-mini{font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cab.app .hoy .hoy-sig{display:none}
 .cab.app .hoy b{font-size:.95rem;margin:0;white-space:nowrap}
 .cab.app .hoy .man{font-size:.74rem}
 .cab.app .hoy .man.extra-app{display:none}
@@ -759,11 +767,16 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const notaLinea=n=>(horario(n)?horario(n)+" · ":"")+n.t+(n.tipo?` (${repeTxt(n)})`:"");
 
   function pintarHoy(){
-    const t=turno(hoy), x=Y.turnos[t], man=Y.cambios[fechaISO(hoy)];
-    const man2=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+1), t2=turno(man2);
-    $("hoy").innerHTML=`<small>Hoy</small><b><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}</b>
-      <span class="man">${x?`${hora(x.ini)}–${hora(finTurno(x))}`:""}${man?" · cambiado a mano":""}</span><br>
-      <span class="man extra-app">Mañana: ${esc(nombre(t2))}</span>${notasDe(fechaISO(hoy)).map(n=>`<br><span class="man extra-app">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}`;
+    const f=fechaISO(hoy), t=turno(hoy), x=Y.turnos[t], man=Y.cambios[f];
+    const t2=turno(new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+1)), ns=notasDe(f), en=entreno(hoy), fe=festivo(hoy);
+    const ENT={fuerte:"💪 Día de entreno fuerte",suave:"🚶 Entreno suave",descanso:"😴 Hoy toca descansar"};
+    const nota1=ns.length?`📝 ${esc((horario(ns[0])?horario(ns[0])+" ":"")+ns[0].t).slice(0,34)}${ns.length>1?` <b>+${ns.length-1}</b>`:""}`:"";
+    $("hoy").innerHTML=`<small>Hoy${fe?" · ★ "+esc(fe):""}</small>
+      <b class="hoy-turno"><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}</b>
+      ${x?`<span class="hoy-mini hoy-hora">🕒 ${hora(x.ini)}–${hora(finTurno(x))} · ${horasTxt(x.h)}${man?" · cambiado":""}</span>`:(man?`<span class="hoy-mini">cambiado a mano</span>`:"")}
+      <span class="hoy-mini">${ENT[en[2]]}</span>
+      ${nota1?`<span class="hoy-mini">${nota1}</span>`:""}
+      <span class="hoy-mini hoy-sig">Mañana: <span class="c t-${esc(t2)}" style="min-width:20px;height:18px;font-size:.66rem">${esc(t2)}</span> ${esc(nombre(t2))}</span>`;
   }
 
   // ===== Libres en común (Pro): el cuadrante de otra persona, recibido por enlace =====
@@ -1516,16 +1529,25 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       :`<p class="nota" style="margin:10px 0">Cada noche, hacia las 21:00, te llega tu turno de mañana y tus notas, sin abrir la app.</p><button class="boton primario" id="av-activar">🔔 Activar avisos</button><p class="nota" id="av-msg" role="status" style="margin:8px 0 0"></p>`;
     const msg=t=>{const e=$("av-msg"); if(e) e.textContent=t;};
     const act=$("av-activar"); if(act) act.addEventListener("click",async()=>{
-      try{ msg("Activando…");
-        const perm=await Notification.requestPermission(); if(perm!=="granted"){ msg("Has bloqueado los avisos. Actívalos en los ajustes del móvil para TurnoWork y vuelve a probar."); return; }
-        const {clave}=await (await fetch("/api/push/clave",{cache:"no-store"})).json();
-        const reg=await navigator.serviceWorker.ready;
-        const s2=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uABytes(clave)});
+      let paso="pedir permiso";
+      const plazo=(p,ms,que)=>Promise.race([p,new Promise((_,no)=>setTimeout(()=>no(new Error("tiempo")),ms))]);
+      try{
+        msg("1/4 · Pidiendo permiso para avisarte…");
+        const perm=Notification.permission==="granted"?"granted":await plazo(Notification.requestPermission(),30000);
+        if(perm!=="granted"){ msg(perm==="denied"?"Los avisos están bloqueados para TurnoWork. En el iPhone: Ajustes → Notificaciones → TurnoWork → Permitir. Luego vuelve a pulsar.":"No has aceptado el permiso. Vuelve a pulsar y elige «Permitir»."); return; }
+        paso="preparar el móvil"; msg("2/4 · Preparando el móvil…");
+        let reg=await navigator.serviceWorker.getRegistration(); if(!reg) reg=await navigator.serviceWorker.register("/sw.js");
+        reg=await plazo(navigator.serviceWorker.ready,15000);
+        paso="conectar con el servidor"; msg("3/4 · Conectando…");
+        const {clave}=await plazo((await fetch("/api/push/clave",{cache:"no-store"})).json(),15000);
+        let s2=await reg.pushManager.getSubscription();
+        if(!s2) s2=await plazo(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uABytes(clave)}),20000);
+        paso="guardar el aviso"; msg("4/4 · Guardando…");
         const r=await fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"alta",email:PRO.email,sub:s2.toJSON()})});
         const j=await r.json().catch(()=>({}));
         if(!r.ok){ msg(j.error||"No se ha podido activar."); return; }
         escribir("tw_push",{endpoint:s2.endpoint}); guardarAgenda(); pintarAvisos();
-      }catch(e){ msg("No se ha podido activar en este móvil. Comprueba la conexión y vuelve a probar."); }
+      }catch(e){ msg(`No se ha podido activar (paso: ${paso}${e&&e.message?" · "+e.message:""}). Cierra TurnoWork del todo, ábrela desde el icono y vuelve a probar.`); }
     });
     const pr=$("av-probar"); if(pr) pr.addEventListener("click",async()=>{
       guardarAgenda(); msg("Enviando…");
