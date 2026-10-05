@@ -1,7 +1,7 @@
 // TurnoWork funciona sin conexión: primero la red, y si no hay, lo último guardado.
 // También enseña el aviso de la noche antes: el servidor manda un aviso vacío y aquí se escribe
 // el texto con la agenda que la app deja guardada en este móvil (los turnos nunca salen del móvil para esto).
-const CACHE = "turnowork-v39";
+const CACHE = "turnowork-v40";
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./", "icono.svg", "icono-192.png", "manifest.webmanifest"]))); });
 self.addEventListener("activate", e => e.waitUntil(clients.claim()));
 self.addEventListener("fetch", e => {
