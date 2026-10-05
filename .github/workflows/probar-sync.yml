@@ -25,3 +25,6 @@ jobs:
           echo "::notice title=cal-borrado::$(curl -s -o /dev/null -w '%{http_code}' https://turnos.arnoldwork.com/cal/$CAL.ics)"
           echo "::notice title=push-clave::$(curl -s https://turnos.arnoldwork.com/api/push/clave | jq -c '{longitud:(.clave|length)}')"
           echo "::notice title=push-alta-sin-pro::$(curl -s -X POST https://turnos.arnoldwork.com/api/push -H 'Content-Type: application/json' -d '{"accion":"alta","email":"prueba@example.com","sub":{"endpoint":"https://example.com/x"}}')"
+          echo "::notice title=version::$(curl -s 'https://turnos.arnoldwork.com/version.json?x='$RANDOM)"
+          echo "::notice title=viaje::$(curl -s 'https://turnos.arnoldwork.com/?x='$RANDOM | grep -c 'kiwitaxi')"
+          echo "::notice title=cache::$(curl -sI 'https://turnos.arnoldwork.com/' | grep -i -E 'cache-control|age:|cf-cache' | tr -d '\r' | tr '\n' ' ')"
