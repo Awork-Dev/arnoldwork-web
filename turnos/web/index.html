@@ -875,8 +875,16 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   // ===== Planificador de vacaciones (Pro) =====
   const trabaja=d=>esTrabajo(turno(d));
+  // Sin turnos (no trabajas o no tienes cuadrante): el viaje es de N días naturales seguidos, empezando en distintas semanas.
+  function planesLibres(n,desde,hasta){
+    const sum=(d,k)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+k), L=[];
+    for(let k=0;k<4;k++){ const a=sum(desde,k*7), b=sum(a,n-1); if(b>hasta) break; L.push({s:a,ult:b,a,b,total:n,libre:true}); }
+    return L;
+  }
+  function sinTurnosEn(desde,hasta){ for(let d=new Date(desde);d<=hasta;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)) if(trabaja(d)) return false; return true; }
   function planes(n,desde,hasta){
     const sum=(d,k)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+k), C=[];
+    if(sinTurnosEn(desde,hasta)) return planesLibres(n,desde,hasta);
     for(let s=new Date(desde);s<=hasta;s=sum(s,1)){
       if(!trabaja(s)) continue;
       let usados=0,e=new Date(s),ult=null;
@@ -907,16 +915,16 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const P=Y.plan||(Y.plan={n:5,desde:fechaISO(hoy),hasta:`${hoy.getFullYear()+(hoy.getMonth()>=9?1:0)}-12-31`});
     if(P.aero==null) P.aero="PMI"; if(P.dest==null) P.dest="";
     caja.innerHTML=`<div class="form">
-        <label>Días de vacaciones que quieres gastar<input type="number" id="pl-n" min="1" max="30" value="${P.n}" inputmode="numeric"></label>
+        <label>Días de vacaciones (si trabajas a turnos, los que quieres gastar; si no, los que dura el viaje)<input type="number" id="pl-n" min="1" max="60" value="${P.n}" inputmode="numeric"></label>
         <label>Desde<input type="date" id="pl-desde" value="${P.desde}"></label>
         <label>Hasta<input type="date" id="pl-hasta" value="${P.hasta}"></label>
         <label>Tu aeropuerto (código)<input id="pl-aero" value="${esc(P.aero)}" maxlength="3" autocapitalize="characters" placeholder="PMI"></label>
         <label>¿A dónde? (opcional: pon la ciudad para ver hotel, coche, traslado, qué ver y eSIM)<input id="pl-dest" value="${esc(P.dest)}" placeholder="Roma, Londres, FCO… o vacío = a cualquier sitio" list="pl-ciudades"></label>
         <datalist id="pl-ciudades">${Object.keys(CIUDADES).map(c=>`<option value="${c[0].toUpperCase()+c.slice(1)}">`).join("")}</datalist>
       </div><div class="acciones" style="margin:12px 0 0"><button class="boton primario" id="pl-ir">Buscar los mejores días</button></div><div class="planes" id="pl-res"></div>
-      <p class="nota" style="margin:8px 0 0">Cuenta como vacaciones solo tus días de turno: los libres que quedan en medio no gastan días.</p>`;
+      <p class="nota" style="margin:8px 0 0">Si trabajas a turnos, cuenta como vacaciones solo tus días de turno: los libres que quedan en medio no gastan días. Si no trabajas a turnos, te propone el viaje de esos días seguidos en varias semanas.</p>`;
     $("pl-ir").addEventListener("click",()=>{
-      P.n=Math.max(1,Math.min(30,Math.round(+$("pl-n").value||5))); P.desde=$("pl-desde").value||fechaISO(hoy); P.hasta=$("pl-hasta").value||P.desde;
+      P.n=Math.max(1,Math.min(60,Math.round(+$("pl-n").value||5))); P.desde=$("pl-desde").value||fechaISO(hoy); P.hasta=$("pl-hasta").value||P.desde;
       P.aero=($("pl-aero").value||"PMI").trim().toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)||"PMI"; P.dest=$("pl-dest").value.trim().slice(0,60); guardar();
       // Vuelos en Kiwi.com con el enlace de afiliado de Travelpayouts (socio 785981).
       const destIATA=codigoDestino(P.dest);
@@ -924,13 +932,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         return `https://c111.travelpayouts.com/click?shmarker=785981.turnowork&promo_id=3791&source_type=customlink&type=click&custom_url=${encodeURIComponent(k)}`;};
       const hoteles=(a,b)=>`https://www.booking.com/searchresults.es.html?ss=${encodeURIComponent(P.dest)}&checkin=${a}&checkout=${b}&group_adults=2&no_rooms=1`;
       const L=planes(P.n,deISO(P.desde),deISO(P.hasta)), fc=d=>d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"});
-      $("pl-res").innerHTML=L.length?L.map((c,i)=>`<div class="plan${i===0?" mejor":""}"><b class="grande">${i===0?"⭐ ":""}${c.total} días seguidos de descanso</b>
-        <span>Pide del <b>${fc(c.s)}</b> al <b>${fc(c.ult)}</b> (${P.n} días de turno).</span><span class="nota">Descansas del ${fc(c.a)} al ${fc(c.b)}.</span>
-        <div class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button>
+      $("pl-res").innerHTML=L.length?L.map((c,i)=>`<div class="plan${i===0?" mejor":""}"><b class="grande">${c.libre?`Viaje de ${c.total} días`:`${i===0?"⭐ ":""}${c.total} días seguidos de descanso`}</b>
+        ${c.libre?`<span>Del <b>${fc(c.a)}</b> al <b>${fc(c.b)}</b>.</span>`:`<span>Pide del <b>${fc(c.s)}</b> al <b>${fc(c.ult)}</b> (${P.n} días de turno).</span><span class="nota">Descansas del ${fc(c.a)} al ${fc(c.b)}.</span>`}
+        <div class="dos" style="display:flex;gap:6px;flex-wrap:wrap">${c.libre?"":`<button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button>`}
         <a class="boton primario" href="${vuelos(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">✈️ ${destIATA?"Vuelos a "+esc(P.dest):"¿A dónde barato?"}</a>
         </div>
         ${P.dest?`<div class="viaje">${VIAJE.map(([ic,nom,url])=>`<a class="boton" href="${typeof url==="function"?url(P.dest,fechaISO(c.a),fechaISO(c.b)):url}" target="_blank" rel="noopener">${ic} ${nom}</a>`).join("")}<a class="boton" href="${hoteles(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">🏨 Hoteles</a></div>`:""}</div>`).join("")
-        :`<p class="nota">No caben ${P.n} días de turno entre esas fechas. Amplía el «Hasta» o pide menos días.</p>`;
+        :`<p class="nota">No caben ${P.n} días entre esas fechas. Amplía el «Hasta» o pide menos días.</p>`;
     });
     $("pl-res").addEventListener("click",e=>{const b=e.target.closest("[data-marcar]"); if(!b) return;
       const [a,z]=b.dataset.marcar.split("|"); let k=0;
