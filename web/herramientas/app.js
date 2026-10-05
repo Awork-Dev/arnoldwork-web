@@ -952,8 +952,20 @@
     $('ruTxt').innerHTML = sem[1] + ' ' + rir + ' Cuando llegues al máximo de repeticiones en todas las series, sube el peso (<a href="/herramientas/cuando-subir-peso/">¿Subo peso?</a>). Descansa 2-3 minutos en los básicos y 1-2 en el resto, y calienta antes con <a href="/herramientas/series-de-aproximacion/">series de aproximación</a>.';
     texto.push('Deja ' + (avanz ? '1-2' : '2-3') + ' repeticiones en la recámara. Sube el peso cuando llegues al máximo del rango.', 'arnoldwork.com/herramientas/generador-de-rutina/');
     ultRut = texto.join('\n');
+    // Para TurnoWork: las sesiones en el orden en que se van alternando y los días de la semana de entreno.
+    var rot = d === 3 ? ['fa', 'fb'] : sem[0].filter(function(k, i){ return d !== 6 || i < 3; });
+    ultRutTw = { n: 'Rutina de ' + d + ' días · ' + sub.textContent.split(' · ')[0], dias: { 2: [1, 4], 3: [1, 3, 5], 4: [1, 2, 4, 5], 5: [1, 2, 3, 4, 5], 6: [1, 2, 3, 4, 5, 6] }[d],
+      rot: rot.map(function(k){ return { n: DIAS[k][0], t: DIAS[k][1].map(function(e, i){ var nom = EJ[e][donde]; return nom + ': ' + seriesDe(e, i, avanz, nom); }).join('; ') }; }) };
   }
+  var ultRutTw = null;
   reg(calcRutina, ['ruDias', 'ruDonde', 'ruNivel']);
+  on('ruTw', 'click', function(){
+    if(!ultRutTw) return;
+    var url = 'https://turnos.arnoldwork.com/#entrenos=' + btoa(unescape(encodeURIComponent(JSON.stringify({ o: 'rutina', r: ultRutTw })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    try{ navigator.clipboard.writeText(url).catch(function(){}); }catch(e){}
+    $('ruTwNota').textContent = 'Rutina enviada a TurnoWork. Si la usas instalada en el móvil, ábrela y pulsa «📋 Pegar entrenos»: el enlace ya está copiado.';
+    window.open(url, '_blank', 'noopener');
+  });
   on('ruCopy', 'click', function(){
     var b = $('ruCopy');
     var hecho = function(){ b.textContent = 'Copiada ✓'; setTimeout(function(){ b.textContent = 'Copiar la rutina'; }, 2000); };
