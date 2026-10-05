@@ -148,6 +148,8 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .sem-info .linea{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:700}
 .sem-info .extra{color:var(--suave);font-size:.86rem;font-weight:600;overflow-wrap:anywhere}
 .planes{display:grid;gap:10px;margin-top:12px}
+.entreno{display:inline-flex;gap:5px;align-items:center;font-size:.8rem;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--panel);border:1px solid var(--linea);color:var(--tinta)}
+.cmp td.mas{color:var(--verde);font-weight:800}.cmp td.menos{color:var(--rojo);font-weight:800}
 .plan{border:2px solid var(--linea);border-radius:16px;padding:12px 14px;display:grid;gap:6px;background:var(--fondo)}
 .plan.mejor{border-color:var(--verde)}
 .plan b.grande{font:600 1.15rem/1.3 var(--display)}
@@ -376,6 +378,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="sync"></div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-sim">
+    <p class="titulo" style="margin:0">🔮 ¿Y si cambio de turno?</p>
+    <div id="sim"></div>
+  </section>
+
   <section class="tarjeta no-imprimir" id="caja-pareja">
     <p class="titulo" style="margin:0">👫 Libres en común</p>
     <div id="pareja"></div>
@@ -408,7 +415,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
-      <li><span>✈️</span><div><b>Planificador de vacaciones:</b> dile cuántos días quieres y te dice cuáles pedir para descansar más días seguidos.</div></li>
+      <li><span>✈️</span><div><b>Planificador de vacaciones:</b> dile cuántos días quieres, te dice cuáles pedir para descansar más días seguidos y te lleva a los vuelos y hoteles más baratos para esas fechas.</div></li>
+      <li><span>🔮</span><div><b>¿Y si cambio de turno?</b> Compara tu ciclo con otro antes de pedirlo: horas, noches, findes y festivos.</div></li>
       <li><span>💶</span><div><b>Pluses en euros:</b> lo que llevas de nocturnidad, festivos y fines de semana, mes a mes.</div></li>
       <li><span>🎨</span><div><b>El color de cada turno a tu gusto</b>, para ver tu año de un vistazo.</div></li>
       <li><span>☁️</span><div><b>Tu cuadrante en todos tus dispositivos</b> y un <b>calendario que se actualiza solo</b> en Google, iPhone u Outlook.</div></li>
@@ -724,6 +732,14 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   // ===== Cupo de vacaciones y asuntos propios (Pro) =====
   // ===== Mi semana (gratis): los próximos 7 días =====
+  // Entrenamiento según el turno (gratis): consejo sencillo para cada día.
+  function entreno(d){
+    const t=turno(d), ant=turno(new Date(d.getFullYear(),d.getMonth(),d.getDate()-1));
+    if(t==="N"||t==="G"||ant==="N"||ant==="G") return ["😴","Recupera: duerme y nada pesado","descanso"];
+    if(!esTrabajo(t)) return ["💪","Buen día para entrenar fuerte","fuerte"];
+    if(t==="M") return ["💪","Fuerza por la tarde, al salir","fuerte"];
+    return ["🚶","Algo suave o movilidad","suave"];
+  }
   function pintarSemana(){
     const base=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()), DS=["dom","lun","mar","mié","jue","vie","sáb"];
     let html="";
@@ -732,8 +748,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const ns=notasDe(f), m=menstrualDia(f);
       html+=`<div class="sem-dia${i===0?" es-hoy":""}"><div class="sem-fecha"><small>${i===0?"hoy":i===1?"mañana":DS[d.getDay()]}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("es-ES",{month:"short"})}</small></div>
         <div class="sem-info"><div class="linea"><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}${x?` <span class="extra">${hora(x.ini)}–${hora(finTurno(x))} · ${horasTxt(x.h)}</span>`:""}${Y.cambios[f]?` <span class="extra">· cambiado</span>`:""}</div>
-        ${fe?`<span class="extra">★ ${esc(fe)}</span>`:""}${ns.map(n=>`<span class="extra">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}${m?`<span class="extra">🌸 ${m==="regla"?"Regla":"Regla prevista"}</span>`:""}</div></div>`;
+        ${fe?`<span class="extra">★ ${esc(fe)}</span>`:""}${ns.map(n=>`<span class="extra">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}${m?`<span class="extra">🌸 ${m==="regla"?"Regla":"Regla prevista"}</span>`:""}<span><span class="entreno">${entreno(d)[0]} ${entreno(d)[1]}</span></span></div></div>`;
     }
+    const fuertes=[0,1,2,3,4,5,6].filter(i=>entreno(new Date(base.getFullYear(),base.getMonth(),base.getDate()+i))[2]==="fuerte").length;
+    html+=`<div class="aviso-pro" style="justify-content:space-between"><span>💪 Esta semana tienes <b>${fuertes} ${fuertes===1?"día bueno":"días buenos"}</b> para entrenar fuerte.</span>
+      <span class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><a class="boton" href="https://arnoldwork.com/herramientas/generador-de-rutina/" target="_blank" rel="noopener">Rutina gratis</a><a class="boton" href="https://heavywork.arnoldwork.com/" target="_blank" rel="noopener">HeavyWork</a></span></div>`;
     $("semana").innerHTML=html;
   }
 
@@ -759,24 +778,63 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const caja=$("plan");
     if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Dile cuántos días de vacaciones quieres gastar y te dice qué días pedir para encadenarlos con tus libres y descansar el máximo seguido. Ningún calendario hace esto.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
     const P=Y.plan||(Y.plan={n:5,desde:fechaISO(hoy),hasta:`${hoy.getFullYear()+(hoy.getMonth()>=9?1:0)}-12-31`});
+    if(P.aero==null) P.aero="PMI"; if(P.dest==null) P.dest="";
     caja.innerHTML=`<div class="form">
         <label>Días de vacaciones que quieres gastar<input type="number" id="pl-n" min="1" max="30" value="${P.n}" inputmode="numeric"></label>
         <label>Desde<input type="date" id="pl-desde" value="${P.desde}"></label>
         <label>Hasta<input type="date" id="pl-hasta" value="${P.hasta}"></label>
+        <label>Tu aeropuerto (código)<input id="pl-aero" value="${esc(P.aero)}" maxlength="3" autocapitalize="characters" placeholder="PMI"></label>
+        <label>¿A dónde? (opcional)<input id="pl-dest" value="${esc(P.dest)}" placeholder="Vacío = a cualquier sitio barato"></label>
       </div><div class="acciones" style="margin:12px 0 0"><button class="boton primario" id="pl-ir">Buscar los mejores días</button></div><div class="planes" id="pl-res"></div>
       <p class="nota" style="margin:8px 0 0">Cuenta como vacaciones solo tus días de turno: los libres que quedan en medio no gastan días.</p>`;
     $("pl-ir").addEventListener("click",()=>{
-      P.n=Math.max(1,Math.min(30,Math.round(+$("pl-n").value||5))); P.desde=$("pl-desde").value||fechaISO(hoy); P.hasta=$("pl-hasta").value||P.desde; guardar();
+      P.n=Math.max(1,Math.min(30,Math.round(+$("pl-n").value||5))); P.desde=$("pl-desde").value||fechaISO(hoy); P.hasta=$("pl-hasta").value||P.desde;
+      P.aero=($("pl-aero").value||"PMI").trim().toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)||"PMI"; P.dest=$("pl-dest").value.trim().slice(0,60); guardar();
+      const vuelos=(a,b)=>P.dest?`https://www.google.com/travel/flights?hl=es&curr=EUR&q=${encodeURIComponent(`Vuelos de ${P.aero} a ${P.dest} el ${a} vuelta ${b}`)}`
+        :`https://www.skyscanner.es/g/referrals/v1/flights/browse-view/?origin=${P.aero.toLowerCase()}&outboundDate=${a}&inboundDate=${b}&adultsv2=1&market=ES&locale=es-ES&currency=EUR`;
+      const hoteles=(a,b)=>`https://www.booking.com/searchresults.es.html?ss=${encodeURIComponent(P.dest)}&checkin=${a}&checkout=${b}&group_adults=2&no_rooms=1`;
       const L=planes(P.n,deISO(P.desde),deISO(P.hasta)), fc=d=>d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"});
       $("pl-res").innerHTML=L.length?L.map((c,i)=>`<div class="plan${i===0?" mejor":""}"><b class="grande">${i===0?"⭐ ":""}${c.total} días seguidos de descanso</b>
         <span>Pide del <b>${fc(c.s)}</b> al <b>${fc(c.ult)}</b> (${P.n} días de turno).</span><span class="nota">Descansas del ${fc(c.a)} al ${fc(c.b)}.</span>
-        <div><button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button></div></div>`).join("")
+        <div class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button>
+        <a class="boton primario" href="${vuelos(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">✈️ ${P.dest?"Vuelos":"¿A dónde barato?"}</a>
+        ${P.dest?`<a class="boton" href="${hoteles(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">🏨 Hoteles</a>`:""}</div></div>`).join("")
         :`<p class="nota">No caben ${P.n} días de turno entre esas fechas. Amplía el «Hasta» o pide menos días.</p>`;
     });
     $("pl-res").addEventListener("click",e=>{const b=e.target.closest("[data-marcar]"); if(!b) return;
       const [a,z]=b.dataset.marcar.split("|"); let k=0;
       for(let d=deISO(a);d<=deISO(z);d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)) if(trabaja(d)){Y.cambios[fechaISO(d)]="V";k++;}
       guardar(); pintar(); b.textContent=`✓ ${k} días marcados como V`; b.disabled=true;});
+  }
+
+  // ===== ¿Y si cambio de turno? (Pro): compara el año con otro ciclo =====
+  function statsCiclo(patron,turnosC,a){
+    const c=patron.toUpperCase().split(/[\s,;]+/).filter(Boolean), r={trab:0,horas:0,noches:0,findes:0,fest:0,libres:0,puentes:0};
+    let racha=0;
+    for(let d=new Date(a,0,1);d.getFullYear()===a;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)){
+      const n=diasEntre(deISO(Y.ref),d)+(+Y.pos||0), t=c.length?c[((n%c.length)+c.length)%c.length]:"L", x=turnosC[t];
+      if(x){ r.trab++; r.horas+=x.h; if(t==="N"||(x.ini>=20)) r.noches++; const w=d.getDay(); if(w===0||w===6) r.findes++; if(festivo(d)) r.fest++; if(racha>=3) r.puentes++; racha=0; }
+      else { r.libres++; racha++; }
+    }
+    if(racha>=3) r.puentes++;
+    return r;
+  }
+  function pintarSim(){
+    const caja=$("sim");
+    if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Antes de pedir un cambio de turno, mira cómo sería tu año: horas, noches, fines de semana, festivos y libres seguidos, comparado con lo que tienes ahora.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    caja.innerHTML=`<div class="form"><label>Compara tu ciclo con…<select id="sim-mod"><option value="">Elige un ciclo</option>${MODELOS.map(([n],i)=>`<option value="${i}">${esc(n)}</option>`).join("")}</select></label></div><div id="sim-res"></div>`;
+    $("sim-mod").addEventListener("change",e=>{
+      const m=MODELOS[e.target.value]; if(!m){$("sim-res").innerHTML="";return;}
+      const tc=JSON.parse(JSON.stringify(TURNOS_DEF)); Object.entries(m[2]).forEach(([k,v])=>Object.assign(tc[k],v));
+      const a=+Y.anio, A=statsCiclo(Y.patron,Y.turnos,a), B=statsCiclo(m[1],tc,a);
+      const fila=(nom,k,fmt,mejorMas)=>{const d=B[k]-A[k], cl=d===0?"":(d>0)===mejorMas?"mas":"menos";
+        return `<tr><th>${nom}</th><td>${fmt(A[k])}</td><td>${fmt(B[k])}</td><td class="${cl}">${d===0?"=":(d>0?"+":"−")+fmt(Math.abs(d))}</td></tr>`;};
+      const n=v=>String(v);
+      $("sim-res").innerHTML=`<div class="tabla cmp"><table><thead><tr><th>${a}</th><th>Ahora</th><th>Con el nuevo</th><th>Diferencia</th></tr></thead><tbody>
+        ${fila("Días de trabajo","trab",n,false)}${fila("Horas","horas",horasTxt,false)}${fila("Noches","noches",n,false)}${fila("Días de finde trabajados","findes",n,false)}
+        ${fila("Festivos trabajados","fest",n,false)}${fila("Días libres","libres",n,true)}${fila("Descansos de 3 días o más","puentes",n,true)}</tbody></table></div>
+        <p class="nota" style="margin:8px 0 0">En verde lo que mejora y en rojo lo que empeora. Compara solo los ciclos, sin tus cambios a mano, y con los horarios típicos de cada turno.</p>`;
+    });
   }
 
   // ===== Pluses en euros (Pro) =====
@@ -859,7 +917,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   let cacheNS={}; const NS=f=>cacheNS[f]||(cacheNS[f]=notasDe(f));
   // El planificador conserva lo que tienes escrito: solo se vuelve a pintar al entrar o al cambiar Pro.
-  let planPintado=null; function pintarPlanSiCambia(){ if(planPintado!==!!PRO){ planPintado=!!PRO; pintarPlan(); } }
+  let planPintado=null; function pintarPlanSiCambia(){ if(planPintado!==!!PRO){ planPintado=!!PRO; pintarPlan(); pintarSim(); } }
   function pintar(){
     cacheNS={}; cacheCM=null;
     const {dias,total,meses}=datos(), a=+Y.anio, pri=dias[0], ult=dias[dias.length-1];
@@ -979,7 +1037,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const PESTANAS={hoy:["pide-funcion","ganchos","instalar","caja-semana","caja-compartir"],
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
-    mas:["caja-plan","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
+    mas:["caja-plan","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
     pro:["pro","mejoras"]};
   Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
   let pesActual=null;
