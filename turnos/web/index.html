@@ -388,6 +388,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="sync"></div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-airhelp">
+    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <span><b>✈️ ¿Vuelo retrasado, cancelado o con overbooking?</b><br><span class="nota">Si llegaste con más de 3 horas de retraso, puedes tener derecho a hasta 600 € por persona. AirHelp lo reclama por ti y solo cobra si gana.</span></span>
+      <a class="boton primario" href="https://www.airhelp.com/es/" target="_blank" rel="noopener">Comprobar mi vuelo</a>
+    </div>
+  </section>
+
   <section class="tarjeta no-imprimir" id="caja-sim">
     <p class="titulo" style="margin:0">🔮 ¿Y si cambio de turno?</p>
     <div id="sim"></div>
@@ -814,7 +821,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         <span>Pide del <b>${fc(c.s)}</b> al <b>${fc(c.ult)}</b> (${P.n} días de turno).</span><span class="nota">Descansas del ${fc(c.a)} al ${fc(c.b)}.</span>
         <div class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button>
         <a class="boton primario" href="${vuelos(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">✈️ ${destIATA?"Vuelos a "+esc(P.dest):"¿A dónde barato?"}</a>
-        ${P.dest?`<a class="boton" href="${hoteles(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">🏨 Hoteles</a>`:""}</div></div>`).join("")
+        ${P.dest?`<a class="boton" href="${hoteles(fechaISO(c.a),fechaISO(c.b))}" target="_blank" rel="noopener">🏨 Hoteles</a><a class="boton" href="https://www.economybookings.com/es" target="_blank" rel="noopener">🚗 Coche</a>`:""}</div></div>`).join("")
         :`<p class="nota">No caben ${P.n} días de turno entre esas fechas. Amplía el «Hasta» o pide menos días.</p>`;
     });
     $("pl-res").addEventListener("click",e=>{const b=e.target.closest("[data-marcar]"); if(!b) return;
@@ -1053,7 +1060,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const PESTANAS={hoy:["pide-funcion","ganchos","instalar","caja-semana","caja-compartir"],
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
-    mas:["caja-plan","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
+    mas:["caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
     pro:["pro","mejoras"]};
   Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
   let pesActual=null;
