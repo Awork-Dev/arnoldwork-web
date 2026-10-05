@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TurnoWork · Tu cuadrante de turnos para todo el año</title>
-<meta name="description" content="Pon tu ciclo de turnos una vez y ve todo tu año: mañanas, tardes, noches, guardias de 24 h, festivos de tu comunidad, horas y cambios con compañeros por WhatsApp. Mira qué días libráis tú y tu pareja y apunta lo de cada semana. Gratis.">
+<title>TurnoWork · Tus turnos y tu día a día</title>
+<meta name="description" content="Para profesionales a turnos y para el día a día de cualquiera. Pon tu ciclo de turnos una vez y ve todo tu año: mañanas, tardes, noches, guardias de 24 h, festivos de tu comunidad, horas y cambios con compañeros por WhatsApp. Mira qué días libráis tú y tu pareja y apunta lo de cada semana. Gratis.">
 <link rel="canonical" href="https://turnos.arnoldwork.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TurnoWork">
@@ -270,9 +270,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div>
       <div class="marca"><img src="icono.svg" alt="" width="34" height="34">TurnoWork<span id="insignia-pro" hidden style="font:800 .62rem/1 var(--texto);letter-spacing:.08em;background:#ffb020;color:#2b1a00;border-radius:6px;padding:4px 7px">PRO</span></div>
       <div class="fecha-app" id="fecha-app"></div>
-      <h1>Tu cuadrante de turnos para todo el año</h1>
-      <p>Pon tu ciclo una vez y ve cada día del año: mañanas, tardes, noches, guardias, festivos y horas. Para sanitarios, bomberos, seguridad, fábricas, hostelería… </p>
-      <div class="ventajas"><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos, en tu móvil</span></div>
+      <h1>Tus turnos y tu día a día, en una sola app</h1>
+      <p><b>Si trabajas a turnos</b> (sanidad, policía, bomberos, seguridad, fábricas, hostelería…), pon tu ciclo una vez y ve todo tu año con festivos y horas. <b>Si no</b>, organiza tu semana igual: notas que se repiten, vacaciones y lo de cada día, como la piscina de los peques.</p>
+      <div class="ventajas"><span>Para turnos y para el día a día</span><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos, en tu móvil</span></div>
     </div>
     <div class="hoy" id="hoy"></div>
   </div>
@@ -490,7 +490,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <footer id="pie">
     <p>Festivos nacionales y de tu comunidad calculados de forma orientativa (cada año los fija un decreto): añade los locales o los que cambien tocando el día. Comprueba siempre con el cuadrante oficial de tu empresa y tu convenio.</p>
     <p>Tus datos se guardan solo en este dispositivo: nadie más los ve. Solo si activas la sincronización de Pro se guarda una copia de tu cuadrante en nuestro servidor, protegida con tu código, para verlo en tus otros dispositivos y en tu calendario; puedes borrarla cuando quieras. El ciclo menstrual nunca sale del móvil. Pro se activa con el correo con el que pagaste en Ko-fi.</p>
-    <p><a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · <a href="#" id="buscar-act">🔄 Buscar actualización</a> <span id="version-txt"></span> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
+    <p><a href="/cuadrante/">📚 Cuadrantes por profesión</a> · <a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · <a href="#" id="buscar-act">🔄 Buscar actualización</a> <span id="version-txt"></span> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
   </footer>
 </main>
 <nav class="pestanas-app no-imprimir" id="pestanas-app" aria-label="Secciones">
@@ -539,6 +539,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     ["Mañanas y tardes: 2 y 2, con 4 libres","M M T T L L L L",{}],
     ["6 de trabajo y 6 de descanso","M M M T T T L L L L L L",{}],
     ["Fijo de lunes a viernes","M M M M M L L",{}],
+    ["Sin turnos: solo quiero organizar mi día a día","L",{}],
   ];
   const MANUALES={V:"Vacaciones",AP:"Asuntos propios",B:"Baja",F:"Formación",J:"Juicio",C:"Compensación"};
   const AUSENCIAS=["V","AP","B","F","J"];
@@ -1315,6 +1316,23 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     return true;
   }
 
+  // Al llegar desde una página de Google (?ciclo=…): ofrecer cargar ese ciclo.
+  const CICLOS_WEB={"enfermeria-12-horas":2,"4x4-12-horas":3,"bomberos-24x72":4,"guardia-24-horas-4-libres":5,"policia-rotativo-2-2-2":0,"vigilante-seguridad-2-2-2":0,"rotativo-semanal-fabrica":1,"hosteleria-2-2-4":6,"6x6":7};
+  function cicloDesdeWeb(){
+    let slug=null; try{ slug=new URLSearchParams(location.search).get("ciclo"); }catch(e){}
+    const i=CICLOS_WEB[slug]; if(i==null) return false;
+    const m=MODELOS[i], limpiar=()=>history.replaceState(null,"",location.pathname);
+    $("propuesta").innerHTML=`<div class="tarjeta aviso"><b>¿Empezamos con este ciclo?</b><p class="nota" style="margin:6px 0">${esc(m[0])}: <b>${esc(m[1])}</b></p>
+      <div class="acciones"><button class="boton primario" id="cw-si">Usar este ciclo</button><button class="boton" id="cw-no">No, gracias</button></div></div>`;
+    $("cw-si").addEventListener("click",()=>{
+      Y.patron=m[1]; Y.turnos=JSON.parse(JSON.stringify(TURNOS_DEF)); Object.entries(m[2]).forEach(([k,v])=>Object.assign(Y.turnos[k],v));
+      Y.ref=fechaISO(hoy); Y.pos=0; guardar(); limpiar(); pintarAjustes(); pintar(); verPestana("anio","ajustes"); $("ajustes").open=true;
+      $("propuesta").innerHTML=`<p class="nota">✓ Ciclo cargado. Ahora dinos <b>qué día del ciclo es hoy</b> en «Mi ciclo» y tendrás tu año exacto.</p>`;
+    });
+    $("cw-no").addEventListener("click",()=>{$("propuesta").innerHTML="";limpiar();});
+    return true;
+  }
+
   function abrirMenu(el){
     cerrarMenu();
     const f=el.dataset.f, opciones=[...usados(),"L",...Object.keys(MANUALES)];
@@ -1353,8 +1371,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   function cambio(){guardar(); pintar();}
   if(primeraVez&&!/^#(importar|pareja)=/.test(location.hash)) $("ajustes").open=true;
-  pintarAjustes(); pintarPro(); pintar(); if(!importar()&&!recibirPareja()) propuesta();
-  verPestana(primeraVez&&!/^#(importar|pareja|cambio)=/.test(location.hash)?"anio":(leer("tw_pestana",null)||"hoy"));
+  pintarAjustes(); pintarPro(); pintar(); if(!importar()&&!recibirPareja()&&!cicloDesdeWeb()) propuesta();
+  verPestana(primeraVez&&!/^#(importar|pareja|cambio)=/.test(location.hash)&&!/[?&]ciclo=/.test(location.search)?"anio":(leer("tw_pestana",null)||"hoy"));
   addEventListener("hashchange",propuesta);
   // ===== Instalar en el móvil =====
   const instalada=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
