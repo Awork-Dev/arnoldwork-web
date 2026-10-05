@@ -14,6 +14,11 @@
 <meta name="theme-color" content="#ff6f91">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TurnoWork">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;600;700;800&display=swap">
@@ -145,6 +150,19 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .bloqueado .velo{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:12px}
 .aviso-pro{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--acento-suave);font-size:.86rem;font-weight:600}
 textarea{min-height:110px;resize:vertical}
+/* Instalar en el móvil */
+.instalar{display:grid;gap:12px}
+.instalar-cab{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.instalar-cab div{display:flex;gap:12px;align-items:center}
+.instalar-cab img{width:46px;height:46px;border-radius:12px;box-shadow:var(--sombra)}
+.pestanas{display:flex;gap:6px;background:var(--fondo);border-radius:12px;padding:4px;width:max-content;max-width:100%}
+.pestanas button{border:0;background:transparent;border-radius:9px;padding:8px 14px;font-weight:800;cursor:pointer;color:var(--suave)}
+.pestanas button[aria-selected="true"]{background:var(--panel);color:var(--tinta);box-shadow:var(--sombra)}
+.pasos{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:paso}
+.pasos li{display:flex;gap:12px;align-items:flex-start;counter-increment:paso}
+.pasos li::before{content:counter(paso);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.8rem;color:#fff;background:linear-gradient(120deg,var(--acento),var(--acento-2))}
+.pasos svg{width:18px;height:18px;vertical-align:-4px;stroke:var(--acento)}
+.cerrar{border:0;background:transparent;color:var(--suave);font-weight:800;cursor:pointer;padding:6px}
 footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--suave);font-size:.85rem}
 .solo-imprimir{display:none}
 @media (prefers-reduced-motion:reduce){.boton,.dia,details.tarjeta>summary::before{transition:none}}
@@ -174,6 +192,30 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
 <main class="envoltura">
   <div id="propuesta"></div>
+
+  <section class="tarjeta instalar no-imprimir" id="instalar" hidden>
+    <div class="instalar-cab">
+      <div><img src="icono-192.png" alt="" width="46" height="46"><div><p class="titulo" style="margin:0">Tenla en la pantalla de tu móvil</p><span class="nota">Se abre como una app, a pantalla completa y sin conexión.</span></div></div>
+      <button class="boton primario" id="instalar-ya" hidden>📲 Instalar TurnoWork</button>
+    </div>
+    <div class="pestanas" role="tablist">
+      <button role="tab" data-so="iphone" aria-selected="false">iPhone</button>
+      <button role="tab" data-so="android" aria-selected="false">Android</button>
+    </div>
+    <ol class="pasos" data-pasos="iphone">
+      <li><span>Abre esta página en <b>Safari</b> (en otros navegadores del iPhone el paso cambia o no aparece).</span></li>
+      <li><span>Toca el botón <b>Compartir</b> <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>, abajo en el centro (o arriba a la derecha en el iPad).</span></li>
+      <li><span>Baja y elige <b>Añadir a pantalla de inicio</b>.</span></li>
+      <li><span>Toca <b>Añadir</b>. Ya tienes el icono de TurnoWork junto a tus apps.</span></li>
+    </ol>
+    <ol class="pasos" data-pasos="android" hidden>
+      <li><span>Abre esta página en <b>Chrome</b>.</span></li>
+      <li><span>Si ves el botón <b>📲 Instalar TurnoWork</b> aquí arriba, tócalo y listo.</span></li>
+      <li><span>Si no, toca el menú <b>⋮</b> (arriba a la derecha) y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar aplicación</b>.</span></li>
+      <li><span>Confirma con <b>Instalar</b>. El icono aparecerá en tu pantalla de inicio.</span></li>
+    </ol>
+    <div style="display:flex;justify-content:flex-end"><button class="cerrar" id="instalar-cerrar">Ahora no</button></div>
+  </section>
 
   <details class="tarjeta no-imprimir" id="ajustes">
     <summary>Mi ciclo <span class="nota" id="desc"></span></summary>
@@ -254,7 +296,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <footer>
     <p>Festivos nacionales y de tu comunidad calculados de forma orientativa (cada año los fija un decreto): añade los locales o los que cambien tocando el día. Comprueba siempre con el cuadrante oficial de tu empresa y tu convenio.</p>
     <p>Tus datos se guardan solo en este dispositivo: nadie más los ve. Pro se activa con el correo con el que pagaste en Ko-fi.</p>
-    <p>Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
+    <p><a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
   </footer>
 </main>
 
@@ -676,6 +718,25 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   if(primeraVez&&!/^#importar=/.test(location.hash)) $("ajustes").open=true;
   pintarAjustes(); pintarPro(); pintar(); if(!importar()) propuesta();
   addEventListener("hashchange",propuesta);
+  // ===== Instalar en el móvil =====
+  const instalada=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  const esIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  function verSO(so){
+    document.querySelectorAll("[data-so]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.so===so)));
+    document.querySelectorAll("[data-pasos]").forEach(o=>o.hidden=o.dataset.pasos!==so);
+  }
+  document.querySelectorAll("[data-so]").forEach(b=>b.addEventListener("click",()=>verSO(b.dataset.so)));
+  verSO(esIOS?"iphone":"android");
+  const mostrarInstalar=()=>{$("instalar").hidden=false;};
+  if(!instalada&&!leer("tw_instalar_no",false)) mostrarInstalar();
+  $("instalar-cerrar").addEventListener("click",()=>{$("instalar").hidden=true;escribir("tw_instalar_no",true);});
+  $("ver-instalar").addEventListener("click",e=>{e.preventDefault();mostrarInstalar();$("instalar").scrollIntoView({behavior:"smooth",block:"center"});});
+  let avisoInstalar=null;
+  addEventListener("beforeinstallprompt",e=>{e.preventDefault();avisoInstalar=e;$("instalar-ya").hidden=false;});
+  $("instalar-ya").addEventListener("click",async()=>{if(!avisoInstalar)return;avisoInstalar.prompt();
+    const r=await avisoInstalar.userChoice.catch(()=>null);avisoInstalar=null;$("instalar-ya").hidden=true;if(r&&r.outcome==="accepted")$("instalar").hidden=true;});
+  addEventListener("appinstalled",()=>{$("instalar").hidden=true;});
+
   if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
 </script>
