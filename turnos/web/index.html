@@ -330,7 +330,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
 <main class="envoltura">
   <div id="aviso-act" class="tarjeta aviso no-imprimir" hidden style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
-    <span><b>✨ Hay una versión nueva de TurnoWork</b><br><span class="nota">Con mejoras y arreglos. Tus datos no se tocan.</span></span>
+    <span><b>✨ Hay una versión nueva de TurnoWork</b><br><span class="nota" id="aviso-act-txt">Con mejoras y arreglos. Tus datos no se tocan.</span></span>
     <button class="boton primario" id="actualizar-ya">Actualizar ahora</button>
   </div>
   <div id="propuesta"></div>
@@ -1578,8 +1578,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   // ===== Actualizaciones: la versión de esta página frente a la publicada =====
   const MI_VERSION="__VERSION__", MI_FECHA="__FECHA__";
-  const fechaVer=f=>{const d=new Date(f);return isNaN(d)?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"});};
-  if(fechaVer(MI_FECHA)) $("version-txt").textContent=`(versión del ${fechaVer(MI_FECHA)})`;
+  const fechaVer=f=>{const d=new Date(f);return isNaN(d)?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"})+", "+d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});};
+  if(fechaVer(MI_FECHA)) $("version-txt").textContent=`(versión del ${fechaVer(MI_FECHA)} · ${MI_VERSION})`;
   async function hayNueva(){ if(MODO_LIBRE) return null;
     try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) return null; const j=await r.json();
       return MI_VERSION.startsWith("__")?null:(j.version&&j.version!==MI_VERSION?j:false);}catch(e){return null;}
@@ -1593,8 +1593,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   $("buscar-act").addEventListener("click",async e=>{
     e.preventDefault(); const a=e.currentTarget, antes=a.textContent; a.textContent="Buscando…";
     const n=await hayNueva();
-    if(n){ a.textContent="Actualizando…"; actualizar(); }
-    else{ a.textContent=n===false?"✓ Ya tienes la última versión":"Sin conexión: prueba luego"; setTimeout(()=>a.textContent=antes,2500); }
+    if(n){ a.textContent="Actualizando a la del "+fechaVer(n.fecha)+"…"; setTimeout(actualizar,900); }
+    else{ a.textContent=n===false?"✓ Ya tienes la última ("+fechaVer(MI_FECHA)+")":"Sin conexión: prueba luego"; setTimeout(()=>a.textContent=antes,4000); }
   });
   // ===== Avisos la noche antes (Pro) =====
   // La app deja en este móvil la agenda de los próximos 60 días; el aviso nocturno la lee aquí mismo.
@@ -1730,8 +1730,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   if(SY&&PRO&&!MODO_LIBRE) bajar(false).then(()=>pintarSync());
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&SY&&PRO) bajar(false); });
 
-  hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; });
-  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; }); });
+  const avisoNueva=n=>{ if(!n) return; $("aviso-act-txt").textContent=`Publicada el ${fechaVer(n.fecha)}. Tú tienes la del ${fechaVer(MI_FECHA)}. Tus datos no se tocan.`; $("aviso-act").hidden=false; };
+  hayNueva().then(avisoNueva);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) hayNueva().then(avisoNueva); });
 
   if(MODO_LIBRE){ $("instalar").hidden=true; ["ver-instalar","buscar-act","version-txt"].forEach(id=>{const e=$(id); if(e) e.hidden=true;}); }
   if(!MODO_LIBRE&&"serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
