@@ -10,6 +10,8 @@
 //   POST /kofi      Ko-fi avisa de cada venta o batido → mensaje a Telegram.
 //   POST /pro       las webs de pago (Turnos…) preguntan si un correo ha comprado su versión Pro en Ko-fi.
 //   POST /mejora    buzón de mejoras de las webs de pago: solo para quien tiene el Pro → mensaje a Telegram.
+//   POST /api/sync  TurnoWork Pro: sincronizar el cuadrante entre dispositivos (turnos-sync.js).
+//   GET  /cal/<token>.ics  TurnoWork Pro: calendario suscrito que se actualiza solo.
 //   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
@@ -27,6 +29,7 @@
 
 import { DurableObject } from "cloudflare:workers";
 import { recoger, mensajesTelegram, paraWeb, alternar, VERSION_WEB } from "./noticias.js";
+import { syncApi, calendario } from "./turnos-sync.js";
 
 const CHAT_ID = "288460670";
 const LENTO_MS = 4000;
@@ -90,6 +93,8 @@ export class Memoria extends DurableObject {
     // Licencias Pro: el correo se guarda como huella (SHA-256), nunca en claro.
     this.sql.exec(`CREATE TABLE IF NOT EXISTS licencias (huella TEXT, producto TEXT, fecha INTEGER, venta TEXT, PRIMARY KEY (huella, producto))`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS intentos (ip TEXT, fecha INTEGER)`);
+    // TurnoWork: cuadrantes sincronizados (huella del correo, huella del código, datos, fecha y token del calendario).
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS sync (huella TEXT PRIMARY KEY, codigo TEXT, datos TEXT, t INTEGER, cal TEXT UNIQUE, creado INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS incidencias (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, detalle TEXT)`);
     // Las pruebas de Ko-fi no son ventas: fuera si alguna se guardó.
     this.sql.exec(`DELETE FROM ventas WHERE id = ? OR nombre = 'Jo Example'`, KOFI_PRUEBA);
@@ -134,6 +139,14 @@ export class Memoria extends DurableObject {
     this.sql.exec(`INSERT INTO intentos (ip, fecha) VALUES (?, ?)`, ip, ahora);
     return this.sql.exec(`SELECT COUNT(*) AS n FROM licencias WHERE huella = ? AND producto = ?`, huella, producto).one().n > 0;
   }
+
+  syncFila(huella) { return this.sql.exec(`SELECT codigo, datos, t, cal FROM sync WHERE huella = ?`, huella).toArray()[0] || null; }
+  syncCrear(huella, codigo, cal) {
+    this.sql.exec(`INSERT OR REPLACE INTO sync (huella, codigo, datos, t, cal, creado) VALUES (?, ?, NULL, 0, ?, ?)`, huella, codigo, cal, Date.now());
+  }
+  syncGuardar(huella, datos, t) { this.sql.exec(`UPDATE sync SET datos = ?, t = ? WHERE huella = ?`, datos, t, huella); }
+  syncBorrar(huella) { this.sql.exec(`DELETE FROM sync WHERE huella = ?`, huella); }
+  syncPorCal(cal) { return this.sql.exec(`SELECT datos FROM sync WHERE cal = ?`, cal).toArray()[0] || null; }
 
   licenciasDesde(desde) {
     return this.sql.exec(`SELECT producto, COUNT(*) AS n FROM licencias WHERE fecha >= ? GROUP BY producto`, desde).toArray();
@@ -573,6 +586,11 @@ export default {
     if (req.method === "POST" && url.pathname === "/contacto") return contacto(req, env);
     if (req.method === "POST" && url.pathname === "/pro") return pro(req, env);
     if (req.method === "POST" && url.pathname === "/mejora") return mejora(req, env);
+    if (req.method === "POST" && url.pathname === "/api/sync") {
+      const m = memoria(env);
+      return syncApi(req, env, m, { huellaCorreo, esPro: async (hu, ip) => PRO_CASA.has(hu) ? true : await m.comprobarLicencia(hu, "turnos", ip) });
+    }
+    if (req.method === "GET" && url.pathname.startsWith("/cal/")) return calendario(url.pathname.slice(5).replace(/\.ics$/, ""), memoria(env));
     if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
 
     if (url.pathname === "/diagnostico") {
