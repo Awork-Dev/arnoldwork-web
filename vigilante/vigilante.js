@@ -56,6 +56,10 @@ const PRODUCTOS_KOFI = {
 const PRO_KOFI = {
   "d1bb163587": "turnos",
 };
+// Licencias de la casa (huella del correo, nunca el correo en claro: este repositorio es público).
+const PRO_CASA = new Set([
+  "81dc043b89f78dc1ba5654908eacc5331b5dedc8f7435d4aa4b6cc2629260916",   // Carlos
+]);
 const NOMBRE_PRO = { turnos: "Turnos Pro", calas: "Calas Hoy Pro" };
 // Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
 const KOFI_PRUEBA = "00000000-1111-2222-3333-444444444444";
@@ -488,7 +492,9 @@ async function pro(req, env) {
   const m = memoria(env);
   if (!m) return new Response('{"error":"Sin memoria"}', { status: 503, headers: h });
   const ip = await huellaCorreo((req.headers.get("CF-Connecting-IP") || "") + "#ip");
-  const r = await m.comprobarLicencia(await huellaCorreo(email), producto, ip.slice(0, 16));
+  const hu = await huellaCorreo(email);
+  if (PRO_CASA.has(hu)) return new Response('{"ok":true}', { headers: h });
+  const r = await m.comprobarLicencia(hu, producto, ip.slice(0, 16));
   if (r === null) return new Response('{"error":"Demasiados intentos, prueba dentro de una hora"}', { status: 429, headers: h });
   return new Response(JSON.stringify({ ok: r }), { headers: h });
 }
@@ -503,7 +509,8 @@ async function mejora(req, env) {
   const m = memoria(env);
   if (!m) return new Response('{"error":"Sin memoria"}', { status: 503, headers: h });
   const ip = await huellaCorreo((req.headers.get("CF-Connecting-IP") || "") + "#ip");
-  const r = await m.comprobarLicencia(await huellaCorreo(email), producto, ip.slice(0, 16));
+  const hu = await huellaCorreo(email);
+  const r = PRO_CASA.has(hu) ? true : await m.comprobarLicencia(hu, producto, ip.slice(0, 16));
   if (r === null) return new Response('{"error":"Has enviado muchas seguidas: prueba dentro de una hora"}', { status: 429, headers: h });
   if (!r) return new Response('{"error":"El buzón de mejoras es para usuarios Pro"}', { status: 403, headers: h });
   await enviarTelegram(env, `💡 Mejora para ${NOMBRE_PRO[producto]}\n\n📮 ${recorta(email, 120)}\n\n${texto}`);
