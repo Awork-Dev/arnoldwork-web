@@ -874,7 +874,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     let racha=0;
     for(let d=new Date(a,0,1);d.getFullYear()===a;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)){
       const n=diasEntre(deISO(Y.ref),d)+(+Y.pos||0), t=c.length?c[((n%c.length)+c.length)%c.length]:"L", x=turnosC[t];
-      if(x){ r.trab++; r.horas+=x.h; if(t==="N"||(x.ini>=20)) r.noches++; const w=d.getDay(); if(w===0||w===6) r.findes++; if(festivo(d)) r.fest++; if(racha>=3) r.puentes++; racha=0; }
+      if(x){ r.trab++; r.horas+=x.h; if(t==="N"||x.ini>=20||x.h>=24) r.noches++; const w=d.getDay(); if(w===0||w===6) r.findes++; if(festivo(d)) r.fest++; if(racha>=3) r.puentes++; racha=0; }
       else { r.libres++; racha++; }
     }
     if(racha>=3) r.puentes++;

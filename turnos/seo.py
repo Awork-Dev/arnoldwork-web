@@ -58,7 +58,7 @@ def ciclo_anio(patron, turnos):
         if t in turnos:
             n, ini, h = turnos[t]
             r["trab"] += 1; r["horas"] += h
-            if t == "N" or ini >= 20: r["noches"] += 1
+            if t == "N" or ini >= 20 or h >= 24: r["noches"] += 1
             if d.weekday() >= 5: r["findes"] += 1
         else:
             r["libres"] += 1
