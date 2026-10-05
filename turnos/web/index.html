@@ -24,7 +24,7 @@
   --acento:#6c4cf1; --acento-2:#ff6b8b; --acento-suave:#f1edff; --oro:#ffb020; --rojo:#e5484d; --verde:#2f9e6b;
   --sombra:0 1px 2px rgba(29,24,56,.06),0 10px 28px rgba(29,24,56,.07);
   --tM:#ffe066; --tT:#ffa94d; --tN:#a99bff; --tD:#66d4ff; --tG:#ff8fa3;
-  --tV:#69db7c; --tAP:#38d9a9; --tB:#ff8787; --tF:#74c0fc; --tC:#d0d4e4; --tinta-celda:#1d1838;
+  --tV:#69db7c; --tAP:#38d9a9; --tB:#ff8787; --tF:#74c0fc; --tJ:#d0a8ff; --tC:#d0d4e4; --tinta-celda:#1d1838;
   --display:"Unbounded", "Avenir Next", system-ui, sans-serif;
   --texto:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme:light;
@@ -34,7 +34,7 @@
   --acento:#9d86ff; --acento-2:#ff8aa3; --acento-suave:#251f47; --oro:#ffc44d; --rojo:#ff7b80; --verde:#5fd39b;
   --sombra:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
   --tM:#f5d23d; --tT:#f99a3a; --tN:#9283ff; --tD:#45c3f2; --tG:#ff7a92;
-  --tV:#4fcf66; --tAP:#20c997; --tB:#ff6b6b; --tF:#5aaef5; --tC:#9aa0b8;
+  --tV:#4fcf66; --tAP:#20c997; --tB:#ff6b6b; --tF:#5aaef5; --tJ:#b98af5; --tC:#9aa0b8;
   color-scheme:dark;}}
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -92,7 +92,7 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .t-M{background:var(--tM);color:var(--tinta-celda)} .t-T{background:var(--tT);color:var(--tinta-celda)} .t-N{background:var(--tN);color:var(--tinta-celda)}
 .t-D{background:var(--tD);color:var(--tinta-celda)} .t-G{background:var(--tG);color:var(--tinta-celda)}
 .t-V{background:var(--tV);color:var(--tinta-celda)} .t-AP{background:var(--tAP);color:var(--tinta-celda)} .t-B{background:var(--tB);color:var(--tinta-celda)}
-.t-F{background:var(--tF);color:var(--tinta-celda)} .t-C{background:var(--tC);color:var(--tinta-celda)}
+.t-F{background:var(--tF);color:var(--tinta-celda)} .t-J{background:var(--tJ);color:var(--tinta-celda)} .t-C{background:var(--tC);color:var(--tinta-celda)}
 .t-L{background:transparent;color:var(--suave);font-weight:600}
 .c.t-L{border:1.5px dashed var(--linea)}
 /* Año */
@@ -211,7 +211,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="saldo-cont">
       <div class="form">
         <label>Jornada anual (horas)<input id="jornada" type="number" min="0" max="3000" step="1" inputmode="numeric" placeholder="Por ejemplo, 1642"></label>
-        <label>Horas que cuenta un día de vacaciones, asuntos propios, baja o formación<input id="haus" type="number" min="0" max="24" step="0.5" inputmode="decimal"></label>
+        <label>Horas que cuenta un día de vacaciones, asuntos propios, baja, formación o juicio<input id="haus" type="number" min="0" max="24" step="0.5" inputmode="decimal"></label>
       </div>
       <p class="titulo" style="margin:18px 0 0">Factores correctores</p>
       <p class="nota" style="margin:4px 0 0">Si tu convenio cuenta algunas horas de más (por ejemplo, cada hora de noche vale 1,25), ponlo aquí. El factor de cada turno se pone en «Mi ciclo», junto a su horario. Con 1 la hora cuenta normal.</p>
@@ -287,8 +287,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     ["6 de trabajo y 6 de descanso","M M M T T T L L L L L L",{}],
     ["Fijo de lunes a viernes","M M M M M L L",{}],
   ];
-  const MANUALES={V:"Vacaciones",AP:"Asuntos propios",B:"Baja",F:"Formación",C:"Compensación"};
-  const AUSENCIAS=["V","AP","B","F"];
+  const MANUALES={V:"Vacaciones",AP:"Asuntos propios",B:"Baja",F:"Formación",J:"Juicio",C:"Compensación"};
+  const AUSENCIAS=["V","AP","B","F","J"];
 
   // ===== Festivos (orientativos): nacionales + de cada comunidad =====
   // JS = Jueves Santo, LP = Lunes de Pascua; fechas fijas como [mes(1-12), día, nombre].
@@ -617,6 +617,29 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       $("propuesta").innerHTML=`<p class="nota">✓ Cambio apuntado. Los días cambiados salen con borde.</p>`;});
     $("prop-no").addEventListener("click",cerrar);
   }
+  // Traer el cuadrante desde IndicativoWork: llega en el enlace (#importar=…), que nunca sale del móvil.
+  function importar(){
+    const m=/^#importar=([A-Za-z0-9_-]+)$/.exec(location.hash); if(!m) return false;
+    let d=null;
+    try{ d=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/"))))); }catch(e){}
+    const cerrar=()=>{history.replaceState(null,"",location.pathname);};
+    if(!d||!d.patron){ cerrar(); return false; }
+    $("propuesta").innerHTML=`<div class="tarjeta aviso"><b>Traer tu cuadrante de IndicativoWork</b>
+      <p class="nota">Ciclo <b>${esc(d.patron)}</b>, ${Object.keys(d.cambios||{}).length} días cambiados a mano y tus horarios. ${primeraVez?"":"Sustituirá el cuadrante que tienes ahora en TurnoWork."}</p>
+      <div class="acciones"><button class="boton primario" id="imp-si">Traer mi cuadrante</button><button class="boton" id="imp-no">Ahora no</button></div></div>`;
+    $("imp-si").addEventListener("click",()=>{
+      Y.patron=String(d.patron); Y.ref=d.ref||Y.ref; Y.pos=+d.pos||0;
+      if(d.turnos) Object.entries(d.turnos).forEach(([k,t])=>{ if(!Y.turnos[k]) Y.turnos[k]={n:t.n||k,ini:8,h:8}; Y.turnos[k].ini=+t.ini||0; Y.turnos[k].h=+t.h||8; if(t.n) Y.turnos[k].n=t.n; });
+      Y.cambios=d.cambios||{}; if(d.fest) Y.fest={extra:d.fest.extra||{},quita:d.fest.quita||[]};
+      if(d.saldo){ Y.saldo.jornada=+d.saldo.jornada||0; Y.saldo.haus=+d.saldo.haus||8; }
+      Y.comunidad="BAL"; guardar(); cerrar();
+      pintarAjustes(); $("jornada").value=Y.saldo.jornada||""; $("haus").value=Y.saldo.haus; pintar();
+      $("propuesta").innerHTML=`<p class="nota">✓ Cuadrante traído de IndicativoWork. Revisa «Mi ciclo» por si quieres ajustar algo.</p>`;
+    });
+    $("imp-no").addEventListener("click",()=>{$("propuesta").innerHTML="";cerrar();});
+    return true;
+  }
+
   function abrirMenu(el){
     cerrarMenu();
     const f=el.dataset.f, opciones=[...usados(),"L",...Object.keys(MANUALES)];
@@ -650,8 +673,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   addEventListener("keydown",e=>{if(e.key==="Escape")cerrarMenu();});
 
   function cambio(){guardar(); pintar();}
-  if(primeraVez) $("ajustes").open=true;
-  pintarAjustes(); pintarPro(); pintar(); propuesta();
+  if(primeraVez&&!/^#importar=/.test(location.hash)) $("ajustes").open=true;
+  pintarAjustes(); pintarPro(); pintar(); if(!importar()) propuesta();
   addEventListener("hashchange",propuesta);
   if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
