@@ -18,7 +18,7 @@ jobs:
           echo "::notice title=subir::$(echo "$s" | sed 's/"cal":"[^"]*"/"cal":"***"/')"
           b=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"bajar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
           echo "::notice title=bajar::$(echo "$b" | jq -c '{ok,t,patron:.datos.patron,repes:(.datos.repes|length)}')"
-          ics=$(curl -s https://turnos.arnoldwork.com/cal/$CAL.ics)
+          ics=$(curl -s https://turnos.arnoldwork.com/cal/$CAL.ics | tr -d "\r")
           echo "::notice title=cal::$(echo "$ics" | grep -c BEGIN:VEVENT) eventos; $(echo "$ics" | grep -m1 'DTSTART:2026100' ); $(echo "$ics" | grep -m1 RRULE); $(echo "$ics" | grep -m1 'SUMMARY:📝 Prueba')"
           r=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"borrar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
           echo "::notice title=borrar::$r"
