@@ -877,12 +877,12 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     for(const c of C){ if(elegidos.some(e=>!(c.b<e.a||c.a>e.b))) continue; elegidos.push(c); if(elegidos.length===3) break; }
     return elegidos;
   }
-  // Lo demás del viaje (programas de Travelpayouts; el código de Drive los convierte en enlaces de afiliado).
+  // Lo demás del viaje: enlaces de afiliado de Travelpayouts (socio 785981).
   const VIAJE=[
     ["🚗","Coche","https://localrent.tpx.gr/coiU5ulN"],
     ["🚕","Traslado","https://kiwitaxi.tpx.gr/yRaFWIV1"],
     ["🎟️","Qué ver","https://tiqets.tpx.gr/3eDmkmcL"],
-    ["📶","eSIM","https://saily.com/es/"],
+    ["📶","eSIM","https://saily.tpx.gr/bjGf598V"],
   ];
   // Ciudades frecuentes → código de aeropuerto o de ciudad (para buscar vuelos).
   const CIUDADES={"roma":"ROM","londres":"LON","parís":"PAR","paris":"PAR","madrid":"MAD","barcelona":"BCN","lisboa":"LIS","oporto":"OPO","ámsterdam":"AMS","amsterdam":"AMS","berlín":"BER","berlin":"BER","milán":"MIL","milan":"MIL","nápoles":"NAP","venecia":"VCE","florencia":"FLR","sevilla":"SVQ","málaga":"AGP","malaga":"AGP","valencia":"VLC","bilbao":"BIO","ibiza":"IBZ","menorca":"MAH","tenerife":"TCI","gran canaria":"LPA","granada":"GRX","santiago":"SCQ","dublín":"DUB","dublin":"DUB","edimburgo":"EDI","praga":"PRG","viena":"VIE","budapest":"BUD","cracovia":"KRK","atenas":"ATH","estambul":"IST","marrakech":"RAK","bruselas":"BRU","copenhague":"CPH","estocolmo":"STO","oslo":"OSL","zúrich":"ZRH","zurich":"ZRH","ginebra":"GVA","múnich":"MUC","munich":"MUC","niza":"NCE","malta":"MLA","nueva york":"NYC","cancún":"CUN","cancun":"CUN","tokio":"TYO"};
