@@ -230,7 +230,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div class="marca"><img src="icono.svg" alt="" width="34" height="34">TurnoWork<span id="insignia-pro" hidden style="font:800 .62rem/1 var(--texto);letter-spacing:.08em;background:#ffb020;color:#2b1a00;border-radius:6px;padding:4px 7px">PRO</span></div>
       <h1>Tu cuadrante de turnos para todo el año</h1>
       <p>Pon tu ciclo una vez y ve cada día del año: mañanas, tardes, noches, guardias, festivos y horas. Para sanitarios, bomberos, seguridad, fábricas, hostelería… </p>
-      <div class="ventajas"><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos no salen del móvil</span></div>
+      <div class="ventajas"><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos, en tu móvil</span></div>
     </div>
     <div class="hoy" id="hoy"></div>
   </div>
@@ -354,6 +354,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="menstrual"></div>
   </details>
 
+  <section class="tarjeta no-imprimir" id="caja-sync">
+    <p class="titulo" style="margin:0">☁️ En todos tus dispositivos y en tu calendario</p>
+    <div id="sync"></div>
+  </section>
+
   <section class="tarjeta no-imprimir" id="caja-pareja">
     <p class="titulo" style="margin:0">👫 Libres en común</p>
     <div id="pareja"></div>
@@ -389,6 +394,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>✈️</span><div><b>Planificador de vacaciones:</b> dile cuántos días quieres y te dice cuáles pedir para descansar más días seguidos.</div></li>
       <li><span>💶</span><div><b>Pluses en euros:</b> lo que llevas de nocturnidad, festivos y fines de semana, mes a mes.</div></li>
       <li><span>🎨</span><div><b>El color de cada turno a tu gusto</b>, para ver tu año de un vistazo.</div></li>
+      <li><span>☁️</span><div><b>Tu cuadrante en todos tus dispositivos</b> y un <b>calendario que se actualiza solo</b> en Google, iPhone u Outlook.</div></li>
       <li><span>💾</span><div><b>Copia de seguridad</b> para no perder nada y pasar tu cuadrante a otro móvil.</div></li>
       <li><span>💡</span><div><b>¿Quieres una función? Pídela.</b> Los usuarios Pro tienen buzón directo y sus ideas son las primeras que hacemos.</div></li>
     </ul>
@@ -403,7 +409,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   <footer>
     <p>Festivos nacionales y de tu comunidad calculados de forma orientativa (cada año los fija un decreto): añade los locales o los que cambien tocando el día. Comprueba siempre con el cuadrante oficial de tu empresa y tu convenio.</p>
-    <p>Tus datos se guardan solo en este dispositivo: nadie más los ve. Pro se activa con el correo con el que pagaste en Ko-fi.</p>
+    <p>Tus datos se guardan solo en este dispositivo: nadie más los ve. Solo si activas la sincronización de Pro se guarda una copia de tu cuadrante en nuestro servidor, protegida con tu código, para verlo en tus otros dispositivos y en tu calendario; puedes borrarla cuando quieras. El ciclo menstrual nunca sale del móvil. Pro se activa con el correo con el que pagaste en Ko-fi.</p>
     <p><a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · <a href="#" id="buscar-act">🔄 Buscar actualización</a> <span id="version-txt"></span> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
   </footer>
 </main>
@@ -480,7 +486,12 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   if(!Y.repes) Y.repes=[];   // notas que se repiten (Pro): {id,t,h,hf,tipo:"semana"|"mes"|"anio",desde,hasta}
   if(!Y.cupos) Y.cupos={V:0,AP:0};
   if(Y.avisoTurno==null) Y.avisoTurno=0;   // notas por día: {"2026-10-05": {t:"Revisión médica", h:"09:30"}}
-  const guardar=()=>escribir("tw_cuadrante",Y);
+  const guardar=()=>{escribir("tw_cuadrante",Y); programarSubida();};
+  function asegurar(){
+    if(!Y.fest) Y.fest={extra:{},quita:[]}; if(!Y.cambios) Y.cambios={};
+    Y.saldo=Object.assign({jornada:0,haus:8,fFest:1,fFinde:1,modo:"mayor"},Y.saldo||{});
+    if(!Y.notas) Y.notas={}; if(!Y.repes) Y.repes=[]; if(!Y.cupos) Y.cupos={V:0,AP:0}; if(Y.avisoTurno==null) Y.avisoTurno=0;
+  }
   let PRO=leer("tw_pro",null);
 
   function festivo(f){const k=fechaISO(f);if(Y.fest.extra[k])return Y.fest.extra[k];if(Y.fest.quita.includes(k))return null;return festivosAuto(f.getFullYear())[k]||null;}
@@ -895,7 +906,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    aplicarColores(); pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
+    aplicarColores(); pintarMejoras(); pintarSync(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     $("aviso-turno-caja").hidden=!PRO;
@@ -1194,6 +1205,82 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     if(n){ a.textContent="Actualizando…"; actualizar(); }
     else{ a.textContent=n===false?"✓ Ya tienes la última versión":"Sin conexión: prueba luego"; setTimeout(()=>a.textContent=antes,2500); }
   });
+  // ===== Sincronización y calendario suscrito (Pro) =====
+  var SY=leer("tw_sync",null), subidaPend=null;   // {email, codigo, cal, t}
+  function programarSubida(){ if(!SY||!PRO) return; clearTimeout(subidaPend); subidaPend=setTimeout(subir,2500); }
+  async function api(o){ const r=await fetch("/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(o)}); return {r,j:await r.json().catch(()=>({}))}; }
+  function estadoSync(t){const e=$("sync-estado"); if(e) e.textContent=t;}
+  async function subir(){
+    if(!SY) return; const t=Date.now();
+    try{ const {r,j}=await api({accion:"subir",email:SY.email,codigo:SY.codigo,datos:Y,t});
+      if(r.ok&&j.ok){ SY.t=t; if(j.cal) SY.cal=j.cal; escribir("tw_sync",SY); estadoSync("✓ Sincronizado "+new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})); }
+      else if(r.status===409&&j.masNuevo) await bajar(true);
+      else if(r.status===403) estadoSync("⚠️ El código ya no vale: desvincula y vuelve a vincular este móvil.");
+      else estadoSync(j.error||"No se ha podido sincronizar");
+    }catch(e){ estadoSync("Sin conexión: se sincroniza cuando vuelva la red."); }
+  }
+  function repintarTodo(){ asegurar(); pintarAjustes(); $("jornada").value=Y.saldo.jornada||""; $("haus").value=Y.saldo.haus; $("aviso-turno").value=String(Y.avisoTurno||0);
+    $("ffest").value=Y.saldo.fFest; $("ffinde").value=Y.saldo.fFinde; $("fmodo").value=Y.saldo.modo; aplicarColores(); planPintado=null; pintar(); }
+  async function bajar(forzar){
+    if(!SY) return false;
+    try{ const {r,j}=await api({accion:"bajar",email:SY.email,codigo:SY.codigo});
+      if(!r.ok){ estadoSync(r.status===403?"⚠️ El código ya no vale: desvincula y vuelve a vincular este móvil.":(j.error||"No se ha podido sincronizar")); return false; }
+      SY.cal=j.cal;
+      if(j.datos&&(forzar||(j.t||0)>(SY.t||0))){ Y=j.datos; SY.t=j.t; escribir("tw_cuadrante",Y); escribir("tw_sync",SY); repintarTodo(); estadoSync("✓ Actualizado con tu último cambio"); }
+      else { escribir("tw_sync",SY); if(!j.datos||(j.t||0)<(SY.t||0)) await subir(); else estadoSync("✓ Al día"); }
+      return true;
+    }catch(e){ estadoSync("Sin conexión: se sincroniza cuando vuelva la red."); return false; }
+  }
+  function pintarSync(){
+    const caja=$("sync");
+    if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Ten tu cuadrante en el móvil, la tablet y el ordenador a la vez, y un calendario en Google, iPhone u Outlook que se actualiza solo cada vez que cambias algo.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    if(!SY){
+      caja.innerHTML=`<p class="nota" style="margin:8px 0">Al activarla se guarda una copia de tu cuadrante en nuestro servidor, protegida con un código que solo tú tienes. Tu ciclo menstrual no se sube nunca.</p>
+        <div class="acciones" style="margin:0"><button class="boton primario" id="sy-crear">Activar en este móvil</button><button class="boton" id="sy-otro">Ya la tengo en otro móvil</button></div>
+        <div id="sy-vincular" hidden style="margin-top:12px"><div class="pro-fila"><input id="sy-codigo" placeholder="Tu código (XXXX-XXXX-XXXX)" autocapitalize="characters" autocomplete="off" spellcheck="false"><button class="boton primario" id="sy-ok">Vincular</button></div>
+        <p class="nota" style="margin:6px 0 0">Lo encuentras en el otro móvil, en este mismo apartado. Lo que haya allí sustituye a lo de este móvil.</p></div>
+        <p class="nota" id="sy-msg" role="status" style="margin:8px 0 0"></p>`;
+      $("sy-otro").addEventListener("click",()=>{$("sy-vincular").hidden=false;$("sy-codigo").focus();});
+      $("sy-ok").addEventListener("click",async()=>{
+        const codigo=$("sy-codigo").value.trim().toUpperCase(); if(!codigo) return;
+        SY={email:PRO.email,codigo,cal:"",t:0}; $("sy-msg").textContent="Vinculando…";
+        const ok=await bajar(true);
+        if(ok){ escribir("tw_sync",SY); pintarSync(); } else { SY=null; $("sy-msg").textContent="Ese código no coincide con tu correo de Pro. Revísalo en el otro móvil."; }
+      });
+      $("sy-crear").addEventListener("click",async e=>{
+        const reiniciar=e.currentTarget.dataset.reiniciar==="1"; $("sy-msg").textContent="Activando…";
+        try{ const {r,j}=await api({accion:"crear",email:PRO.email,reiniciar});
+          if(r.ok&&j.ok){ SY={email:PRO.email,codigo:j.codigo,cal:j.cal,t:0}; escribir("tw_sync",SY); await subir(); pintarSync(); return; }
+          if(r.status===409&&j.existe){ $("sy-msg").innerHTML=`Ya la tienes activada en otro móvil: pulsa «Ya la tengo en otro móvil» y escribe tu código. ¿Lo has perdido? <button class="boton" id="sy-reini">Empezar de cero</button>`;
+            $("sy-reini").addEventListener("click",()=>{ if(!confirm("Se borrará la copia del servidor y tendrás un código nuevo. Tus otros móviles dejarán de sincronizar hasta que los vuelvas a vincular. ¿Seguro?")) return;
+              $("sy-crear").dataset.reiniciar="1"; $("sy-crear").click(); }); return; }
+          $("sy-msg").textContent=j.error||"No se ha podido activar. Prueba en un rato.";
+        }catch(x){ $("sy-msg").textContent="Sin conexión: conéctate a internet y vuelve a probar."; }
+      });
+      return;
+    }
+    const url=`https://${location.host}/cal/${SY.cal}.ics`, webcal=url.replace(/^https:/,"webcal:");
+    caja.innerHTML=`<p style="margin:8px 0 4px"><b>✓ Sincronización activada</b> <span class="nota" id="sync-estado"></span></p>
+      <p class="nota" style="margin:0 0 10px">Tus cambios se guardan solos y aparecen en tus otros dispositivos al abrir TurnoWork.</p>
+      <div class="resumen" style="margin:0"><div><small>Tu código para otros móviles</small><b style="letter-spacing:.06em;user-select:all">${esc(SY.codigo)}</b></div></div>
+      <div class="acciones"><button class="boton" id="sy-copiar">Copiar código</button></div>
+      ${SY.cal?`<p class="titulo" style="margin:14px 0 6px">📅 Calendario que se actualiza solo</p>
+      <p class="nota" style="margin:0 0 8px">Suscríbete una vez y tus turnos y notas aparecen en tu calendario, actualizados solos. Google lo refresca cada pocas horas.</p>
+      <div class="acciones" style="margin:0"><a class="boton primario" href="${webcal}">iPhone / Outlook</a><a class="boton" href="https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcal)}" target="_blank" rel="noopener">Google Calendar</a><button class="boton" id="sy-copiar-cal">Copiar enlace</button></div>
+      <p class="nota" style="margin:6px 0 0">No compartas este enlace: quien lo tenga ve tus turnos.</p>`:""}
+      <div class="acciones"><button class="boton" id="sy-desv">Desvincular este móvil</button><button class="boton" id="sy-borrar">Borrar del servidor</button></div>`;
+    const copiar=async(t,b)=>{let ok=false; try{await navigator.clipboard.writeText(t);ok=true;}catch(e){} const a=b.textContent; b.textContent=ok?"Copiado ✓":"Cópialo a mano"; setTimeout(()=>b.textContent=a,1800);};
+    $("sy-copiar").addEventListener("click",e=>copiar(SY.codigo,e.currentTarget));
+    const cc=$("sy-copiar-cal"); if(cc) cc.addEventListener("click",e=>copiar(url,e.currentTarget));
+    $("sy-desv").addEventListener("click",()=>{ if(!confirm("Este móvil dejará de sincronizar. Tus datos se quedan aquí.")) return; SY=null; try{localStorage.removeItem("tw_sync");}catch(e){} pintarSync(); });
+    $("sy-borrar").addEventListener("click",async()=>{ if(!confirm("Se borrará la copia del servidor y el calendario suscrito dejará de funcionar. Tus datos se quedan en este móvil. ¿Seguro?")) return;
+      try{ await api({accion:"borrar",email:SY.email,codigo:SY.codigo}); }catch(e){} SY=null; try{localStorage.removeItem("tw_sync");}catch(e){} pintarSync(); });
+    estadoSync(SY.t?"· "+new Date(SY.t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"");
+  }
+  pintarSync();
+  if(SY&&PRO) bajar(false).then(()=>pintarSync());
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&SY&&PRO) bajar(false); });
+
   hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; });
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; }); });
 

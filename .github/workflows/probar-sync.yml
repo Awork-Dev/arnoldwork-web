@@ -2,8 +2,6 @@
 name: Probar API de TurnoWork
 on:
   workflow_dispatch:
-  push:
-    paths: [".github/workflows/probar-sync.yml"]
 jobs:
   probar:
     runs-on: ubuntu-latest
