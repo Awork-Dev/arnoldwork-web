@@ -71,7 +71,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--acento);outline:none;
 button:focus-visible,.dia:focus-visible,a:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
 fieldset.turno{border:1.5px solid var(--linea);border-radius:14px;padding:10px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;min-width:0;background:var(--fondo)}
 fieldset.turno legend{font-weight:800;padding:0 6px;display:flex;align-items:center;gap:6px}
-fieldset.turno .dur{grid-column:1/-1;font-size:.8rem;color:var(--suave);font-weight:700}
+fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-bottom:12px}
 .boton{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--linea);background:var(--panel);border-radius:12px;padding:10px 15px;font-weight:800;cursor:pointer;color:var(--tinta);transition:transform .12s,box-shadow .12s}
 .boton:hover{transform:translateY(-1px);box-shadow:var(--sombra)}
 .boton.primario{background:linear-gradient(120deg,var(--acento),var(--acento-2));border-color:transparent;color:#fff}
@@ -213,6 +213,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         <label>Jornada anual (horas)<input id="jornada" type="number" min="0" max="3000" step="1" inputmode="numeric" placeholder="Por ejemplo, 1642"></label>
         <label>Horas que cuenta un día de vacaciones, asuntos propios, baja o formación<input id="haus" type="number" min="0" max="24" step="0.5" inputmode="decimal"></label>
       </div>
+      <p class="titulo" style="margin:18px 0 0">Factores correctores</p>
+      <p class="nota" style="margin:4px 0 0">Si tu convenio cuenta algunas horas de más (por ejemplo, cada hora de noche vale 1,25), ponlo aquí. El factor de cada turno se pone en «Mi ciclo», junto a su horario. Con 1 la hora cuenta normal.</p>
+      <div class="form">
+        <label>Factor de los festivos<input id="ffest" type="number" min="0.5" max="3" step="0.01" inputmode="decimal"></label>
+        <label>Factor de sábados y domingos<input id="ffinde" type="number" min="0.5" max="3" step="0.01" inputmode="decimal"></label>
+        <label>Si coinciden (una noche en festivo)<select id="fmodo"><option value="mayor">Se aplica solo el factor mayor</option><option value="suma">Se suman los extras (1,25 + 1,5 → 1,75)</option><option value="multi">Se multiplican (1,25 × 1,5 → 1,875)</option></select></label>
+      </div>
       <div id="saldo"></div>
     </div>
   </section>
@@ -232,6 +239,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>⏱️</span><div><b>Horarios con minutos.</b> Entras a las 6:50 y sales a las 15:10: tus horas se cuentan al minuto.</div></li>
       <li><span>📅</span><div><b>Tus turnos en el calendario del móvil</b> (Google, iPhone, Outlook), con su hora de entrada y salida.</div></li>
       <li><span>⚖️</span><div><b>Saldo de horas</b> frente a tu jornada anual y <b>resumen mes a mes</b>.</div></li>
+      <li><span>✖️</span><div><b>Factores correctores</b> para tardes, noches, festivos y fines de semana, como diga tu convenio.</div></li>
       <li><span>📤</span><div><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</div></li>
       <li><span>💡</span><div><b>Buzón de mejoras.</b> Pide lo que te falte: las ideas de los usuarios Pro son las primeras que hacemos.</div></li>
     </ul>
@@ -317,6 +325,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   let Y=leer("tw_cuadrante",null);
   const primeraVez=!Y;
   if(!Y||!Y.patron) Y={patron:MODELOS[0][1],ref:fechaISO(hoy),pos:0,turnos:JSON.parse(JSON.stringify(TURNOS_DEF)),cambios:{},anio:hoy.getFullYear(),comunidad:"",fest:{extra:{},quita:[]},saldo:{jornada:0,haus:8}};
+  Y.saldo=Object.assign({jornada:0,haus:8,fFest:1,fFinde:1,modo:"mayor"},Y.saldo||{});
   const guardar=()=>escribir("tw_cuadrante",Y);
   let PRO=leer("tw_pro",null);
 
@@ -343,7 +352,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <fieldset class="turno"><legend><span class="c t-${k}">${k}</span> ${esc(t.n)}</legend>
         <label>Entras<input type="time" step="${PRO?60:3600}" data-t="${k}" data-k="ini" value="${aHHMM(t.ini)}"></label>
         <label>Sales<input type="time" step="${PRO?60:3600}" data-t="${k}" data-k="fin" value="${aHHMM(t.ini+t.h)}"></label>
-        <span class="dur" data-dur="${k}">${durTxt(t.h)}</span>
+        <label>Factor${PRO?"":" 🔒"}<input type="number" min="0.5" max="3" step="0.01" inputmode="decimal" data-t="${k}" data-k="f" value="${t.f||1}"${PRO?"":" disabled"}></label>
+        <span class="dur" data-dur="${k}" style="align-self:end">${durTxt(t.h)}</span>
       </fieldset>`;}).join("");
   }
   function pintarAjustes(){
@@ -361,7 +371,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   $("comunidad").addEventListener("change",e=>{Y.comunidad=e.target.value;cambio();});
   $("turnos").addEventListener("change",e=>{
     const i=e.target.closest("[data-t]"); if(!i||!i.value) return;
-    const t=Y.turnos[i.dataset.t]; let v=deHHMM(i.value);
+    const t=Y.turnos[i.dataset.t];
+    if(i.dataset.k==="f"){ const f=parseFloat(String(i.value).replace(",","."));
+      t.f=f>=0.5&&f<=3?Math.round(f*100)/100:1; i.value=t.f; cambio(); return; }
+    let v=deHHMM(i.value);
     if(!PRO&&v%1){ v=Math.round(v); i.value=aHHMM(v);
       $("aviso-minutos").innerHTML=`<div class="aviso-pro">⏱️ Los horarios con minutos (como 6:50) son de Pro. Sin Pro se cuenta la hora en punto.<button class="boton primario" data-ir-pro>Ver Pro</button></div>`; }
     const fin=i.dataset.k==="fin"?v:t.ini+t.h, ini=i.dataset.k==="ini"?v:t.ini;
@@ -384,14 +397,24 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const t=turno(d), prev=turno(new Date(d.getFullYear(),d.getMonth(),d.getDate()-1));
       dias.push({d,t,man:!!Y.cambios[fechaISO(d)],corto:esTrabajo(t)&&descanso(prev,t)<12,fest:festivo(d)});
     }
-    const suma=L=>{const r={trab:0,horas:0,noches:0,findes:0,libres:0,man:{},fest:0,festTrab:0,aus:0};
+    const suma=L=>{const r={trab:0,horas:0,comp:0,noches:0,findes:0,libres:0,man:{},fest:0,festTrab:0,aus:0};
       L.forEach(x=>{if(x.fest){r.fest++;if(esTrabajo(x.t))r.festTrab++;}
-        if(esTrabajo(x.t)){r.trab++;r.horas+=Y.turnos[x.t].h;if(x.t==="N")r.noches++;const w=x.d.getDay();if(w===0||w===6)r.findes++;}
+        if(esTrabajo(x.t)){r.trab++;r.horas+=Y.turnos[x.t].h;r.comp+=horasComp(x);if(x.t==="N")r.noches++;const w=x.d.getDay();if(w===0||w===6)r.findes++;}
         else if(x.t==="L")r.libres++; else {r.man[x.t]=(r.man[x.t]||0)+1; if(AUSENCIAS.includes(x.t)) r.aus++;}});
       return r;};
     return {dias,total:suma(dias),meses:MESES.map((n,i)=>({n,...suma(dias.filter(x=>x.d.getMonth()===i))}))};
   }
   const num=v=>v.toLocaleString("es-ES",{maximumFractionDigits:1});
+  // Horas que computa un día de trabajo con los factores correctores (solo Pro; sin Pro, la hora vale 1).
+  function horasComp(x){
+    const t=Y.turnos[x.t]; if(!t) return 0; if(!PRO) return t.h;
+    const w=x.d.getDay(), fs=[+t.f||1];
+    if(x.fest) fs.push(+Y.saldo.fFest||1);
+    if(w===0||w===6) fs.push(+Y.saldo.fFinde||1);
+    const f=Y.saldo.modo==="suma"?1+fs.reduce((s,v)=>s+(v-1),0):Y.saldo.modo==="multi"?fs.reduce((s,v)=>s*v,1):Math.max(...fs);
+    return t.h*f;
+  }
+  const hayFactores=()=>PRO&&(Object.values(Y.turnos).some(t=>(+t.f||1)!==1)||(+Y.saldo.fFest||1)!==1||(+Y.saldo.fFinde||1)!==1);
   // 1642,33 → «1.642 h 20 min»
   const horasTxt=v=>{const m=Math.round(Math.abs(v)*60),h=Math.floor(m/60),r=m%60;return `${h.toLocaleString("es-ES")} h${r?` ${r} min`:""}`;};
   function durTxt(h){return `Duración: ${horasTxt(h)}${h>=24?" (guardia)":""}`;}
@@ -416,6 +439,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div><small>Acabas el año (31 dic)</small><b><span class="c t-${esc(ult.t)}">${esc(ult.t)}</span> ${esc(nombre(ult.t))}</b></div>
       <div><small>Días de trabajo</small><b>${total.trab}</b></div>
       <div><small>Horas de turno</small><b>${horasTxt(total.horas)}</b></div>
+      ${hayFactores()?`<div><small>Horas computables</small><b>${horasTxt(total.comp)}</b></div>`:""}
       <div><small>Noches</small><b>${total.noches}</b></div>
       <div><small>Días de finde trabajados</small><b>${total.findes}</b></div>
       <div><small>Libres</small><b>${total.libres}</b></div>
@@ -439,20 +463,25 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const velo=html=>PRO?html:`<div class="bloqueado"><div class="contenido">${html}</div><div class="velo"><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button></div></div>`;
   function pintarMeses(meses,total){
     const manK=Object.keys(MANUALES).filter(k=>meses.some(x=>x.man[k]));
-    $("meses").innerHTML=velo(`<div class="tabla"><table><thead><tr><th>Mes</th><th>Días</th><th>Horas</th><th>Noches</th><th>Findes</th><th>Libres</th><th title="Festivos trabajados">Fest.</th>${manK.map(k=>`<th title="${esc(MANUALES[k])}">${k}</th>`).join("")}</tr></thead>
-      <tbody>${meses.map(x=>`<tr><th>${x.n}</th><td>${x.trab}</td><td>${horasTxt(x.horas)}</td><td>${x.noches}</td><td>${x.findes}</td><td>${x.libres}</td><td>${x.festTrab||""}</td>${manK.map(k=>`<td>${x.man[k]||""}</td>`).join("")}</tr>`).join("")}</tbody>
-      <tfoot><tr><th>Total</th><td>${total.trab}</td><td>${horasTxt(total.horas)}</td><td>${total.noches}</td><td>${total.findes}</td><td>${total.libres}</td><td>${total.festTrab}</td>${manK.map(k=>`<td>${total.man[k]||""}</td>`).join("")}</tr></tfoot></table></div>`);
+    $("meses").innerHTML=velo(`<div class="tabla"><table><thead><tr><th>Mes</th><th>Días</th><th>Horas</th>${hayFactores()?"<th>Comput.</th>":""}<th>Noches</th><th>Findes</th><th>Libres</th><th title="Festivos trabajados">Fest.</th>${manK.map(k=>`<th title="${esc(MANUALES[k])}">${k}</th>`).join("")}</tr></thead>
+      <tbody>${meses.map(x=>`<tr><th>${x.n}</th><td>${x.trab}</td><td>${horasTxt(x.horas)}</td>${hayFactores()?`<td>${horasTxt(x.comp)}</td>`:""}<td>${x.noches}</td><td>${x.findes}</td><td>${x.libres}</td><td>${x.festTrab||""}</td>${manK.map(k=>`<td>${x.man[k]||""}</td>`).join("")}</tr>`).join("")}</tbody>
+      <tfoot><tr><th>Total</th><td>${total.trab}</td><td>${horasTxt(total.horas)}</td>${hayFactores()?`<td>${horasTxt(total.comp)}</td>`:""}<td>${total.noches}</td><td>${total.findes}</td><td>${total.libres}</td><td>${total.festTrab}</td>${manK.map(k=>`<td>${total.man[k]||""}</td>`).join("")}</tr></tfoot></table></div>`);
   }
   $("jornada").value=Y.saldo.jornada||""; $("haus").value=Y.saldo.haus;
   $("jornada").addEventListener("input",e=>{Y.saldo.jornada=+e.target.value||0;cambio();});
   $("haus").addEventListener("input",e=>{Y.saldo.haus=+e.target.value||0;cambio();});
+  $("ffest").value=Y.saldo.fFest; $("ffinde").value=Y.saldo.fFinde; $("fmodo").value=Y.saldo.modo;
+  const factor=v=>{const f=parseFloat(String(v).replace(",","."));return f>=0.5&&f<=3?Math.round(f*100)/100:1;};
+  $("ffest").addEventListener("change",e=>{Y.saldo.fFest=factor(e.target.value);e.target.value=Y.saldo.fFest;cambio();});
+  $("ffinde").addEventListener("change",e=>{Y.saldo.fFinde=factor(e.target.value);e.target.value=Y.saldo.fFinde;cambio();});
+  $("fmodo").addEventListener("change",e=>{Y.saldo.modo=e.target.value;cambio();});
   const signo=v=>(v>0?"+":v<0?"−":"")+horasTxt(v);
   function pintarSaldo(dias,total){
-    const J=+Y.saldo.jornada||0, ha=+Y.saldo.haus||0, comp=total.horas+total.aus*ha;
+    const J=+Y.saldo.jornada||0, ha=+Y.saldo.haus||0, comp=total.comp+total.aus*ha;
     if(!PRO){$("saldo-desc").textContent="";$("saldo").innerHTML=`<p class="nota">Horas computadas este año: <b>${horasTxt(comp)}</b>. Con Pro ves si te sobran o te faltan horas frente a tu jornada, también a día de hoy.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`;return;}
     if(!J){$("saldo").innerHTML=`<p class="nota">Pon tu jornada anual para ver el saldo. Horas computadas este año: <b>${horasTxt(comp)}</b>.</p>`;$("saldo-desc").textContent="";return;}
     const hasta=dias.filter(x=>x.d<=hoy), enCurso=+Y.anio===hoy.getFullYear();
-    const compHoy=hasta.reduce((s,x)=>s+(esTrabajo(x.t)?Y.turnos[x.t].h:AUSENCIAS.includes(x.t)?ha:0),0);
+    const compHoy=hasta.reduce((s,x)=>s+(esTrabajo(x.t)?horasComp(x):AUSENCIAS.includes(x.t)?ha:0),0);
     const jHoy=J*hasta.length/dias.length, saldo=comp-J, saldoHoy=compHoy-jHoy;
     $("saldo-desc").textContent=`· ${signo(saldo)} en el año`;
     $("saldo").innerHTML=`<div class="resumen">
@@ -460,7 +489,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div><small>Horas computadas</small><b>${horasTxt(comp)}</b></div>
       <div><small>Jornada anual</small><b>${horasTxt(J)}</b></div>
       ${enCurso?`<div><small>Saldo a día de hoy</small><b>${signo(saldoHoy)}</b></div>`:""}</div>
-      <p class="nota">${saldo>0?`Te salen <b>${horasTxt(saldo)} de más</b> en el año`:saldo<0?`Te faltan <b>${horasTxt(-saldo)}</b> para la jornada del año`:"Cuadra exacto con la jornada"}: ${horasTxt(total.horas)} de turnos${total.aus?` + ${total.aus} días de ausencia × ${num(ha)} h`:""}.</p>`;
+      <p class="nota">${saldo>0?`Te salen <b>${horasTxt(saldo)} de más</b> en el año`:saldo<0?`Te faltan <b>${horasTxt(-saldo)}</b> para la jornada del año`:"Cuadra exacto con la jornada"}: ${horasTxt(total.comp)} de turnos${hayFactores()?` (${horasTxt(total.horas)} reales, con los factores)`:""}${total.aus?` + ${total.aus} días de ausencia × ${num(ha)} h`:""}.</p>`;
   }
 
   function pintarMejoras(){
@@ -482,7 +511,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   function pintarPro(){
     pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML="";
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
-    $("jornada").disabled=$("haus").disabled=!PRO;
+    ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     if(PRO){ $("pro-estado").innerHTML=`<p class="nota">✅ Pro activado con <b>${esc(PRO.email)}</b>. ¡Gracias por apoyar TurnoWork!</p>`; return; }
     $("pro-estado").innerHTML=`
       <div class="pro-fila">${KOFI_PRO?`<a class="boton primario" href="${KOFI_PRO}" target="_blank" rel="noopener">Comprar Pro en Ko-fi</a>`:`<span class="nota"><b>Muy pronto a la venta.</b></span>`}</div>
