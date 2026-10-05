@@ -123,7 +123,8 @@ fieldset.turno{border:1.5px solid var(--linea);border-radius:14px;padding:10px 1
 fieldset.turno legend{font-weight:800;padding:0 6px;display:flex;align-items:center;gap:6px}
 fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-bottom:12px}
 .boton{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--linea);background:var(--panel);border-radius:12px;padding:10px 15px;font-weight:800;cursor:pointer;color:var(--tinta);transition:transform .12s,box-shadow .12s}
-.boton:hover{transform:translateY(-1px);box-shadow:var(--sombra)}
+@media (hover:hover){.boton:hover{transform:translateY(-1px);box-shadow:var(--sombra)}}
+button,.boton,a,summary,.dia{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .boton.primario{background:linear-gradient(120deg,var(--acento),var(--acento-2));border-color:transparent;color:#fff}
 .boton.pro::after{content:"PRO";font:800 .6rem/1 var(--texto);letter-spacing:.08em;background:var(--oro);color:#2b1a00;border-radius:6px;padding:3px 6px}
 .boton.pro.desbloqueado::after{display:none}
@@ -153,7 +154,7 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .sem,.dias{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .sem span{font-size:.65rem;color:var(--suave);text-align:center;font-weight:800}
 .dia{position:relative;aspect-ratio:1;display:grid;place-items:center;border-radius:9px;font-weight:800;font-size:.78rem;cursor:pointer;line-height:1;min-width:0;transition:transform .1s}
-.dia:hover{transform:scale(1.08);z-index:2}
+@media (hover:hover){.dia:hover{transform:scale(1.08);z-index:2}}
 .dia.t-L{border:1px solid var(--linea)}
 .dia small{position:absolute;top:2px;left:4px;font-size:.55rem;font-weight:700;opacity:.7}
 .dia.finde small{opacity:1;font-weight:900}
@@ -245,8 +246,8 @@ textarea{min-height:110px;resize:vertical}
 .cerrar{border:0;background:transparent;color:var(--suave);font-weight:800;cursor:pointer;padding:6px}
 /* Pestañas de abajo: la app se reparte en secciones para no hacer scroll largo */
 body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-.pestanas-app{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--linea);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
-.pestanas-app button{flex:1;max-width:120px;display:grid;justify-items:center;gap:2px;border:0;background:transparent;border-radius:12px;padding:6px 2px;font:800 .7rem/1.1 var(--texto);color:var(--suave);cursor:pointer}
+.pestanas-app{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;background:var(--panel);transform:translateZ(0);border-top:1px solid var(--linea);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.pestanas-app button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;flex:1;max-width:120px;display:grid;justify-items:center;gap:2px;border:0;background:transparent;border-radius:12px;padding:6px 2px;font:800 .7rem/1.1 var(--texto);color:var(--suave);cursor:pointer}
 .pestanas-app button span{font-size:1.25rem;line-height:1.1;filter:grayscale(.6);opacity:.75}
 .pestanas-app button[aria-current="page"]{color:var(--acento);background:var(--acento-suave)}
 .pestanas-app button[aria-current="page"] span{filter:none;opacity:1}
@@ -1018,7 +1019,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     for(let k=0;k<6;k++){ const d=new Date(hoy.getFullYear(),hoy.getMonth()+k,1); proximos+=mesHTML(d.getFullYear(),d.getMonth(),d.getFullYear()!==hoy.getFullYear()||k===0); }
     const abierto=$("anio-entero")&&$("anio-entero").open;
     $("anio").innerHTML=`<div class="no-imprimir"><p class="titulo" style="margin:0 0 8px">Próximos 6 meses</p><div class="anio" style="margin-block:0 12px">${proximos}</div></div>
-      <details class="tarjeta" id="anio-entero"${abierto?" open":""}><summary>📅 Todo el año ${a}</summary><div class="anio">${MESES.map((n,m)=>mesHTML(a,m,false)).join("")}</div></details>`;
+      <details class="tarjeta" id="anio-entero"${abierto?" open":""}><summary>📅 Todo el año ${a}</summary><div class="anio" id="anio-meses">${abierto?MESES.map((n,m)=>mesHTML(a,m,false)).join(""):""}</div></details>`;
+    $("anio-entero").addEventListener("toggle",e=>{ if(e.target.open&&!$("anio-meses").children.length) $("anio-meses").innerHTML=MESES.map((n,m)=>mesHTML(a,m,false)).join(""); });
     const cortos=dias.filter(x=>x.corto).length;
     $("leyenda").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `<span><span class="c t-${k}">${k}</span> ${esc(t.n)} ${hora(t.ini)}–${hora(finTurno(t))}</span>`;}).join("")
       +`<span><span class="c t-L">L</span> Libre</span>`+Object.entries(MANUALES).map(([k,n])=>`<span><span class="c t-${k}">${k}</span> ${n}</span>`).join("")
@@ -1126,9 +1128,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     document.querySelectorAll("[data-pestana]").forEach(el=>el.classList.toggle("fuera-pes",el.dataset.pestana!==p));
     document.querySelectorAll("[data-pes]").forEach(b=>b.setAttribute("aria-current",b.dataset.pes===p?"page":"false"));
     cerrarMenu&&cerrarMenu();
-    if(destino&&$(destino)){ if($(destino).tagName==="DETAILS") $(destino).open=true; $(destino).scrollIntoView({behavior:"smooth",block:"start"}); } else scrollTo({top:0,behavior:"smooth"});
+    if(destino&&$(destino)){ if($(destino).tagName==="DETAILS") $(destino).open=true; $(destino).scrollIntoView({block:"start"}); } else scrollTo(0,0);
   }
-  $("pestanas-app").addEventListener("click",e=>{const b=e.target.closest("[data-pes]"); if(b) verPestana(b.dataset.pes);});
+  $("pestanas-app").addEventListener("click",e=>{const b=e.target.closest("[data-pes]"); if(b&&b.dataset.pes!==pesActual) verPestana(b.dataset.pes); else if(b) scrollTo(0,0);});
   document.addEventListener("click",e=>{
     if(e.target.closest("[data-ir-pro]")){ e.preventDefault(); verPestana("pro","pro"); return; }
     const a=e.target.closest("[data-ir]"); if(a){ e.preventDefault(); verPestana(a.dataset.ir,a.getAttribute("href")?.slice(1)); }
