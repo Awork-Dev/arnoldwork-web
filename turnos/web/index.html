@@ -288,6 +288,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     </div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-compartir">
+    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <span><b>📤 ¿Conoces a alguien que trabaja a turnos?</b><br><span class="nota">Pásale TurnoWork: es gratis y no pide registro.</span></span>
+      <span class="dos" style="display:flex;gap:6px;flex-wrap:wrap"><a class="boton primario" id="compartir-wa" target="_blank" rel="noopener">WhatsApp</a><button class="boton" id="compartir-mas">Compartir</button></span>
+    </div>
+  </section>
+
   <section class="tarjeta no-imprimir" id="caja-semana">
     <p class="titulo" style="margin:0">🗓️ Mi semana</p>
     <div class="semana" id="semana"></div>
@@ -435,7 +442,17 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 (function(){
   // ===== Configuración =====
   const VIGILANTE = "https://vigilante.arnoldwork.workers.dev";
-  const KOFI_PRO = "https://ko-fi.com/s/d1bb163587";   // enlace del producto «TurnoWork Pro» en Ko-fi (ko-fi.com/s/…). Vacío = aún no está a la venta.
+  const KOFI_PRO = "https://ko-fi.com/s/d1bb163587";
+  // Versión gratuita incrustada (artefacto): sin Pro, sin servidor y sin instalar; los enlaces llevan a la web.
+  const MODO_LIBRE = false;
+  const WEB = "https://turnos.arnoldwork.com/";
+  const BASE = MODO_LIBRE ? WEB : location.origin + "/";
+  const confirmar = m => MODO_LIBRE ? true : window.confirm(m);
+  const pedirTexto = (m, d) => MODO_LIBRE ? d : window.prompt(m, d);
+  function avisar(m){ if(!MODO_LIBRE){ window.alert(m); return; }
+    let t=document.getElementById("tostada"); if(!t){ t=document.createElement("div"); t.id="tostada"; t.setAttribute("role","status");
+      t.style.cssText="position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:var(--panel);padding:10px 16px;border-radius:12px;font-weight:700;max-width:90vw;box-shadow:var(--sombra)"; document.body.append(t); }
+    t.textContent=m; t.hidden=false; clearTimeout(t._x); t._x=setTimeout(()=>t.hidden=true,3500); }   // enlace del producto «TurnoWork Pro» en Ko-fi (ko-fi.com/s/…). Vacío = aún no está a la venta.
 
   const $=id=>document.getElementById(id);
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -509,7 +526,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     Y.saldo=Object.assign({jornada:0,haus:8,fFest:1,fFinde:1,modo:"mayor"},Y.saldo||{});
     if(!Y.notas) Y.notas={}; if(!Y.repes) Y.repes=[]; if(!Y.cupos) Y.cupos={V:0,AP:0}; if(Y.avisoTurno==null) Y.avisoTurno=0;
   }
-  let PRO=leer("tw_pro",null);
+  let PRO=MODO_LIBRE?null:leer("tw_pro",null);
   // Identificador aleatorio de este dispositivo: cada compra de Pro vale para 3.
   function idDispositivo(){ let d=leer("tw_disp",null); if(!d){ d=[...crypto.getRandomValues(new Uint8Array(12))].map(x=>x.toString(16).padStart(2,"0")).join(""); escribir("tw_disp",d); } return d; }
 
@@ -677,13 +694,13 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       caja.innerHTML=`<p style="margin:8px 0 4px">Con <b>${esc(Y.pareja.nombre||"tu pareja")}</b> tenéis <b>${dias.length} días libres en común</b> en ${a}${findes?`, ${findes} en fin de semana`:""}. Salen con borde verde en el año.</p>
         ${prox.length?`<p class="nota" style="margin:8px 0 0">Los próximos:</p><ul class="lista-comun">${prox.map(d=>`<li>${d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})}</li>`).join("")}</ul>`:""}
         <div class="acciones" style="margin:12px 0 4px"><button class="boton" id="quitar-pareja">Dejar de comparar</button></div>`+compartir;
-      $("quitar-pareja").addEventListener("click",()=>{if(!confirm("¿Dejar de comparar con "+(Y.pareja.nombre||"tu pareja")+"?"))return;delete Y.pareja;guardar();pintar();});
+      $("quitar-pareja").addEventListener("click",()=>{if(!confirmar("¿Dejar de comparar con "+(Y.pareja.nombre||"tu pareja")+"?"))return;delete Y.pareja;guardar();pintar();});
     }
     $("mi-nombre").addEventListener("change",e=>{Y.miNombre=e.target.value.trim().slice(0,40);guardar();});
     $("enviar-pareja").addEventListener("click",()=>{
       Y.miNombre=$("mi-nombre").value.trim().slice(0,40); guardar();
       const d={nombre:Y.miNombre||"",patron:Y.patron,ref:Y.ref,pos:Y.pos,turnos:Object.fromEntries(Object.entries(Y.turnos).map(([k,t])=>[k,{n:t.n}])),cambios:Y.cambios};
-      const url=`${location.origin}/#pareja=${b64(d)}`;
+      const url=`${BASE}#pareja=${b64(d)}`;
       const txt=`${Y.miNombre?Y.miNombre+" te manda":"Te mando"} su cuadrante de turnos para ver qué días libramos los dos. Ábrelo en TurnoWork: ${url}`;
       window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");
     });
@@ -824,7 +841,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div class="acciones" style="margin:8px 0 0"><button class="boton" id="cm-off">Desactivar y borrar</button></div>`;
     $("cm-hoy").addEventListener("click",()=>{const f=fechaISO(hoy); if(!CM.inicios.includes(f)) CM.inicios.push(f); guardarCM(); cacheCM=null; pintar();});
     $("cm-dur").addEventListener("change",e=>{CM.dur=Math.max(2,Math.min(10,Math.round(+e.target.value||5)));guardarCM();cacheCM=null;pintar();});
-    $("cm-off").addEventListener("click",()=>{if(!confirm("¿Desactivar y borrar todo lo apuntado del ciclo menstrual?"))return; CM={activo:false,inicios:[],dur:5}; guardarCM(); cacheCM=null; pintar();});
+    $("cm-off").addEventListener("click",()=>{if(!confirmar("¿Desactivar y borrar todo lo apuntado del ciclo menstrual?"))return; CM={activo:false,inicios:[],dur:5}; guardarCM(); cacheCM=null; pintar();});
   }
 
   function pintarCupos(total){
@@ -931,6 +948,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     $("aviso-turno-caja").hidden=!PRO;
     $("pro-venta").hidden=!!PRO;
     if(PRO){ $("pro-estado").innerHTML=`<div class="pro-fila" style="justify-content:space-between"><span><b>✅ TurnoWork Pro activado</b><br><span class="nota">${esc(PRO.email)} · ¡Gracias por apoyar TurnoWork!</span></span></div>`; return; }
+    if(MODO_LIBRE){ $("pro-estado").innerHTML=`<div class="pro-fila"><a class="boton primario" href="${WEB}#pro" target="_blank" rel="noopener">Pásate a la app completa</a></div><p class="nota" style="margin:10px 0 0">Pro se compra y se activa en la app completa, <b>turnos.arnoldwork.com</b>. Tu cuadrante de aquí puedes llevártelo allí con «Copia de seguridad».</p>`; return; }
     $("pro-estado").innerHTML=`
       <div class="pro-fila">${KOFI_PRO?`<a class="boton primario" href="${KOFI_PRO}" target="_blank" rel="noopener">Comprar Pro en Ko-fi</a>`:`<span class="nota"><b>Muy pronto a la venta.</b></span>`}</div>
       <p class="nota" style="margin:12px 0 6px">¿Ya lo has comprado? Escribe el correo con el que pagaste en Ko-fi (cada compra vale para 3 dispositivos):</p>
@@ -947,8 +965,18 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       }catch(x){msg.textContent="Sin conexión: conéctate a internet y vuelve a probar.";}
     });
   }
+  // ===== Compartir la app (gratis) =====
+  const TXT_COMPARTIR="Mira TurnoWork: pones tu ciclo de turnos una vez y te saca todo el año, con festivos, horas y cambios con compañeros. Gratis y sin registro: "+WEB;
+  $("compartir-wa").href="https://wa.me/?text="+encodeURIComponent(TXT_COMPARTIR);
+  $("compartir-mas").addEventListener("click",async e=>{
+    const b=e.currentTarget;
+    if(!MODO_LIBRE&&navigator.share){ try{ await navigator.share({title:"TurnoWork",text:"Tu cuadrante de turnos para todo el año, gratis.",url:WEB}); return; }catch(x){ if(x&&x.name==="AbortError") return; } }
+    let ok=false; try{ await navigator.clipboard.writeText(TXT_COMPARTIR); ok=true; }catch(x){}
+    const a=b.textContent; b.textContent=ok?"Enlace copiado ✓":"turnos.arnoldwork.com"; setTimeout(()=>b.textContent=a,2200);
+  });
+
   // ===== Pestañas =====
-  const PESTANAS={hoy:["pide-funcion","ganchos","instalar","caja-semana"],
+  const PESTANAS={hoy:["pide-funcion","ganchos","instalar","caja-semana","caja-compartir"],
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
     mas:["caja-plan","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
@@ -1037,15 +1065,15 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     try{
       const j=JSON.parse(await a.text()), d=j&&j.datos;
       if(!d||!d.patron||!d.turnos) throw new Error("no es una copia");
-      if(!confirm("¿Recuperar la copia del "+(j.fecha?new Date(j.fecha).toLocaleDateString("es-ES"):"archivo")+"? Sustituye tu cuadrante actual.")) return;
+      if(!confirmar("¿Recuperar la copia del "+(j.fecha?new Date(j.fecha).toLocaleDateString("es-ES"):"archivo")+"? Sustituye tu cuadrante actual.")) return;
       Y=Object.assign(Y,d); guardar(); pintarAjustes(); $("jornada").value=Y.saldo.jornada||""; $("haus").value=Y.saldo.haus; pintar();
-      alert("✓ Copia recuperada.");
-    }catch(x){ alert("Ese archivo no es una copia de TurnoWork. Elige el archivo «turnowork-copia-….json» que descargaste."); }
+      avisar("✓ Copia recuperada.");
+    }catch(x){ avisar("Ese archivo no es una copia de TurnoWork. Elige el archivo «turnowork-copia-….json» que descargaste."); }
   });
   $("limpiar").addEventListener("click",()=>{
     const claves=Object.keys(Y.cambios).filter(k=>k.startsWith(Y.anio+"-"));
-    if(!claves.length){alert("Este año no tiene cambios a mano.");return;}
-    if(!confirm(`¿Quitar los ${claves.length} cambios a mano de ${Y.anio}?`)) return;
+    if(!claves.length){avisar("Este año no tiene cambios a mano.");return;}
+    if(!confirmar(`¿Quitar los ${claves.length} cambios a mano de ${Y.anio}?`)) return;
     claves.forEach(k=>delete Y.cambios[k]); guardar(); pintar();
   });
 
@@ -1065,12 +1093,12 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const preparar=()=>{
       const B=sin.checked?"":fb.value, Yt=menu.querySelector("#cb-turno").value;
       if(!sin.checked&&!B){fb.focus();return null;}
-      const url=`${location.origin}${location.pathname}#cambio=${f}.${X}${B?`.${B}.L`:""}`;
+      const url=`${MODO_LIBRE?WEB:location.origin+location.pathname}#cambio=${f}.${X}${B?`.${B}.L`:""}`;
       const txt=`Cambio de turno: ¿me haces mi ${X} (${nombre(X).toLowerCase()}) del ${diaTxt(f)}?${B?` A cambio yo te hago tu ${Yt} (${nombre(Yt).toLowerCase()}) del ${diaTxt(B)}.`:""} Si te va bien, apúntalo en tu cuadrante de TurnoWork con un toque (gratis): ${url}`;
       return {B,Yt,txt};
     };
     const apuntar=c=>{
-      if(!confirm("¿Lo apunto también en tu cuadrante?"+`\n· ${diaTxt(f)}: libre`+(c.B?`\n· ${diaTxt(c.B)}: ${c.Yt}`:""))) return;
+      if(!confirmar("¿Lo apunto también en tu cuadrante?"+`\n· ${diaTxt(f)}: libre`+(c.B?`\n· ${diaTxt(c.B)}: ${c.Yt}`:""))) return;
       Y.cambios[f]="L"; if(c.B) Y.cambios[c.B]=c.Yt; guardar(); pintar();
     };
     menu.querySelector("#cb-wa").addEventListener("click",()=>{const c=preparar();if(!c)return;
@@ -1110,7 +1138,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const bajar=(ev,nombre)=>descargar(nombre,["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ArnoldWork//TurnoWork//ES","CALSCALE:GREGORIAN",...ev,"END:VCALENDAR"].join("\r\n"),"text/calendar;charset=utf-8");
     menu.querySelectorAll("[data-quitar-repe]").forEach(x=>x.addEventListener("click",()=>{
       const r=Y.repes.find(z=>z.id===x.dataset.quitarRepe); if(!r) return;
-      if(!confirm(`¿Quitar «${r.t}» (${repeTxt(r)}) de todos los días?`)) return;
+      if(!confirmar(`¿Quitar «${r.t}» (${repeTxt(r)}) de todos los días?`)) return;
       Y.repes=Y.repes.filter(z=>z!==r); guardar(); cerrarMenu(); pintar();}));
     menu.querySelectorAll("[data-cal-repe]").forEach(x=>x.addEventListener("click",()=>{
       const r=Y.repes.find(z=>z.id===x.dataset.calRepe); if(r){bajar(eventoRepe(r,selloICS()),`nota-${r.id}.ics`);cerrarMenu();}}));
@@ -1183,7 +1211,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const bf=e.target.closest("[data-fest]");
       if(bf){
         if(bf.dataset.fest==="quitar"){delete Y.fest.extra[f]; if(festivosAuto(+f.slice(0,4))[f]&&!Y.fest.quita.includes(f)) Y.fest.quita.push(f);}
-        else{const n=prompt("Nombre del festivo (por ejemplo, fiesta local):","Fiesta local"); if(n===null) return;
+        else{const n=pedirTexto("Nombre del festivo (por ejemplo, fiesta local):","Fiesta local"); if(n===null) return;
           Y.fest.quita=Y.fest.quita.filter(x=>x!==f); if(!festivosAuto(+f.slice(0,4))[f]) Y.fest.extra[f]=n.trim()||"Fiesta local";}
         guardar(); cerrarMenu(); pintar(); return;
       }
@@ -1214,7 +1242,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const mostrarInstalar=(pasos)=>{$("instalar").hidden=false;verPasos(!!pasos);};
   // Abierta desde el icono: ya está instalada, y no se vuelve a ofrecer.
   if(instalada) escribir("tw_instalar_no",true);
-  if(!instalada&&!leer("tw_instalar_no",false)) mostrarInstalar(false);
+  if(!MODO_LIBRE&&!instalada&&!leer("tw_instalar_no",false)) mostrarInstalar(false);
   $("instalar-como").addEventListener("click",()=>verPasos($("instalar-pasos").hidden));
   $("instalar-cerrar").addEventListener("click",()=>{$("instalar").hidden=true;escribir("tw_instalar_no",true);});
   $("ver-instalar").addEventListener("click",e=>{e.preventDefault();mostrarInstalar(true);verPestana("hoy","instalar");});
@@ -1228,7 +1256,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const MI_VERSION="__VERSION__", MI_FECHA="__FECHA__";
   const fechaVer=f=>{const d=new Date(f);return isNaN(d)?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"});};
   if(fechaVer(MI_FECHA)) $("version-txt").textContent=`(versión del ${fechaVer(MI_FECHA)})`;
-  async function hayNueva(){
+  async function hayNueva(){ if(MODO_LIBRE) return null;
     try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) return null; const j=await r.json();
       return MI_VERSION.startsWith("__")?null:(j.version&&j.version!==MI_VERSION?j:false);}catch(e){return null;}
   }
@@ -1291,7 +1319,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         try{ const {r,j}=await api({accion:"crear",email:PRO.email,reiniciar});
           if(r.ok&&j.ok){ SY={email:PRO.email,codigo:j.codigo,cal:j.cal,t:0}; escribir("tw_sync",SY); await subir(); pintarSync(); return; }
           if(r.status===409&&j.existe){ $("sy-msg").innerHTML=`Ya la tienes activada en otro móvil: pulsa «Ya la tengo en otro móvil» y escribe tu código. ¿Lo has perdido? <button class="boton" id="sy-reini">Empezar de cero</button>`;
-            $("sy-reini").addEventListener("click",()=>{ if(!confirm("Se borrará la copia del servidor y tendrás un código nuevo. Tus otros móviles dejarán de sincronizar hasta que los vuelvas a vincular. ¿Seguro?")) return;
+            $("sy-reini").addEventListener("click",()=>{ if(!confirmar("Se borrará la copia del servidor y tendrás un código nuevo. Tus otros móviles dejarán de sincronizar hasta que los vuelvas a vincular. ¿Seguro?")) return;
               $("sy-crear").dataset.reiniciar="1"; $("sy-crear").click(); }); return; }
           $("sy-msg").textContent=j.error||"No se ha podido activar. Prueba en un rato.";
         }catch(x){ $("sy-msg").textContent="Sin conexión: conéctate a internet y vuelve a probar."; }
@@ -1311,19 +1339,20 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const copiar=async(t,b)=>{let ok=false; try{await navigator.clipboard.writeText(t);ok=true;}catch(e){} const a=b.textContent; b.textContent=ok?"Copiado ✓":"Cópialo a mano"; setTimeout(()=>b.textContent=a,1800);};
     $("sy-copiar").addEventListener("click",e=>copiar(SY.codigo,e.currentTarget));
     const cc=$("sy-copiar-cal"); if(cc) cc.addEventListener("click",e=>copiar(url,e.currentTarget));
-    $("sy-desv").addEventListener("click",()=>{ if(!confirm("Este móvil dejará de sincronizar. Tus datos se quedan aquí.")) return; SY=null; try{localStorage.removeItem("tw_sync");}catch(e){} pintarSync(); });
-    $("sy-borrar").addEventListener("click",async()=>{ if(!confirm("Se borrará la copia del servidor y el calendario suscrito dejará de funcionar. Tus datos se quedan en este móvil. ¿Seguro?")) return;
+    $("sy-desv").addEventListener("click",()=>{ if(!confirmar("Este móvil dejará de sincronizar. Tus datos se quedan aquí.")) return; SY=null; try{localStorage.removeItem("tw_sync");}catch(e){} pintarSync(); });
+    $("sy-borrar").addEventListener("click",async()=>{ if(!confirmar("Se borrará la copia del servidor y el calendario suscrito dejará de funcionar. Tus datos se quedan en este móvil. ¿Seguro?")) return;
       try{ await api({accion:"borrar",email:SY.email,codigo:SY.codigo}); }catch(e){} SY=null; try{localStorage.removeItem("tw_sync");}catch(e){} pintarSync(); });
     estadoSync(SY.t?"· "+new Date(SY.t).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"");
   }
   pintarSync();
-  if(SY&&PRO) bajar(false).then(()=>pintarSync());
+  if(SY&&PRO&&!MODO_LIBRE) bajar(false).then(()=>pintarSync());
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&SY&&PRO) bajar(false); });
 
   hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; });
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; }); });
 
-  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+  if(MODO_LIBRE){ $("instalar").hidden=true; ["ver-instalar","buscar-act","version-txt"].forEach(id=>{const e=$(id); if(e) e.hidden=true;}); }
+  if(!MODO_LIBRE&&"serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
 </script>
 </body>
