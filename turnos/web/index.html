@@ -391,10 +391,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="cupos"></div>
   </section>
 
-  <section class="tarjeta no-imprimir" id="caja-plan">
-    <p class="titulo" style="margin:0">✈️ Planificador de vacaciones</p>
+  <details class="tarjeta no-imprimir" id="caja-plan">
+    <summary>✈️ Planificador de vacaciones</summary>
+    
     <div id="plan"></div>
-  </section>
+  </details>
 
   <section class="tarjeta no-imprimir" id="caja-pluses">
     <p class="titulo" style="margin:0">💶 Pluses en euros</p>
@@ -406,29 +407,33 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="menstrual"></div>
   </details>
 
-  <section class="tarjeta no-imprimir" id="caja-sync">
-    <p class="titulo" style="margin:0">☁️ En todos tus dispositivos y en tu calendario</p>
+  <details class="tarjeta no-imprimir" id="caja-sync">
+    <summary>☁️ En todos tus dispositivos y en tu calendario</summary>
+    
     <div id="sync"></div>
-  </section>
+  </details>
 
-  <section class="tarjeta no-imprimir" id="caja-airhelp">
-    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
-      <span><b>✈️ ¿Vuelo retrasado, cancelado o con overbooking?</b><br><span class="nota">Si llegaste con más de 3 horas de retraso, puedes tener derecho a hasta 600 € por persona. AirHelp lo reclama por ti y solo cobra si gana.</span></span>
-      <a class="boton primario" href="https://www.airhelp.com/es/" target="_blank" rel="noopener">Comprobar mi vuelo</a>
-    </div>
-  </section>
+  <details class="tarjeta no-imprimir" id="caja-airhelp">
+    <summary>✈️ ¿Vuelo retrasado o cancelado?</summary>
+    <p class="nota" style="margin:10px 0">Si llegaste con más de 3 horas de retraso, te cancelaron el vuelo o te dejaron en tierra por overbooking, puedes tener derecho a hasta 600 € por persona. AirHelp lo reclama por ti y solo cobra si gana.</p>
+    <a class="boton primario" href="https://www.airhelp.com/es/" target="_blank" rel="noopener">Comprobar mi vuelo</a>
+  </details>
 
-  <section class="tarjeta no-imprimir" id="caja-sim">
-    <p class="titulo" style="margin:0">🔮 ¿Y si cambio de turno?</p>
+  <details class="tarjeta no-imprimir" id="caja-sim">
+    <summary>🔮 ¿Y si cambio de turno?</summary>
+    
     <div id="sim"></div>
-  </section>
+  </details>
 
-  <section class="tarjeta no-imprimir" id="caja-pareja">
-    <p class="titulo" style="margin:0">👫 Libres en común</p>
+  <details class="tarjeta no-imprimir" id="caja-pareja">
+    <summary>👫 Libres en común</summary>
+    
     <div id="pareja"></div>
-  </section>
+  </details>
 
-  <div class="acciones no-imprimir" id="acciones-export">
+  <details class="tarjeta no-imprimir" id="acciones-export">
+    <summary>📤 Exportar, calendario y copias</summary>
+  <div class="acciones">
     <button class="boton pro" id="ics">📅 Al calendario del móvil</button>
     <label class="nota" id="aviso-turno-caja" style="display:inline-flex;gap:6px;align-items:center">Aviso antes del turno
       <select id="aviso-turno" style="width:auto;padding:8px"><option value="0">Sin aviso</option><option value="30">30 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="720">La noche antes (12 h)</option></select></label>
@@ -440,6 +445,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <input type="file" id="recuperar-archivo" accept=".json,application/json" hidden>
     <button class="boton" id="limpiar">Quitar cambios del año</button>
   </div>
+  </details>
 
   <section class="tarjeta pro-caja no-imprimir" id="pro">
     <div id="pro-venta">
@@ -1094,7 +1100,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     document.querySelectorAll("[data-pestana]").forEach(el=>el.classList.toggle("fuera-pes",el.dataset.pestana!==p));
     document.querySelectorAll("[data-pes]").forEach(b=>b.setAttribute("aria-current",b.dataset.pes===p?"page":"false"));
     cerrarMenu&&cerrarMenu();
-    if(destino&&$(destino)) $(destino).scrollIntoView({behavior:"smooth",block:"start"}); else scrollTo({top:0,behavior:"smooth"});
+    if(destino&&$(destino)){ if($(destino).tagName==="DETAILS") $(destino).open=true; $(destino).scrollIntoView({behavior:"smooth",block:"start"}); } else scrollTo({top:0,behavior:"smooth"});
   }
   $("pestanas-app").addEventListener("click",e=>{const b=e.target.closest("[data-pes]"); if(b) verPestana(b.dataset.pes);});
   document.addEventListener("click",e=>{
