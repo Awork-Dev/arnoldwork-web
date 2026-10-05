@@ -117,6 +117,10 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .dia.hoy{box-shadow:0 0 0 2.5px var(--acento),0 4px 12px rgba(108,76,241,.35);z-index:1}
 .dia.man{box-shadow:inset 0 0 0 2px var(--tinta)}
 .dia.corto{outline:2px dashed var(--rojo);outline-offset:-3px}
+.dia.comun{box-shadow:inset 0 0 0 2.5px var(--verde)}
+.dia.comun.hoy{box-shadow:inset 0 0 0 2.5px var(--verde),0 0 0 2.5px var(--acento)}
+.lista-comun{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;padding:0;list-style:none}
+.lista-comun li{background:var(--fondo);border:1.5px solid var(--verde);border-radius:999px;padding:4px 10px;font-size:.82rem;font-weight:700}
 .dia.con-nota::before{content:"";position:absolute;bottom:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--acento);box-shadow:0 0 0 1.5px var(--panel)}
 .menu textarea{min-height:70px}
 .menu .dos{display:flex;gap:6px;flex-wrap:wrap}
@@ -271,11 +275,26 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     </div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-cupos">
+    <p class="titulo" style="margin:0">🏖️ Vacaciones y asuntos propios</p>
+    <div id="cupos"></div>
+  </section>
+
+  <section class="tarjeta no-imprimir" id="caja-pareja">
+    <p class="titulo" style="margin:0">👫 Libres en común</p>
+    <div id="pareja"></div>
+  </section>
+
   <div class="acciones no-imprimir">
     <button class="boton pro" id="ics">📅 Al calendario del móvil</button>
+    <label class="nota" id="aviso-turno-caja" style="display:inline-flex;gap:6px;align-items:center">Aviso antes del turno
+      <select id="aviso-turno" style="width:auto;padding:8px"><option value="0">Sin aviso</option><option value="30">30 min</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="720">La noche antes (12 h)</option></select></label>
     <button class="boton pro" id="excel">Copiar para Excel</button>
     <button class="boton pro" id="csv">Descargar CSV</button>
     <button class="boton pro" id="imprimir">Imprimir / PDF</button>
+    <button class="boton pro" id="copia">💾 Copia de seguridad</button>
+    <button class="boton pro" id="recuperar">Recuperar copia</button>
+    <input type="file" id="recuperar-archivo" accept=".json,application/json" hidden>
     <button class="boton" id="limpiar">Quitar cambios del año</button>
   </div>
 
@@ -289,6 +308,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>⚖️</span><div><b>Saldo de horas</b> frente a tu jornada anual y <b>resumen mes a mes</b>.</div></li>
       <li><span>✖️</span><div><b>Factores correctores</b> para tardes, noches, festivos y fines de semana, como diga tu convenio.</div></li>
       <li><span>📤</span><div><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</div></li>
+      <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
+      <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
+      <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
+      <li><span>💾</span><div><b>Copia de seguridad</b> para no perder nada y pasar tu cuadrante a otro móvil.</div></li>
       <li><span>💡</span><div><b>Buzón de mejoras.</b> Pide lo que te falte: las ideas de los usuarios Pro son las primeras que hacemos.</div></li>
     </ul>
     </div>
@@ -375,7 +398,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const primeraVez=!Y;
   if(!Y||!Y.patron) Y={patron:MODELOS[0][1],ref:fechaISO(hoy),pos:0,turnos:JSON.parse(JSON.stringify(TURNOS_DEF)),cambios:{},anio:hoy.getFullYear(),comunidad:"",fest:{extra:{},quita:[]},saldo:{jornada:0,haus:8}};
   Y.saldo=Object.assign({jornada:0,haus:8,fFest:1,fFinde:1,modo:"mayor"},Y.saldo||{});
-  if(!Y.notas) Y.notas={};   // notas por día: {"2026-10-05": {t:"Revisión médica", h:"09:30"}}
+  if(!Y.notas) Y.notas={};
+  if(!Y.cupos) Y.cupos={V:0,AP:0};
+  if(Y.avisoTurno==null) Y.avisoTurno=0;   // notas por día: {"2026-10-05": {t:"Revisión médica", h:"09:30"}}
   const guardar=()=>escribir("tw_cuadrante",Y);
   let PRO=leer("tw_pro",null);
 
@@ -481,6 +506,72 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <span class="man">Mañana: ${esc(nombre(t2))}</span>${Y.notas[fechaISO(hoy)]?`<br><span class="man">📝 ${esc((Y.notas[fechaISO(hoy)].h?Y.notas[fechaISO(hoy)].h+" · ":"")+Y.notas[fechaISO(hoy)].t)}</span>`:""}`;
   }
 
+  // ===== Libres en común (Pro): el cuadrante de otra persona, recibido por enlace =====
+  function turnoDe(P,f){
+    const k=fechaISO(f); if(P.cambios&&P.cambios[k]) return P.cambios[k];
+    const c=String(P.patron).toUpperCase().split(/[\s,;]+/).filter(Boolean); if(!c.length) return "L";
+    const n=diasEntre(deISO(P.ref),f)+(+P.pos||0); return c[((n%c.length)+c.length)%c.length];
+  }
+  const libreDe=(P,f)=>!(P.turnos||{})[turnoDe(P,f)];
+  const libreYo=f=>!esTrabajo(turno(f));
+  const comun=f=>PRO&&Y.pareja&&libreYo(f)&&libreDe(Y.pareja,f);
+  const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  const deB64=t=>JSON.parse(decodeURIComponent(escape(atob(t.replace(/-/g,"+").replace(/_/g,"/")))));
+
+  function pintarPareja(){
+    const caja=$("pareja");
+    const compartir=`<p class="nota" style="margin:8px 0">Manda tu cuadrante a tu pareja o a un compañero: al abrir el enlace lo guarda en su TurnoWork y ve qué días libráis los dos. ${PRO?"":"(Ver los libres en común es de Pro; mandar el tuyo es gratis.)"}</p>
+      <div class="acciones" style="margin:0"><input id="mi-nombre" placeholder="Tu nombre (para que sepa de quién es)" value="${esc(Y.miNombre||"")}" style="flex:1 1 200px;width:auto"><button class="boton primario" id="enviar-pareja">Enviar mi cuadrante por WhatsApp</button></div>`;
+    if(!PRO||!Y.pareja){ caja.innerHTML=compartir+(!PRO?`<p style="margin:10px 0 0"><button class="boton primario" data-ir-pro>🔒 Ver libres en común con Pro</button></p>`:Y.pareja?"":`<p class="nota" style="margin:10px 0 0">Cuando alguien te mande su cuadrante, aquí verás vuestros días libres en común, marcados en verde en el año.</p>`); }
+    else{
+      const a=+Y.anio, dias=[]; for(let d=new Date(a,0,1);d.getFullYear()===a;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)) if(comun(d)) dias.push(new Date(d));
+      const prox=dias.filter(d=>d>=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate())).slice(0,8);
+      const findes=dias.filter(d=>d.getDay()===0||d.getDay()===6).length;
+      caja.innerHTML=`<p style="margin:8px 0 4px">Con <b>${esc(Y.pareja.nombre||"tu pareja")}</b> tenéis <b>${dias.length} días libres en común</b> en ${a}${findes?`, ${findes} en fin de semana`:""}. Salen con borde verde en el año.</p>
+        ${prox.length?`<p class="nota" style="margin:8px 0 0">Los próximos:</p><ul class="lista-comun">${prox.map(d=>`<li>${d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})}</li>`).join("")}</ul>`:""}
+        <div class="acciones" style="margin:12px 0 4px"><button class="boton" id="quitar-pareja">Dejar de comparar</button></div>`+compartir;
+      $("quitar-pareja").addEventListener("click",()=>{if(!confirm("¿Dejar de comparar con "+(Y.pareja.nombre||"tu pareja")+"?"))return;delete Y.pareja;guardar();pintar();});
+    }
+    $("mi-nombre").addEventListener("change",e=>{Y.miNombre=e.target.value.trim().slice(0,40);guardar();});
+    $("enviar-pareja").addEventListener("click",()=>{
+      Y.miNombre=$("mi-nombre").value.trim().slice(0,40); guardar();
+      const d={nombre:Y.miNombre||"",patron:Y.patron,ref:Y.ref,pos:Y.pos,turnos:Object.fromEntries(Object.entries(Y.turnos).map(([k,t])=>[k,{n:t.n}])),cambios:Y.cambios};
+      const url=`${location.origin}/#pareja=${b64(d)}`;
+      const txt=`${Y.miNombre?Y.miNombre+" te manda":"Te mando"} su cuadrante de turnos para ver qué días libramos los dos. Ábrelo en TurnoWork: ${url}`;
+      window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");
+    });
+  }
+  // Al abrir un enlace #pareja=…: se guarda como cuadrante para comparar.
+  function recibirPareja(){
+    const m=/^#pareja=([A-Za-z0-9_-]+)$/.exec(location.hash); if(!m) return false;
+    let d=null; try{d=deB64(m[1]);}catch(e){}
+    const cerrar=()=>history.replaceState(null,"",location.pathname);
+    if(!d||!d.patron||!d.ref){cerrar();return false;}
+    const quien=d.nombre||"Un compañero";
+    $("propuesta").innerHTML=`<div class="tarjeta aviso"><b>👫 ${esc(quien)} te manda su cuadrante</b>
+      <p class="nota">Guárdalo para ver qué días libráis los dos. Solo se usa para comparar: no cambia tu cuadrante.${PRO?"":" Ver los libres en común es de TurnoWork Pro."}</p>
+      <div class="acciones"><button class="boton primario" id="par-si">Guardar para comparar</button><button class="boton" id="par-no">Ahora no</button></div></div>`;
+    $("par-si").addEventListener("click",()=>{Y.pareja={nombre:String(d.nombre||"").slice(0,40),patron:String(d.patron),ref:d.ref,pos:+d.pos||0,turnos:d.turnos||{},cambios:d.cambios||{}};guardar();cerrar();pintar();
+      $("propuesta").innerHTML=`<p class="nota">✓ Guardado. ${PRO?"Tus días libres en común salen con borde verde.":"Con Pro verás vuestros días libres en común."}</p>`;
+      $("caja-pareja").scrollIntoView({behavior:"smooth",block:"center"});});
+    $("par-no").addEventListener("click",()=>{$("propuesta").innerHTML="";cerrar();});
+    return true;
+  }
+
+  // ===== Cupo de vacaciones y asuntos propios (Pro) =====
+  function pintarCupos(total){
+    const usadoV=total.man.V||0, usadoAP=total.man.AP||0;
+    if(!PRO){ $("cupos").innerHTML=`<p class="nota" style="margin:8px 0">Este año llevas <b>${usadoV}</b> días de vacaciones y <b>${usadoAP}</b> de asuntos propios marcados. Con Pro pones tu cupo y ves cuántos te quedan.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    const fila=(k,nom,usado)=>{const cupo=+Y.cupos[k]||0, queda=cupo-usado;
+      return `<div><small>${nom}</small><b style="color:${cupo&&queda<0?"var(--rojo)":"inherit"}">${cupo?`${queda} de ${cupo}`:usado}</b><span class="nota" style="display:block">${cupo?(queda>=0?`te quedan · llevas ${usado}`:`te has pasado ${-queda}`):"llevas este año (pon tu cupo)"}</span></div>`;};
+    $("cupos").innerHTML=`<div class="form">
+        <label>Días de vacaciones al año<input type="number" min="0" max="60" step="1" inputmode="numeric" data-cupo="V" value="${+Y.cupos.V||""}" placeholder="Por ejemplo, 22"></label>
+        <label>Días de asuntos propios al año<input type="number" min="0" max="30" step="1" inputmode="numeric" data-cupo="AP" value="${+Y.cupos.AP||""}" placeholder="Por ejemplo, 6"></label>
+      </div><div class="resumen">${fila("V","Vacaciones",usadoV)}${fila("AP","Asuntos propios",usadoAP)}</div>
+      <p class="nota" style="margin:0">Cuenta los días que marcas con <b>V</b> y <b>AP</b> en ${+Y.anio}. Tócalos en el año para apuntarlos.</p>`;
+    $("cupos").querySelectorAll("[data-cupo]").forEach(i=>i.addEventListener("change",e=>{Y.cupos[e.target.dataset.cupo]=Math.max(0,Math.round(+e.target.value||0));cambio();}));
+  }
+
   function pintar(){
     const {dias,total,meses}=datos(), a=+Y.anio, pri=dias[0], ult=dias[dias.length-1];
     $("desc").textContent=`· ${ciclo().join(" ")}`;
@@ -502,14 +593,14 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const D=dias.filter(x=>x.d.getMonth()===m), hueco=(D[0].d.getDay()+6)%7;
       return `<div class="mes"><h3>${n}</h3><div class="sem">${["L","M","X","J","V","S","D"].map(x=>`<span>${x}</span>`).join("")}</div>
         <div class="dias">${"<span></span>".repeat(hueco)}${D.map(x=>{const w=x.d.getDay(),f=fechaISO(x.d);
-          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${Y.notas[f]?" con-nota":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${Y.notas[f]?". Nota: "+esc(Y.notas[f].t):""}"${x.fest||Y.notas[f]?` title="${esc([x.fest,Y.notas[f]&&((Y.notas[f].h?Y.notas[f].h+" · ":"")+Y.notas[f].t)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
+          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${Y.notas[f]?" con-nota":""}${comun(x.d)?" comun":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${Y.notas[f]?". Nota: "+esc(Y.notas[f].t):""}"${x.fest||Y.notas[f]?` title="${esc([x.fest,Y.notas[f]&&((Y.notas[f].h?Y.notas[f].h+" · ":"")+Y.notas[f].t)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
     }).join("");
     const cortos=dias.filter(x=>x.corto).length;
     $("leyenda").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `<span><span class="c t-${k}">${k}</span> ${esc(t.n)} ${hora(t.ini)}–${hora(finTurno(t))}</span>`;}).join("")
       +`<span><span class="c t-L">L</span> Libre</span>`+Object.entries(MANUALES).map(([k,n])=>`<span><span class="c t-${k}">${k}</span> ${n}</span>`).join("")
       +`<span><span class="c" style="box-shadow:inset 0 0 0 2px var(--tinta)">·</span> Cambiado a mano</span><span><span class="c" style="color:var(--rojo)">★</span> Festivo</span><span><span class="c" style="position:relative"><span style="width:7px;height:7px;border-radius:50%;background:var(--acento)"></span></span> Con nota</span>`
       +(cortos?`<p class="alerta">${cortos===1?"1 turno empieza":cortos+" turnos empiezan"} con menos de 12 horas de descanso desde el anterior (marcados con línea roja).</p>`:"");
-    pintarMeses(meses,total); pintarSaldo(dias,total);
+    pintarMeses(meses,total); pintarSaldo(dias,total); pintarCupos(total); pintarPareja();
   }
 
   // ===== Funciones Pro =====
@@ -565,6 +656,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
+    $("aviso-turno-caja").hidden=!PRO;
     $("pro-venta").hidden=!!PRO;
     if(PRO){ $("pro-estado").innerHTML=`<div class="pro-fila" style="justify-content:space-between"><span><b>✅ TurnoWork Pro activado</b><br><span class="nota">${esc(PRO.email)} · ¡Gracias por apoyar TurnoWork!</span></span></div>`; return; }
     $("pro-estado").innerHTML=`
@@ -625,7 +717,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     datos().dias.forEach(x=>{
       const f=fechaISO(x.d).replace(/-/g,"");
       if(esTrabajo(x.t)){const t=Y.turnos[x.t];
-        ics.push("BEGIN:VEVENT",`UID:tw-${f}@turnos.arnoldwork.com`,`DTSTAMP:${sello}`,`DTSTART:${fmt(x.d,t.ini)}`,`DTEND:${fmt(x.d,finTurno(t))}`,`SUMMARY:${x.t} · ${t.n}`,"END:VEVENT");}
+        ics.push("BEGIN:VEVENT",`UID:tw-${f}@turnos.arnoldwork.com`,`DTSTAMP:${sello}`,`DTSTART:${fmt(x.d,t.ini)}`,`DTEND:${fmt(x.d,finTurno(t))}`,`SUMMARY:${x.t} · ${t.n}`);
+        if(+Y.avisoTurno>0) ics.push("BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsTxt(t.n+" a las "+hora(t.ini))}`,`TRIGGER:-PT${+Y.avisoTurno}M`,"END:VALARM");
+        ics.push("END:VEVENT");}
       else if(MANUALES[x.t]){const sig=new Date(x.d.getFullYear(),x.d.getMonth(),x.d.getDate()+1);
         ics.push("BEGIN:VEVENT",`UID:tw-${f}@turnos.arnoldwork.com`,`DTSTAMP:${sello}`,`DTSTART;VALUE=DATE:${f}`,`DTEND;VALUE=DATE:${fechaISO(sig).replace(/-/g,"")}`,`SUMMARY:${MANUALES[x.t]}`,"TRANSP:TRANSPARENT","END:VEVENT");}
       ics.push(...eventoNota(fechaISO(x.d),sello));
@@ -633,6 +727,22 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     ics.push("END:VCALENDAR");
     descargar(`mis-turnos-${Y.anio}.ics`,ics.join("\r\n"),"text/calendar;charset=utf-8");
   }));
+  $("aviso-turno").value=String(Y.avisoTurno||0);
+  $("aviso-turno").addEventListener("change",e=>{Y.avisoTurno=+e.target.value||0;guardar();});
+  $("copia").addEventListener("click",exigePro(()=>{
+    descargar(`turnowork-copia-${fechaISO(hoy)}.json`,JSON.stringify({app:"TurnoWork",version:1,fecha:new Date().toISOString(),datos:Y},null,1),"application/json");
+  }));
+  $("recuperar").addEventListener("click",exigePro(()=>$("recuperar-archivo").click()));
+  $("recuperar-archivo").addEventListener("change",async e=>{
+    const a=e.target.files&&e.target.files[0]; e.target.value=""; if(!a) return;
+    try{
+      const j=JSON.parse(await a.text()), d=j&&j.datos;
+      if(!d||!d.patron||!d.turnos) throw new Error("no es una copia");
+      if(!confirm("¿Recuperar la copia del "+(j.fecha?new Date(j.fecha).toLocaleDateString("es-ES"):"archivo")+"? Sustituye tu cuadrante actual.")) return;
+      Y=Object.assign(Y,d); guardar(); pintarAjustes(); $("jornada").value=Y.saldo.jornada||""; $("haus").value=Y.saldo.haus; pintar();
+      alert("✓ Copia recuperada.");
+    }catch(x){ alert("Ese archivo no es una copia de TurnoWork. Elige el archivo «turnowork-copia-….json» que descargaste."); }
+  });
   $("limpiar").addEventListener("click",()=>{
     const claves=Object.keys(Y.cambios).filter(k=>k.startsWith(Y.anio+"-"));
     if(!claves.length){alert("Este año no tiene cambios a mano.");return;}
@@ -764,8 +874,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   addEventListener("keydown",e=>{if(e.key==="Escape")cerrarMenu();});
 
   function cambio(){guardar(); pintar();}
-  if(primeraVez&&!/^#importar=/.test(location.hash)) $("ajustes").open=true;
-  pintarAjustes(); pintarPro(); pintar(); if(!importar()) propuesta();
+  if(primeraVez&&!/^#(importar|pareja)=/.test(location.hash)) $("ajustes").open=true;
+  pintarAjustes(); pintarPro(); pintar(); if(!importar()&&!recibirPareja()) propuesta();
   addEventListener("hashchange",propuesta);
   // ===== Instalar en el móvil =====
   const instalada=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
