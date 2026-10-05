@@ -96,7 +96,7 @@ fieldset.turno input[type=color]{padding:2px;height:42px;cursor:pointer}
 .cab.app h1,.cab.app p,.cab.app .ventajas{display:none}
 .cab.app .marca{font-size:1rem;gap:8px}
 .cab.app .marca img{width:30px;height:30px;border-radius:8px}
-.cab.app .fecha-app{display:block;margin-top:4px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.88);text-transform:capitalize}
+.cab.app .fecha-app{display:block;margin-top:4px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.88)}
 .cab.app .hoy{min-width:0;flex:0 1 auto;padding:8px 12px;border-radius:14px;box-shadow:0 6px 16px rgba(20,10,60,.2);text-align:right}
 .cab.app .hoy small{display:none}
 .cab.app .hoy b{font-size:.95rem;margin:0;white-space:nowrap}
@@ -1054,7 +1054,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     aplicarColores(); pintarMejoras(); pintarSync(); pintarTurnos();
     document.querySelector(".cab").classList.toggle("app",!!PRO);
     const sal=hoy.getHours()<13?"Buenos días":hoy.getHours()<20?"Buenas tardes":"Buenas noches";
-    $("fecha-app").textContent=`${sal}${Y.miNombre?", "+Y.miNombre:""} · ${hoy.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"})}`; $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
+    $("fecha-app").textContent=`${sal}${Y.miNombre?", "+Y.miNombre:""} · ${hoy.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"})}`; $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=true;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     $("aviso-turno-caja").hidden=!PRO;
@@ -1092,7 +1092,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
     mas:["caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
-    pro:["pide-funcion","pro","mejoras"]};
+    pro:["pro","mejoras"]};
   Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
   let pesActual=null;
   function verPestana(p,destino){
