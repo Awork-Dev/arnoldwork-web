@@ -199,6 +199,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 </header>
 
 <main class="envoltura">
+  <div id="aviso-act" class="tarjeta aviso no-imprimir" hidden style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+    <span><b>✨ Hay una versión nueva de TurnoWork</b><br><span class="nota">Con mejoras y arreglos. Tus datos no se tocan.</span></span>
+    <button class="boton primario" id="actualizar-ya">Actualizar ahora</button>
+  </div>
   <div id="propuesta"></div>
 
   <section class="tarjeta instalar no-imprimir" id="instalar" hidden>
@@ -326,7 +330,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <footer>
     <p>Festivos nacionales y de tu comunidad calculados de forma orientativa (cada año los fija un decreto): añade los locales o los que cambien tocando el día. Comprueba siempre con el cuadrante oficial de tu empresa y tu convenio.</p>
     <p>Tus datos se guardan solo en este dispositivo: nadie más los ve. Pro se activa con el correo con el que pagaste en Ko-fi.</p>
-    <p><a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
+    <p><a href="#instalar" id="ver-instalar">📲 Cómo instalarla en el móvil</a> · <a href="#" id="buscar-act">🔄 Buscar actualización</a> <span id="version-txt"></span> · Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
   </footer>
 </main>
 
@@ -899,6 +903,29 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   $("instalar-ya").addEventListener("click",async()=>{if(!avisoInstalar)return;avisoInstalar.prompt();
     const r=await avisoInstalar.userChoice.catch(()=>null);avisoInstalar=null;$("instalar-ya").hidden=true;if(r&&r.outcome==="accepted")$("instalar").hidden=true;});
   addEventListener("appinstalled",()=>{$("instalar").hidden=true;escribir("tw_instalar_no",true);});
+
+  // ===== Actualizaciones: la versión de esta página frente a la publicada =====
+  const MI_VERSION="__VERSION__", MI_FECHA="__FECHA__";
+  const fechaVer=f=>{const d=new Date(f);return isNaN(d)?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"});};
+  if(fechaVer(MI_FECHA)) $("version-txt").textContent=`(versión del ${fechaVer(MI_FECHA)})`;
+  async function hayNueva(){
+    try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) return null; const j=await r.json();
+      return MI_VERSION.startsWith("__")?null:(j.version&&j.version!==MI_VERSION?j:false);}catch(e){return null;}
+  }
+  async function actualizar(){
+    try{ if(window.caches){ for(const k of await caches.keys()) await caches.delete(k); }
+      if(navigator.serviceWorker){ const r=await navigator.serviceWorker.getRegistration(); if(r) await r.update(); } }catch(e){}
+    location.reload();
+  }
+  $("actualizar-ya").addEventListener("click",actualizar);
+  $("buscar-act").addEventListener("click",async e=>{
+    e.preventDefault(); const a=e.currentTarget, antes=a.textContent; a.textContent="Buscando…";
+    const n=await hayNueva();
+    if(n){ a.textContent="Actualizando…"; actualizar(); }
+    else{ a.textContent=n===false?"✓ Ya tienes la última versión":"Sin conexión: prueba luego"; setTimeout(()=>a.textContent=antes,2500); }
+  });
+  hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; });
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) hayNueva().then(n=>{ if(n) $("aviso-act").hidden=false; }); });
 
   if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
