@@ -811,10 +811,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     $("pl-ir").addEventListener("click",()=>{
       P.n=Math.max(1,Math.min(30,Math.round(+$("pl-n").value||5))); P.desde=$("pl-desde").value||fechaISO(hoy); P.hasta=$("pl-hasta").value||P.desde;
       P.aero=($("pl-aero").value||"PMI").trim().toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)||"PMI"; P.dest=$("pl-dest").value.trim().slice(0,60); guardar();
-      // Vuelos en Kiwi.com con el enlace de afiliado de Travelpayouts (socio 581867).
+      // Vuelos en Kiwi.com con el enlace de afiliado de Travelpayouts (socio 785981).
       const destIATA=codigoDestino(P.dest);
       const vuelos=(a,b)=>{const k=`https://www.kiwi.com/deep?from=${P.aero}&to=${destIATA||"anywhere"}&departure=${a}&return=${b}&lang=es&currency=EUR`;
-        return `https://c111.travelpayouts.com/click?shmarker=581867.turnowork&promo_id=3791&source_type=customlink&type=click&custom_url=${encodeURIComponent(k)}`;};
+        return `https://c111.travelpayouts.com/click?shmarker=785981.turnowork&promo_id=3791&source_type=customlink&type=click&custom_url=${encodeURIComponent(k)}`;};
       const hoteles=(a,b)=>`https://www.booking.com/searchresults.es.html?ss=${encodeURIComponent(P.dest)}&checkin=${a}&checkout=${b}&group_adults=2&no_rooms=1`;
       const L=planes(P.n,deISO(P.desde),deISO(P.hasta)), fc=d=>d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"});
       $("pl-res").innerHTML=L.length?L.map((c,i)=>`<div class="plan${i===0?" mejor":""}"><b class="grande">${i===0?"⭐ ":""}${c.total} días seguidos de descanso</b>
