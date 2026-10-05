@@ -23,3 +23,5 @@ jobs:
           r=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"borrar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
           echo "::notice title=borrar::$r"
           echo "::notice title=cal-borrado::$(curl -s -o /dev/null -w '%{http_code}' https://turnos.arnoldwork.com/cal/$CAL.ics)"
+          echo "::notice title=push-clave::$(curl -s https://turnos.arnoldwork.com/api/push/clave | jq -c '{longitud:(.clave|length)}')"
+          echo "::notice title=push-alta-sin-pro::$(curl -s -X POST https://turnos.arnoldwork.com/api/push -H 'Content-Type: application/json' -d '{"accion":"alta","email":"prueba@example.com","sub":{"endpoint":"https://example.com/x"}}')"
