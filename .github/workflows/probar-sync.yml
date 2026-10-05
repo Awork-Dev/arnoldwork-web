@@ -1,0 +1,20 @@
+# Prueba puntual de la API de TurnoWork (se puede lanzar a mano).
+name: Probar API de TurnoWork
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/probar-sync.yml"]
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a la API
+        run: |
+          echo "--- bajar con código malo (debe dar 403)"
+          curl -s -w ' [%{http_code}]\n' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"bajar","email":"prueba@example.com","codigo":"MALO"}'
+          echo "--- crear sin Pro (debe dar 403)"
+          curl -s -w ' [%{http_code}]\n' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"crear","email":"prueba@example.com"}'
+          echo "--- calendario inexistente (debe dar 404 con texto)"
+          curl -s -w ' [%{http_code}]\n' https://turnos.arnoldwork.com/cal/abcdefghijkmnpqrstuvwxyz2345.ics
+          echo "--- web"
+          curl -s -o /dev/null -w '[%{http_code}]\n' https://turnos.arnoldwork.com/
