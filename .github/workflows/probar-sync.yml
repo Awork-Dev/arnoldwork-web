@@ -10,11 +10,11 @@ jobs:
     steps:
       - name: Llamar a la API
         run: |
-          echo "--- bajar con código malo (debe dar 403)"
-          curl -s -w ' [%{http_code}]\n' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"bajar","email":"prueba@example.com","codigo":"MALO"}'
-          echo "--- crear sin Pro (debe dar 403)"
-          curl -s -w ' [%{http_code}]\n' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"crear","email":"prueba@example.com"}'
-          echo "--- calendario inexistente (debe dar 404 con texto)"
-          curl -s -w ' [%{http_code}]\n' https://turnos.arnoldwork.com/cal/abcdefghijkmnpqrstuvwxyz2345.ics
-          echo "--- web"
-          curl -s -o /dev/null -w '[%{http_code}]\n' https://turnos.arnoldwork.com/
+          a=$(curl -s -w ' [%{http_code}]' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"bajar","email":"prueba@example.com","codigo":"MALO"}')
+          b=$(curl -s -w ' [%{http_code}]' -X POST https://turnos.arnoldwork.com/api/sync -H 'Content-Type: application/json' -d '{"accion":"crear","email":"prueba@example.com"}')
+          c=$(curl -s -w ' [%{http_code}]' https://turnos.arnoldwork.com/cal/abcdefghijkmnpqrstuvwxyz2345.ics)
+          d=$(curl -s -o /dev/null -w '[%{http_code}]' https://turnos.arnoldwork.com/)
+          echo "::notice title=bajar::$a"
+          echo "::notice title=crear::$b"
+          echo "::notice title=cal::$c"
+          echo "::notice title=web::$d"
