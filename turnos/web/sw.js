@@ -1,13 +1,15 @@
 // TurnoWork funciona sin conexión: primero la red, y si no hay, lo último guardado.
 // También enseña el aviso de la noche antes: el servidor manda un aviso vacío y aquí se escribe
 // el texto con la agenda que la app deja guardada en este móvil (los turnos nunca salen del móvil para esto).
-const CACHE = "turnowork-v32";
+const CACHE = "turnowork-v33";
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./", "icono.svg", "icono-192.png", "manifest.webmanifest"]))); });
 self.addEventListener("activate", e => e.waitUntil(clients.claim()));
 self.addEventListener("fetch", e => {
   const u = new URL(e.request.url);
   if (e.request.method !== "GET" || u.origin !== location.origin || u.pathname.endsWith("/version.json") || u.pathname.startsWith("/api/") || u.pathname.startsWith("/cal/") || u.pathname === "/__agenda") return;
-  e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put(e.request, c)); return r; })
+  // Las páginas siempre se piden nuevas al servidor (sin caché del navegador) para que las mejoras lleguen al momento.
+  const pide = e.request.mode === "navigate" ? fetch(e.request, { cache: "no-store" }) : fetch(e.request);
+  e.respondWith(pide.then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put(e.request, c)); return r; })
     .catch(() => caches.match(e.request).then(r => r || caches.match("./"))));
 });
 
