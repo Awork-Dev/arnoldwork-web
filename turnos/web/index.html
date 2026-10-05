@@ -210,6 +210,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <button class="boton primario" id="actualizar-ya">Actualizar ahora</button>
   </div>
   <div id="propuesta"></div>
+  <a class="tarjeta no-imprimir" id="pide-funcion" href="#mejoras" hidden style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;text-decoration:none;color:inherit">
+    <span><b>💡 Eres Pro: si quieres una función, pídela</b><br><span class="nota">Escríbenos en el buzón de mejoras. Las ideas de los usuarios Pro son las primeras que hacemos.</span></span>
+    <span class="boton primario">Pedir una función</span>
+  </a>
   <section class="ganchos no-imprimir" id="ganchos" aria-label="Lo que puedes hacer con TurnoWork Pro">
     <button class="gancho" data-ir-pro><q>Los martes, piscina de la peque de 17:15 a 18:00</q><span>Lo pones una vez y sale todas las semanas, también en el calendario del móvil.</span><b>PRO</b></button>
     <button class="gancho" data-ir-pro><q>¿Qué días libramos los dos?</q><span>Compara tu cuadrante con el de tu pareja o un compañero y mira vuestros libres en común.</span><b>PRO</b></button>
@@ -329,14 +333,14 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
       <li><span>💾</span><div><b>Copia de seguridad</b> para no perder nada y pasar tu cuadrante a otro móvil.</div></li>
-      <li><span>💡</span><div><b>Buzón de mejoras.</b> Pide lo que te falte: las ideas de los usuarios Pro son las primeras que hacemos.</div></li>
+      <li><span>💡</span><div><b>¿Quieres una función? Pídela.</b> Los usuarios Pro tienen buzón directo y sus ideas son las primeras que hacemos.</div></li>
     </ul>
     </div>
     <div id="pro-estado"></div>
   </section>
 
   <section class="tarjeta no-imprimir" id="mejoras">
-    <p class="titulo" style="margin:0">💡 Buzón de mejoras</p>
+    <p class="titulo" style="margin:0">💡 ¿Quieres una función? Pídela</p>
     <div id="mejoras-cont"></div>
   </section>
 
@@ -688,7 +692,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO;
+    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     $("aviso-turno-caja").hidden=!PRO;
