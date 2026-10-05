@@ -224,6 +224,13 @@ button,.boton,a,summary,.dia{touch-action:manipulation;-webkit-tap-highlight-col
 .dia.regla::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#e64980}
 .dia.regla-prev::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;border:1.5px solid #e64980;background:transparent}
 .dia.fest.regla::after,.dia.fest.regla-prev::after{right:12px}
+.dia.sin-cole{background-image:linear-gradient(to top,#f5a524 0 4px,transparent 4px)}
+.cole-vac{display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;margin:6px 0}
+.cole-vac input{padding:8px;min-width:0}
+.lista-cole{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:6px}
+.lista-cole li{padding:8px 10px;border:1px solid var(--linea);border-radius:10px;font-size:.88rem}
+.lista-cole li.choque{border-color:#f5a524;background:rgba(245,165,36,.1)}
+@media (max-width:520px){.cole-vac{grid-template-columns:1fr 1fr auto}.cole-vac input[data-vn]{grid-column:1/-1}}
 .dia.con-nota::before{content:"";position:absolute;bottom:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--acento);box-shadow:0 0 0 1.5px var(--panel)}
 .menu textarea{min-height:70px}
 .menu .dos{display:flex;gap:6px;flex-wrap:wrap}
@@ -453,6 +460,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="menstrual"></div>
   </details>
 
+  <details class="tarjeta no-imprimir" id="caja-cole">
+    <summary>🎒 El cole de los peques</summary>
+    <div id="cole"></div>
+  </details>
+
   <details class="tarjeta no-imprimir" id="caja-avisos">
     <summary>🔔 Avisos la noche antes</summary>
     <div id="avisos"></div>
@@ -510,6 +522,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>📤</span><div><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</div></li>
       <li><span>🔁</span><div><b>Notas que se repiten:</b> «los martes, piscina de 17:15 a 18:00» se pone una vez y sale todas las semanas, también en el calendario.</div></li>
       <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
+      <li><span>🎒</span><div><b>El cole de tus hijos:</b> festivos nacionales y de tu comunidad, vacaciones y los días locales que añadas. Te avisa de los días sin cole en que trabajas.</div></li>
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
       <li><span>🔔</span><div><b>Aviso en el móvil la noche antes:</b> «Mañana: Mañana · 06:50–15:10» o «Mañana libras», sin abrir la app.</div></li>
@@ -779,6 +792,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       ${x?`<span class="hoy-mini hoy-hora">🕒 ${hora(x.ini)}–${hora(finTurno(x))} · ${horasTxt(x.h)}${man?" · cambiado":""}</span>`:(man?`<span class="hoy-mini">cambiado a mano</span>`:"")}
       <span class="hoy-mini">${ENT[en[2]]}</span>
       ${nota1?`<span class="hoy-mini">${nota1}</span>`:""}
+      ${sinCole(hoy)?`<span class="hoy-mini">🎒 Hoy no hay cole</span>`:sinCole(new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+1))?`<span class="hoy-mini">🎒 Mañana no hay cole</span>`:""}
       <span class="hoy-mini hoy-sig">Mañana: <span class="c t-${esc(t2)}" style="min-width:20px;height:18px;font-size:.66rem">${esc(t2)}</span> ${esc(nombre(t2))}</span>`;
   }
 
@@ -852,7 +866,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const ns=notasDe(f), m=menstrualDia(f);
       html+=`<div class="sem-dia${i===0?" es-hoy":""}"><div class="sem-fecha"><small>${i===0?"hoy":i===1?"mañana":DS[d.getDay()]}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("es-ES",{month:"short"})}</small></div>
         <div class="sem-info"><div class="linea"><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}${x?` <span class="extra">${hora(x.ini)}–${hora(finTurno(x))} · ${horasTxt(x.h)}</span>`:""}${Y.cambios[f]?` <span class="extra">· cambiado</span>`:""}</div>
-        ${fe?`<span class="extra">★ ${esc(fe)}</span>`:""}${ns.map(n=>`<span class="extra">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}${m?`<span class="extra">🌸 ${m==="regla"?"Regla":"Regla prevista"}</span>`:""}<span><span class="entreno">${entreno(d)[0]} ${entreno(d)[1]}</span></span></div></div>`;
+        ${fe?`<span class="extra">★ ${esc(fe)}</span>`:""}${sinCole(d)?`<span class="extra">🎒 Sin cole${sinCole(d)!==fe?" · "+esc(sinCole(d)):""}</span>`:""}${ns.map(n=>`<span class="extra">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}${m?`<span class="extra">🌸 ${m==="regla"?"Regla":"Regla prevista"}</span>`:""}<span><span class="entreno">${entreno(d)[0]} ${entreno(d)[1]}</span></span></div></div>`;
     }
     const fuertes=[0,1,2,3,4,5,6].filter(i=>entreno(new Date(base.getFullYear(),base.getMonth(),base.getDate()+i))[2]==="fuerte").length;
     $("entreno-res").innerHTML=`<b>💪 Esta semana tienes ${fuertes} ${fuertes===1?"día bueno":"días buenos"} para entrenar fuerte</b><br><span class="nota">Mira en cada día de «Mi semana» qué te toca.</span>`;
@@ -1032,6 +1046,64 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     $("cupos").querySelectorAll("[data-cupo]").forEach(i=>i.addEventListener("change",e=>{Y.cupos[e.target.dataset.cupo]=Math.max(0,Math.round(+e.target.value||0));cambio();}));
   }
 
+  // ===== El cole de los peques (Pro): qué días laborables no hay clase =====
+  // Sin cole: festivos (nacionales, de la comunidad y los locales marcados), vacaciones del curso y días sueltos añadidos a mano.
+  function colePorDefecto(){
+    const a=hoy.getMonth()>=6?hoy.getFullYear():hoy.getFullYear()-1, P=pascua(a+1), mas=k=>fechaISO(new Date(P.getFullYear(),P.getMonth(),P.getDate()+k));
+    return {activo:true,inicio:`${a}-09-10`,fin:`${a+1}-06-19`,vac:[{n:"Navidad",d:`${a}-12-23`,h:`${a+1}-01-07`},{n:"Semana Santa",d:mas(-6),h:mas(1)}],noLect:{}};
+  }
+  function sinCole(d){
+    const C=Y.cole; if(!PRO||!C||!C.activo) return null;
+    const w=d.getDay(); if(w===0||w===6) return null;
+    const f=fechaISO(d);
+    if(C.noLect&&C.noLect[f]) return C.noLect[f];
+    if(f>C.fin) return f<=`${C.fin.slice(0,4)}-09-15`?"Vacaciones de verano":null;
+    if(f<C.inicio) return f>=`${C.inicio.slice(0,4)}-06-15`?"Vacaciones de verano":null;
+    for(const v of C.vac||[]) if(v.d&&v.h&&f>=v.d&&f<=v.h) return v.n||"Vacaciones";
+    return festivo(d)||null;
+  }
+  function pintarCole(){
+    const caja=$("cole");
+    if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Marca en tu año los días que tus hijos no tienen cole: festivos nacionales y de tu comunidad, vacaciones de Navidad, Semana Santa y verano, y los días locales que añadas tú. Y te avisa de los días sin cole en que te toca trabajar.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    if(!Y.cole||!Y.cole.activo){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Marca en tu año los días que no hay cole y mira cuáles te toca trabajar, para organizarte con tiempo.</p><button class="boton primario" id="cole-on">Activar</button>`;
+      $("cole-on").addEventListener("click",()=>{ Y.cole=Object.assign(colePorDefecto(),Y.cole&&Y.cole.noLect?{noLect:Y.cole.noLect}:{}); guardar(); pintar(); }); return; }
+    const C=Y.cole; if(!C.noLect) C.noLect={}; if(!C.vac) C.vac=[];
+    const base=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()), dias=[];
+    for(let k=0;k<75&&dias.length<10;k++){ const d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+k), m=sinCole(d); if(m) dias.push([d,m]); }
+    const quien=Y.pareja?esc(Y.pareja.nombre||"tu pareja"):"";
+    const linea=([d,m])=>{ const t=turno(d), x=Y.turnos[t], otro=Y.pareja?!libreDe(Y.pareja,d):null;
+      const txt=x?`⚠️ Trabajas: ${esc(nombre(t))} ${hora(x.ini)}–${hora(finTurno(x))}${Y.pareja?(otro?` · ${quien} también trabaja`:` · ${quien} libra`):""}`:`✓ Libras${Y.pareja&&otro?` · ${quien} trabaja`:""}`;
+      return `<li class="${x?"choque":""}"><b>${d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})}</b> · ${esc(m)}<br><span class="nota">${txt}</span></li>`; };
+    const choques=dias.filter(([d])=>trabaja(d)).length;
+    const sueltos=Object.keys(C.noLect).sort().filter(f=>f>=fechaISO(base));
+    const acabado=fechaISO(base)>C.fin;
+    caja.innerHTML=`<p class="nota" style="margin:8px 0">Los días sin cole salen en el año con una <b style="color:#f5a524">raya naranja</b> abajo. Los festivos nacionales y ${Y.comunidad?`de <b>${esc(COMUNIDADES[Y.comunidad][0])}</b>`:`<b>de tu comunidad</b> (elígela en «Mi ciclo», en la pestaña Año)`} ya están puestos.</p>
+      ${acabado?`<p class="alerta" style="margin:8px 0">Este curso ya ha terminado. <button class="boton" id="cole-nuevo">Preparar el curso que viene</button></p>`:""}
+      <p class="titulo" style="margin:14px 0 6px">Próximos días sin cole${choques?` · <span style="color:#c77d00">${choques} trabajando</span>`:""}</p>
+      ${dias.length?`<ul class="lista-cole">${dias.map(linea).join("")}</ul>`:`<p class="nota" style="margin:0">Ninguno en las próximas semanas.</p>`}
+      <p class="titulo" style="margin:16px 0 6px">El curso</p>
+      <div class="cole-vac" style="grid-template-columns:1fr 1fr"><label>Empieza<input type="date" id="cole-ini" value="${esc(C.inicio)}"></label><label>Acaba<input type="date" id="cole-fin" value="${esc(C.fin)}"></label></div>
+      <p class="titulo" style="margin:14px 0 6px">Vacaciones</p>
+      ${C.vac.map((v,i)=>`<div class="cole-vac"><input data-vn="${i}" value="${esc(v.n)}" placeholder="Nombre" aria-label="Nombre"><input type="date" data-vd="${i}" value="${esc(v.d)}" aria-label="Desde"><input type="date" data-vh="${i}" value="${esc(v.h)}" aria-label="Hasta"><button class="boton" data-vx="${i}" aria-label="Quitar">✕</button></div>`).join("")}
+      <div class="acciones" style="margin:6px 0 0"><button class="boton" id="cole-mas">+ Añadir vacaciones</button></div>
+      <p class="titulo" style="margin:14px 0 6px">Días locales y no lectivos</p>
+      <p class="nota" style="margin:0 0 6px">Las fiestas de tu pueblo y los días que el cole no tiene clase: toca el día en el año y pulsa <b>«🎒 No hay cole este día»</b>.</p>
+      ${sueltos.length?`<ul class="lista-cole">${sueltos.map(f=>`<li>${deISO(f).toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"})} · ${esc(C.noLect[f])} <button class="boton" data-nlx="${f}" style="padding:2px 10px;margin-left:6px">✕</button></li>`).join("")}</ul>`:""}
+      <p class="nota" style="margin:12px 0 0">Las fechas vienen puestas de forma orientativa: revísalas con el calendario escolar de tu comunidad y de tu cole.</p>
+      <div class="acciones"><button class="boton" id="cole-off">Desactivar</button></div>`;
+    const set=(fn)=>e=>{ fn(e.target); guardar(); pintar(); };
+    $("cole-ini").addEventListener("change",set(t=>{ if(t.value) C.inicio=t.value; }));
+    $("cole-fin").addEventListener("change",set(t=>{ if(t.value) C.fin=t.value; }));
+    caja.querySelectorAll("[data-vn]").forEach(el=>el.addEventListener("change",set(t=>{ C.vac[+t.dataset.vn].n=t.value.trim().slice(0,40)||"Vacaciones"; })));
+    caja.querySelectorAll("[data-vd]").forEach(el=>el.addEventListener("change",set(t=>{ C.vac[+t.dataset.vd].d=t.value; })));
+    caja.querySelectorAll("[data-vh]").forEach(el=>el.addEventListener("change",set(t=>{ C.vac[+t.dataset.vh].h=t.value; })));
+    caja.querySelectorAll("[data-vx]").forEach(el=>el.addEventListener("click",set(t=>{ C.vac.splice(+t.dataset.vx,1); })));
+    caja.querySelectorAll("[data-nlx]").forEach(el=>el.addEventListener("click",set(t=>{ delete C.noLect[t.dataset.nlx]; })));
+    $("cole-mas").addEventListener("click",set(()=>{ C.vac.push({n:"Vacaciones",d:fechaISO(base),h:fechaISO(base)}); }));
+    const nuevo=$("cole-nuevo"); if(nuevo) nuevo.addEventListener("click",set(()=>{ const n=colePorDefecto(); C.inicio=n.inicio; C.fin=n.fin; C.vac=n.vac; }));
+    $("cole-off").addEventListener("click",()=>{ if(!confirmar("¿Quitar el cole de tu año? Se borran sus fechas y los días que añadiste.")) return; Y.cole={activo:false}; guardar(); pintar(); });
+  }
+
   let cacheNS={}; const NS=f=>cacheNS[f]||(cacheNS[f]=notasDe(f));
   // El planificador conserva lo que tienes escrito: solo se vuelve a pintar al entrar o al cambiar Pro.
   let planPintado=null; function pintarPlanSiCambia(){ if(planPintado!==!!PRO){ planPintado=!!PRO; pintarPlan(); pintarSim(); } }
@@ -1055,8 +1127,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       ${extra?`<div><small>Marcados a mano</small><b style="font-size:.95rem">${esc(extra)}</b></div>`:""}`;
     // Un mes cualquiera (de este año o del siguiente), con su color de turno, festivos, notas…
     const celdaDia=(d,n)=>{const t=turno(d), prev=turno(new Date(d.getFullYear(),d.getMonth(),d.getDate()-1)), f=fechaISO(d), w=d.getDay(),
-        man=!!Y.cambios[f], corto=esTrabajo(t)&&descanso(prev,t)<12, fe=festivo(d);
-      return `<div role="button" tabindex="0" class="dia t-${esc(t)}${man?" man":""}${corto?" corto":""}${w===0||w===6?" finde":""}${fe?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(d)?" comun":""}${menstrualDia(f)==="regla"?" regla":menstrualDia(f)==="prev"?" regla-prev":""}" data-f="${f}" aria-label="${d.getDate()} de ${n}${fe?" ("+esc(fe)+")":""}: ${esc(nombre(t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}"${fe||NS(f).length?` title="${esc([fe,...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${d.getDate()}</small>${esc(t)}</div>`;};
+        man=!!Y.cambios[f], corto=esTrabajo(t)&&descanso(prev,t)<12, fe=festivo(d), sc=sinCole(d);
+      return `<div role="button" tabindex="0" class="dia t-${esc(t)}${sc?" sin-cole":""}${man?" man":""}${corto?" corto":""}${w===0||w===6?" finde":""}${fe?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(d)?" comun":""}${menstrualDia(f)==="regla"?" regla":menstrualDia(f)==="prev"?" regla-prev":""}" data-f="${f}" aria-label="${d.getDate()} de ${n}${fe?" ("+esc(fe)+")":""}: ${esc(nombre(t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}${sc?". Sin cole":""}"${fe||sc||NS(f).length?` title="${esc([fe,sc&&sc!==fe?"🎒 "+sc:sc?"🎒 Sin cole":"",...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${d.getDate()}</small>${esc(t)}</div>`;};
     const mesHTML=(a,m,conAnio)=>{const n=MESES[m], ult=new Date(a,m+1,0).getDate(), hueco=(new Date(a,m,1).getDay()+6)%7; let c="";
       for(let k=1;k<=ult;k++) c+=celdaDia(new Date(a,m,k),n);
       return `<div class="mes"><h3>${n}${conAnio?` ${a}`:""}</h3><div class="sem">${["L","M","X","J","V","S","D"].map(x=>`<span>${x}</span>`).join("")}</div><div class="dias">${"<span></span>".repeat(hueco)}${c}</div></div>`;};
@@ -1069,9 +1141,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const cortos=dias.filter(x=>x.corto).length;
     $("leyenda").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `<span><span class="c t-${k}">${k}</span> ${esc(t.n)} ${hora(t.ini)}–${hora(finTurno(t))}</span>`;}).join("")
       +`<span><span class="c t-L">L</span> Libre</span>`+Object.entries(MANUALES).map(([k,n])=>`<span><span class="c t-${k}">${k}</span> ${n}</span>`).join("")
-      +`<span><span class="c" style="box-shadow:inset 0 0 0 2px var(--tinta)">·</span> Cambiado a mano</span><span><span class="c" style="color:var(--rojo)">★</span> Festivo</span><span><span class="c" style="position:relative"><span style="width:7px;height:7px;border-radius:50%;background:var(--acento)"></span></span> Con nota</span>`
+      +`<span><span class="c" style="box-shadow:inset 0 0 0 2px var(--tinta)">·</span> Cambiado a mano</span><span><span class="c" style="color:var(--rojo)">★</span> Festivo</span>${PRO&&Y.cole&&Y.cole.activo?`<span><span class="c" style="background-image:linear-gradient(to top,#f5a524 0 4px,transparent 4px);border:1px solid var(--linea)"></span> Sin cole</span>`:""}<span><span class="c" style="position:relative"><span style="width:7px;height:7px;border-radius:50%;background:var(--acento)"></span></span> Con nota</span>`
       +(cortos?`<p class="alerta">${cortos===1?"1 turno empieza":cortos+" turnos empiezan"} con menos de 12 horas de descanso desde el anterior (marcados con línea roja).</p>`:"");
-    pintarMeses(meses,total); pintarSaldo(dias,total); pintarCupos(total); pintarPareja(); pintarSemana(); pintarPlanSiCambia(); pintarPluses(dias); pintarMenstrual();
+    pintarMeses(meses,total); pintarSaldo(dias,total); pintarCupos(total); pintarPareja(); pintarSemana(); pintarPlanSiCambia(); pintarPluses(dias); pintarMenstrual(); pintarCole();
   }
 
   // ===== Funciones Pro =====
@@ -1200,7 +1272,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const PESTANAS={hoy:["caja-entreno","ganchos","instalar","caja-semana","caja-compartir"],
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
-    mas:["caja-avisos","caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
+    mas:["caja-avisos","caja-cole","caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
     pro:["pro","mejoras"]};
   Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
   let pesActual=null;
@@ -1434,6 +1506,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     menu.innerHTML=`<small>${f.split("-").reverse().join("/")}${fe?" · ★ "+esc(fe):""}</small><div class="fila">${opciones.map(k=>`<button class="c t-${k}" data-c="${k}" title="${esc(nombre(k))}">${k}</button>`).join("")}</div>
       ${Y.cambios[f]?`<button class="boton" data-c="">Volver al ciclo (${esc(turnoCiclo(deISO(f)))})</button>`:""}
       <button class="boton" data-fest="${fe?"quitar":"poner"}">${fe?"Quitar festivo":"★ Marcar como festivo"}</button>
+      ${PRO&&Y.cole&&Y.cole.activo&&!/^[06]$/.test(String(deISO(f).getDay()))?(Y.cole.noLect&&Y.cole.noLect[f]?`<button class="boton" data-cole="quitar">🎒 Sí hay cole este día</button>`:sinCole(deISO(f))?"":`<button class="boton" data-cole="poner">🎒 No hay cole este día</button>`):""}
       ${CM.activo?`<button class="boton" data-regla>🌸 ${CM.inicios.includes(f)?"Quitar inicio de regla":"Me vino la regla este día"}</button>`:""}
       <button class="boton" data-nota>📝 ${notasDe(f).length?"Ver o cambiar notas":"Añadir una nota"}</button>
       ${esTrabajo(turno(deISO(f)))?`<button class="boton" data-cambio>↔ Proponer cambio a un compañero</button>`:""}`;
@@ -1446,6 +1519,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       if(e.target.closest("[data-cambio]")){formCambio(f);return;}
       if(e.target.closest("[data-nota]")){formNota(f);return;}
       if(e.target.closest("[data-regla]")){ if(CM.inicios.includes(f)) CM.inicios=CM.inicios.filter(x=>x!==f); else CM.inicios.push(f); guardarCM(); cacheCM=null; cerrarMenu(); pintar(); return; }
+      const bc=e.target.closest("[data-cole]");
+      if(bc){ if(!Y.cole.noLect) Y.cole.noLect={};
+        if(bc.dataset.cole==="quitar") delete Y.cole.noLect[f];
+        else{ const n=pedirTexto("¿Por qué no hay cole? (fiesta local, día no lectivo…)","Fiesta local"); if(n===null) return; Y.cole.noLect[f]=n.trim().slice(0,40)||"Sin cole"; }
+        guardar(); cerrarMenu(); pintar(); return; }
       const bf=e.target.closest("[data-fest]");
       if(bf){
         if(bf.dataset.fest==="quitar"){delete Y.fest.extra[f]; if(festivosAuto(+f.slice(0,4))[f]&&!Y.fest.quita.includes(f)) Y.fest.quita.push(f);}
@@ -1516,7 +1594,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   function guardarAgenda(){ if(!("caches" in window)||MODO_LIBRE) return; clearTimeout(agendaPend); agendaPend=setTimeout(async()=>{
     const dias={}, base=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
     for(let k=0;k<60;k++){ const d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+k), f=fechaISO(d), t=turno(d), x=Y.turnos[t];
-      dias[f]={n:nombre(t),trabajo:!!x,h:x?`${hora(x.ini)}–${hora(finTurno(x))}`:"",notas:notasDe(f).map(n=>(horario(n)?horario(n)+" · ":"")+n.t)}; }
+      dias[f]={n:nombre(t),trabajo:!!x,h:x?`${hora(x.ini)}–${hora(finTurno(x))}`:"",notas:notasDe(f).map(n=>(horario(n)?horario(n)+" · ":"")+n.t),cole:sinCole(d)||""}; }
     try{ await (await caches.open("tw-agenda")).put("/__agenda",new Response(JSON.stringify({generado:Date.now(),dias}),{headers:{"Content-Type":"application/json"}})); }catch(e){}
   },800); }
   var pushSoportado=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;

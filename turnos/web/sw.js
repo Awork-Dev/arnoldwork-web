@@ -1,7 +1,7 @@
 // TurnoWork funciona sin conexión: primero la red, y si no hay, lo último guardado.
 // También enseña el aviso de la noche antes: el servidor manda un aviso vacío y aquí se escribe
 // el texto con la agenda que la app deja guardada en este móvil (los turnos nunca salen del móvil para esto).
-const CACHE = "turnowork-v41";
+const CACHE = "turnowork-v42";
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./", "icono.svg", "icono-192.png", "manifest.webmanifest"]))); });
 self.addEventListener("activate", e => e.waitUntil(clients.claim()));
 self.addEventListener("fetch", e => {
@@ -22,7 +22,7 @@ async function textoAviso(prueba) {
   const man = new Date(); man.setDate(man.getDate() + 1);
   const dia = ag && ag.dias ? ag.dias[fISO(man)] : null;
   if (!dia) return { title: "TurnoWork", body: "Abre TurnoWork para ver tu turno de mañana." };
-  const notas = (dia.notas || []).map(n => "📝 " + n).join("\n");
+  const notas = [...(dia.cole ? ["🎒 No hay cole · " + dia.cole] : []), ...(dia.notas || []).map(n => "📝 " + n)].join("\n");
   const title = (prueba ? "Prueba · " : "") + (dia.trabajo ? `Mañana: ${dia.n}${dia.h ? " · " + dia.h : ""}` : `Mañana: ${dia.n} 😴`);
   const body = notas || (dia.trabajo ? "Deja la ropa preparada y descansa bien." : "Disfruta del día.");
   return { title, body };
