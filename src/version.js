@@ -1,7 +1,7 @@
 // ArnoldWork · versión de la web y «Buscar actualización».
 // Lo usan arnoldwork.com, HeavyWork y CaveWork (build.py lo copia a web/ y a heavywork/web/: edítalo en src/).
 // Pinta en cada elemento con [data-version] la fecha de la versión que tienes abierta y un botón para
-// buscar si hay una más nueva. /version.json lo escribe la publicación (GitHub Actions) con la fecha del cambio.
+// buscar si hay una más nueva. /version.json lo escribe la publicación (Cloudflare Workers Builds, con publicar-web.sh y heavywork/publicar.sh) con la fecha del cambio.
 (() => {
   const sitios = document.querySelectorAll('[data-version]');
   if (!sitios.length) return;
