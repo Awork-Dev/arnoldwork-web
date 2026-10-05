@@ -88,6 +88,21 @@ fieldset.turno input[type=color]{padding:2px;height:42px;cursor:pointer}
 .hoy small{display:block;color:#6b6688;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
 .hoy b{font:700 1.35rem/1.25 var(--display);display:block;margin-top:6px}
 .hoy .man{color:#6b6688;font-size:.86rem;font-weight:600}
+/* Cabecera de app (Pro): barra compacta y fija arriba con la fecha y el turno de hoy */
+.fecha-app{display:none}
+.cab.app{position:sticky;top:0;z-index:35;box-shadow:0 6px 20px rgba(20,10,60,.18)}
+.cab.app .envoltura{padding-block:10px 12px;align-items:center;flex-wrap:nowrap;gap:12px}
+.cab.app h1,.cab.app p,.cab.app .ventajas{display:none}
+.cab.app .marca{font-size:1rem;gap:8px}
+.cab.app .marca img{width:30px;height:30px;border-radius:8px}
+.cab.app .fecha-app{display:block;margin-top:4px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.88);text-transform:capitalize}
+.cab.app .hoy{min-width:0;flex:0 1 auto;padding:8px 12px;border-radius:14px;box-shadow:0 6px 16px rgba(20,10,60,.2);text-align:right}
+.cab.app .hoy small{display:none}
+.cab.app .hoy b{font-size:.95rem;margin:0;white-space:nowrap}
+.cab.app .hoy .man{font-size:.74rem}
+.cab.app .hoy .man.extra-app{display:none}
+.cab.app .hoy br{display:none}
+@media (max-width:380px){.cab.app .hoy .man{display:none}}
 /* Tarjetas y formularios */
 main{padding-block:20px 40px}
 .tarjeta{background:var(--panel);border:1px solid var(--linea);border-radius:18px;padding:16px 18px;margin-block:14px;box-shadow:var(--sombra)}
@@ -250,6 +265,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <div class="envoltura">
     <div>
       <div class="marca"><img src="icono.svg" alt="" width="34" height="34">TurnoWork<span id="insignia-pro" hidden style="font:800 .62rem/1 var(--texto);letter-spacing:.08em;background:#ffb020;color:#2b1a00;border-radius:6px;padding:4px 7px">PRO</span></div>
+      <div class="fecha-app" id="fecha-app"></div>
       <h1>Tu cuadrante de turnos para todo el año</h1>
       <p>Pon tu ciclo una vez y ve cada día del año: mañanas, tardes, noches, guardias, festivos y horas. Para sanitarios, bomberos, seguridad, fábricas, hostelería… </p>
       <div class="ventajas"><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos, en tu móvil</span></div>
@@ -692,7 +708,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const man2=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+1), t2=turno(man2);
     $("hoy").innerHTML=`<small>Hoy</small><b><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}</b>
       <span class="man">${x?`${hora(x.ini)}–${hora(finTurno(x))}`:""}${man?" · cambiado a mano":""}</span><br>
-      <span class="man">Mañana: ${esc(nombre(t2))}</span>${notasDe(fechaISO(hoy)).map(n=>`<br><span class="man">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}`;
+      <span class="man extra-app">Mañana: ${esc(nombre(t2))}</span>${notasDe(fechaISO(hoy)).map(n=>`<br><span class="man extra-app">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}`;
   }
 
   // ===== Libres en común (Pro): el cuadrante de otra persona, recibido por enlace =====
@@ -1023,7 +1039,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    aplicarColores(); pintarMejoras(); pintarSync(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
+    aplicarColores(); pintarMejoras(); pintarSync(); pintarTurnos();
+    document.querySelector(".cab").classList.toggle("app",!!PRO);
+    const sal=hoy.getHours()<13?"Buenos días":hoy.getHours()<20?"Buenas tardes":"Buenas noches";
+    $("fecha-app").textContent=`${sal}${Y.miNombre?", "+Y.miNombre:""} · ${hoy.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"})}`; $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     $("aviso-turno-caja").hidden=!PRO;
