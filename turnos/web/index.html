@@ -277,6 +277,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   </div>
 
   <section class="tarjeta pro-caja no-imprimir" id="pro">
+    <div id="pro-venta">
     <h2>TurnoWork <em>Pro</em> · 2,99 €, pago único</h2>
     <p class="nota" style="margin:0">El cuadrante es gratis para siempre. Pro es para quien quiere sacarle todo el jugo, y ayuda a mantener la web sin anuncios.</p>
     <ul class="pro-lista">
@@ -287,6 +288,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>📤</span><div><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</div></li>
       <li><span>💡</span><div><b>Buzón de mejoras.</b> Pide lo que te falte: las ideas de los usuarios Pro son las primeras que hacemos.</div></li>
     </ul>
+    </div>
     <div id="pro-estado"></div>
   </section>
 
@@ -559,7 +561,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
-    if(PRO){ $("pro-estado").innerHTML=`<p class="nota">✅ Pro activado con <b>${esc(PRO.email)}</b>. ¡Gracias por apoyar TurnoWork!</p>`; return; }
+    $("pro-venta").hidden=!!PRO;
+    if(PRO){ $("pro-estado").innerHTML=`<div class="pro-fila" style="justify-content:space-between"><span><b>✅ TurnoWork Pro activado</b><br><span class="nota">${esc(PRO.email)} · ¡Gracias por apoyar TurnoWork!</span></span></div>`; return; }
     $("pro-estado").innerHTML=`
       <div class="pro-fila">${KOFI_PRO?`<a class="boton primario" href="${KOFI_PRO}" target="_blank" rel="noopener">Comprar Pro en Ko-fi</a>`:`<span class="nota"><b>Muy pronto a la venta.</b></span>`}</div>
       <p class="nota" style="margin:12px 0 6px">¿Ya lo has comprado? Escribe el correo con el que pagaste en Ko-fi:</p>
