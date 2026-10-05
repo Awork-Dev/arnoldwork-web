@@ -156,8 +156,15 @@ async function comprobar(c) {
   return segundo;
 }
 
-async function revisarTodo() {
-  return Promise.all(COMPROBACIONES.map(comprobar));
+// Webs privadas: su dirección vive en un secreto de Cloudflare (nunca en este repositorio público)
+// y no salen en la página de estado pública, solo en Telegram.
+function privadas(env) {
+  const u = String((env && env.URL_INDICATIVO) || "").trim();
+  return /^https:\/\//.test(u) ? [{ nombre: "IndicativoWork", url: u, privado: true }] : [];
+}
+
+async function revisarTodo(env) {
+  return Promise.all([...COMPROBACIONES, ...privadas(env)].map(comprobar));
 }
 
 function informe(resultados, titulo) {
@@ -231,7 +238,7 @@ function cors(req) {
 
 async function revisionCadaMediaHora(env) {
   const m = memoria(env);
-  const resultados = await revisarTodo();
+  const resultados = await revisarTodo(env);
   const fallos = resultados.filter(r => !r.ok);
   const lentos = resultados.filter(r => r.lento);
 
@@ -269,7 +276,7 @@ async function revisionCadaMediaHora(env) {
 }
 
 async function resumenDiario(env) {
-  const resultados = await revisarTodo();
+  const resultados = await revisarTodo(env);
   const fallos = resultados.filter(r => !r.ok);
   const titulo = fallos.length
     ? `☀️ Buenos días. Hay ${fallos.length} cosa(s) que fallan:`
@@ -530,11 +537,11 @@ export default {
       });
     }
 
-    const resultados = await revisarTodo();
+    const resultados = await revisarTodo(env);
     if (url.searchParams.get("prueba") && autorizado) {
       await enviarTelegram(env, informe(resultados, "🧪 Prueba del vigilante de ArnoldWork"));
     }
-    return new Response(informe(resultados, "Estado de ArnoldWork"), {
+    return new Response(informe(autorizado ? resultados : resultados.filter(r => !r.privado), "Estado de ArnoldWork"), {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
   },
