@@ -175,6 +175,8 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .sem-info .linea{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:700}
 .sem-info .extra{color:var(--suave);font-size:.86rem;font-weight:600;overflow-wrap:anywhere}
 .planes{display:grid;gap:10px;margin-top:12px}
+.tres-botones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+.tres-botones .boton{justify-content:center;padding:10px 4px;font-size:.84rem;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
 .entreno{display:inline-flex;gap:5px;align-items:center;font-size:.8rem;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--panel);border:1px solid var(--linea);color:var(--tinta)}
 .cmp td.mas{color:var(--verde);font-weight:800}.cmp td.menos{color:var(--rojo);font-weight:800}
 .plan{border:2px solid var(--linea);border-radius:16px;padding:12px 14px;display:grid;gap:6px;background:var(--fondo)}
@@ -289,7 +291,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <section class="tarjeta no-imprimir" id="caja-entreno">
     <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
       <span id="entreno-res"><b>💪 Entrena según tus turnos</b></span>
-      <span style="display:flex;gap:6px;flex-wrap:wrap"><a class="boton primario" href="https://arnoldwork.com/herramientas/generador-de-rutina/" target="_blank" rel="noopener">Rutina gratis</a><a class="boton" href="https://heavywork.arnoldwork.com/" target="_blank" rel="noopener">HeavyWork</a><a class="boton" href="https://heavywork.arnoldwork.com/game/" target="_blank" rel="noopener">🦖 Juego</a></span>
+      <span class="tres-botones"><a class="boton primario" href="https://arnoldwork.com/herramientas/generador-de-rutina/" target="_blank" rel="noopener">💪 Rutina</a><a class="boton" href="https://heavywork.arnoldwork.com/" target="_blank" rel="noopener">HeavyWork</a><a class="boton" href="https://heavywork.arnoldwork.com/game/" target="_blank" rel="noopener">🦖 Juego</a></span>
     </div>
   </section>
   <section class="ganchos no-imprimir" id="ganchos" aria-label="Lo que puedes hacer con TurnoWork Pro">
