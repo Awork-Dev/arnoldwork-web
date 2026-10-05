@@ -312,6 +312,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>⚖️</span><div><b>Saldo de horas</b> frente a tu jornada anual y <b>resumen mes a mes</b>.</div></li>
       <li><span>✖️</span><div><b>Factores correctores</b> para tardes, noches, festivos y fines de semana, como diga tu convenio.</div></li>
       <li><span>📤</span><div><b>Exportar</b> a Excel, CSV y PDF para imprimir o enviar.</div></li>
+      <li><span>🔁</span><div><b>Notas que se repiten:</b> «los martes, piscina de 17:15 a 18:00» se pone una vez y sale todas las semanas, también en el calendario.</div></li>
       <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
@@ -403,6 +404,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   if(!Y||!Y.patron) Y={patron:MODELOS[0][1],ref:fechaISO(hoy),pos:0,turnos:JSON.parse(JSON.stringify(TURNOS_DEF)),cambios:{},anio:hoy.getFullYear(),comunidad:"",fest:{extra:{},quita:[]},saldo:{jornada:0,haus:8}};
   Y.saldo=Object.assign({jornada:0,haus:8,fFest:1,fFinde:1,modo:"mayor"},Y.saldo||{});
   if(!Y.notas) Y.notas={};
+  if(!Y.repes) Y.repes=[];   // notas que se repiten (Pro): {id,t,h,hf,tipo:"semana"|"mes"|"anio",desde,hasta}
   if(!Y.cupos) Y.cupos={V:0,AP:0};
   if(Y.avisoTurno==null) Y.avisoTurno=0;   // notas por día: {"2026-10-05": {t:"Revisión médica", h:"09:30"}}
   const guardar=()=>escribir("tw_cuadrante",Y);
@@ -502,12 +504,27 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   function durTxt(h){return `Duración: ${horasTxt(h)}${h>=24?" (guardia)":""}`;}
   const hora=v=>`${p2(Math.floor(v%24))}:${p2(Math.round((v%1)*60))}`;
 
+  // ===== Notas: las de un día y las que se repiten =====
+  const DIAS_SEM=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+  function repeAplica(r,d){
+    const f=fechaISO(d); if(f<r.desde||(r.hasta&&f>r.hasta)) return false;
+    const o=deISO(r.desde);
+    if(r.tipo==="semana") return d.getDay()===o.getDay();
+    if(r.tipo==="mes") return d.getDate()===o.getDate();
+    if(r.tipo==="anio") return d.getDate()===o.getDate()&&d.getMonth()===o.getMonth();
+    return false;
+  }
+  const repeTxt=r=>{const o=deISO(r.desde);return r.tipo==="semana"?`cada ${DIAS_SEM[o.getDay()]}`:r.tipo==="mes"?`cada mes, el día ${o.getDate()}`:`cada año, el ${o.toLocaleDateString("es-ES",{day:"numeric",month:"long"})}`;};
+  const horario=n=>n.h?(n.hf?`${n.h}–${n.hf}`:n.h):"";
+  function notasDe(f){const d=deISO(f), L=[]; if(Y.notas[f]) L.push(Y.notas[f]); if(PRO) Y.repes.forEach(r=>{if(repeAplica(r,d)) L.push(r);}); return L;}
+  const notaLinea=n=>(horario(n)?horario(n)+" · ":"")+n.t+(n.tipo?` (${repeTxt(n)})`:"");
+
   function pintarHoy(){
     const t=turno(hoy), x=Y.turnos[t], man=Y.cambios[fechaISO(hoy)];
     const man2=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+1), t2=turno(man2);
     $("hoy").innerHTML=`<small>Hoy</small><b><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}</b>
       <span class="man">${x?`${hora(x.ini)}–${hora(finTurno(x))}`:""}${man?" · cambiado a mano":""}</span><br>
-      <span class="man">Mañana: ${esc(nombre(t2))}</span>${Y.notas[fechaISO(hoy)]?`<br><span class="man">📝 ${esc((Y.notas[fechaISO(hoy)].h?Y.notas[fechaISO(hoy)].h+" · ":"")+Y.notas[fechaISO(hoy)].t)}</span>`:""}`;
+      <span class="man">Mañana: ${esc(nombre(t2))}</span>${notasDe(fechaISO(hoy)).map(n=>`<br><span class="man">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}`;
   }
 
   // ===== Libres en común (Pro): el cuadrante de otra persona, recibido por enlace =====
@@ -576,7 +593,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     $("cupos").querySelectorAll("[data-cupo]").forEach(i=>i.addEventListener("change",e=>{Y.cupos[e.target.dataset.cupo]=Math.max(0,Math.round(+e.target.value||0));cambio();}));
   }
 
+  let cacheNS={}; const NS=f=>cacheNS[f]||(cacheNS[f]=notasDe(f));
   function pintar(){
+    cacheNS={};
     const {dias,total,meses}=datos(), a=+Y.anio, pri=dias[0], ult=dias[dias.length-1];
     $("desc").textContent=`· ${ciclo().join(" ")}`;
     $("titulo-imp").textContent=`Mi cuadrante · ${a}`;
@@ -597,7 +616,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const D=dias.filter(x=>x.d.getMonth()===m), hueco=(D[0].d.getDay()+6)%7;
       return `<div class="mes"><h3>${n}</h3><div class="sem">${["L","M","X","J","V","S","D"].map(x=>`<span>${x}</span>`).join("")}</div>
         <div class="dias">${"<span></span>".repeat(hueco)}${D.map(x=>{const w=x.d.getDay(),f=fechaISO(x.d);
-          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${Y.notas[f]?" con-nota":""}${comun(x.d)?" comun":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${Y.notas[f]?". Nota: "+esc(Y.notas[f].t):""}"${x.fest||Y.notas[f]?` title="${esc([x.fest,Y.notas[f]&&((Y.notas[f].h?Y.notas[f].h+" · ":"")+Y.notas[f].t)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
+          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(x.d)?" comun":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}"${x.fest||NS(f).length?` title="${esc([x.fest,...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
     }).join("");
     const cortos=dias.filter(x=>x.corto).length;
     $("leyenda").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `<span><span class="c t-${k}">${k}</span> ${esc(t.n)} ${hora(t.ini)}–${hora(finTurno(t))}</span>`;}).join("")
@@ -684,7 +703,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 
   // ===== Exportar (Pro) =====
   const SEMANA=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
-  const notaTxt=f=>{const n=Y.notas[f];return n?(n.h?n.h+" · ":"")+n.t:"";};
+  const notaTxt=f=>notasDe(f).map(notaLinea).join(" | ");
   const filas=()=>[["Fecha","Día","Turno","Descripción","Horas","Festivo","Nota"],...datos().dias.map(x=>[x.d.toLocaleDateString("es-ES"),SEMANA[x.d.getDay()],x.t,nombre(x.t),esTrabajo(x.t)?horasTxt(Y.turnos[x.t].h):"",x.fest||"",notaTxt(fechaISO(x.d)).replace(/\s+/g," ")])];
   function descargar(nombreArchivo,contenido,tipo){
     const u=URL.createObjectURL(new Blob([contenido],{type:tipo}));
@@ -705,15 +724,22 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const icsTxt=t=>String(t).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");
   const fmtICS=(d,h)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,Math.round(h*60));return `${x.getFullYear()}${p2(x.getMonth()+1)}${p2(x.getDate())}T${p2(x.getHours())}${p2(x.getMinutes())}00`;};
   const selloICS=()=>new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
-  function eventoNota(f,sello){
-    const n=Y.notas[f]; if(!n) return [];
+  function eventoDe(n,f,uid,sello,rrule){
     const d=deISO(f), k=f.replace(/-/g,""), resumen="📝 "+n.t.split("\n")[0].slice(0,80);
-    const ev=["BEGIN:VEVENT",`UID:tw-nota-${k}@turnos.arnoldwork.com`,`DTSTAMP:${sello}`];
-    if(n.h){const h=deHHMM(n.h); ev.push(`DTSTART:${fmtICS(d,h)}`,`DTEND:${fmtICS(d,h+1)}`);}
+    const ev=["BEGIN:VEVENT",`UID:${uid}@turnos.arnoldwork.com`,`DTSTAMP:${sello}`];
+    if(n.h){const h=deHHMM(n.h); let hf=n.hf?deHHMM(n.hf):h+1; if(hf<=h) hf+=24; ev.push(`DTSTART:${fmtICS(d,h)}`,`DTEND:${fmtICS(d,hf)}`);}
     else{const sig=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1); ev.push(`DTSTART;VALUE=DATE:${k}`,`DTEND;VALUE=DATE:${fechaISO(sig).replace(/-/g,"")}`,"TRANSP:TRANSPARENT");}
+    if(rrule) ev.push("RRULE:"+rrule);
     ev.push(`SUMMARY:${icsTxt(resumen)}`,`DESCRIPTION:${icsTxt(n.t)}`);
     if(n.h) ev.push("BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsTxt(resumen)}`,"TRIGGER:-PT30M","END:VALARM");
     ev.push("END:VEVENT"); return ev;
+  }
+  function eventoNota(f,sello){const n=Y.notas[f]; return n?eventoDe(n,f,"tw-nota-"+f.replace(/-/g,""),sello):[];}
+  function eventoRepe(r,sello){
+    const o=deISO(r.desde), BY=["SU","MO","TU","WE","TH","FR","SA"];
+    let rr=r.tipo==="semana"?`FREQ=WEEKLY;BYDAY=${BY[o.getDay()]}`:r.tipo==="mes"?`FREQ=MONTHLY;BYMONTHDAY=${o.getDate()}`:"FREQ=YEARLY";
+    if(r.hasta) rr+=";UNTIL="+r.hasta.replace(/-/g,"")+(r.h?"T235959":"");
+    return eventoDe(r,r.desde,"tw-repe-"+r.id,sello,rr);
   }
   $("ics").addEventListener("click",exigePro(()=>{
     const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ArnoldWork//TurnoWork//ES","CALSCALE:GREGORIAN","X-WR-CALNAME:Mis turnos "+Y.anio];
@@ -728,6 +754,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         ics.push("BEGIN:VEVENT",`UID:tw-${f}@turnos.arnoldwork.com`,`DTSTAMP:${sello}`,`DTSTART;VALUE=DATE:${f}`,`DTEND;VALUE=DATE:${fechaISO(sig).replace(/-/g,"")}`,`SUMMARY:${MANUALES[x.t]}`,"TRANSP:TRANSPARENT","END:VEVENT");}
       ics.push(...eventoNota(fechaISO(x.d),sello));
     });
+    Y.repes.forEach(r=>ics.push(...eventoRepe(r,sello)));
     ics.push("END:VCALENDAR");
     descargar(`mis-turnos-${Y.anio}.ics`,ics.join("\r\n"),"text/calendar;charset=utf-8");
   }));
@@ -785,22 +812,44 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       e.target.textContent=ok?"Copiado ✓":"No se pudo copiar"; setTimeout(()=>{cerrarMenu();apuntar(c);},700);});
   }
   function formNota(f){
-    const n=Y.notas[f]||{t:"",h:""};
-    menu.innerHTML=`<small>📝 Nota · ${diaTxt(f)}</small>
-      <label>Qué quieres apuntar<textarea id="nt-txt" maxlength="500" placeholder="Por ejemplo: revisión médica, juicio en Palma, cumpleaños…">${esc(n.t)}</textarea></label>
-      <label>Hora (opcional)<input type="time" id="nt-hora" value="${esc(n.h||"")}"></label>
-      <div class="dos"><button class="boton primario" id="nt-ok">Guardar</button>${Y.notas[f]?`<button class="boton" id="nt-borrar">Borrar</button>`:""}</div>
+    const n=Y.notas[f]||{t:"",h:"",hf:""}, d=deISO(f);
+    const repesDia=PRO?Y.repes.filter(r=>repeAplica(r,d)):[];
+    menu.innerHTML=`<small>📝 Notas · ${diaTxt(f)}</small>
+      ${repesDia.map(r=>`<div class="aviso-pro" style="margin:0">🔁 ${esc(notaLinea(r))}<span class="dos"><button class="boton" data-cal-repe="${r.id}">📅</button><button class="boton" data-quitar-repe="${r.id}">Quitar</button></span></div>`).join("")}
+      <label>Qué quieres apuntar<textarea id="nt-txt" maxlength="500" placeholder="Por ejemplo: piscina de la peque, revisión médica, cumpleaños…">${esc(n.t)}</textarea></label>
+      <div class="dos"><label style="flex:1 1 110px">Desde (opcional)<input type="time" id="nt-hora" value="${esc(n.h||"")}"></label><label style="flex:1 1 110px">Hasta (opcional)<input type="time" id="nt-hf" value="${esc(n.hf||"")}"></label></div>
+      <label>Repetir${PRO?"":" 🔒"}<select id="nt-rep"><option value="">No, solo este día</option><option value="semana">Cada ${DIAS_SEM[d.getDay()]}</option><option value="mes">Cada mes, el día ${d.getDate()}</option><option value="anio">Cada año, el ${d.toLocaleDateString("es-ES",{day:"numeric",month:"long"})}</option></select></label>
+      <label id="nt-hasta-l" hidden>Repetir hasta (opcional)<input type="date" id="nt-hasta" min="${f}"></label>
+      <div id="nt-aviso"></div>
+      <div class="dos"><button class="boton primario" id="nt-ok">Guardar</button>${Y.notas[f]?`<button class="boton" id="nt-borrar">Borrar nota</button>`:""}</div>
       <button class="boton${PRO?"":" pro"}" id="nt-cal">📅 Al calendario del móvil</button>`;
-    const txt=menu.querySelector("#nt-txt"); txt.focus();
-    const guardarNota=()=>{const t=txt.value.trim(), h=menu.querySelector("#nt-hora").value;
-      if(t) Y.notas[f]={t,h}; else delete Y.notas[f]; guardar(); pintar(); return !!t;};
-    menu.querySelector("#nt-ok").addEventListener("click",()=>{guardarNota();cerrarMenu();});
+    const txt=menu.querySelector("#nt-txt"), sel=menu.querySelector("#nt-rep"); txt.focus();
+    sel.addEventListener("change",()=>{
+      menu.querySelector("#nt-hasta-l").hidden=!sel.value;
+      menu.querySelector("#nt-aviso").innerHTML=sel.value&&!PRO?`<div class="aviso-pro">🔁 Repetir notas (como «los martes, piscina de 17:15 a 18:00») es de Pro.<button class="boton primario" data-ir-pro>Ver Pro</button></div>`:"";
+    });
+    // Devuelve qué se ha guardado: {nota:f} o {repe:r}; null si falta texto o no se puede repetir sin Pro.
+    const guardarNota=()=>{
+      const t=txt.value.trim(), h=menu.querySelector("#nt-hora").value, hf=h?menu.querySelector("#nt-hf").value:"", tipo=sel.value;
+      if(!t){ if(!tipo){delete Y.notas[f];guardar();pintar();} return null; }
+      if(tipo){ if(!PRO) return null;
+        const r={id:Date.now().toString(36),t,h,hf,tipo,desde:f,hasta:menu.querySelector("#nt-hasta").value||""};
+        Y.repes.push(r); delete Y.notas[f]; guardar(); pintar(); return {repe:r}; }
+      Y.notas[f]={t,h,hf}; guardar(); pintar(); return {nota:f};
+    };
+    menu.querySelector("#nt-ok").addEventListener("click",()=>{ if(sel.value&&!PRO){sel.dispatchEvent(new Event("change"));return;} guardarNota(); cerrarMenu(); });
     const b=menu.querySelector("#nt-borrar"); if(b) b.addEventListener("click",()=>{delete Y.notas[f];guardar();cerrarMenu();pintar();});
+    const bajar=(ev,nombre)=>descargar(nombre,["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ArnoldWork//TurnoWork//ES","CALSCALE:GREGORIAN",...ev,"END:VCALENDAR"].join("\r\n"),"text/calendar;charset=utf-8");
+    menu.querySelectorAll("[data-quitar-repe]").forEach(x=>x.addEventListener("click",()=>{
+      const r=Y.repes.find(z=>z.id===x.dataset.quitarRepe); if(!r) return;
+      if(!confirm(`¿Quitar «${r.t}» (${repeTxt(r)}) de todos los días?`)) return;
+      Y.repes=Y.repes.filter(z=>z!==r); guardar(); cerrarMenu(); pintar();}));
+    menu.querySelectorAll("[data-cal-repe]").forEach(x=>x.addEventListener("click",()=>{
+      const r=Y.repes.find(z=>z.id===x.dataset.calRepe); if(r){bajar(eventoRepe(r,selloICS()),`nota-${r.id}.ics`);cerrarMenu();}}));
     menu.querySelector("#nt-cal").addEventListener("click",()=>{
       if(!PRO){cerrarMenu();$("pro").scrollIntoView({behavior:"smooth",block:"center"});return;}
-      if(!guardarNota()){txt.focus();return;}
-      const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ArnoldWork//TurnoWork//ES","CALSCALE:GREGORIAN",...eventoNota(f,selloICS()),"END:VCALENDAR"];
-      descargar(`nota-${f}.ics`,ics.join("\r\n"),"text/calendar;charset=utf-8"); cerrarMenu();
+      const g=guardarNota(); if(!g){txt.focus();return;}
+      bajar(g.repe?eventoRepe(g.repe,selloICS()):eventoNota(f,selloICS()),`nota-${g.repe?g.repe.id:f}.ics`); cerrarMenu();
     });
   }
 
@@ -851,7 +900,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     menu.innerHTML=`<small>${f.split("-").reverse().join("/")}${fe?" · ★ "+esc(fe):""}</small><div class="fila">${opciones.map(k=>`<button class="c t-${k}" data-c="${k}" title="${esc(nombre(k))}">${k}</button>`).join("")}</div>
       ${Y.cambios[f]?`<button class="boton" data-c="">Volver al ciclo (${esc(turnoCiclo(deISO(f)))})</button>`:""}
       <button class="boton" data-fest="${fe?"quitar":"poner"}">${fe?"Quitar festivo":"★ Marcar como festivo"}</button>
-      <button class="boton" data-nota>📝 ${Y.notas[f]?"Ver o cambiar la nota":"Añadir una nota"}</button>
+      <button class="boton" data-nota>📝 ${notasDe(f).length?"Ver o cambiar notas":"Añadir una nota"}</button>
       ${esTrabajo(turno(deISO(f)))?`<button class="boton" data-cambio>↔ Proponer cambio a un compañero</button>`:""}`;
     document.body.append(menu);
     const r=el.getBoundingClientRect(), w=menu.offsetWidth;
