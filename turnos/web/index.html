@@ -137,6 +137,22 @@ fieldset.turno .dur{font-size:.8rem;color:var(--suave);font-weight:700;padding-b
 .dia.comun.hoy{box-shadow:inset 0 0 0 2.5px var(--verde),0 0 0 2.5px var(--acento)}
 .lista-comun{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;padding:0;list-style:none}
 .lista-comun li{background:var(--fondo);border:1.5px solid var(--verde);border-radius:999px;padding:4px 10px;font-size:.82rem;font-weight:700}
+.semana{display:grid;gap:8px;margin-top:10px}
+.sem-dia{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:start;padding:10px 12px;border-radius:14px;background:var(--fondo)}
+.sem-dia.es-hoy{background:var(--acento-suave);box-shadow:inset 0 0 0 2px var(--acento)}
+.sem-fecha{display:grid;justify-items:center;line-height:1.1}
+.sem-fecha small{color:var(--suave);font-weight:800;text-transform:uppercase;font-size:.68rem;letter-spacing:.06em}
+.sem-fecha b{font:600 1.35rem/1.1 var(--display)}
+.sem-info{display:grid;gap:4px;min-width:0}
+.sem-info .linea{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:700}
+.sem-info .extra{color:var(--suave);font-size:.86rem;font-weight:600;overflow-wrap:anywhere}
+.planes{display:grid;gap:10px;margin-top:12px}
+.plan{border:2px solid var(--linea);border-radius:16px;padding:12px 14px;display:grid;gap:6px;background:var(--fondo)}
+.plan.mejor{border-color:var(--verde)}
+.plan b.grande{font:600 1.15rem/1.3 var(--display)}
+.dia.regla::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#e64980}
+.dia.regla-prev::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;border:1.5px solid #e64980;background:transparent}
+.dia.fest.regla::after,.dia.fest.regla-prev::after{right:12px}
 .dia.con-nota::before{content:"";position:absolute;bottom:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--acento);box-shadow:0 0 0 1.5px var(--panel)}
 .menu textarea{min-height:70px}
 .menu .dos{display:flex;gap:6px;flex-wrap:wrap}
@@ -262,6 +278,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     </div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-semana">
+    <p class="titulo" style="margin:0">🗓️ Mi semana</p>
+    <div class="semana" id="semana"></div>
+  </section>
+
   <details class="tarjeta no-imprimir" id="ajustes">
     <summary>Mi ciclo <span class="nota" id="desc"></span></summary>
     <div class="form">
@@ -318,6 +339,21 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <div id="cupos"></div>
   </section>
 
+  <section class="tarjeta no-imprimir" id="caja-plan">
+    <p class="titulo" style="margin:0">✈️ Planificador de vacaciones</p>
+    <div id="plan"></div>
+  </section>
+
+  <section class="tarjeta no-imprimir" id="caja-pluses">
+    <p class="titulo" style="margin:0">💶 Pluses en euros</p>
+    <div id="pluses"></div>
+  </section>
+
+  <details class="tarjeta no-imprimir" id="caja-menstrual">
+    <summary>🌸 Ciclo menstrual <span class="nota">(opcional)</span></summary>
+    <div id="menstrual"></div>
+  </details>
+
   <section class="tarjeta no-imprimir" id="caja-pareja">
     <p class="titulo" style="margin:0">👫 Libres en común</p>
     <div id="pareja"></div>
@@ -350,6 +386,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
+      <li><span>✈️</span><div><b>Planificador de vacaciones:</b> dile cuántos días quieres y te dice cuáles pedir para descansar más días seguidos.</div></li>
+      <li><span>💶</span><div><b>Pluses en euros:</b> lo que llevas de nocturnidad, festivos y fines de semana, mes a mes.</div></li>
       <li><span>🎨</span><div><b>El color de cada turno a tu gusto</b>, para ver tu año de un vistazo.</div></li>
       <li><span>💾</span><div><b>Copia de seguridad</b> para no perder nada y pasar tu cuadrante a otro móvil.</div></li>
       <li><span>💡</span><div><b>¿Quieres una función? Pídela.</b> Los usuarios Pro tienen buzón directo y sus ideas son las primeras que hacemos.</div></li>
@@ -638,6 +676,127 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   }
 
   // ===== Cupo de vacaciones y asuntos propios (Pro) =====
+  // ===== Mi semana (gratis): los próximos 7 días =====
+  function pintarSemana(){
+    const base=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()), DS=["dom","lun","mar","mié","jue","vie","sáb"];
+    let html="";
+    for(let i=0;i<7;i++){
+      const d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+i), f=fechaISO(d), t=turno(d), x=Y.turnos[t], fe=festivo(d);
+      const ns=notasDe(f), m=menstrualDia(f);
+      html+=`<div class="sem-dia${i===0?" es-hoy":""}"><div class="sem-fecha"><small>${i===0?"hoy":i===1?"mañana":DS[d.getDay()]}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString("es-ES",{month:"short"})}</small></div>
+        <div class="sem-info"><div class="linea"><span class="c t-${esc(t)}">${esc(t)}</span> ${esc(nombre(t))}${x?` <span class="extra">${hora(x.ini)}–${hora(finTurno(x))} · ${horasTxt(x.h)}</span>`:""}${Y.cambios[f]?` <span class="extra">· cambiado</span>`:""}</div>
+        ${fe?`<span class="extra">★ ${esc(fe)}</span>`:""}${ns.map(n=>`<span class="extra">📝 ${esc(horario(n)?horario(n)+" · "+n.t:n.t)}</span>`).join("")}${m?`<span class="extra">🌸 ${m==="regla"?"Regla":"Regla prevista"}</span>`:""}</div></div>`;
+    }
+    $("semana").innerHTML=html;
+  }
+
+  // ===== Planificador de vacaciones (Pro) =====
+  const trabaja=d=>esTrabajo(turno(d));
+  function planes(n,desde,hasta){
+    const sum=(d,k)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+k), C=[];
+    for(let s=new Date(desde);s<=hasta;s=sum(s,1)){
+      if(!trabaja(s)) continue;
+      let usados=0,e=new Date(s),ult=null;
+      for(let g=0;g<120&&usados<n;g++){ if(trabaja(e)){usados++;ult=new Date(e);} e=sum(e,1); }
+      if(usados<n||ult>hasta) continue;
+      let a=new Date(s); for(let g=0;g<60&&!trabaja(sum(a,-1));g++) a=sum(a,-1);
+      let b=new Date(ult); for(let g=0;g<60&&!trabaja(sum(b,1));g++) b=sum(b,1);
+      C.push({s:new Date(s),ult,a,b,total:diasEntre(a,b)+1});
+    }
+    C.sort((x,y)=>y.total-x.total||x.s-y.s);
+    const elegidos=[];
+    for(const c of C){ if(elegidos.some(e=>!(c.b<e.a||c.a>e.b))) continue; elegidos.push(c); if(elegidos.length===3) break; }
+    return elegidos;
+  }
+  function pintarPlan(){
+    const caja=$("plan");
+    if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Dile cuántos días de vacaciones quieres gastar y te dice qué días pedir para encadenarlos con tus libres y descansar el máximo seguido. Ningún calendario hace esto.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    const P=Y.plan||(Y.plan={n:5,desde:fechaISO(hoy),hasta:`${hoy.getFullYear()+(hoy.getMonth()>=9?1:0)}-12-31`});
+    caja.innerHTML=`<div class="form">
+        <label>Días de vacaciones que quieres gastar<input type="number" id="pl-n" min="1" max="30" value="${P.n}" inputmode="numeric"></label>
+        <label>Desde<input type="date" id="pl-desde" value="${P.desde}"></label>
+        <label>Hasta<input type="date" id="pl-hasta" value="${P.hasta}"></label>
+      </div><div class="acciones" style="margin:12px 0 0"><button class="boton primario" id="pl-ir">Buscar los mejores días</button></div><div class="planes" id="pl-res"></div>
+      <p class="nota" style="margin:8px 0 0">Cuenta como vacaciones solo tus días de turno: los libres que quedan en medio no gastan días.</p>`;
+    $("pl-ir").addEventListener("click",()=>{
+      P.n=Math.max(1,Math.min(30,Math.round(+$("pl-n").value||5))); P.desde=$("pl-desde").value||fechaISO(hoy); P.hasta=$("pl-hasta").value||P.desde; guardar();
+      const L=planes(P.n,deISO(P.desde),deISO(P.hasta)), fc=d=>d.toLocaleDateString("es-ES",{weekday:"short",day:"numeric",month:"short"});
+      $("pl-res").innerHTML=L.length?L.map((c,i)=>`<div class="plan${i===0?" mejor":""}"><b class="grande">${i===0?"⭐ ":""}${c.total} días seguidos de descanso</b>
+        <span>Pide del <b>${fc(c.s)}</b> al <b>${fc(c.ult)}</b> (${P.n} días de turno).</span><span class="nota">Descansas del ${fc(c.a)} al ${fc(c.b)}.</span>
+        <div><button class="boton" data-marcar="${fechaISO(c.s)}|${fechaISO(c.ult)}">Marcar como vacaciones</button></div></div>`).join("")
+        :`<p class="nota">No caben ${P.n} días de turno entre esas fechas. Amplía el «Hasta» o pide menos días.</p>`;
+    });
+    $("pl-res").addEventListener("click",e=>{const b=e.target.closest("[data-marcar]"); if(!b) return;
+      const [a,z]=b.dataset.marcar.split("|"); let k=0;
+      for(let d=deISO(a);d<=deISO(z);d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)) if(trabaja(d)){Y.cambios[fechaISO(d)]="V";k++;}
+      guardar(); pintar(); b.textContent=`✓ ${k} días marcados como V`; b.disabled=true;});
+  }
+
+  // ===== Pluses en euros (Pro) =====
+  function horasNoche(ini,h){ // horas del turno entre las 22:00 y las 6:00
+    let r=0; for(const [a,b] of [[-2,6],[22,30],[46,54]]) r+=Math.max(0,Math.min(ini+h,b)-Math.max(ini,a)); return r;
+  }
+  function pintarPluses(dias){
+    const caja=$("pluses");
+    if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:8px 0">Pon lo que te pagan por hora de noche, de festivo o de fin de semana y te dice cuánto llevas de pluses, mes a mes.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    const E=Y.euros||(Y.euros={noche:0,fest:0,finde:0});
+    const meses=MESES.map(n=>({n,noche:0,fest:0,finde:0}));
+    dias.forEach(x=>{ const t=Y.turnos[x.t]; if(!t) return; const M=meses[x.d.getMonth()], w=x.d.getDay();
+      M.noche+=horasNoche(t.ini,t.h); if(x.fest) M.fest+=t.h; if(w===0||w===6) M.finde+=t.h; });
+    const eur=v=>v.toLocaleString("es-ES",{style:"currency",currency:"EUR"});
+    const tot={noche:0,fest:0,finde:0,e:0}; meses.forEach(M=>{M.e=M.noche*E.noche+M.fest*E.fest+M.finde*E.finde; tot.noche+=M.noche; tot.fest+=M.fest; tot.finde+=M.finde; tot.e+=M.e;});
+    const hayE=E.noche||E.fest||E.finde;
+    caja.innerHTML=`<div class="form">
+        <label>€ por hora de noche (22:00–6:00)<input type="number" min="0" step="0.01" inputmode="decimal" data-eur="noche" value="${E.noche||""}" placeholder="Por ejemplo, 2,10"></label>
+        <label>€ por hora en festivo<input type="number" min="0" step="0.01" inputmode="decimal" data-eur="fest" value="${E.fest||""}"></label>
+        <label>€ por hora en sábado o domingo<input type="number" min="0" step="0.01" inputmode="decimal" data-eur="finde" value="${E.finde||""}"></label>
+      </div>
+      ${hayE?`<div class="resumen"><div><small>Pluses de ${+Y.anio}</small><b>${eur(tot.e)}</b></div><div><small>Horas de noche</small><b>${horasTxt(tot.noche)}</b></div><div><small>Horas en festivo</small><b>${horasTxt(tot.fest)}</b></div><div><small>Horas en finde</small><b>${horasTxt(tot.finde)}</b></div></div>
+      <div class="tabla"><table><thead><tr><th>Mes</th><th>Noche</th><th>Festivo</th><th>Finde</th><th>Pluses</th></tr></thead><tbody>${meses.map(M=>`<tr><th>${M.n}</th><td>${horasTxt(M.noche)}</td><td>${horasTxt(M.fest)}</td><td>${horasTxt(M.finde)}</td><td><b>${eur(M.e)}</b></td></tr>`).join("")}</tbody></table></div>`
+      :`<p class="nota">Pon al menos un importe para ver tus pluses.</p>`}
+      <p class="nota" style="margin:8px 0 0">Cálculo orientativo con tu cuadrante: compáralo siempre con tu nómina y tu convenio.</p>`;
+    caja.querySelectorAll("[data-eur]").forEach(i=>i.addEventListener("change",e=>{E[e.target.dataset.eur]=Math.max(0,parseFloat(String(e.target.value).replace(",","."))||0);cambio();}));
+  }
+
+  // ===== Ciclo menstrual (opcional; solo en este móvil, no se sincroniza ni va al calendario) =====
+  let CM=leer("tw_menstrual",null)||{activo:false,inicios:[],dur:5};
+  const guardarCM=()=>escribir("tw_menstrual",CM);
+  function cicloMedio(){
+    const I=[...CM.inicios].sort(), dif=[];
+    for(let i=1;i<I.length;i++){const d=diasEntre(deISO(I[i-1]),deISO(I[i])); if(d>=18&&d<=60) dif.push(d);}
+    const ult=dif.slice(-6); return ult.length?Math.round(ult.reduce((a,b)=>a+b,0)/ult.length):28;
+  }
+  let cacheCM=null;
+  function mapaCM(){
+    if(cacheCM) return cacheCM; const m={}; if(!CM.activo||!CM.inicios.length) return cacheCM=m;
+    const I=[...CM.inicios].sort(), dur=+CM.dur||5, med=cicloMedio();
+    const marca=(ini,tipo)=>{for(let k=0;k<dur;k++){const d=deISO(ini); d.setDate(d.getDate()+k); const f=fechaISO(d); if(!m[f]||tipo==="regla") m[f]=tipo;}};
+    I.forEach(f=>marca(f,"regla"));
+    let p=deISO(I[I.length-1]); for(let k=0;k<14;k++){ p=new Date(p.getFullYear(),p.getMonth(),p.getDate()+med); marca(fechaISO(p),"prev"); }
+    return cacheCM=m;
+  }
+  const menstrualDia=f=>{const t=mapaCM()[f]; return t==="regla"?"regla":t==="prev"?"prev":"";};
+  function pintarMenstrual(){
+    const caja=$("menstrual");
+    if(!CM.activo){ caja.innerHTML=`<p class="nota" style="margin:10px 0">Apunta cuándo te viene la regla y TurnoWork te dice cuándo toca la siguiente, junto a tus turnos. Todo se queda <b>solo en este móvil</b>: no se sincroniza, no va al calendario y no se envía a ningún sitio.</p><button class="boton primario" id="cm-on">Activar</button>`;
+      $("cm-on").addEventListener("click",()=>{CM.activo=true;guardarCM();cacheCM=null;pintar();}); return; }
+    const I=[...CM.inicios].sort(), med=cicloMedio(), hoyD=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
+    let prox=null; if(I.length){ let p=deISO(I[I.length-1]); while(p<=hoyD) p=new Date(p.getFullYear(),p.getMonth(),p.getDate()+med); prox=p; }
+    const diaCiclo=I.length?diasEntre(deISO(I[I.length-1]),hoyD)+1:null;
+    caja.innerHTML=`${I.length?`<div class="resumen"><div><small>Próxima regla prevista</small><b>${prox.toLocaleDateString("es-ES",{day:"numeric",month:"short"})}</b><span class="nota" style="display:block">en ${diasEntre(hoyD,prox)} días</span></div>
+        <div><small>Día del ciclo</small><b>${diaCiclo}</b></div><div><small>Ciclo medio</small><b>${med} días</b></div></div>
+        ${prox&&Y.turnos[turno(prox)]?`<p class="nota" style="margin:0">Ese día tienes <b>${esc(nombre(turno(prox)))}</b>.</p>`:""}`
+      :`<p class="nota" style="margin:10px 0">Toca en el año el día en que te vino la regla y pulsa <b>«🌸 Me vino la regla»</b>.</p>`}
+      <div class="acciones" style="margin:12px 0 0"><button class="boton primario" id="cm-hoy">🌸 Me ha venido hoy</button>
+      <label class="nota" style="display:inline-flex;gap:6px;align-items:center">Días que dura<input type="number" id="cm-dur" min="2" max="10" value="${+CM.dur||5}" style="width:70px;padding:8px"></label></div>
+      ${I.length?`<p class="nota" style="margin:8px 0 0">Últimos inicios: ${I.slice(-6).reverse().map(f=>deISO(f).toLocaleDateString("es-ES",{day:"numeric",month:"short"})).join(" · ")}</p>`:""}
+      <p class="nota" style="margin:8px 0 0">En el año: <span style="color:#e64980">●</span> regla apuntada, <span style="color:#e64980">○</span> prevista. Es una previsión orientativa: <b>no sirve como método anticonceptivo</b> ni sustituye a tu médico. Solo se guarda en este móvil.</p>
+      <div class="acciones" style="margin:8px 0 0"><button class="boton" id="cm-off">Desactivar y borrar</button></div>`;
+    $("cm-hoy").addEventListener("click",()=>{const f=fechaISO(hoy); if(!CM.inicios.includes(f)) CM.inicios.push(f); guardarCM(); cacheCM=null; pintar();});
+    $("cm-dur").addEventListener("change",e=>{CM.dur=Math.max(2,Math.min(10,Math.round(+e.target.value||5)));guardarCM();cacheCM=null;pintar();});
+    $("cm-off").addEventListener("click",()=>{if(!confirm("¿Desactivar y borrar todo lo apuntado del ciclo menstrual?"))return; CM={activo:false,inicios:[],dur:5}; guardarCM(); cacheCM=null; pintar();});
+  }
+
   function pintarCupos(total){
     const usadoV=total.man.V||0, usadoAP=total.man.AP||0;
     if(!PRO){ $("cupos").innerHTML=`<p class="nota" style="margin:8px 0">Este año llevas <b>${usadoV}</b> días de vacaciones y <b>${usadoAP}</b> de asuntos propios marcados. Con Pro pones tu cupo y ves cuántos te quedan.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
@@ -652,8 +811,10 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   }
 
   let cacheNS={}; const NS=f=>cacheNS[f]||(cacheNS[f]=notasDe(f));
+  // El planificador conserva lo que tienes escrito: solo se vuelve a pintar al entrar o al cambiar Pro.
+  let planPintado=null; function pintarPlanSiCambia(){ if(planPintado!==!!PRO){ planPintado=!!PRO; pintarPlan(); } }
   function pintar(){
-    cacheNS={};
+    cacheNS={}; cacheCM=null;
     const {dias,total,meses}=datos(), a=+Y.anio, pri=dias[0], ult=dias[dias.length-1];
     $("desc").textContent=`· ${ciclo().join(" ")}`;
     $("titulo-imp").textContent=`Mi cuadrante · ${a}`;
@@ -674,14 +835,14 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       const D=dias.filter(x=>x.d.getMonth()===m), hueco=(D[0].d.getDay()+6)%7;
       return `<div class="mes"><h3>${n}</h3><div class="sem">${["L","M","X","J","V","S","D"].map(x=>`<span>${x}</span>`).join("")}</div>
         <div class="dias">${"<span></span>".repeat(hueco)}${D.map(x=>{const w=x.d.getDay(),f=fechaISO(x.d);
-          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(x.d)?" comun":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}"${x.fest||NS(f).length?` title="${esc([x.fest,...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
+          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(x.d)?" comun":""}${menstrualDia(f)==="regla"?" regla":menstrualDia(f)==="prev"?" regla-prev":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}"${x.fest||NS(f).length?` title="${esc([x.fest,...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
     }).join("");
     const cortos=dias.filter(x=>x.corto).length;
     $("leyenda").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `<span><span class="c t-${k}">${k}</span> ${esc(t.n)} ${hora(t.ini)}–${hora(finTurno(t))}</span>`;}).join("")
       +`<span><span class="c t-L">L</span> Libre</span>`+Object.entries(MANUALES).map(([k,n])=>`<span><span class="c t-${k}">${k}</span> ${n}</span>`).join("")
       +`<span><span class="c" style="box-shadow:inset 0 0 0 2px var(--tinta)">·</span> Cambiado a mano</span><span><span class="c" style="color:var(--rojo)">★</span> Festivo</span><span><span class="c" style="position:relative"><span style="width:7px;height:7px;border-radius:50%;background:var(--acento)"></span></span> Con nota</span>`
       +(cortos?`<p class="alerta">${cortos===1?"1 turno empieza":cortos+" turnos empiezan"} con menos de 12 horas de descanso desde el anterior (marcados con línea roja).</p>`:"");
-    pintarMeses(meses,total); pintarSaldo(dias,total); pintarCupos(total); pintarPareja();
+    pintarMeses(meses,total); pintarSaldo(dias,total); pintarCupos(total); pintarPareja(); pintarSemana(); pintarPlanSiCambia(); pintarPluses(dias); pintarMenstrual();
   }
 
   // ===== Funciones Pro =====
@@ -958,6 +1119,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     menu.innerHTML=`<small>${f.split("-").reverse().join("/")}${fe?" · ★ "+esc(fe):""}</small><div class="fila">${opciones.map(k=>`<button class="c t-${k}" data-c="${k}" title="${esc(nombre(k))}">${k}</button>`).join("")}</div>
       ${Y.cambios[f]?`<button class="boton" data-c="">Volver al ciclo (${esc(turnoCiclo(deISO(f)))})</button>`:""}
       <button class="boton" data-fest="${fe?"quitar":"poner"}">${fe?"Quitar festivo":"★ Marcar como festivo"}</button>
+      ${CM.activo?`<button class="boton" data-regla>🌸 ${CM.inicios.includes(f)?"Quitar inicio de regla":"Me vino la regla este día"}</button>`:""}
       <button class="boton" data-nota>📝 ${notasDe(f).length?"Ver o cambiar notas":"Añadir una nota"}</button>
       ${esTrabajo(turno(deISO(f)))?`<button class="boton" data-cambio>↔ Proponer cambio a un compañero</button>`:""}`;
     document.body.append(menu);
@@ -968,6 +1130,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       e.stopPropagation();
       if(e.target.closest("[data-cambio]")){formCambio(f);return;}
       if(e.target.closest("[data-nota]")){formNota(f);return;}
+      if(e.target.closest("[data-regla]")){ if(CM.inicios.includes(f)) CM.inicios=CM.inicios.filter(x=>x!==f); else CM.inicios.push(f); guardarCM(); cacheCM=null; cerrarMenu(); pintar(); return; }
       const bf=e.target.closest("[data-fest]");
       if(bf){
         if(bf.dataset.fest==="quitar"){delete Y.fest.extra[f]; if(festivosAuto(+f.slice(0,4))[f]&&!Y.fest.quita.includes(f)) Y.fest.quita.push(f);}
