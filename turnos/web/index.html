@@ -38,8 +38,8 @@
   --fondo:#faf8ff; --panel:#ffffff; --tinta:#1d1838; --suave:#6b6688; --linea:#ebe7f5;
   --acento:#6c4cf1; --acento-2:#ff6b8b; --acento-suave:#f1edff; --oro:#ffb020; --rojo:#e5484d; --verde:#2f9e6b;
   --sombra:0 1px 2px rgba(29,24,56,.06),0 10px 28px rgba(29,24,56,.07);
-  --tM:#ffe066; --tT:#f9a8d4; --tN:#a99bff; --tD:#66d4ff; --tG:#ff7b7b;
-  --tV:#69db7c; --tAP:#38d9a9; --tB:#ff8787; --tF:#74c0fc; --tJ:#d0a8ff; --tC:#d0d4e4; --tinta-celda:#1d1838;
+  --tM:#bfe3ff; --tT:#b7ead3; --tN:#c3c8ff; --tD:#a6e4e6; --tG:#9fd6b6;
+  --tV:#ffe08a; --tAP:#ffd2ad; --tB:#ffb8b8; --tF:#dccfff; --tJ:#ecc9ff; --tC:#d0d4e4; --tinta-celda:#1d1838;
   --display:"Unbounded", "Avenir Next", system-ui, sans-serif;
   --texto:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme:light;
@@ -48,8 +48,8 @@
   --fondo:#110e22; --panel:#1b1733; --tinta:#efecff; --suave:#a7a1c8; --linea:#2c2650;
   --acento:#9d86ff; --acento-2:#ff8aa3; --acento-suave:#251f47; --oro:#ffc44d; --rojo:#ff7b80; --verde:#5fd39b;
   --sombra:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
-  --tM:#f5d23d; --tT:#f490c4; --tN:#9283ff; --tD:#45c3f2; --tG:#ff6b6b;
-  --tV:#4fcf66; --tAP:#20c997; --tB:#ff6b6b; --tF:#5aaef5; --tJ:#b98af5; --tC:#9aa0b8;
+  --tM:#8cc6f2; --tT:#84d6b2; --tN:#9ea6f2; --tD:#7ccdd2; --tG:#74c296;
+  --tV:#f0cd5c; --tAP:#f2b98c; --tB:#f19a9a; --tF:#b9aaf2; --tJ:#cfa8f2; --tC:#9aa0b8;
   color-scheme:dark;}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -363,7 +363,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <h2 class="solo-imprimir" id="titulo-imp"></h2>
   <div class="resumen" id="resumen"></div>
   <p class="nota no-imprimir" id="nota-anio">Toca un día para cambiarlo (vacaciones, baja, asuntos propios…), apuntar una nota, marcar un festivo local o proponer un cambio de turno a un compañero.</p>
-  <div class="anio" id="anio"></div>
+  <div id="anio" style="margin-block:14px"></div>
   <div class="leyenda" id="leyenda"></div>
 
   <section class="tarjeta no-imprimir" id="caja-meses">
@@ -408,6 +408,11 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <details class="tarjeta no-imprimir" id="caja-menstrual">
     <summary>🌸 Ciclo menstrual <span class="nota">(opcional)</span></summary>
     <div id="menstrual"></div>
+  </details>
+
+  <details class="tarjeta no-imprimir" id="caja-avisos">
+    <summary>🔔 Avisos la noche antes</summary>
+    <div id="avisos"></div>
   </details>
 
   <details class="tarjeta no-imprimir" id="caja-sync">
@@ -464,6 +469,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
+      <li><span>🔔</span><div><b>Aviso en el móvil la noche antes:</b> «Mañana: Mañana · 06:50–15:10» o «Mañana libras», sin abrir la app.</div></li>
       <li><span>✈️</span><div><b>Planificador de vacaciones:</b> dile cuántos días quieres, te dice cuáles pedir para descansar más días seguidos y te lleva a los vuelos y hoteles más baratos para esas fechas.</div></li>
       <li><span>🔮</span><div><b>¿Y si cambio de turno?</b> Compara tu ciclo con otro antes de pedirlo: horas, noches, findes y festivos.</div></li>
       <li><span>💶</span><div><b>Pluses en euros:</b> lo que llevas de nocturnidad, festivos y fines de semana, mes a mes.</div></li>
@@ -973,7 +979,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   // El planificador conserva lo que tienes escrito: solo se vuelve a pintar al entrar o al cambiar Pro.
   let planPintado=null; function pintarPlanSiCambia(){ if(planPintado!==!!PRO){ planPintado=!!PRO; pintarPlan(); pintarSim(); } }
   function pintar(){
-    cacheNS={}; cacheCM=null;
+    cacheNS={}; cacheCM=null; guardarAgenda();
     const {dias,total,meses}=datos(), a=+Y.anio, pri=dias[0], ult=dias[dias.length-1];
     $("desc").textContent=`· ${ciclo().join(" ")}`;
     $("titulo-imp").textContent=`Mi cuadrante · ${a}`;
@@ -990,12 +996,18 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <div><small>Libres</small><b>${total.libres}</b></div>
       <div><small>Festivos trabajados</small><b>${total.festTrab} de ${total.fest}</b></div>
       ${extra?`<div><small>Marcados a mano</small><b style="font-size:.95rem">${esc(extra)}</b></div>`:""}`;
-    $("anio").innerHTML=MESES.map((n,m)=>{
-      const D=dias.filter(x=>x.d.getMonth()===m), hueco=(D[0].d.getDay()+6)%7;
-      return `<div class="mes"><h3>${n}</h3><div class="sem">${["L","M","X","J","V","S","D"].map(x=>`<span>${x}</span>`).join("")}</div>
-        <div class="dias">${"<span></span>".repeat(hueco)}${D.map(x=>{const w=x.d.getDay(),f=fechaISO(x.d);
-          return `<div role="button" tabindex="0" class="dia t-${esc(x.t)}${x.man?" man":""}${x.corto?" corto":""}${w===0||w===6?" finde":""}${x.fest?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(x.d)?" comun":""}${menstrualDia(f)==="regla"?" regla":menstrualDia(f)==="prev"?" regla-prev":""}" data-f="${f}" aria-label="${x.d.getDate()} de ${n}${x.fest?" ("+esc(x.fest)+")":""}: ${esc(nombre(x.t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}"${x.fest||NS(f).length?` title="${esc([x.fest,...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${x.d.getDate()}</small>${esc(x.t)}</div>`;}).join("")}</div></div>`;
-    }).join("");
+    // Un mes cualquiera (de este año o del siguiente), con su color de turno, festivos, notas…
+    const celdaDia=(d,n)=>{const t=turno(d), prev=turno(new Date(d.getFullYear(),d.getMonth(),d.getDate()-1)), f=fechaISO(d), w=d.getDay(),
+        man=!!Y.cambios[f], corto=esTrabajo(t)&&descanso(prev,t)<12, fe=festivo(d);
+      return `<div role="button" tabindex="0" class="dia t-${esc(t)}${man?" man":""}${corto?" corto":""}${w===0||w===6?" finde":""}${fe?" fest":""}${f===fechaISO(hoy)?" hoy":""}${NS(f).length?" con-nota":""}${comun(d)?" comun":""}${menstrualDia(f)==="regla"?" regla":menstrualDia(f)==="prev"?" regla-prev":""}" data-f="${f}" aria-label="${d.getDate()} de ${n}${fe?" ("+esc(fe)+")":""}: ${esc(nombre(t))}${NS(f).length?". Notas: "+esc(NS(f).map(z=>z.t).join(", ")):""}"${fe||NS(f).length?` title="${esc([fe,...NS(f).map(notaLinea)].filter(Boolean).join(" · "))}"`:""}><small>${d.getDate()}</small>${esc(t)}</div>`;};
+    const mesHTML=(a,m,conAnio)=>{const n=MESES[m], ult=new Date(a,m+1,0).getDate(), hueco=(new Date(a,m,1).getDay()+6)%7; let c="";
+      for(let k=1;k<=ult;k++) c+=celdaDia(new Date(a,m,k),n);
+      return `<div class="mes"><h3>${n}${conAnio?` ${a}`:""}</h3><div class="sem">${["L","M","X","J","V","S","D"].map(x=>`<span>${x}</span>`).join("")}</div><div class="dias">${"<span></span>".repeat(hueco)}${c}</div></div>`;};
+    let proximos="";
+    for(let k=0;k<6;k++){ const d=new Date(hoy.getFullYear(),hoy.getMonth()+k,1); proximos+=mesHTML(d.getFullYear(),d.getMonth(),d.getFullYear()!==hoy.getFullYear()||k===0); }
+    const abierto=$("anio-entero")&&$("anio-entero").open;
+    $("anio").innerHTML=`<div class="no-imprimir"><p class="titulo" style="margin:0 0 8px">Próximos 6 meses</p><div class="anio" style="margin-block:0 12px">${proximos}</div></div>
+      <details class="tarjeta" id="anio-entero"${abierto?" open":""}><summary>📅 Todo el año ${a}</summary><div class="anio">${MESES.map((n,m)=>mesHTML(a,m,false)).join("")}</div></details>`;
     const cortos=dias.filter(x=>x.corto).length;
     $("leyenda").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `<span><span class="c t-${k}">${k}</span> ${esc(t.n)} ${hora(t.ini)}–${hora(finTurno(t))}</span>`;}).join("")
       +`<span><span class="c t-L">L</span> Libre</span>`+Object.entries(MANUALES).map(([k,n])=>`<span><span class="c t-${k}">${k}</span> ${n}</span>`).join("")
@@ -1054,7 +1066,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    aplicarColores(); pintarMejoras(); pintarSync(); pintarTurnos();
+    aplicarColores(); pintarMejoras(); pintarSync(); pintarAvisos(); pintarTurnos();
     document.querySelector(".cab").classList.toggle("app",!!PRO);
     const sal=hoy.getHours()<13?"Buenos días":hoy.getHours()<20?"Buenas tardes":"Buenas noches";
     $("fecha-app").textContent=`${sal}${Y.miNombre?", "+Y.miNombre:""} · ${hoy.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"})}`; $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=true;
@@ -1094,7 +1106,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const PESTANAS={hoy:["caja-entreno","ganchos","instalar","caja-semana","caja-compartir"],
     anio:["ajustes","barra-anio","titulo-imp","resumen","nota-anio","anio","leyenda"],
     horas:["caja-saldo","caja-meses","caja-cupos","caja-pluses"],
-    mas:["caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
+    mas:["caja-avisos","caja-plan","caja-airhelp","caja-sim","caja-pareja","caja-sync","caja-menstrual","acciones-export","pie"],
     pro:["pro","mejoras"]};
   Object.entries(PESTANAS).forEach(([p,ids])=>ids.forEach(id=>{const el=$(id); if(el) el.dataset.pestana=p;}));
   let pesActual=null;
@@ -1130,7 +1142,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     const csv="﻿"+filas().map(r=>r.map(c=>/[;"\n]/.test(String(c))?`"${String(c).replace(/"/g,'""')}"`:c).join(";")).join("\r\n");
     descargar(`turnos-${Y.anio}.csv`,csv,"text/csv;charset=utf-8");
   }));
-  $("imprimir").addEventListener("click",exigePro(()=>{ verPestana("anio"); setTimeout(()=>print(),300); }));
+  $("imprimir").addEventListener("click",exigePro(()=>{ verPestana("anio"); $("anio-entero").open=true; setTimeout(()=>print(),300); }));
   // Calendario (.ics): textos escapados y líneas de nota (con hora: evento de 1 h con aviso 30 min antes; sin hora: todo el día).
   const icsTxt=t=>String(t).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");
   const fmtICS=(d,h)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,Math.round(h*60));return `${x.getFullYear()}${p2(x.getMonth()+1)}${p2(x.getDate())}T${p2(x.getHours())}${p2(x.getMinutes())}00`;};
@@ -1387,6 +1399,55 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     if(n){ a.textContent="Actualizando…"; actualizar(); }
     else{ a.textContent=n===false?"✓ Ya tienes la última versión":"Sin conexión: prueba luego"; setTimeout(()=>a.textContent=antes,2500); }
   });
+  // ===== Avisos la noche antes (Pro) =====
+  // La app deja en este móvil la agenda de los próximos 60 días; el aviso nocturno la lee aquí mismo.
+  var agendaPend=null;
+  function guardarAgenda(){ if(!("caches" in window)||MODO_LIBRE) return; clearTimeout(agendaPend); agendaPend=setTimeout(async()=>{
+    const dias={}, base=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
+    for(let k=0;k<60;k++){ const d=new Date(base.getFullYear(),base.getMonth(),base.getDate()+k), f=fechaISO(d), t=turno(d), x=Y.turnos[t];
+      dias[f]={n:nombre(t),trabajo:!!x,h:x?`${hora(x.ini)}–${hora(finTurno(x))}`:"",notas:notasDe(f).map(n=>(horario(n)?horario(n)+" · ":"")+n.t)}; }
+    try{ await (await caches.open("tw-agenda")).put("/__agenda",new Response(JSON.stringify({generado:Date.now(),dias}),{headers:{"Content-Type":"application/json"}})); }catch(e){}
+  },800); }
+  var pushSoportado=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+  var b64uABytes=t=>{const s=atob(t.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((t.length+3)%4)); return Uint8Array.from(s,c=>c.charCodeAt(0));};
+  async function pintarAvisos(){
+    const caja=$("avisos"); if(!caja||typeof pushSoportado!=="function") return;
+    if(MODO_LIBRE){ caja.innerHTML=`<p class="nota" style="margin:10px 0">Los avisos en el móvil están en la app completa.</p><a class="boton primario" href="${WEB}" target="_blank" rel="noopener">Abrir TurnoWork</a>`; return; }
+    if(!PRO){ caja.innerHTML=`<p class="nota" style="margin:10px 0">Cada noche te llega al móvil tu turno de mañana: «Mañana: Mañana · 06:50–15:10» o «Mañana libras 😴», con tus notas. Sin abrir la app.</p><button class="boton primario" data-ir-pro>🔒 Disponible en Pro</button>`; return; }
+    const ios=/iphone|ipad|ipod/i.test(navigator.userAgent), instalada=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+    if(!pushSoportado()||(ios&&!instalada)){ caja.innerHTML=`<p class="nota" style="margin:10px 0">${ios?"En iPhone, los avisos solo funcionan con TurnoWork <b>instalada en la pantalla de inicio</b>: en Safari, botón Compartir → «Añadir a pantalla de inicio». Ábrela desde el icono y vuelve aquí.":"Este navegador no admite avisos. Prueba con Chrome."}</p>`; return; }
+    let sub=null; try{ sub=await (await navigator.serviceWorker.ready).pushManager.getSubscription(); }catch(e){}
+    const activo=sub&&leer("tw_push",null);
+    caja.innerHTML=activo?`<p style="margin:10px 0 4px"><b>✓ Avisos activados en este móvil</b></p><p class="nota" style="margin:0 0 10px">Cada noche, hacia las 21:00, te llega tu turno de mañana y tus notas.</p>
+        <div class="acciones" style="margin:0"><button class="boton" id="av-probar">Probar ahora</button><button class="boton" id="av-quitar">Desactivar</button></div><p class="nota" id="av-msg" role="status" style="margin:8px 0 0"></p>`
+      :`<p class="nota" style="margin:10px 0">Cada noche, hacia las 21:00, te llega tu turno de mañana y tus notas, sin abrir la app.</p><button class="boton primario" id="av-activar">🔔 Activar avisos</button><p class="nota" id="av-msg" role="status" style="margin:8px 0 0"></p>`;
+    const msg=t=>{const e=$("av-msg"); if(e) e.textContent=t;};
+    const act=$("av-activar"); if(act) act.addEventListener("click",async()=>{
+      try{ msg("Activando…");
+        const perm=await Notification.requestPermission(); if(perm!=="granted"){ msg("Has bloqueado los avisos. Actívalos en los ajustes del móvil para TurnoWork y vuelve a probar."); return; }
+        const {clave}=await (await fetch("/api/push/clave",{cache:"no-store"})).json();
+        const reg=await navigator.serviceWorker.ready;
+        const s2=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uABytes(clave)});
+        const r=await fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"alta",email:PRO.email,sub:s2.toJSON()})});
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok){ msg(j.error||"No se ha podido activar."); return; }
+        escribir("tw_push",{endpoint:s2.endpoint}); guardarAgenda(); pintarAvisos();
+      }catch(e){ msg("No se ha podido activar en este móvil. Comprueba la conexión y vuelve a probar."); }
+    });
+    const pr=$("av-probar"); if(pr) pr.addEventListener("click",async()=>{
+      guardarAgenda(); msg("Enviando…");
+      try{ const r=await fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"prueba",endpoint:sub.endpoint})}); const j=await r.json().catch(()=>({}));
+        msg(r.ok&&j.ok?"✓ Enviado: te llegará en unos segundos.":(j.error||"No se ha podido enviar."));
+      }catch(e){ msg("Sin conexión."); }
+    });
+    const qu=$("av-quitar"); if(qu) qu.addEventListener("click",async()=>{
+      try{ await fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({accion:"baja",endpoint:sub.endpoint})}); await sub.unsubscribe(); }catch(e){}
+      try{localStorage.removeItem("tw_push");}catch(e){} pintarAvisos();
+    });
+  }
+
+  pintarAvisos(); guardarAgenda();
+
   // ===== Sincronización y calendario suscrito (Pro) =====
   var SY=leer("tw_sync",null), subidaPend=null;   // {email, codigo, cal, t}
   function programarSubida(){ if(!SY||!PRO) return; clearTimeout(subidaPend); subidaPend=setTimeout(subir,2500); }

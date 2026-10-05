@@ -11,6 +11,7 @@
 //   POST /pro       las webs de pago (Turnos…) preguntan si un correo ha comprado su versión Pro en Ko-fi.
 //   POST /mejora    buzón de mejoras de las webs de pago: solo para quien tiene el Pro → mensaje a Telegram.
 //   POST /api/sync  TurnoWork Pro: sincronizar el cuadrante entre dispositivos (turnos-sync.js).
+//   /api/push…      TurnoWork Pro: avisos en el móvil la noche antes (turnos-push.js); cada noche a las 19:00 UTC.
 //   GET  /cal/<token>.ics  TurnoWork Pro: calendario suscrito que se actualiza solo.
 //   GET  /pro/liberar?clave=<PRUEBA_CLAVE>&email=…  libera los dispositivos de una compra (cambio de móvil).
 //   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
@@ -31,6 +32,7 @@
 import { DurableObject } from "cloudflare:workers";
 import { recoger, mensajesTelegram, paraWeb, alternar, VERSION_WEB } from "./noticias.js";
 import { syncApi, calendario } from "./turnos-sync.js";
+import { pushApi, enviarAvisos } from "./turnos-push.js";
 
 const CHAT_ID = "288460670";
 const LENTO_MS = 4000;
@@ -98,6 +100,8 @@ export class Memoria extends DurableObject {
     // Dispositivos donde se ha activado cada licencia Pro (máximo MAX_DISPOSITIVOS por compra).
     this.sql.exec(`CREATE TABLE IF NOT EXISTS dispositivos (huella TEXT, producto TEXT, disp TEXT, fecha INTEGER, PRIMARY KEY (huella, producto, disp))`);
     // TurnoWork: cuadrantes sincronizados (huella del correo, huella del código, datos, fecha y token del calendario).
+    // TurnoWork: móviles con avisos la noche antes (solo la dirección de aviso y la huella del correo).
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS push (endpoint TEXT PRIMARY KEY, huella TEXT, fecha INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS sync (huella TEXT PRIMARY KEY, codigo TEXT, datos TEXT, t INTEGER, cal TEXT UNIQUE, creado INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS incidencias (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, detalle TEXT)`);
     // Las pruebas de Ko-fi no son ventas: fuera si alguna se guardó.
@@ -143,6 +147,12 @@ export class Memoria extends DurableObject {
     this.sql.exec(`INSERT INTO intentos (ip, fecha) VALUES (?, ?)`, ip, ahora);
     return this.sql.exec(`SELECT COUNT(*) AS n FROM licencias WHERE huella = ? AND producto = ?`, huella, producto).one().n > 0;
   }
+
+  pushAlta(endpoint, huella) { this.sql.exec(`INSERT OR REPLACE INTO push (endpoint, huella, fecha) VALUES (?, ?, ?)`, endpoint, huella, Date.now()); }
+  pushBaja(endpoint) { this.sql.exec(`DELETE FROM push WHERE endpoint = ?`, endpoint); }
+  pushExiste(endpoint) { return this.sql.exec(`SELECT COUNT(*) AS n FROM push WHERE endpoint = ?`, endpoint).one().n > 0; }
+  pushLista() { return this.sql.exec(`SELECT endpoint FROM push`).toArray().map(r => r.endpoint); }
+  tieneLicencia(huella, producto) { return this.sql.exec(`SELECT COUNT(*) AS n FROM licencias WHERE huella = ? AND producto = ?`, huella, producto).one().n > 0; }
 
   syncFila(huella) { return this.sql.exec(`SELECT codigo, datos, t, cal FROM sync WHERE huella = ?`, huella).toArray()[0] || null; }
   syncCrear(huella, codigo, cal) {
@@ -591,6 +601,7 @@ export default {
       return;
     }
     if (event.cron === "30 7 * * 1") return resumenSemanal(env);
+    if (event.cron === "0 19 * * *") { const r = await enviarAvisos(env, memoria(env)); console.log("avisos TurnoWork", JSON.stringify(r)); return; }
     // ¿Quedaron noticias de la semana sin mandar porque alguna fuente no respondió? Se reintentan aparte,
     // para no retrasar la revisión de las webs.
     ctx.waitUntil((async () => {
@@ -610,6 +621,10 @@ export default {
     if (req.method === "POST" && url.pathname === "/api/sync") {
       const m = memoria(env);
       return syncApi(req, env, m, { huellaCorreo, esPro: async (hu, ip) => PRO_CASA.has(hu) ? true : await m.comprobarLicencia(hu, "turnos", ip) });
+    }
+    if (url.pathname === "/api/push" || url.pathname === "/api/push/clave") {
+      const m = memoria(env);
+      return pushApi(req, env, m, { huellaCorreo, esProSinLimite: async hu => PRO_CASA.has(hu) || await m.tieneLicencia(hu, "turnos") });
     }
     if (req.method === "GET" && url.pathname.startsWith("/cal/")) return calendario(url.pathname.slice(5).replace(/\.ics$/, ""), memoria(env));
     if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));

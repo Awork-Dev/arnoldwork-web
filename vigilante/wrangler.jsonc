@@ -1,6 +1,6 @@
 // Worker "vigilante": revisa las webs y avisa por Telegram.
 // Secretos (se ponen una vez en el panel o con `wrangler secret put`): TELEGRAM_TOKEN, KOFI_TOKEN, PRUEBA_CLAVE.
-// Horarios (UTC): revisión cada 30 min, resumen diario a las 7:00 (los viernes, también las noticias) y resumen semanal los lunes a las 7:30.
+// Horarios (UTC): avisos de TurnoWork a las 19:00, revisión cada 30 min, resumen diario a las 7:00 (los viernes, también las noticias) y resumen semanal los lunes a las 7:30.
 {
   "name": "vigilante",
   "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
@@ -11,7 +11,7 @@
   "workers_dev": true,
   // No borrar las variables puestas a mano en el panel de Cloudflare al publicar.
   "keep_vars": true,
-  "triggers": { "crons": ["*/30 * * * *", "0 7 * * *", "30 7 * * 1"] },
+  "triggers": { "crons": ["*/30 * * * *", "0 7 * * *", "30 7 * * 1", "0 19 * * *"] },
   // Memoria de qué está caído (no hace falta crear nada en el panel).
   // Acceso interno al ranking (código de premio del campeón): no se puede usar desde internet.
   "services": [{ "binding": "RANKING_PRIVADO", "service": "cavework-ranking", "entrypoint": "Privado" }],
