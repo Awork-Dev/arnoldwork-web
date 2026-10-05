@@ -1,0 +1,47 @@
+# Publica calas/web en el Worker "calas" (calas.arnoldwork.workers.dev).
+# - Push a main: publica.
+# - Push a otra rama: vista previa en https://<rama>-calas.arnoldwork.workers.dev
+# Necesita el secreto de GitHub CLOUDFLARE_API_TOKEN.
+
+name: Desplegar Calas Hoy
+
+on:
+  push:
+    paths:
+      - "calas/**"
+      - ".github/workflows/calas.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: calas-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nombre de la vista previa
+        id: alias
+        run: echo "alias=$(echo '${{ github.ref_name }}' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-30 | sed 's/-*$//')" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar en calas.arnoldwork.workers.dev
+        if: github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: calas
+          command: deploy
+
+      - name: Subir vista previa
+        if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4"
+          workingDirectory: calas
+          command: versions upload --preview-alias ${{ steps.alias.outputs.alias }}

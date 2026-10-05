@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calas Hoy · Mallorca</title>
+<meta name="description" content="A qué cala de Mallorca ir hoy: viento, olas y lluvia de cada cala, puntuadas de 0 a 10 según lo abrigadas que estén.">
+<meta name="theme-color" content="#0b3a53">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%230b3a53'/%3E%3Cpath d='M4 19c4-3 8 3 12 0s8 3 12 0v9H4z' fill='%2334c3c0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: una columna estrecha tipo parte meteorológico; cabecera marina, la mejor cala destacada y el ranking debajo */
+:root{
+  --mar:#0b3a53;        /* azul mediterráneo profundo */
+  --turquesa:#1a9e9b;   /* agua de cala */
+  --mares:#efe7d8;      /* piedra de marès */
+  --fondo:#f7f4ee;
+  --tinta:#14232c;
+  --tinta-suave:#536570;
+  --linea:#ded6c6;
+  --tarjeta:#fffdf9;
+  --bien:#1f8a5b; --regular:#b7791f; --mal:#b5473a;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --texto:"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --mar:#082636; --turquesa:#3cc4c0; --mares:#1d2a31; --fondo:#0f1a20; --tinta:#e8eef0;
+  --tinta-suave:#9db0b9; --linea:#26363f; --tarjeta:#15232b; --bien:#4cc28a; --regular:#e0a54a; --mal:#e57a6c;
+  color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--fondo);color:var(--tinta);font:16px/1.5 var(--texto);-webkit-font-smoothing:antialiased}
+.envoltura{max-width:720px;margin:0 auto;padding-inline:16px}
+header.mar{background:var(--mar);color:#f2f7f8;padding-top:env(safe-area-inset-top,0px);position:relative;overflow:hidden}
+header.mar .envoltura{padding-block:28px 34px;position:relative;z-index:1}
+header.mar svg.olas{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:46px}
+.marca{font:600 .78rem/1 var(--texto);letter-spacing:.14em;text-transform:uppercase;color:#8fd9d6}
+h1{font:800 clamp(2.2rem,8vw,3.4rem)/1 var(--display);margin:.35em 0 .25em;letter-spacing:-.02em;text-wrap:balance}
+.sub{margin:0;color:#c7dbe0;max-width:46ch}
+.controles{display:flex;flex-direction:column;gap:12px;padding-block:18px 6px}
+.fila{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:700 .9rem/1 var(--texto);padding:10px 14px;border-radius:999px;border:1.5px solid var(--linea);background:var(--tarjeta);color:var(--tinta);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--mar);border-color:var(--mar);color:#fff}
+@media (prefers-color-scheme:dark){.chip[aria-pressed="true"]{background:var(--turquesa);border-color:var(--turquesa);color:#062028}}
+.chip:focus-visible{outline:3px solid var(--turquesa);outline-offset:2px}
+.etiqueta{font:700 .72rem/1 var(--texto);letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-suave)}
+#estado{padding-block:8px;color:var(--tinta-suave)}
+.destacada{background:var(--tarjeta);border:1.5px solid var(--linea);border-radius:18px;padding:18px;margin-block:10px 22px}
+.destacada h2{font:800 1.9rem/1.05 var(--display);margin:.25em 0 .2em;letter-spacing:-.01em}
+.porque{margin:.2em 0 .8em;color:var(--tinta-suave)}
+.horas{display:grid;grid-template-columns:repeat(var(--n,10),1fr);gap:4px;align-items:end;height:74px;margin-top:6px}
+.horas div{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0}
+.horas i{display:block;width:100%;border-radius:4px 4px 2px 2px;background:var(--turquesa)}
+.horas span{font-size:.7rem;color:var(--tinta-suave);font-variant-numeric:tabular-nums}
+ol.lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+ol.lista li{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding-block:14px;border-top:1px solid var(--linea)}
+.nota{font:800 1.35rem/1 var(--display);font-variant-numeric:tabular-nums;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:#fff}
+.n-bien{background:var(--bien)} .n-regular{background:var(--regular)} .n-mal{background:var(--mal)}
+.nombre{font:700 1.05rem/1.2 var(--texto);margin:0}
+.datos{margin:.15em 0 0;color:var(--tinta-suave);font-size:.9rem;font-variant-numeric:tabular-nums}
+.datos b{color:var(--tinta);font-weight:700}
+.abrigo{display:inline-block;font:700 .7rem/1 var(--texto);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:6px;background:var(--mares);color:var(--tinta);margin-left:6px;vertical-align:2px}
+.ir{font:700 .85rem/1 var(--texto);color:var(--turquesa);text-decoration:none;white-space:nowrap}
+.ir:hover{text-decoration:underline}
+.brujula{width:22px;height:22px;vertical-align:-6px;margin-right:2px}
+.brujula path{fill:var(--tinta)}
+footer{padding-block:28px 40px;color:var(--tinta-suave);font-size:.85rem;border-top:1px solid var(--linea);margin-top:18px}
+footer a{color:inherit}
+.vientos{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;margin-top:8px}
+@media (prefers-reduced-motion:no-preference){.destacada,ol.lista li{animation:entra .35s ease both}}
+@keyframes entra{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="mar">
+  <div class="envoltura">
+    <div class="marca">Mallorca · parte de calas</div>
+    <h1>¿A qué cala vamos hoy?</h1>
+    <p class="sub">Cada cala, puntuada de 0 a 10 según el viento que le entra, las olas y la lluvia. Si sopla tramuntana, vete al sur; si entra xaloc, busca el norte.</p>
+  </div>
+  <svg class="olas" viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 24c100-20 200 20 300 0s200-20 300 0 200 20 300 0 200-20 300 0v22H0z" fill="var(--fondo)"/></svg>
+</header>
+
+<main class="envoltura">
+  <div class="controles">
+    <div>
+      <div class="etiqueta">Día</div>
+      <div class="fila" id="dias" style="margin-top:8px"></div>
+    </div>
+    <div>
+      <div class="etiqueta">Horario</div>
+      <div class="fila" id="franjas" style="margin-top:8px"></div>
+    </div>
+    <div>
+      <div class="etiqueta">Zona</div>
+      <div class="fila" id="zonas" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div id="estado" role="status">Cargando el parte del mar…</div>
+  <section id="destacada" class="destacada" hidden></section>
+  <ol id="lista" class="lista"></ol>
+
+  <footer>
+    <p>Datos de viento, lluvia y olas: <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a>, actualizados cada hora. La orientación de cada cala es aproximada: mira siempre el mar antes de bañarte y respeta las banderas.</p>
+    <div class="vientos" aria-label="Vientos de Mallorca">
+      <span><b>Tramuntana</b> N</span><span><b>Gregal</b> NE</span><span><b>Llevant</b> E</span><span><b>Xaloc</b> SE</span>
+      <span><b>Migjorn</b> S</span><span><b>Garbí</b> SO</span><span><b>Ponent</b> O</span><span><b>Mestral</b> NO</span>
+    </div>
+    <p>Un proyecto del equipo <a href="https://arnoldwork.com/">ArnoldWork</a>.</p>
+  </footer>
+</main>
+
+<script>
+// Calas: [nombre, zona, lat, lon, orientación (hacia dónde mira la cala, en grados)]
+const CALAS = [
+  ["Platja de Formentor","Norte",39.9605,3.1310,150],
+  ["Cala Sant Vicenç","Norte",39.9218,3.0570,30],
+  ["Platja d'Alcúdia","Norte",39.8360,3.1330,110],
+  ["Platja de Muro","Norte",39.7980,3.1210,100],
+  ["Cala Mesquida","Este",39.7440,3.4310,350],
+  ["Cala Torta","Este",39.7460,3.3960,10],
+  ["Cala Agulla","Este",39.7190,3.4580,60],
+  ["Platja de Canyamel","Este",39.6560,3.4400,120],
+  ["Cala Millor","Este",39.5960,3.3850,90],
+  ["Platja de Portocristo","Este",39.5400,3.3340,100],
+  ["Cala Varques","Este",39.4680,3.2970,110],
+  ["Cala Mondragó","Sureste",39.3500,3.1910,120],
+  ["Caló des Moro","Sureste",39.3240,3.1380,150],
+  ["Cala Llombards","Sureste",39.3180,3.1200,170],
+  ["Platja des Caragol","Sur",39.2950,3.0400,220],
+  ["Es Trenc","Sur",39.3470,2.9800,210],
+  ["Platja de Palma","Bahía de Palma",39.5220,2.7500,225],
+  ["Cala Major","Bahía de Palma",39.5530,2.6060,180],
+  ["Platja de Palmanova","Bahía de Palma",39.5230,2.5400,160],
+  ["Portals Vells","Suroeste",39.4750,2.5200,100],
+  ["Camp de Mar","Suroeste",39.5380,2.4250,190],
+  ["Sant Elm","Suroeste",39.5800,2.3510,240],
+  ["Port de Sóller","Tramuntana",39.7980,2.6950,300],
+  ["Cala Deià","Tramuntana",39.7610,2.6380,320],
+  ["Cala Tuent","Tramuntana",39.8380,2.7730,300],
+  ["Sa Calobra","Tramuntana",39.8530,2.8040,340]
+];
+const VIENTOS = ["tramuntana","gregal","llevant","xaloc","migjorn","garbí","ponent","mestral"];
+const FRANJAS = {manana:["por la mañana",10,14], tarde:["por la tarde",14,19], dia:["todo el día",10,19]};
+const ZONAS = ["Todas", ...new Set(CALAS.map(c=>c[1]))];
+
+const estado = {dia:0, franja: new Date().getHours()>=14 ? "tarde" : "dia", zona:"Todas", datos:null};
+const guarda = (k,v)=>{try{localStorage.setItem("calas-"+k,v)}catch(e){}};
+const lee = k=>{try{return localStorage.getItem("calas-"+k)}catch(e){return null}};
+if (ZONAS.includes(lee("zona"))) estado.zona = lee("zona");
+
+const $ = id=>document.getElementById(id);
+const rad = g=>g*Math.PI/180;
+const nombreViento = dir=>VIENTOS[Math.round(((dir%360)+360)%360/45)%8];
+
+// Punto en el mar delante de la cala (para el oleaje): ~1,5 km en la dirección a la que mira.
+function puntoMar(lat,lon,az){ const d=.014; return [lat+d*Math.cos(rad(az)), lon+d*Math.sin(rad(az))/Math.cos(rad(lat))]; }
+
+async function cargar(){
+  const lats=CALAS.map(c=>c[2]).join(","), lons=CALAS.map(c=>c[3]).join(",");
+  const mar=CALAS.map(c=>puntoMar(c[2],c[3],c[4]));
+  const u1=`https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=temperature_2m,precipitation_probability,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=Europe%2FMadrid&forecast_days=3`;
+  const u2=`https://marine-api.open-meteo.com/v1/marine?latitude=${mar.map(p=>p[0].toFixed(4)).join(",")}&longitude=${mar.map(p=>p[1].toFixed(4)).join(",")}&hourly=wave_height&timezone=Europe%2FMadrid&forecast_days=3`;
+  const [r1,r2]=await Promise.all([fetch(u1),fetch(u2).catch(()=>null)]);
+  if(!r1.ok) throw new Error("tiempo");
+  const tiempo=await r1.json();
+  let olas=null; try{ if(r2&&r2.ok) olas=await r2.json(); }catch(e){}
+  return CALAS.map((c,i)=>({cala:c, h:tiempo[i].hourly, olas: olas && olas[i] ? olas[i].hourly.wave_height : null}));
+}
+
+// Puntuación de una hora: 10 menos viento que entra en la cala, olas, lluvia y frío.
+function notaHora(cala,h,i,olas){
+  const v=h.wind_speed_10m[i], dir=h.wind_direction_10m[i], racha=h.wind_gusts_10m[i]||v;
+  const entra=Math.max(0,Math.cos(rad(dir-cala[4])));            // 1 = viento de mar de frente, 0 = de tierra
+  const viento=Math.max(v,racha*.6)*(.3+.7*entra);
+  const ola=olas && olas[i]!=null ? olas[i] : null;
+  const lluvia=h.precipitation_probability[i]||0, t=h.temperature_2m[i];
+  let n=10 - viento/3.5 - (ola??.3)*5 - lluvia/25 - (t<20?(20-t)*.3:0);
+  return {n:Math.max(0,Math.min(10,n)), v, dir, entra, ola, lluvia, t};
+}
+
+function fechaDia(off){ const d=new Date(); d.setDate(d.getDate()+off);
+  return d.toLocaleDateString("sv-SE",{timeZone:"Europe/Madrid"}); }
+
+function evaluar(item){
+  const [,ini,fin]=FRANJAS[estado.franja], dia=fechaDia(estado.dia), h=item.h;
+  const horas=[];
+  h.time.forEach((t,i)=>{ if(t.startsWith(dia)){ const hh=+t.slice(11,13); if(hh>=ini&&hh<fin) horas.push({hh,...notaHora(item.cala,h,i,item.olas)}); }});
+  if(!horas.length) return null;
+  const m=k=>horas.reduce((s,x)=>s+(x[k]??0),0)/horas.length;
+  const olasVal=horas.some(x=>x.ola!=null)?m("ola"):null;
+  // dirección media del viento (vectorial)
+  const sx=horas.reduce((s,x)=>s+Math.sin(rad(x.dir)),0), sy=horas.reduce((s,x)=>s+Math.cos(rad(x.dir)),0);
+  const dir=(Math.atan2(sx,sy)*180/Math.PI+360)%360;
+  return {cala:item.cala, nota:m("n"), v:m("v"), dir, entra:m("entra"), ola:olasVal, lluvia:Math.max(...horas.map(x=>x.lluvia)), t:Math.max(...horas.map(x=>x.t)), horas};
+}
+
+const clase = n=> n>=7 ? "n-bien" : n>=4.5 ? "n-regular" : "n-mal";
+const veredicto = n=> n>=8.5 ? "Perfecta" : n>=7 ? "Muy buena" : n>=5.5 ? "Aceptable" : n>=4 ? "Regular" : "Mejor otra";
+const brujula = dir=>`<svg class="brujula" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(${Math.round(dir+180)} 12 12)" d="M12 3l5 15-5-3.5L7 18z"/></svg>`;
+const mapa = c=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c[0]+", Mallorca")}`;
+const fmt = (x,d=0)=>x.toLocaleString("es-ES",{maximumFractionDigits:d,minimumFractionDigits:d});
+
+function lineaDatos(r){
+  return `${brujula(r.dir)}<b>${fmt(r.v)} km/h</b> de ${nombreViento(r.dir)} · olas <b>${r.ola==null?"—":fmt(r.ola,1)+" m"}</b> · lluvia <b>${fmt(r.lluvia)} %</b> · <b>${fmt(r.t)}°</b>`;
+}
+
+function pintar(){
+  if(!estado.datos) return;
+  const res=estado.datos.map(evaluar).filter(Boolean)
+    .filter(r=>estado.zona==="Todas"||r.cala[1]===estado.zona)
+    .sort((a,b)=>b.nota-a.nota);
+  const st=$("estado");
+  if(!res.length){ st.textContent="No hay datos para este día."; $("destacada").hidden=true; $("lista").innerHTML=""; return; }
+  const dia=["hoy","mañana","pasado mañana"][estado.dia], franja=FRANJAS[estado.franja][0];
+  st.textContent=`Mejores calas para ${dia} (${franja})${estado.zona!=="Todas"?" en "+estado.zona:""}.`;
+  const b=res[0], abrigada=b.entra<.25&&b.v>12;
+  const porque = b.v<10 ? "Casi sin viento: buena en cualquier orilla." :
+    abrigada ? `El ${nombreViento(b.dir)} sopla de tierra y la cala queda al abrigo.` :
+    "La que menos viento y oleaje recibe en este horario.";
+  const max=10;
+  $("destacada").innerHTML=`
+    <div class="etiqueta">La mejor · ${b.cala[1]}</div>
+    <h2>${b.cala[0]}</h2>
+    <p class="porque">${veredicto(b.nota)}, ${fmt(b.nota,1)} sobre 10. ${porque}</p>
+    <p class="datos" style="margin:0">${lineaDatos(b)}</p>
+    <div class="horas" style="--n:${b.horas.length}" aria-label="Nota por horas">
+      ${b.horas.map(x=>`<div title="${x.hh}:00 · ${fmt(x.n,1)}"><i style="height:${Math.max(6,x.n/max*52)}px"></i><span>${x.hh}</span></div>`).join("")}
+    </div>
+    <p style="margin:12px 0 0"><a class="ir" href="${mapa(b.cala)}" target="_blank" rel="noopener">Cómo llegar →</a></p>`;
+  $("destacada").hidden=false;
+  $("lista").innerHTML=res.slice(1).map(r=>`
+    <li>
+      <div class="nota ${clase(r.nota)}" aria-label="Nota ${fmt(r.nota,1)}">${fmt(r.nota,1)}</div>
+      <div style="min-width:0">
+        <p class="nombre">${r.cala[0]}${r.entra<.25&&r.v>12?'<span class="abrigo">Abrigada</span>':''}</p>
+        <p class="datos">${r.cala[1]} · ${lineaDatos(r)}</p>
+      </div>
+      <a class="ir" href="${mapa(r.cala)}" target="_blank" rel="noopener">Ir</a>
+    </li>`).join("");
+}
+
+function botones(cont, opciones, actual, al){
+  cont.innerHTML="";
+  opciones.forEach(([valor,texto])=>{
+    const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=texto;
+    b.setAttribute("aria-pressed", String(valor===actual));
+    b.onclick=()=>{ al(valor); [...cont.children].forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); pintar(); };
+    cont.appendChild(b);
+  });
+}
+const nombresDias=[0,1,2].map(o=>{ if(o===0) return "Hoy"; if(o===1) return "Mañana";
+  const d=new Date(); d.setDate(d.getDate()+2); const s=d.toLocaleDateString("es-ES",{weekday:"long"}); return s[0].toUpperCase()+s.slice(1); });
+botones($("dias"), nombresDias.map((t,i)=>[i,t]), estado.dia, v=>estado.dia=v);
+botones($("franjas"), Object.entries(FRANJAS).map(([k,v])=>[k,`${v[0][0].toUpperCase()+v[0].slice(1)} · ${v[1]}–${v[2]} h`]), estado.franja, v=>estado.franja=v);
+botones($("zonas"), ZONAS.map(z=>[z,z]), estado.zona, v=>{estado.zona=v; guarda("zona",v);});
+
+cargar().then(d=>{ estado.datos=d; pintar(); })
+  .catch(()=>{ $("estado").textContent="No se ha podido cargar el parte. Comprueba la conexión y recarga la página."; });
+</script>
+</body>
+</html>
