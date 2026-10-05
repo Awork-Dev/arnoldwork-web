@@ -1,0 +1,10 @@
+// Worker que sirve TurnoWork (turnos.arnoldwork.com): cuadrante de turnos para todo el año, con Pro por Ko-fi.
+{
+  "name": "turnos",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "compatibility_date": "2026-10-05",
+  "assets": { "directory": "./web" },
+  "routes": [{ "pattern": "turnos.arnoldwork.com", "custom_domain": true }],
+  "workers_dev": true,
+  "preview_urls": true
+}

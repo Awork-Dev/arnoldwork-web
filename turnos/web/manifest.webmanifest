@@ -1,0 +1,10 @@
+{
+  "name": "TurnoWork · Mi cuadrante de turnos",
+  "short_name": "TurnoWork",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#141a33",
+  "theme_color": "#141a33",
+  "lang": "es",
+  "icons": [{ "src": "icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

@@ -8,6 +8,8 @@
 //                   y copia de seguridad del ranking y de los contactos, enviada por Telegram.
 // En cualquier momento:
 //   POST /kofi      Ko-fi avisa de cada venta o batido → mensaje a Telegram.
+//   POST /pro       las webs de pago (Turnos…) preguntan si un correo ha comprado su versión Pro en Ko-fi.
+//   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
 //                   principal falló, este mismo Worker lo manda a Telegram para que no se pierda.
 //   GET  /contactos?clave=<PRUEBA_CLAVE>  descarga los mensajes de los últimos 90 días (CSV).
@@ -35,6 +37,8 @@ const ORIGENES = [
   /^https:\/\/(www\.)?arnoldwork\.com$/,
   /^https:\/\/heavywork\.arnoldwork\.com$/,                            // mensajes que lleguen desde HeavyWork
   /^https:\/\/[a-z0-9-]+-(arnoldwork-v11|heavywork)\.arnoldwork\.workers\.dev$/,   // vistas previas
+  /^https:\/\/(turnos|calas)\.arnoldwork\.com$/,                         // webs con versión Pro
+  /^https:\/\/([a-z0-9-]+-)?(turnos|calas)\.arnoldwork\.workers\.dev$/,
   /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/,                        // pruebas en local
 ];
 // Enlaces de la tienda de Ko-fi (ko-fi.com/s/<código>) → nombre del producto.
@@ -45,6 +49,12 @@ const PRODUCTOS_KOFI = {
   "8850046986": "Ficha: Estar en forma para la vida",
   "833e551486": "Pack completo: libro + las tres fichas",
 };
+// Productos de Ko-fi que desbloquean la versión Pro de una web (código del enlace ko-fi.com/s/<código> → producto).
+// Al comprarlos, el correo del comprador queda guardado (cifrado) y la web se desbloquea con ese correo.
+const PRO_KOFI = {
+  // "xxxxxxxxxx": "turnos",
+};
+const NOMBRE_PRO = { turnos: "Turnos Pro", calas: "Calas Hoy Pro" };
 // Ko-fi manda sus pruebas («Send Test») siempre con este número de operación y a nombre de «Jo Example».
 const KOFI_PRUEBA = "00000000-1111-2222-3333-444444444444";
 const MOTIVO_NEGOCIO = "Web o automatización para mi negocio";
@@ -57,6 +67,7 @@ const COMPROBACIONES = [
   { nombre: "HeavyWork",         url: "https://heavywork.arnoldwork.com/",    texto: "HeavyWork" },
   { nombre: "CaveWork",          url: "https://heavywork.arnoldwork.com/game/", texto: "CaveWork" },
   { nombre: "CaveWork (Google Play)", url: "https://heavywork.arnoldwork.com/app/", texto: "CaveWork" },
+  { nombre: "TurnoWork",         url: "https://turnos.arnoldwork.com/",       texto: "TurnoWork" },
   { nombre: "API contacto",      url: "https://arnoldwork-api.arnoldwork.workers.dev/" },
   { nombre: "API CaveWork",      url: "https://cavework-api.arnoldwork.workers.dev/" },
   { nombre: "Ranking CaveWork",  url: "https://cavework-ranking.arnoldwork.workers.dev/top", texto: "top" },
@@ -70,6 +81,9 @@ export class Memoria extends DurableObject {
     this.sql = ctx.storage.sql;
     this.sql.exec(`CREATE TABLE IF NOT EXISTS contactos (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, motivo TEXT, mensaje TEXT, contacto TEXT, origen TEXT, ip TEXT)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS ventas (id TEXT PRIMARY KEY, fecha INTEGER, tipo TEXT, nombre TEXT, importe REAL, moneda TEXT, detalle TEXT)`);
+    // Licencias Pro: el correo se guarda como huella (SHA-256), nunca en claro.
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS licencias (huella TEXT, producto TEXT, fecha INTEGER, venta TEXT, PRIMARY KEY (huella, producto))`);
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS intentos (ip TEXT, fecha INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS incidencias (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, detalle TEXT)`);
     // Las pruebas de Ko-fi no son ventas: fuera si alguna se guardó.
     this.sql.exec(`DELETE FROM ventas WHERE id = ? OR nombre = 'Jo Example'`, KOFI_PRUEBA);
@@ -100,6 +114,23 @@ export class Memoria extends DurableObject {
     this.sql.exec(`INSERT INTO ventas (id, fecha, tipo, nombre, importe, moneda, detalle) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       v.id, Date.now(), v.tipo, v.nombre, v.importe, v.moneda, v.detalle);
     return true;
+  }
+
+  darLicencia(huella, producto, venta) {
+    this.sql.exec(`INSERT OR IGNORE INTO licencias (huella, producto, fecha, venta) VALUES (?, ?, ?, ?)`, huella, producto, Date.now(), venta);
+  }
+
+  // null = demasiados intentos desde esa conexión (máximo 10 por hora); true/false = tiene o no la licencia.
+  comprobarLicencia(huella, producto, ip) {
+    const ahora = Date.now();
+    this.sql.exec(`DELETE FROM intentos WHERE fecha < ?`, ahora - 3600e3);
+    if (this.sql.exec(`SELECT COUNT(*) AS n FROM intentos WHERE ip = ?`, ip).one().n >= 10) return null;
+    this.sql.exec(`INSERT INTO intentos (ip, fecha) VALUES (?, ?)`, ip, ahora);
+    return this.sql.exec(`SELECT COUNT(*) AS n FROM licencias WHERE huella = ? AND producto = ?`, huella, producto).one().n > 0;
+  }
+
+  licenciasDesde(desde) {
+    return this.sql.exec(`SELECT producto, COUNT(*) AS n FROM licencias WHERE fecha >= ? GROUP BY producto`, desde).toArray();
   }
 
   olvidarVenta(id) { this.sql.exec(`DELETE FROM ventas WHERE id = ?`, id); }
@@ -422,6 +453,13 @@ async function kofi(req, env) {
   const id = String(d.kofi_transaction_id || d.message_id || crypto.randomUUID());
   const nueva = prueba || !m ? true : await m.guardarVenta({ id, tipo, nombre, importe, moneda, detalle });
   if (!nueva) { await anota("aviso repetido de Ko-fi (ya se había enviado)"); return new Response("OK"); }
+  // Versiones Pro: se guarda el correo del comprador para que la web se desbloquee con él.
+  if (d.type === "Shop Order" && !prueba && m && d.email) {
+    const pros = [...new Set((d.shop_items || []).map(i => PRO_KOFI[i.direct_link_code]).filter(Boolean))];
+    const h = await huellaCorreo(d.email);
+    for (const p of pros) await m.darLicencia(h, p, id);
+    if (pros.length) texto += `\n🔓 Desbloqueado: ${pros.map(p => NOMBRE_PRO[p] || p).join(", ")}`;
+  }
   try { await enviarTelegram(env, texto); }
   catch (e) {
     // Si Telegram falla, la venta no se da por avisada: Ko-fi la reintentará.
@@ -431,6 +469,26 @@ async function kofi(req, env) {
   }
   await anota(`✅ ${prueba ? "prueba" : "aviso"} recibido (${d.type}) y enviado a Telegram`);
   return new Response("OK");
+}
+
+async function huellaCorreo(email) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(email).trim().toLowerCase() + "|aw-pro"));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+// La web pregunta: ¿este correo compró el Pro de este producto?
+async function pro(req, env) {
+  const h = { "Content-Type": "application/json", "Cache-Control": "no-store", ...cors(req) };
+  if (!h["Access-Control-Allow-Origin"]) return new Response('{"error":"Origen no permitido"}', { status: 403, headers: h });
+  const b = await req.json().catch(() => null);
+  const email = String(b?.email || "").trim(), producto = String(b?.producto || "");
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !NOMBRE_PRO[producto]) return new Response('{"error":"Datos no válidos"}', { status: 400, headers: h });
+  const m = memoria(env);
+  if (!m) return new Response('{"error":"Sin memoria"}', { status: 503, headers: h });
+  const ip = await huellaCorreo((req.headers.get("CF-Connecting-IP") || "") + "#ip");
+  const r = await m.comprobarLicencia(await huellaCorreo(email), producto, ip.slice(0, 16));
+  if (r === null) return new Response('{"error":"Demasiados intentos, prueba dentro de una hora"}', { status: 429, headers: h });
+  return new Response(JSON.stringify({ ok: r }), { headers: h });
 }
 
 async function contacto(req, env) {
@@ -487,6 +545,7 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
     if (req.method === "POST" && url.pathname === "/kofi") return kofi(req, env);
     if (req.method === "POST" && url.pathname === "/contacto") return contacto(req, env);
+    if (req.method === "POST" && url.pathname === "/pro") return pro(req, env);
     if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
 
     if (url.pathname === "/diagnostico") {
@@ -521,6 +580,15 @@ export default {
 
     const clave = url.searchParams.get("clave") || url.searchParams.get("prueba");
     const autorizado = clave && env.PRUEBA_CLAVE && clave === env.PRUEBA_CLAVE;
+
+    if (url.pathname === "/pro/dar") {
+      if (!autorizado) return new Response("No autorizado", { status: 403 });
+      const email = url.searchParams.get("email") || "", producto = url.searchParams.get("producto") || "";
+      if (!email.includes("@") || !NOMBRE_PRO[producto]) return new Response("Falta email o producto (turnos)", { status: 400 });
+      const m = memoria(env);
+      await m.darLicencia(await huellaCorreo(email), producto, "a mano");
+      return new Response(`✅ ${NOMBRE_PRO[producto]} activado para ${email}`, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+    }
 
     if (url.pathname === "/noticias") {
       if (!autorizado) return new Response("No autorizado", { status: 403 });
