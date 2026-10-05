@@ -52,7 +52,7 @@ button,input,a{font:inherit;color:inherit}
 
 /* HUD */
 #hud{position:absolute;inset:0 0 auto 0;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;padding:6px 8px;pointer-events:none;font-size:clamp(7px,2.2vw,12px);text-shadow:2px 2px 0 #000}
-#hud[hidden]{display:none}
+#hud[hidden],#tabMes[hidden]{display:none}
 .hud-izq,.hud-der{display:flex;flex-direction:column;gap:4px}
 .hud-der{align-items:flex-end}
 #vidas{color:var(--rojo);letter-spacing:2px}
@@ -397,7 +397,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
       <button type="button" class="btn" id="tabSemana" aria-pressed="false" data-t="tabSemana">ESTA SEMANA</button>
       <button type="button" class="btn" id="tabHoy" aria-pressed="false" data-t="tabHoy">HOY</button>
       <button type="button" class="btn" id="tabLiga" aria-pressed="false" data-t="tabLiga">MI LIGA</button>
-      <button type="button" class="btn" id="tabMes" aria-pressed="false" data-t="tabMes">TEMPORADA</button>
+      <button type="button" class="btn" id="tabMes" aria-pressed="false" data-t="tabMes" hidden>TEMPORADA</button>
     </div>
     <p class="suave" id="topModo"></p>
     <div class="tabla-scroll" id="topScroll">
@@ -543,7 +543,7 @@ const TXT = {
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
     ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
     ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
-    ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y temporadas mensuales: el podio de cada mes luce un trofeo 🏆 todo el mes siguiente. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex.',
+    ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y medallas 🥇🥈🥉 para el podio mundial: son tuyas hasta que alguien te machaque. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa. En el móvil, mejor en horizontal.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
     finTit:'¡AL FALLO!', nuevoTop:'¡ENTRAS EN EL RANKING! PON TUS INICIALES', guardar:'GUARDAR', otra:'OTRA SERIE', compartir:'RETAR A UN AMIGO', retarWa:'RETAR POR WHATSAPP', devJuego:'¿TE GUSTA ESTE JUEGO? HACEMOS WEBS, APPS Y JUEGOS PARA TU NEGOCIO →', otrasApps:'OTRAS APPS', imagen:'IMAGEN', amigo:'TU AMIGO', menu:'MENÚ',
@@ -623,7 +623,7 @@ const TXT = {
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
     ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
     ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
-    ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and monthly seasons: each month\'s podium shows a 🏆 trophy all next month. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex.',
+    ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and 🥇🥈🥉 medals for the world podium: they\'re yours until someone crushes your score. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause. On a phone, better in landscape.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
     finTit:'FAILURE!', nuevoTop:'YOU MADE THE RANKING! ENTER YOUR INITIALS', guardar:'SAVE', otra:'ONE MORE SET', compartir:'CHALLENGE A FRIEND', retarWa:'CHALLENGE ON WHATSAPP', devJuego:'LIKE THIS GAME? WE BUILD WEBSITES, APPS AND GAMES FOR YOUR BUSINESS →', otrasApps:'OTHER APPS', imagen:'IMAGE', amigo:'YOUR FRIEND', menu:'MENU',
@@ -851,12 +851,11 @@ const MANUAL = {
     <ul>
       <li><b>Siempre:</b> el ranking mundial de todos los tiempos.</li>
       <li><b>Esta semana:</b> se reinicia cada lunes.</li>
-      <li><b>Temporada:</b> el mes en curso; se reinicia el día 1.</li>
       <li><b>Hoy:</b> el reto del día.</li>
       <li><b>Mi liga:</b> solo tú y tus amigos.</li>
     </ul><p>Sin conexión, el juego guarda las marcas en tu dispositivo.</p>`],
-    ['CAMPEÓN Y TEMPORADAS', `<p>El <b>campeón de cada semana</b> sale en el menú durante toda la semana siguiente. No hay premios: se juega por la gloria.</p>
-    <p>Cada mes es una <b>temporada</b>. Los 3 primeros de cada lista llevan medalla 🥇🥈🥉. El podio del mes (los 3 primeros de la temporada) luce además un trofeo 🏆 junto a su nombre durante todo el mes siguiente y desbloquea el personaje Campeón de temporada.</p>`],
+    ['CAMPEÓN Y PODIO', `<p>El <b>campeón de cada semana</b> sale en el menú durante toda la semana siguiente. No hay premios: se juega por la gloria.</p>
+    <p>Los 3 primeros de cada lista llevan medalla 🥇🥈🥉. El <b>podio mundial de siempre</b> no caduca: la medalla es tuya hasta que alguien machaque tu marca. Entrar en él desbloquea el personaje Campeón mundial.</p>`],
     ['LIGAS', `<p>Crea tu liga en TOP 50 → MI LIGA e invita a tus amigos por WhatsApp. Todos los récords de la liga salen juntos, y puedes salir de ella cuando quieras.</p>`],
     ['RETAR A UN AMIGO', `<p>Al acabar una partida, pulsa <b>RETAR A UN AMIGO</b>. Le llega un enlace con tu marca y, al abrirlo, juega contra ella con tu marca arriba en pantalla. Si te gana, puede <b>devolverte el reto</b>.</p>`],
     ['PERSONAJES', `<p>Son solo de aspecto: <b>todos juegan igual</b>. Se desbloquean jugando:</p>
@@ -868,7 +867,7 @@ const MANUAL = {
       <li><b>Yeti:</b> derrota a un mamut.</li>
       <li><b>Madrugador:</b> juega 7 retos del día.</li>
       <li><b>Leyenda:</b> haz 50.000 puntos en una partida.</li>
-      <li><b>Campeón de temporada:</b> acaba un mes en el podio mundial.</li>
+      <li><b>Campeón mundial:</b> entra en el podio mundial de siempre (top 3).</li>
     </ul>`],
     ['LOGROS', `<p>Hay 19 logros: primer dino, combo x5, levantar 40, 60 y 100 KG, derrotar jefes, recoger discos, llegar a 40 KG sin comer basura, 10.000 y 50.000 puntos, jugar 25 partidas y más. Míralos en el menú → LOGROS.</p>`],
     ['OPCIONES', `<ul>
@@ -937,12 +936,11 @@ const MANUAL = {
     <ul>
       <li><b>All time:</b> the worldwide ranking.</li>
       <li><b>This week:</b> resets every Monday.</li>
-      <li><b>Season:</b> the current month; resets on the 1st.</li>
       <li><b>Today:</b> the daily challenge.</li>
       <li><b>My league:</b> just you and your friends.</li>
     </ul><p>Offline, the game keeps scores on your device.</p>`],
-    ['CHAMPION AND SEASONS', `<p>The <b>champion of each week</b> is shown in the menu for the whole next week. There are no prizes: you play for glory.</p>
-    <p>Each month is a <b>season</b>. The top 3 of every list get a 🥇🥈🥉 medal. The monthly podium (the season's top 3) also shows a 🏆 trophy next to their name all next month and unlocks the Season Champ character.</p>`],
+    ['CHAMPION AND PODIUM', `<p>The <b>champion of each week</b> is shown in the menu for the whole next week. There are no prizes: you play for glory.</p>
+    <p>The top 3 of every list get a 🥇🥈🥉 medal. The <b>all-time world podium</b> never expires: the medal is yours until someone crushes your score. Getting on it unlocks the World Champ character.</p>`],
     ['LEAGUES', `<p>Create your league in TOP 50 → MY LEAGUE and invite your friends on WhatsApp. All the league's records show up together, and you can leave whenever you like.</p>`],
     ['CHALLENGE A FRIEND', `<p>After a game, tap <b>CHALLENGE A FRIEND</b>. They get a link with your score and play against it, with your score shown on screen. If they beat you, they can <b>send the challenge back</b>.</p>`],
     ['CHARACTERS', `<p>They only change the look: <b>they all play the same</b>. Unlock them by playing:</p>
@@ -954,7 +952,7 @@ const MANUAL = {
       <li><b>Yeti:</b> beat a mammoth.</li>
       <li><b>Early Bird:</b> play 7 daily challenges.</li>
       <li><b>Legend:</b> score 50,000 in one game.</li>
-      <li><b>Season Champ:</b> finish a month on the world podium.</li>
+      <li><b>World Champ:</b> get on the all-time world podium (top 3).</li>
     </ul>`],
     ['ACHIEVEMENTS', `<p>There are 19 achievements: first dino, x5 combo, lifting 40, 60 and 100 KG, beating bosses, racking plates, reaching 40 KG without junk food, 10,000 and 50,000 points, playing 25 games and more. See them in the menu → ACHIEVEMENTS.</p>`],
     ['OPTIONS', `<ul>
@@ -1392,7 +1390,7 @@ const PJS = [
   ['yeti',    'YETI',            'YETI',          'Derrota a un mamut.',                    'Beat a mammoth.',                      ['#f0d8c8','#c8a898','#e8f4ff','#dfe9f2','#9fb6c9','#4fb3ff']],
   ['diario',  'MADRUGADOR',      'EARLY BIRD',    'Juega 7 retos del día.',                 'Play 7 daily challenges.',             ['#e0a070','#b8744a','#6b3a16','#3a8a4a','#1f5a2c','#ff9a1f']],
   ['leyenda', 'LEYENDA',         'LEGEND',        'Haz 50.000 puntos en una partida.',      'Score 50,000 in one game.',            ['#e8b070','#c08850','#ffd23c','#ffd23c','#b8901a','#ffffff']],
-  ['podio',   'CAMPEÓN DE TEMPORADA', 'SEASON CHAMP', 'Acaba un mes en el podio mundial.',  'Finish a month on the world podium.',  ['#e0a070','#b8744a','#2b1a10','#7a2cff','#4a1a9a','#ffd23c'], true]
+  ['podio',   'CAMPEÓN MUNDIAL', 'WORLD CHAMP', 'Entra en el podio mundial de siempre (top 3).',  'Get on the all-time world podium (top 3).',  ['#e0a070','#b8744a','#2b1a10','#7a2cff','#4a1a9a','#ffd23c'], true]
 ];
 function pjAbierto(id){
   const a = store.ach || {};
@@ -1408,9 +1406,9 @@ function pjNuevos(){
   if (n.length){ store.pjVistos = store.pjVistos.concat(n.map(p => p[0])); saveStore(); }
   return n;
 }
-// Si una marca hecha en este dispositivo acabó en el podio del mes pasado, se desbloquea el campeón de temporada.
+// Si una marca hecha en este dispositivo entra en el podio mundial de siempre, se desbloquea el campeón mundial (y se queda).
 function revisarPodio(d){
-  const top = d && d.podio && d.podio.top;
+  const top = d && Array.isArray(d.top) && d.top.slice(0, 3);
   if (store.podioGanado || !top || !top.length) return;
   if ((store.misMarcas || []).some(m => top.some(t => t.name === m.name && t.score === m.score))){ store.podioGanado = true; saveStore(); }
 }
@@ -2458,7 +2456,7 @@ async function saveInitials(ev){
 
 let vistaTop = 'siempre', lastTopArgs = [];
 function renderTop(d, hiName, hiScore){
-  if (!API.online) vistaTop = 'siempre';
+  if (!API.online || vistaTop === 'mes') vistaTop = 'siempre';
   const v = vistaTop, semana = v === 'semana';
   const listas = {siempre:d && d.top, semana:d && d.semana, hoy:d && d.hoy, liga:d && d.liga, mes:d && d.temporada};
   const top = listas[v] || [];
@@ -2480,11 +2478,9 @@ function renderTop(d, hiName, hiScore){
     }
   }
   const nota = $('#notaTop');
-  // Medallas: los 3 primeros de cada lista. Trofeo: las marcas del podio del mes pasado, en todas las listas.
-  const podio = (d && d.podio && d.podio.top) || [], MEDALLAS = ['🥇', '🥈', '🥉'];
-  const trofeo = r => podio.some(t => t.name === r.name && t.score === r.score && t.date === r.date) ? ' 🏆' : '';
-  nota.hidden = !(API.online && v === 'mes' && podio.length);
-  if (!nota.hidden) nota.textContent = T('podio')(nombreMes(d.podio.mes)) + podio.map((t, i) => `${MEDALLAS[i]} ${t.name} ${NUM(t.score)}`).join(' · ');
+  // Medallas para los 3 primeros de cada lista; en la de siempre duran hasta que alguien machaque la marca.
+  const MEDALLAS = ['🥇', '🥈', '🥉'];
+  nota.hidden = true;
   const body = $('#topCuerpo');
   body.innerHTML = '';
   if (!top || !top.length){
@@ -2495,7 +2491,7 @@ function renderTop(d, hiName, hiScore){
   (top || []).forEach((r, i) => {
     const tr = document.createElement('tr');
     if (r.name === hiName && r.score === hiScore) tr.className = 'tuyo';
-    [MEDALLAS[i] || String(i + 1), r.name + trofeo(r), String(kgDe(r.level || 1)), NUM(r.score)].forEach(v => {
+    [MEDALLAS[i] || String(i + 1), r.name, String(kgDe(r.level || 1)), NUM(r.score)].forEach(v => {
       const td = document.createElement('td'); td.textContent = v; tr.append(td);
     });
     body.append(tr);
