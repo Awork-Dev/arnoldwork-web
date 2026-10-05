@@ -159,6 +159,7 @@ export class Memoria extends DurableObject {
     this.sql.exec(`INSERT OR REPLACE INTO sync (huella, codigo, datos, t, cal, creado) VALUES (?, ?, NULL, 0, ?, ?)`, huella, codigo, cal, Date.now());
   }
   syncGuardar(huella, datos, t) { this.sql.exec(`UPDATE sync SET datos = ?, t = ? WHERE huella = ?`, datos, t, huella); }
+  syncNuevoCodigo(huella, codigo) { this.sql.exec(`UPDATE sync SET codigo = ? WHERE huella = ?`, codigo, huella); }
   syncBorrar(huella) { this.sql.exec(`DELETE FROM sync WHERE huella = ?`, huella); }
   syncPorCal(cal) { return this.sql.exec(`SELECT datos FROM sync WHERE cal = ?`, cal).toArray()[0] || null; }
 
@@ -661,6 +662,21 @@ export default {
 
     const clave = url.searchParams.get("clave") || url.searchParams.get("prueba");
     const autorizado = clave && env.PRUEBA_CLAVE && clave === env.PRUEBA_CLAVE;
+
+    // Soporte: código nuevo de sincronización conservando la copia (quien borró la app y perdió el código).
+    if (url.pathname === "/sync/nuevo-codigo") {
+      if (!autorizado) return new Response("No autorizado", { status: 403 });
+      const email = url.searchParams.get("email") || "";
+      if (!email.includes("@")) return new Response("Falta email", { status: 400 });
+      const m = memoria(env), hu = await huellaCorreo(email), fila = await m.syncFila(hu);
+      if (!fila) return new Response(`Ese correo no tiene sincronización activada (no hay copia en el servidor).`, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
+      const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r = crypto.getRandomValues(new Uint8Array(12));
+      const codigo = [...r].map(x => abc[x % abc.length]).join("").replace(/(.{4})(.{4})(.{4})/, "$1-$2-$3");
+      const h = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(codigo + "|aw-sync")))].map(x => x.toString(16).padStart(2, "0")).join("");
+      await m.syncNuevoCodigo(hu, h);
+      const fecha = fila.t ? new Date(fila.t).toLocaleString("es-ES", { timeZone: "Europe/Madrid" }) : "—";
+      return new Response(`✅ Código nuevo para ${email}: ${codigo}\n\nCopia guardada: ${fila.datos ? "sí" : "vacía"} (último cambio: ${fecha}).\nEn TurnoWork: Más → ☁️ En todos tus dispositivos → «Ya la tengo en otro móvil» → escribe este código.`, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+    }
 
     if (url.pathname === "/pro/liberar") {
       if (!autorizado) return new Response("No autorizado", { status: 403 });
