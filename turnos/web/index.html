@@ -11,7 +11,7 @@
 <meta property="og:title" content="TurnoWork · Tu cuadrante de turnos para todo el año">
 <meta property="og:description" content="Pon tu ciclo una vez y ve todo tu año: turnos, festivos, horas y cambios con compañeros. Gratis.">
 <meta property="og:url" content="https://turnos.arnoldwork.com/">
-<meta name="theme-color" content="#ff6f91">
+<meta name="theme-color" content="#5b3fd6">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icono.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -28,7 +28,7 @@
   --fondo:#faf8ff; --panel:#ffffff; --tinta:#1d1838; --suave:#6b6688; --linea:#ebe7f5;
   --acento:#6c4cf1; --acento-2:#ff6b8b; --acento-suave:#f1edff; --oro:#ffb020; --rojo:#e5484d; --verde:#2f9e6b;
   --sombra:0 1px 2px rgba(29,24,56,.06),0 10px 28px rgba(29,24,56,.07);
-  --tM:#ffe066; --tT:#ffa94d; --tN:#a99bff; --tD:#66d4ff; --tG:#ff8fa3;
+  --tM:#ffe066; --tT:#f9a8d4; --tN:#a99bff; --tD:#66d4ff; --tG:#ff7b7b;
   --tV:#69db7c; --tAP:#38d9a9; --tB:#ff8787; --tF:#74c0fc; --tJ:#d0a8ff; --tC:#d0d4e4; --tinta-celda:#1d1838;
   --display:"Unbounded", "Avenir Next", system-ui, sans-serif;
   --texto:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -38,7 +38,7 @@
   --fondo:#110e22; --panel:#1b1733; --tinta:#efecff; --suave:#a7a1c8; --linea:#2c2650;
   --acento:#9d86ff; --acento-2:#ff8aa3; --acento-suave:#251f47; --oro:#ffc44d; --rojo:#ff7b80; --verde:#5fd39b;
   --sombra:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
-  --tM:#f5d23d; --tT:#f99a3a; --tN:#9283ff; --tD:#45c3f2; --tG:#ff7a92;
+  --tM:#f5d23d; --tT:#f490c4; --tN:#9283ff; --tD:#45c3f2; --tG:#ff6b6b;
   --tV:#4fcf66; --tAP:#20c997; --tB:#ff6b6b; --tF:#5aaef5; --tJ:#b98af5; --tC:#9aa0b8;
   color-scheme:dark;}}
 *{box-sizing:border-box}
@@ -49,7 +49,23 @@ body{background:var(--fondo);color:var(--tinta);font:15px/1.55 var(--texto);-web
 button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--acento)}
 /* Cabecera */
-.cab{background:linear-gradient(120deg,#ffb35c 0%,#ff6f91 42%,#7b5cff 100%);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+/* Temas: la cabecera y los botones principales cambian con el tema elegido (Noche de serie) */
+:root{--cab:linear-gradient(120deg,#4338ca 0%,#7c3aed 55%,#c026d3 100%)}
+:root[data-tema="oceano"]{--cab:linear-gradient(120deg,#0369a1 0%,#2563eb 55%,#4f46e5 100%);--acento:#3b6ff5;--acento-2:#0ea5e9;--acento-suave:#e7efff}
+:root[data-tema="bosque"]{--cab:linear-gradient(120deg,#065f46 0%,#0d9488 55%,#10b981 100%);--acento:#0d9488;--acento-2:#10b981;--acento-suave:#e3f7f2}
+:root[data-tema="grafito"]{--cab:linear-gradient(120deg,#1e293b 0%,#334155 60%,#475569 100%);--acento:#475569;--acento-2:#64748b;--acento-suave:#eef1f5}
+:root[data-tema="amanecer"]{--cab:linear-gradient(120deg,#ffb35c 0%,#ff6f91 42%,#7b5cff 100%);--acento-2:#ff6b8b}
+@media (prefers-color-scheme:dark){
+  :root[data-tema="oceano"]{--acento:#6b9bff;--acento-2:#38bdf8;--acento-suave:#1c2a4d}
+  :root[data-tema="bosque"]{--acento:#34d3b4;--acento-2:#4ade80;--acento-suave:#163a35}
+  :root[data-tema="grafito"]{--acento:#a3b1c6;--acento-2:#cbd5e1;--acento-suave:#252c3a}
+}
+.temas{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tema{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--linea);background:var(--panel);border-radius:999px;padding:5px 12px 5px 5px;font-weight:800;cursor:pointer;color:var(--tinta)}
+.tema i{width:26px;height:26px;border-radius:50%}
+.tema[aria-pressed="true"]{border-color:var(--acento);box-shadow:0 0 0 3px var(--acento-suave)}
+fieldset.turno input[type=color]{padding:2px;height:42px;cursor:pointer}
+.cab{background:var(--cab);color:#fff;padding-top:env(safe-area-inset-top,0px)}
 .cab .envoltura{padding-block:24px 30px;display:flex;flex-wrap:wrap;gap:20px 28px;align-items:flex-end;justify-content:space-between}
 .marca{font:800 1.1rem/1 var(--display);display:flex;align-items:center;gap:10px}
 .marca img{width:34px;height:34px;border-radius:9px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
@@ -259,6 +275,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     <p class="titulo" style="margin:16px 0 0">Horario de cada turno</p>
     <div class="form" id="turnos"></div>
     <div id="aviso-minutos"></div>
+    <p class="titulo" style="margin:18px 0 0">Colores de la app</p>
+    <div class="temas" id="temas" role="group" aria-label="Tema de colores"></div>
   </details>
 
   <div class="barra no-imprimir">
@@ -332,6 +350,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>🏖️</span><div><b>Cupo de vacaciones y asuntos propios:</b> cuántos llevas y cuántos te quedan.</div></li>
       <li><span>👫</span><div><b>Libres en común</b> con tu pareja o un compañero: qué días libráis los dos.</div></li>
       <li><span>⏰</span><div><b>Aviso antes de cada turno</b> en el calendario del móvil.</div></li>
+      <li><span>🎨</span><div><b>El color de cada turno a tu gusto</b>, para ver tu año de un vistazo.</div></li>
       <li><span>💾</span><div><b>Copia de seguridad</b> para no perder nada y pasar tu cuadrante a otro móvil.</div></li>
       <li><span>💡</span><div><b>¿Quieres una función? Pídela.</b> Los usuarios Pro tienen buzón directo y sus ideas son las primeras que hacemos.</div></li>
     </ul>
@@ -451,6 +470,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
         <label>Sales<input type="time" step="60" data-t="${k}" data-k="fin" value="${aHHMM(t.ini+t.h)}"></label>
         <label>Factor${PRO?"":" 🔒"}<input type="number" min="0.5" max="3" step="0.01" inputmode="decimal" data-t="${k}" data-k="f" value="${t.f||1}"${PRO?"":" disabled"}></label>
         <span class="dur" data-dur="${k}" style="align-self:end">${durTxt(t.h)}</span>
+        <label style="grid-column:1/-1">Color${PRO?"":" 🔒"}<input type="color" data-color="${k}" value="${(Y.colores||{})[k]||colorBase(k)}"${PRO?"":" disabled"}></label>
       </fieldset>`;}).join("");
   }
   function pintarAjustes(){
@@ -519,6 +539,28 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   const horasTxt=v=>{const m=Math.round(Math.abs(v)*60),h=Math.floor(m/60),r=m%60;return `${h.toLocaleString("es-ES")} h${r?` ${r} min`:""}`;};
   function durTxt(h){return `Duración: ${horasTxt(h)}${h>=24?" (guardia)":""}`;}
   const hora=v=>`${p2(Math.floor(v%24))}:${p2(Math.round((v%1)*60))}`;
+
+  // ===== Colores: tema de la app (gratis) y color de cada turno (Pro) =====
+  const TEMAS=[["noche","Noche","linear-gradient(120deg,#4338ca,#7c3aed,#c026d3)","#5b3fd6"],["oceano","Océano","linear-gradient(120deg,#0369a1,#2563eb,#4f46e5)","#2563eb"],
+    ["bosque","Bosque","linear-gradient(120deg,#065f46,#0d9488,#10b981)","#0d9488"],["grafito","Grafito","linear-gradient(120deg,#1e293b,#334155,#475569)","#334155"],
+    ["amanecer","Amanecer","linear-gradient(120deg,#ffb35c,#ff6f91,#7b5cff)","#ff6f91"]];
+  const colorBase=k=>getComputedStyle(document.documentElement).getPropertyValue("--t"+k).trim()||"#cccccc";
+  function aplicarColores(){
+    const t=TEMAS.find(x=>x[0]===Y.tema)||TEMAS[0];
+    document.documentElement.dataset.tema=t[0];
+    const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content=t[3];
+    ["M","T","N","D","G"].forEach(k=>document.documentElement.style.removeProperty("--t"+k));
+    if(PRO) Object.entries(Y.colores||{}).forEach(([k,c])=>document.documentElement.style.setProperty("--t"+k,c));
+    $("temas").innerHTML=TEMAS.map(([id,n,g])=>`<button type="button" class="tema" data-tema="${id}" aria-pressed="${id===t[0]}"><i style="background:${g}"></i>${n}</button>`).join("")
+      +(PRO&&Y.colores&&Object.keys(Y.colores).length?`<button type="button" class="tema" id="colores-reset">↺ Colores de turno originales</button>`:"");
+  }
+  $("temas").addEventListener("click",e=>{
+    if(e.target.closest("#colores-reset")){Y.colores={};guardar();aplicarColores();pintarTurnos();return;}
+    const b=e.target.closest("[data-tema]"); if(!b) return; Y.tema=b.dataset.tema; guardar(); aplicarColores();
+  });
+  $("turnos").addEventListener("input",e=>{const c=e.target.closest("[data-color]"); if(!c||!PRO) return;
+    Y.colores=Y.colores||{}; Y.colores[c.dataset.color]=c.value; guardar(); document.documentElement.style.setProperty("--t"+c.dataset.color,c.value);});
+  $("turnos").addEventListener("change",e=>{const c=e.target.closest("[data-color]"); if(c&&PRO) aplicarColores();});
 
   // ===== Notas: las de un día y las que se repiten =====
   const DIAS_SEM=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
@@ -692,7 +734,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
+    aplicarColores(); pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO; $("ganchos").hidden=!!PRO; $("pide-funcion").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     $("aviso-turno-caja").hidden=!PRO;
