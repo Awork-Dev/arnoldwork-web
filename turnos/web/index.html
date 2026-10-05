@@ -42,6 +42,7 @@
   --tV:#4fcf66; --tAP:#20c997; --tB:#ff6b6b; --tF:#5aaef5; --tJ:#b98af5; --tC:#9aa0b8;
   color-scheme:dark;}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--fondo);color:var(--tinta);font:15px/1.55 var(--texto);-webkit-font-smoothing:antialiased}
 .envoltura{max-width:1080px;margin:0 auto;padding-inline:16px}
@@ -196,8 +197,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   <section class="tarjeta instalar no-imprimir" id="instalar" hidden>
     <div class="instalar-cab">
       <div><img src="icono-192.png" alt="" width="46" height="46"><div><p class="titulo" style="margin:0">Tenla en la pantalla de tu móvil</p><span class="nota">Se abre como una app, a pantalla completa y sin conexión.</span></div></div>
-      <button class="boton primario" id="instalar-ya" hidden>📲 Instalar TurnoWork</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="boton primario" id="instalar-ya" hidden>📲 Instalar</button><button class="boton" id="instalar-como" aria-expanded="false">Cómo instalarla</button><button class="boton" id="instalar-cerrar">Ya la tengo</button></div>
     </div>
+    <div id="instalar-pasos" hidden style="display:grid;gap:12px">
     <div class="pestanas" role="tablist">
       <button role="tab" data-so="iphone" aria-selected="false">iPhone</button>
       <button role="tab" data-so="android" aria-selected="false">Android</button>
@@ -214,7 +216,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
       <li><span>Si no, toca el menú <b>⋮</b> (arriba a la derecha) y elige <b>Añadir a pantalla de inicio</b> o <b>Instalar aplicación</b>.</span></li>
       <li><span>Confirma con <b>Instalar</b>. El icono aparecerá en tu pantalla de inicio.</span></li>
     </ol>
-    <div style="display:flex;justify-content:flex-end"><button class="cerrar" id="instalar-cerrar">Ahora no</button></div>
+    </div>
   </section>
 
   <details class="tarjeta no-imprimir" id="ajustes">
@@ -727,15 +729,19 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   }
   document.querySelectorAll("[data-so]").forEach(b=>b.addEventListener("click",()=>verSO(b.dataset.so)));
   verSO(esIOS?"iphone":"android");
-  const mostrarInstalar=()=>{$("instalar").hidden=false;};
-  if(!instalada&&!leer("tw_instalar_no",false)) mostrarInstalar();
+  const verPasos=v=>{$("instalar-pasos").hidden=!v;$("instalar-como").setAttribute("aria-expanded",String(v));$("instalar-como").textContent=v?"Ocultar pasos":"Cómo instalarla";};
+  const mostrarInstalar=(pasos)=>{$("instalar").hidden=false;verPasos(!!pasos);};
+  // Abierta desde el icono: ya está instalada, y no se vuelve a ofrecer.
+  if(instalada) escribir("tw_instalar_no",true);
+  if(!instalada&&!leer("tw_instalar_no",false)) mostrarInstalar(false);
+  $("instalar-como").addEventListener("click",()=>verPasos($("instalar-pasos").hidden));
   $("instalar-cerrar").addEventListener("click",()=>{$("instalar").hidden=true;escribir("tw_instalar_no",true);});
-  $("ver-instalar").addEventListener("click",e=>{e.preventDefault();mostrarInstalar();$("instalar").scrollIntoView({behavior:"smooth",block:"center"});});
+  $("ver-instalar").addEventListener("click",e=>{e.preventDefault();mostrarInstalar(true);$("instalar").scrollIntoView({behavior:"smooth",block:"center"});});
   let avisoInstalar=null;
   addEventListener("beforeinstallprompt",e=>{e.preventDefault();avisoInstalar=e;$("instalar-ya").hidden=false;});
   $("instalar-ya").addEventListener("click",async()=>{if(!avisoInstalar)return;avisoInstalar.prompt();
     const r=await avisoInstalar.userChoice.catch(()=>null);avisoInstalar=null;$("instalar-ya").hidden=true;if(r&&r.outcome==="accepted")$("instalar").hidden=true;});
-  addEventListener("appinstalled",()=>{$("instalar").hidden=true;});
+  addEventListener("appinstalled",()=>{$("instalar").hidden=true;escribir("tw_instalar_no",true);});
 
   if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
