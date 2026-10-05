@@ -182,7 +182,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
 <header class="cab">
   <div class="envoltura">
     <div>
-      <div class="marca"><img src="icono.svg" alt="" width="34" height="34">TurnoWork</div>
+      <div class="marca"><img src="icono.svg" alt="" width="34" height="34">TurnoWork<span id="insignia-pro" hidden style="font:800 .62rem/1 var(--texto);letter-spacing:.08em;background:#ffb020;color:#2b1a00;border-radius:6px;padding:4px 7px">PRO</span></div>
       <h1>Tu cuadrante de turnos para todo el año</h1>
       <p>Pon tu ciclo una vez y ve cada día del año: mañanas, tardes, noches, guardias, festivos y horas. Para sanitarios, bomberos, seguridad, fábricas, hostelería… </p>
       <div class="ventajas"><span>Gratis</span><span>Sin registro</span><span>Funciona sin conexión</span><span>Tus datos no salen del móvil</span></div>
@@ -394,8 +394,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   function pintarTurnos(){
     $("turnos").innerHTML=usados().map(k=>{const t=Y.turnos[k];return `
       <fieldset class="turno"><legend><span class="c t-${k}">${k}</span> ${esc(t.n)}</legend>
-        <label>Entras<input type="time" step="${PRO?60:3600}" data-t="${k}" data-k="ini" value="${aHHMM(t.ini)}"></label>
-        <label>Sales<input type="time" step="${PRO?60:3600}" data-t="${k}" data-k="fin" value="${aHHMM(t.ini+t.h)}"></label>
+        <label>Entras<input type="time" step="60" data-t="${k}" data-k="ini" value="${aHHMM(t.ini)}"></label>
+        <label>Sales<input type="time" step="60" data-t="${k}" data-k="fin" value="${aHHMM(t.ini+t.h)}"></label>
         <label>Factor${PRO?"":" 🔒"}<input type="number" min="0.5" max="3" step="0.01" inputmode="decimal" data-t="${k}" data-k="f" value="${t.f||1}"${PRO?"":" disabled"}></label>
         <span class="dur" data-dur="${k}" style="align-self:end">${durTxt(t.h)}</span>
       </fieldset>`;}).join("");
@@ -413,7 +413,8 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
   $("fecha").addEventListener("input",e=>{if(e.target.value){Y.ref=e.target.value;cambio();}});
   $("pos").addEventListener("change",e=>{Y.pos=+e.target.value;cambio();});
   $("comunidad").addEventListener("change",e=>{Y.comunidad=e.target.value;cambio();});
-  $("turnos").addEventListener("change",e=>{
+  // Se guarda al cambiar y también al soltar el selector (el iPhone a veces solo avisa al cerrar la rueda).
+  const alCambiarTurno=e=>{
     const i=e.target.closest("[data-t]"); if(!i||!i.value) return;
     const t=Y.turnos[i.dataset.t];
     if(i.dataset.k==="f"){ const f=parseFloat(String(i.value).replace(",","."));
@@ -426,7 +427,9 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     t.ini=Math.round(ini*60)/60; t.h=Math.round(h*60)/60;
     const d=$("turnos").querySelector(`[data-dur="${i.dataset.t}"]`); if(d) d.textContent=durTxt(t.h);
     cambio();
-  });
+  };
+  $("turnos").addEventListener("change",alCambiarTurno);
+  $("turnos").addEventListener("focusout",e=>{if(e.target.type==="time")alCambiarTurno(e);});
 
   // ===== Año =====
   $("anio-sel").value=Y.anio;
@@ -553,7 +556,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     });
   }
   function pintarPro(){
-    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML="";
+    pintarMejoras(); pintarTurnos(); $("aviso-minutos").innerHTML=""; $("insignia-pro").hidden=!PRO;
     document.querySelectorAll(".boton.pro").forEach(b=>b.classList.toggle("desbloqueado",!!PRO));
     ["jornada","haus","ffest","ffinde","fmodo"].forEach(id=>$(id).disabled=!PRO);
     if(PRO){ $("pro-estado").innerHTML=`<p class="nota">✅ Pro activado con <b>${esc(PRO.email)}</b>. ¡Gracias por apoyar TurnoWork!</p>`; return; }
