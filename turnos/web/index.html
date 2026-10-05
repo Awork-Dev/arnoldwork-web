@@ -948,7 +948,7 @@ footer{border-top:1px solid var(--linea);padding-block:24px 40px;color:var(--sua
     $("aviso-turno-caja").hidden=!PRO;
     $("pro-venta").hidden=!!PRO;
     if(PRO){ $("pro-estado").innerHTML=`<div class="pro-fila" style="justify-content:space-between"><span><b>✅ TurnoWork Pro activado</b><br><span class="nota">${esc(PRO.email)} · ¡Gracias por apoyar TurnoWork!</span></span></div>`; return; }
-    if(MODO_LIBRE){ $("pro-estado").innerHTML=`<div class="pro-fila"><a class="boton primario" href="${WEB}#pro" target="_blank" rel="noopener">Pásate a la app completa</a></div><p class="nota" style="margin:10px 0 0">Pro se compra y se activa en la app completa, <b>turnos.arnoldwork.com</b>. Tu cuadrante de aquí puedes llevártelo allí con «Copia de seguridad».</p>`; return; }
+    if(MODO_LIBRE){ $("pro-estado").innerHTML=`<div class="pro-fila"><a class="boton primario" href="${WEB}#pro" target="_blank" rel="noopener">Pásate a la app completa</a></div><p class="nota" style="margin:10px 0 0">Pro se compra y se activa en la app completa, <b>turnos.arnoldwork.com</b>, que además se instala en el móvil y funciona sin conexión.</p>`; return; }
     $("pro-estado").innerHTML=`
       <div class="pro-fila">${KOFI_PRO?`<a class="boton primario" href="${KOFI_PRO}" target="_blank" rel="noopener">Comprar Pro en Ko-fi</a>`:`<span class="nota"><b>Muy pronto a la venta.</b></span>`}</div>
       <p class="nota" style="margin:12px 0 6px">¿Ya lo has comprado? Escribe el correo con el que pagaste en Ko-fi (cada compra vale para 3 dispositivos):</p>
