@@ -581,8 +581,8 @@ main{overflow-x:clip}
         </div>
         <div class="botones">
           <button type="button" class="btn btn-claro btn-bloque" id="compartir">Compartir o descargar mi cuaderno</button>
-          <button type="button" class="btn btn-claro btn-bloque" id="aTurnoWork">💪 Llevar a TurnoWork</button>
-          <p class="estado-msg" style="margin:4px 0 0">Tus sesiones salen en <a href="https://turnos.arnoldwork.com/" target="_blank" rel="noopener">TurnoWork</a>, el día que las hiciste, junto a tus turnos o tu agenda.</p>
+          <button type="button" class="btn btn-claro btn-bloque" id="aVidaWork">💪 Llevar a VidaWork</button>
+          <p class="estado-msg" style="margin:4px 0 0">Tus sesiones salen en <a href="https://vida.arnoldwork.com/" target="_blank" rel="noopener">VidaWork</a>, el día que las hiciste, junto a tus turnos o tu agenda.</p>
           <div class="estado-msg" id="revisionMsg" aria-live="polite"></div>
         </div>
       </div>
@@ -1009,8 +1009,8 @@ function actualizarEnlaces(){
   if (!vacio && $('#revisionMsg').classList.contains('aviso')) msgRevision('');
 }
 $('#compartir').addEventListener('click', compartirCuaderno);
-// Llevar a TurnoWork: las sesiones de los últimos 6 meses (día, entreno y series) en un enlace, que también se copia.
-$('#aTurnoWork').addEventListener('click', () => {
+// Llevar a VidaWork: las sesiones de los últimos 6 meses (día, entreno y series) en un enlace, que también se copia.
+$('#aVidaWork').addEventListener('click', () => {
   const d = leer(), lim = Date.now() - 183 * 86400000, dia = iso => { const x = new Date(iso); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`; };
   const series = {};
   todosEjercicios().forEach(x => (d.cuaderno[x.id] || []).forEach(r => { if (new Date(r.fecha) >= lim) (series[dia(r.fecha)] ||= []).push(`${x.n} ${kgTxt(r.kg)} kg × ${r.reps}`); }));
@@ -1018,10 +1018,10 @@ $('#aTurnoWork').addEventListener('click', () => {
   d.sesiones.filter(s => new Date(s.fecha) >= lim).forEach(s => { const k = dia(s.fecha), E = ENTRENOS[s.entreno];
     out[k] = `${E ? `Entreno ${s.entreno} · ${E.nombre}` : 'Sesión HeavyWork'}${series[k] ? ': ' + series[k].join('; ') : ''}`.slice(0, 500); });
   Object.keys(series).forEach(k => { if (!out[k]) out[k] = ('Series: ' + series[k].join('; ')).slice(0, 500); });
-  if (!Object.keys(out).length) { msgRevision('Todavía no hay sesiones que llevar a TurnoWork.'); return; }
-  const url = 'https://turnos.arnoldwork.com/#entrenos=' + btoa(unescape(encodeURIComponent(JSON.stringify({ o:'heavywork', d:out })))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  if (!Object.keys(out).length) { msgRevision('Todavía no hay sesiones que llevar a VidaWork.'); return; }
+  const url = 'https://vida.arnoldwork.com/#entrenos=' + btoa(unescape(encodeURIComponent(JSON.stringify({ o:'heavywork', d:out })))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   try { navigator.clipboard.writeText(url).catch(() => {}); } catch (e) {}
-  msgRevision(`${Object.keys(out).length} días enviados a TurnoWork. Si la usas instalada en el móvil, ábrela y pulsa «📋 Pegar entrenos»: el enlace ya está copiado.`);
+  msgRevision(`${Object.keys(out).length} días enviados a VidaWork. Si la usas instalada en el móvil, ábrela y pulsa «📋 Pegar entrenos»: el enlace ya está copiado.`);
   window.open(url, '_blank', 'noopener');
 });
 

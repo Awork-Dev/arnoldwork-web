@@ -32,7 +32,7 @@ export async function syncApi(req, env, m, { huellaCorreo, esPro }) {
     const ip = (await sha((req.headers.get("CF-Connecting-IP") || "") + "#ip")).slice(0, 16);
     const pro = await esPro(hu, ip);
     if (pro === null) return json({ error: "Demasiados intentos, prueba dentro de una hora" }, 429);
-    if (!pro) return json({ error: "La sincronización es de TurnoWork Pro: activa antes Pro con este correo" }, 403);
+    if (!pro) return json({ error: "La sincronización es de VidaWork Pro: activa antes Pro con este correo" }, 403);
     const ya = await m.syncFila(hu);
     if (ya && !b.reiniciar) return json({ error: "Ya tienes la sincronización activada. Escribe tu código en «Ya la tengo en otro móvil».", existe: true }, 409);
     const codigo = aleatorio(4) + "-" + aleatorio(4) + "-" + aleatorio(4), cal = aleatorio(28, "abcdefghijkmnpqrstuvwxyz23456789");
@@ -80,7 +80,7 @@ export async function calendario(token, m) {
     const n = diasEntre(deISO(Y.ref), d) + (+Y.pos || 0); return ciclo[((n % ciclo.length) + ciclo.length) % ciclo.length]; };
   const sello = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
   const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ArnoldWork//TurnoWork//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
-    "X-WR-CALNAME:Mis turnos · TurnoWork", "REFRESH-INTERVAL;VALUE=DURATION:PT4H", "X-PUBLISHED-TTL:PT4H"];
+    "X-WR-CALNAME:Mi agenda · VidaWork", "REFRESH-INTERVAL;VALUE=DURATION:PT4H", "X-PUBLISHED-TTL:PT4H"];
   const hoy = deISO(fISO(new Date())), aviso = +Y.avisoTurno || 0;
   for (let d = masDias(hoy, -60); d <= masDias(hoy, 400); d = masDias(d, 1)) {
     const k = fISO(d), kk = k.replace(/-/g, ""), t = turnoDe(d), x = Y.turnos?.[t];

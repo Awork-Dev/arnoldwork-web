@@ -44,7 +44,7 @@ const ORIGENES = [
   /^https:\/\/(www\.)?arnoldwork\.com$/,
   /^https:\/\/heavywork\.arnoldwork\.com$/,                            // mensajes que lleguen desde HeavyWork
   /^https:\/\/[a-z0-9-]+-(arnoldwork-v11|heavywork)\.arnoldwork\.workers\.dev$/,   // vistas previas
-  /^https:\/\/(turnos|calas)\.arnoldwork\.com$/,                         // webs con versión Pro
+  /^https:\/\/(turnos|vida|calas)\.arnoldwork\.com$/,                         // webs con versión Pro
   /^https:\/\/([a-z0-9-]+-)?(turnos|calas)\.arnoldwork\.workers\.dev$/,
   /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/,                        // pruebas en local
 ];
@@ -82,7 +82,7 @@ const COMPROBACIONES = [
   { nombre: "HeavyWork",         url: "https://heavywork.arnoldwork.com/",    texto: "HeavyWork" },
   { nombre: "CaveWork",          url: "https://heavywork.arnoldwork.com/game/", texto: "CaveWork" },
   { nombre: "CaveWork (Google Play)", url: "https://heavywork.arnoldwork.com/app/", texto: "CaveWork" },
-  { nombre: "TurnoWork",         url: "https://turnos.arnoldwork.com/",       texto: "TurnoWork" },
+  { nombre: "VidaWork",          url: "https://vida.arnoldwork.com/",         texto: "VidaWork" },
   { nombre: "API contacto",      url: "https://arnoldwork-api.arnoldwork.workers.dev/" },
   { nombre: "API CaveWork",      url: "https://cavework-api.arnoldwork.workers.dev/" },
   { nombre: "Ranking CaveWork",  url: "https://cavework-ranking.arnoldwork.workers.dev/top", texto: "top" },
@@ -539,7 +539,7 @@ async function pro(req, env) {
   if (r === null) return new Response('{"error":"Demasiados intentos, prueba dentro de una hora"}', { status: 429, headers: h });
   if (r) {
     const disp = String(b?.dispositivo || "").replace(/[^a-z0-9]/gi, "").slice(0, 40);
-    if (disp.length < 12) return new Response('{"error":"Actualiza TurnoWork (botón «Buscar actualización») y vuelve a probar"}', { status: 400, headers: h });
+    if (disp.length < 12) return new Response('{"error":"Actualiza VidaWork (botón «Buscar actualización») y vuelve a probar"}', { status: 400, headers: h });
     if (!(await m.activarDispositivo(hu, producto, disp, MAX_DISPOSITIVOS)))
       return new Response(JSON.stringify({ ok: false, limite: true, error: `Este Pro ya está activado en ${MAX_DISPOSITIVOS} dispositivos, el máximo por compra. Si has cambiado de móvil, escríbenos por Ko-fi y lo liberamos.` }), { status: 403, headers: h });
   }
@@ -677,7 +677,7 @@ export default {
       const h = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(codigo + "|aw-sync")))].map(x => x.toString(16).padStart(2, "0")).join("");
       await m.syncNuevoCodigo(hu, h);
       const fecha = fila.t ? new Date(fila.t).toLocaleString("es-ES", { timeZone: "Europe/Madrid" }) : "—";
-      return new Response(`✅ Código nuevo para ${email}: ${codigo}\n\nCopia guardada: ${fila.datos ? "sí" : "vacía"} (último cambio: ${fecha}).\nEn TurnoWork: Más → ☁️ En todos tus dispositivos → «Ya la tengo en otro móvil» → escribe este código.`, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+      return new Response(`✅ Código nuevo para ${email}: ${codigo}\n\nCopia guardada: ${fila.datos ? "sí" : "vacía"} (último cambio: ${fecha}).\nEn VidaWork: Más → ☁️ En todos tus dispositivos → «Ya la tengo en otro móvil» → escribe este código.`, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
     }
 
     if (url.pathname === "/pro/liberar") {

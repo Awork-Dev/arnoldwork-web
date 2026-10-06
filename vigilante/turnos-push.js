@@ -52,7 +52,7 @@ export async function pushApi(req, env, m, { huellaCorreo, esProSinLimite }) {
     const email = String(b?.email || "").trim(), sub = b?.sub;
     if (!email.includes("@") || !sub?.endpoint || !/^https:\/\//.test(sub.endpoint)) return json({ error: "Datos no válidos" }, 400);
     const hu = await huellaCorreo(email);
-    if (!(await esProSinLimite(hu))) return json({ error: "Los avisos son de TurnoWork Pro" }, 403);
+    if (!(await esProSinLimite(hu))) return json({ error: "Los avisos son de VidaWork Pro" }, 403);
     await m.pushAlta(sub.endpoint, hu);
     return json({ ok: true });
   }
