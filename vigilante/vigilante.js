@@ -12,6 +12,7 @@
 //   POST /mejora    buzón de mejoras de las webs de pago: solo para quien tiene el Pro → mensaje a Telegram.
 //   POST /api/sync  VidaWork Pro: sincronizar el cuadrante entre dispositivos (turnos-sync.js).
 //   /api/push…      VidaWork Pro: avisos en el móvil la noche antes (turnos-push.js); cada noche a las 19:00 UTC.
+//   GET  /hoy/<token>.txt  VidaWork Pro: agenda de hoy en texto (widget de Atajos del iPhone).
 //   GET  /cal/<token>.ics  VidaWork Pro: calendario suscrito que se actualiza solo.
 //   GET  /pro/liberar?clave=<PRUEBA_CLAVE>&email=…  libera los dispositivos de una compra (cambio de móvil).
 //   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
@@ -31,7 +32,7 @@
 
 import { DurableObject } from "cloudflare:workers";
 import { recoger, mensajesTelegram, paraWeb, alternar, VERSION_WEB } from "./noticias.js";
-import { syncApi, calendario } from "./turnos-sync.js";
+import { syncApi, calendario, hoyTexto } from "./turnos-sync.js";
 import { pushApi, enviarAvisos } from "./turnos-push.js";
 
 const CHAT_ID = "288460670";
@@ -629,6 +630,7 @@ export default {
       const m = memoria(env);
       return pushApi(req, env, m, { huellaCorreo, esProSinLimite: async hu => PRO_CASA.has(hu) || await m.tieneLicencia(hu, "turnos") });
     }
+    if (req.method === "GET" && url.pathname.startsWith("/hoy/")) return hoyTexto(url.pathname.slice(5).replace(/\.txt$/, ""), memoria(env));
     if (req.method === "GET" && url.pathname.startsWith("/cal/")) return calendario(url.pathname.slice(5).replace(/\.ics$/, ""), memoria(env));
     if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
 

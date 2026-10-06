@@ -115,3 +115,53 @@ function evNota(n, d, uid, sello, rrule) {
   if (n.h) e.push("BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${txt(resumen)}`, "TRIGGER:-PT30M", "END:VALARM");
   e.push("END:VEVENT"); return e;
 }
+
+/* ================= Agenda de hoy en texto (para el widget de Atajos del iPhone) ================= */
+
+// GET /hoy/<token>.txt  Mismo token privado que el calendario. Devuelve texto plano, con la hora de España.
+export async function hoyTexto(token, m) {
+  const fila = m && /^[a-z0-9]{20,40}$/.test(token) ? await m.syncPorCal(token) : null;
+  if (!fila || !fila.datos) return new Response("No encontrado", { status: 404 });
+  const Y = JSON.parse(fila.datos);
+  const ahora = new Date(), parte = o => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid", ...o });
+  const f = parte({ year: "numeric", month: "2-digit", day: "2-digit" }).format(ahora);   // AAAA-MM-DD
+  const d = deISO(f), w = d.getUTCDay();
+  const ciclo = String(Y.patron || "").toUpperCase().split(/[\s,;]+/).filter(Boolean);
+  let t = "L"; if (Y.cambios?.[f]) t = Y.cambios[f]; else if (ciclo.length && Y.ref) { const n = diasEntre(deISO(Y.ref), d) + (+Y.pos || 0); t = ciclo[((n % ciclo.length) + ciclo.length) % ciclo.length]; }
+  const L = [];
+  const dia = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", weekday: "long", day: "numeric", month: "long" }).format(ahora);
+  L.push(dia.charAt(0).toUpperCase() + dia.slice(1));
+  const x = Y.turnos?.[t];
+  if (x) L.push(`👷 ${x.n || t} ${horaTxt(+x.ini)}–${horaTxt(+x.ini + +x.h)}`);
+  else if (MANUALES[t]) L.push(`🌴 ${MANUALES[t]}`);
+  else if (ciclo.length) L.push("😌 Libras");
+  const R = Y.rutina;
+  if (R?.rot?.length && R.desde && Array.isArray(R.dias) && R.dias.includes(w) && f >= R.desde) {
+    let k = 0; for (let q = deISO(R.desde); q < d; q = masDias(q, 1)) if (R.dias.includes(q.getUTCDay())) k++;
+    L.push(`🏋️ ${R.rot[k % R.rot.length].n}`);
+  }
+  const C = Y.cole;
+  const sinCole = (() => { if (!C || !C.activo) return false; if (w === 0 || w === 6) return false; if (C.noLect?.[f]) return true;
+    if (C.fin && f > C.fin) return true; if (C.inicio && f < C.inicio) return true;
+    return (C.vac || []).some(v => v.d && v.h && f >= v.d && f <= v.h); })();
+  if (C?.activo && sinCole) L.push("🎒 Sin cole hoy");
+  const extra = [];
+  for (const h of Y.familia?.hijos || []) for (const a of h.acts || []) {
+    if (!a.dias?.includes(w) || (a.desde && f < a.desde) || (a.hasta && f > a.hasta)) continue;
+    if (a.soloCole !== false && sinCole) continue;
+    extra.push([a.h || "", `${h.nombre}: ${a.t}${a.h ? " " + a.h : ""}${a.lleva ? " (lleva " + a.lleva + ")" : ""}`]);
+    if (h.cumple && h.cumple.slice(5) === f.slice(5)) { /* el cumpleaños se añade abajo, una sola vez */ }
+  }
+  for (const h of Y.familia?.hijos || []) if (h.cumple && h.cumple.slice(5) === f.slice(5)) L.push(`🎂 Cumple de ${h.nombre}`);
+  extra.sort((a, b) => a[0].localeCompare(b[0])).forEach(e => L.push("⚽ " + e[1]));
+  const notas = [];
+  if (Y.notas?.[f]?.t) notas.push([Y.notas[f].h || "", Y.notas[f].t.split("\n")[0].slice(0, 80)]);
+  for (const r of Y.repes || []) {
+    if (!r?.t || !r.desde || f < r.desde || (r.hasta && f > r.hasta)) continue;
+    const o = deISO(r.desde);
+    if (r.tipo === "semana" ? o.getUTCDay() === w : r.tipo === "mes" ? o.getUTCDate() === d.getUTCDate() : (o.getUTCMonth() === d.getUTCMonth() && o.getUTCDate() === d.getUTCDate()))
+      notas.push([r.h || "", r.t.split("\n")[0].slice(0, 80)]);
+  }
+  notas.sort((a, b) => a[0].localeCompare(b[0])).forEach(n => L.push(`📝 ${n[0] ? n[0] + " " : ""}${n[1]}`));
+  return new Response(L.join("\n"), { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+}
