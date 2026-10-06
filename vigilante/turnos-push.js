@@ -1,4 +1,4 @@
-// TurnoWork · avisos en el móvil la noche antes (Web Push, solo usuarios Pro).
+// VidaWork · avisos en el móvil la noche antes (Web Push, solo usuarios Pro).
 //
 // El servidor no sabe nada de los turnos de nadie: cada noche manda un aviso VACÍO a cada móvil apuntado,
 // y es la propia app (su service worker) la que, con la agenda guardada en el móvil, escribe

@@ -4,7 +4,7 @@
   Las páginas de herramientas se generan con `python3 build.py` a partir de `src/`.
 - `heavywork/web/` — heavywork.arnoldwork.com (Worker `heavywork`, `heavywork/wrangler.jsonc`), con el juego CaveWork en `/game/`.
 - `cavework/` — Worker `cavework-ranking`: ranking mundial de CaveWork (Top 50, campeón de la semana, reto diario, ligas y temporadas mensuales).
-- `turnos/` — TurnoWork (Worker `turnos`, turnos.arnoldwork.com): cuadrante de turnos para todo el año. Pro (2,99 €) se compra en Ko-fi y se activa con el correo: el vigilante guarda la compra (`PRO_KOFI` en `vigilante.js`) y responde a `POST /pro`.
+- VidaWork (antes TurnoWork; vida.arnoldwork.com, la antigua turnos.arnoldwork.com sigue funcionando) vive en su propio repositorio, Awork-Dev/TurnoWork: tu trabajo, tu familia y tus viajes en una sola app. Pro (2,99 €) se compra en Ko-fi y se activa con el correo: el vigilante guarda la compra (`PRO_KOFI` en `vigilante.js`) y responde a `POST /pro`.
 - `calas/` — Calas Hoy (Worker `calas`, calas.arnoldwork.workers.dev): a qué cala de Mallorca ir según viento, olas y lluvia (Open-Meteo, en el navegador).
 - `vigilante/` — Worker `vigilante`, los automatismos:
   - cada 30 min revisa webs y APIs (caídas y lentitud) y avisa por Telegram, también de un nuevo nº 1 en CaveWork;

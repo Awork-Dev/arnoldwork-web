@@ -10,9 +10,9 @@
 //   POST /kofi      Ko-fi avisa de cada venta o batido → mensaje a Telegram.
 //   POST /pro       las webs de pago (Turnos…) preguntan si un correo ha comprado su versión Pro en Ko-fi.
 //   POST /mejora    buzón de mejoras de las webs de pago: solo para quien tiene el Pro → mensaje a Telegram.
-//   POST /api/sync  TurnoWork Pro: sincronizar el cuadrante entre dispositivos (turnos-sync.js).
-//   /api/push…      TurnoWork Pro: avisos en el móvil la noche antes (turnos-push.js); cada noche a las 19:00 UTC.
-//   GET  /cal/<token>.ics  TurnoWork Pro: calendario suscrito que se actualiza solo.
+//   POST /api/sync  VidaWork Pro: sincronizar el cuadrante entre dispositivos (turnos-sync.js).
+//   /api/push…      VidaWork Pro: avisos en el móvil la noche antes (turnos-push.js); cada noche a las 19:00 UTC.
+//   GET  /cal/<token>.ics  VidaWork Pro: calendario suscrito que se actualiza solo.
 //   GET  /pro/liberar?clave=<PRUEBA_CLAVE>&email=…  libera los dispositivos de una compra (cambio de móvil).
 //   GET  /pro/dar?clave=<PRUEBA_CLAVE>&email=…&producto=turnos  da una licencia a mano (regalos, soporte).
 //   POST /contacto  el chat de arnoldwork.com guarda aquí una copia de cada mensaje; si la API
@@ -55,7 +55,7 @@ const PRODUCTOS_KOFI = {
   "933c0fd088": "Ficha: Perder grasa sin perder el músculo",
   "8850046986": "Ficha: Estar en forma para la vida",
   "833e551486": "Pack completo: libro + las tres fichas",
-  "d1bb163587": "TurnoWork Pro",
+  "d1bb163587": "VidaWork Pro",
 };
 // Productos de Ko-fi que desbloquean la versión Pro de una web (código del enlace ko-fi.com/s/<código> → producto).
 // Al comprarlos, el correo del comprador queda guardado (cifrado) y la web se desbloquea con ese correo.
@@ -101,8 +101,8 @@ export class Memoria extends DurableObject {
     this.sql.exec(`CREATE TABLE IF NOT EXISTS intentos (ip TEXT, fecha INTEGER)`);
     // Dispositivos donde se ha activado cada licencia Pro (máximo MAX_DISPOSITIVOS por compra).
     this.sql.exec(`CREATE TABLE IF NOT EXISTS dispositivos (huella TEXT, producto TEXT, disp TEXT, fecha INTEGER, PRIMARY KEY (huella, producto, disp))`);
-    // TurnoWork: cuadrantes sincronizados (huella del correo, huella del código, datos, fecha y token del calendario).
-    // TurnoWork: móviles con avisos la noche antes (solo la dirección de aviso y la huella del correo).
+    // VidaWork: cuadrantes sincronizados (huella del correo, huella del código, datos, fecha y token del calendario).
+    // VidaWork: móviles con avisos la noche antes (solo la dirección de aviso y la huella del correo).
     this.sql.exec(`CREATE TABLE IF NOT EXISTS push (endpoint TEXT PRIMARY KEY, huella TEXT, fecha INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS sync (huella TEXT PRIMARY KEY, codigo TEXT, datos TEXT, t INTEGER, cal TEXT UNIQUE, creado INTEGER)`);
     this.sql.exec(`CREATE TABLE IF NOT EXISTS incidencias (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha INTEGER, nombre TEXT, detalle TEXT)`);
@@ -604,7 +604,7 @@ export default {
       return;
     }
     if (event.cron === "30 7 * * 1") return resumenSemanal(env);
-    if (event.cron === "0 19 * * *") { const r = await enviarAvisos(env, memoria(env)); console.log("avisos TurnoWork", JSON.stringify(r)); return; }
+    if (event.cron === "0 19 * * *") { const r = await enviarAvisos(env, memoria(env)); console.log("avisos VidaWork", JSON.stringify(r)); return; }
     // ¿Quedaron noticias de la semana sin mandar porque alguna fuente no respondió? Se reintentan aparte,
     // para no retrasar la revisión de las webs.
     ctx.waitUntil((async () => {

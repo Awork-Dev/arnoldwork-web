@@ -1,4 +1,4 @@
-// TurnoWork · sincronización entre dispositivos y calendario suscrito (solo usuarios Pro).
+// VidaWork · sincronización entre dispositivos y calendario suscrito (solo usuarios Pro).
 //
 //   POST /api/sync   { accion, email, codigo?, datos?, t? }
 //     accion "crear":  activa la sincronización para un correo con Pro y devuelve { codigo, cal }.
@@ -79,17 +79,17 @@ export async function calendario(token, m) {
   const turnoDe = d => { const k = fISO(d); if (Y.cambios?.[k]) return Y.cambios[k]; if (!ciclo.length || !Y.ref) return "L";
     const n = diasEntre(deISO(Y.ref), d) + (+Y.pos || 0); return ciclo[((n % ciclo.length) + ciclo.length) % ciclo.length]; };
   const sello = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
-  const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ArnoldWork//TurnoWork//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+  const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ArnoldWork//VidaWork//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
     "X-WR-CALNAME:Mi agenda · VidaWork", "REFRESH-INTERVAL;VALUE=DURATION:PT4H", "X-PUBLISHED-TTL:PT4H"];
   const hoy = deISO(fISO(new Date())), aviso = +Y.avisoTurno || 0;
   for (let d = masDias(hoy, -60); d <= masDias(hoy, 400); d = masDias(d, 1)) {
     const k = fISO(d), kk = k.replace(/-/g, ""), t = turnoDe(d), x = Y.turnos?.[t];
     if (x) {
-      L.push("BEGIN:VEVENT", `UID:tw-${kk}@turnos.arnoldwork.com`, `DTSTAMP:${sello}`, `DTSTART:${fh(d, +x.ini)}`, `DTEND:${fh(d, +x.ini + +x.h)}`, `SUMMARY:${txt(`${t} · ${x.n || t}`)}`);
+      L.push("BEGIN:VEVENT", `UID:tw-${kk}@vida.arnoldwork.com`, `DTSTAMP:${sello}`, `DTSTART:${fh(d, +x.ini)}`, `DTEND:${fh(d, +x.ini + +x.h)}`, `SUMMARY:${txt(`${t} · ${x.n || t}`)}`);
       if (aviso > 0) L.push("BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${txt(`${x.n || t} a las ${horaTxt(+x.ini)}`)}`, `TRIGGER:-PT${aviso}M`, "END:VALARM");
       L.push("END:VEVENT");
     } else if (MANUALES[t]) {
-      L.push("BEGIN:VEVENT", `UID:tw-${kk}@turnos.arnoldwork.com`, `DTSTAMP:${sello}`, `DTSTART;VALUE=DATE:${kk}`, `DTEND;VALUE=DATE:${fISO(masDias(d, 1)).replace(/-/g, "")}`, `SUMMARY:${MANUALES[t]}`, "TRANSP:TRANSPARENT", "END:VEVENT");
+      L.push("BEGIN:VEVENT", `UID:tw-${kk}@vida.arnoldwork.com`, `DTSTAMP:${sello}`, `DTSTART;VALUE=DATE:${kk}`, `DTEND;VALUE=DATE:${fISO(masDias(d, 1)).replace(/-/g, "")}`, `SUMMARY:${MANUALES[t]}`, "TRANSP:TRANSPARENT", "END:VEVENT");
     }
     const n = Y.notas?.[k]; if (n && n.t) L.push(...evNota(n, d, `tw-nota-${kk}`, sello));
   }
@@ -107,7 +107,7 @@ export async function calendario(token, m) {
 
 function evNota(n, d, uid, sello, rrule) {
   const resumen = "📝 " + String(n.t).split("\n")[0].slice(0, 80), kk = fISO(d).replace(/-/g, "");
-  const e = ["BEGIN:VEVENT", `UID:${uid}@turnos.arnoldwork.com`, `DTSTAMP:${sello}`];
+  const e = ["BEGIN:VEVENT", `UID:${uid}@vida.arnoldwork.com`, `DTSTAMP:${sello}`];
   if (n.h) { const h = hhmm(n.h); let hf = n.hf ? hhmm(n.hf) : h + 1; if (hf <= h) hf += 24; e.push(`DTSTART:${fh(d, h)}`, `DTEND:${fh(d, hf)}`); }
   else e.push(`DTSTART;VALUE=DATE:${kk}`, `DTEND;VALUE=DATE:${fISO(masDias(d, 1)).replace(/-/g, "")}`, "TRANSP:TRANSPARENT");
   if (rrule) e.push("RRULE:" + rrule);

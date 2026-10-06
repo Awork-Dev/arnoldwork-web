@@ -1,5 +1,5 @@
-# Prueba de punta a punta de la sincronización de TurnoWork (se lanza a mano). Deja todo borrado al acabar.
-name: Probar API de TurnoWork
+# Prueba de punta a punta de la sincronización de VidaWork (se lanza a mano). Deja todo borrado al acabar.
+name: Probar API de VidaWork
 on:
   workflow_dispatch:
 jobs:
@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: Crear, subir, bajar, calendario y borrar
         run: |
-          A=https://turnos.arnoldwork.com/api/sync; H='Content-Type: application/json'; E="${{ secrets.PRUEBA_SYNC_EMAIL }}"
+          A=https://vida.arnoldwork.com/api/sync; H='Content-Type: application/json'; E="${{ secrets.PRUEBA_SYNC_EMAIL }}"
           [ -z "$E" ] && E=xarlyds@gmail.com
           c=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"crear\",\"email\":\"$E\"}")
           echo "::notice title=crear::$(echo "$c" | sed 's/"codigo":"[^"]*"/"codigo":"***"/; s/"cal":"[^"]*"/"cal":"***"/')"
@@ -18,13 +18,13 @@ jobs:
           echo "::notice title=subir::$(echo "$s" | sed 's/"cal":"[^"]*"/"cal":"***"/')"
           b=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"bajar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
           echo "::notice title=bajar::$(echo "$b" | jq -c '{ok,t,patron:.datos.patron,repes:(.datos.repes|length)}')"
-          ics=$(curl -s https://turnos.arnoldwork.com/cal/$CAL.ics | tr -d "\r")
+          ics=$(curl -s https://vida.arnoldwork.com/cal/$CAL.ics | tr -d "\r")
           echo "::notice title=cal::$(echo "$ics" | grep -c BEGIN:VEVENT) eventos; $(echo "$ics" | grep -m1 'DTSTART:2026100' ); $(echo "$ics" | grep -m1 RRULE); $(echo "$ics" | grep -m1 'SUMMARY:📝 Prueba')"
           r=$(curl -s -X POST $A -H "$H" -d "{\"accion\":\"borrar\",\"email\":\"$E\",\"codigo\":\"$COD\"}")
           echo "::notice title=borrar::$r"
-          echo "::notice title=cal-borrado::$(curl -s -o /dev/null -w '%{http_code}' https://turnos.arnoldwork.com/cal/$CAL.ics)"
-          echo "::notice title=push-clave::$(curl -s https://turnos.arnoldwork.com/api/push/clave | jq -c '{longitud:(.clave|length)}')"
-          echo "::notice title=push-alta-sin-pro::$(curl -s -X POST https://turnos.arnoldwork.com/api/push -H 'Content-Type: application/json' -d '{"accion":"alta","email":"prueba@example.com","sub":{"endpoint":"https://example.com/x"}}')"
-          echo "::notice title=version::$(curl -s 'https://turnos.arnoldwork.com/version.json?x='$RANDOM)"
-          echo "::notice title=viaje::$(curl -s 'https://turnos.arnoldwork.com/?x='$RANDOM | grep -c 'kiwitaxi')"
-          echo "::notice title=cache::$(curl -sI 'https://turnos.arnoldwork.com/' | grep -i -E 'cache-control|age:|cf-cache' | tr -d '\r' | tr '\n' ' ')"
+          echo "::notice title=cal-borrado::$(curl -s -o /dev/null -w '%{http_code}' https://vida.arnoldwork.com/cal/$CAL.ics)"
+          echo "::notice title=push-clave::$(curl -s https://vida.arnoldwork.com/api/push/clave | jq -c '{longitud:(.clave|length)}')"
+          echo "::notice title=push-alta-sin-pro::$(curl -s -X POST https://vida.arnoldwork.com/api/push -H 'Content-Type: application/json' -d '{"accion":"alta","email":"prueba@example.com","sub":{"endpoint":"https://example.com/x"}}')"
+          echo "::notice title=version::$(curl -s 'https://vida.arnoldwork.com/version.json?x='$RANDOM)"
+          echo "::notice title=viaje::$(curl -s 'https://vida.arnoldwork.com/?x='$RANDOM | grep -c 'kiwitaxi')"
+          echo "::notice title=cache::$(curl -sI 'https://vida.arnoldwork.com/' | grep -i -E 'cache-control|age:|cf-cache' | tr -d '\r' | tr '\n' ' ')"
