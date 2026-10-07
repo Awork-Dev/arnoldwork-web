@@ -101,12 +101,18 @@ export async function calendario(token, m) {
     if (r.hasta) rr += ";UNTIL=" + r.hasta.replace(/-/g, "") + (r.h ? "T235959" : "");
     L.push(...evNota(r, o, `tw-repe-${String(r.id).replace(/[^a-z0-9]/gi, "")}`, sello, rr));
   }
+  const TAR = { tarea: ["✅", ""], examen: ["📚", "Examen: "], entrega: ["📝", "Entrega: "] };
+  for (const t of Y.tareas || []) {
+    if (!t || t.hecha || !t.t || !/^\d{4}-\d{2}-\d{2}$/.test(t.f || "")) continue;
+    const [e, n] = TAR[t.tipo] || TAR.tarea;
+    L.push(...evNota({ t: n + t.t, h: t.h || "" }, deISO(t.f), `tw-tarea-${String(t.id).replace(/[^a-z0-9]/gi, "")}`, sello, null, e + " "));
+  }
   L.push("END:VCALENDAR");
   return new Response(L.join("\r\n"), { headers: { "Content-Type": "text/calendar; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'inline; filename="turnos.ics"' } });
 }
 
-function evNota(n, d, uid, sello, rrule) {
-  const resumen = "📝 " + String(n.t).split("\n")[0].slice(0, 80), kk = fISO(d).replace(/-/g, "");
+function evNota(n, d, uid, sello, rrule, pref = "📝 ") {
+  const resumen = pref + String(n.t).split("\n")[0].slice(0, 80), kk = fISO(d).replace(/-/g, "");
   const e = ["BEGIN:VEVENT", `UID:${uid}@vida.arnoldwork.com`, `DTSTAMP:${sello}`];
   if (n.h) { const h = hhmm(n.h); let hf = n.hf ? hhmm(n.hf) : h + 1; if (hf <= h) hf += 24; e.push(`DTSTART:${fh(d, h)}`, `DTEND:${fh(d, hf)}`); }
   else e.push(`DTSTART;VALUE=DATE:${kk}`, `DTEND;VALUE=DATE:${fISO(masDias(d, 1)).replace(/-/g, "")}`, "TRANSP:TRANSPARENT");
