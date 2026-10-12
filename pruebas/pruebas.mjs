@@ -226,6 +226,24 @@ if (QUE === 'web') {
     await p.close();
   }
 
+  console.log('\n▶ App de Google Play (sin tienda ni pagos externos)');
+  {
+    const PAGO = 'a[href*="ko-fi.com"],a[href*="paypal.me"],a[href$="#batido"],a[href$="#libro"],a[href$="#material"],a[href*="t=tienda"],#libro,#material,#batido';
+    const visibles = p => p.$$eval(PAGO, els => els.filter(e => e.getClientRects().length).length);
+    const { p } = await abrir('/herramientas/calculadora-1rm/?app=play');
+    const enHerr = await visibles(p);
+    await p.goto(BASE + '/'); await p.waitForTimeout(300);   // ya sin ?app=play: el modo app se mantiene al navegar
+    const enPortada = await visibles(p);
+    await p.goto(BASE + '/#t=mas'); await p.waitForTimeout(300);
+    const guia = await p.locator('#indice-mas a[href="#regalo"]').isVisible();
+    const { p: w } = await abrir('/herramientas/calculadora-1rm/');   // la web normal sigue con todo
+    const enWeb = await visibles(w);
+    enHerr === 0 && enPortada === 0 && guia && enWeb > 0
+      ? bien('en la app no aparecen la tienda, los batidos ni Ko-fi; en la web, sí')
+      : mal('/', `app de Google Play: herramienta=${enHerr} portada=${enPortada} guía=${guia} web=${enWeb}`);
+    await p.close(); await w.close();
+  }
+
   // 3) Chat de contacto: normal, con la API principal caída (copia de seguridad) y con todo caído
   console.log('\n▶ Chat de contacto');
   async function chat(lead, copia) {

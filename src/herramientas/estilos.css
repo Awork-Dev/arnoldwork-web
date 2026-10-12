@@ -609,3 +609,7 @@
 .casa-arnold{font-family:Montserrat,system-ui,sans-serif;font-weight:500;font-size:1.9rem;letter-spacing:.32em;line-height:1}
 .casa-lema{font-family:Montserrat,system-ui,sans-serif;font-size:.95rem;letter-spacing:.04em}
 @media (max-width:380px){.casa{gap:14px;padding:18px}.casa svg{width:52px}.casa-arnold{font-size:1.6rem}}
+
+/* App de Google Play (html.app-play): fuera la tienda, los batidos y los pagos externos. */
+.app-play :is(a[href*="ko-fi.com"],a[href*="paypal.me"],a[href^="solana:"],a[href$="#batido"],a[href$="#libro"],a[href$="#material"],a[href*="t=tienda"],.btn-batido,.btn-cab[href$="#batido"],#libro,#material,#batido,.solo-web),
+.app-play p:has(> a[href$="#batido"],> a[href*="ko-fi.com"]){display:none!important}

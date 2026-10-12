@@ -74,6 +74,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
+<script>/* App de Google Play: sin tienda ni donaciones (normas de pagos de Google Play). */(function(){try{var s=sessionStorage;if(/[?&]app=play\b/.test(location.search)||document.referrer.indexOf('android-app://')===0)s.setItem('app-play','1');if(s.getItem('app-play'))document.documentElement.classList.add('app-play')}catch(e){}})()</script>
 <meta name="theme-color" content="#0A0A0A">
 <meta property="og:image" content="https://arnoldwork.com/img/og.png?v=3f1bb251">
 <meta property="og:image:width" content="1200">
@@ -84,6 +85,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* App de Google Play (html.app-play): fuera la tienda, los batidos y los pagos externos. */
+.app-play :is(a[href*="ko-fi.com"],a[href*="paypal.me"],a[href^="solana:"],a[href$="#batido"],a[href$="#libro"],a[href$="#material"],a[href*="t=tienda"],.btn-batido,.btn-cab[href$="#batido"],#libro,#material,#batido,.solo-web),
+.app-play p:has(> a[href$="#batido"],> a[href*="ko-fi.com"]){display:none!important}
+.app-play .rule-c > b{display:none}  /* sin la regla 02, la numeración sobra */
+
   :root{
     --ink:#0A0A0A;
     --ink-2:#141414;
@@ -764,7 +770,7 @@
       <p class="pull">Eso es lo que nunca se me ha olvidado: en la sala, lo que sabes se comparte.</p>
       <p>Hoy pasa lo contrario. La información sobra, pero viene envuelta en ventas: la calculadora te pide el correo, la rutina viene con suscripción y el consejo acaba en un código de descuento. Quien empieza hoy está tan perdido como yo en 1996, solo que con mucho más ruido.</p>
       <p>ArnoldWork nace para devolver lo que me dieron aquellos veteranos. Por eso todo lo que sirve para entrenar es gratis y sin registro: las herramientas, el método de HeavyWork, la guía y hasta el juego. No es un truco para venderte algo después. Es como aprendí que funcionaban las cosas en un gimnasio.</p>
-      <p>Lo único de pago son el libro y las fichas, y tienen un motivo: pagan el servidor, las horas delante del ordenador y cada herramienta nueva. Si compras algo o me invitas a un batido, haces lo mismo que hacían aquellos veteranos: que el siguiente que cruce la puerta lo tenga un poco más fácil.</p>
+      <p class="solo-web">Lo único de pago son el libro y las fichas, y tienen un motivo: pagan el servidor, las horas delante del ordenador y cada herramienta nueva. Si compras algo o me invitas a un batido, haces lo mismo que hacían aquellos veteranos: que el siguiente que cruce la puerta lo tenga un poco más fácil.</p>
       <p>Bienvenido a la sala. Coge sitio, pregunta lo que quieras y, al acabar, recoge los discos.</p>
       <div class="sign">
         <div><b>Un usuario más de la sala</b><span>Entrenando desde 1996 · ArnoldWork</span></div>
@@ -935,7 +941,7 @@
         <h3>Lo útil es gratis</h3>
         <p>Si algo te ayuda a entrenar mejor mañana, tiene que estar al alcance de cualquiera. Por eso las herramientas, HeavyWork y el juego no cuestan nada.</p>
       </div>
-      <div class="rule-c">
+      <div class="rule-c solo-web">
         <b>02</b>
         <h3>Lo que cuesta, paga lo gratis</h3>
         <p>El libro y las fichas son de pago. Con eso se pagan el servidor, las horas delante del ordenador y cada herramienta nueva. Si compras algo, estás sosteniendo todo lo demás.</p>
@@ -1102,7 +1108,7 @@
         <span class="tag">Gratis</span>
         <h2>Cuándo subir peso</h2>
         <p class="lede">La duda más común cuando llevas poco entrenando, resuelta en cuatro páginas: la regla exacta, una tabla que te dice qué hacer en cada situación y una plantilla para imprimir. Te la mando al correo.</p>
-        <p class="gift-why">Solo te mando la guía. No te escribiré nunca más ni te venderé nada: lo único que vendemos son el libro y las fichas que ves en la web, y sirven para pagar los costes. Tu correo no se comparte con nadie.</p>
+        <p class="gift-why">Solo te mando la guía. No te escribiré nunca más ni te venderé nada<span class="solo-web">: lo único que vendemos son el libro y las fichas que ves en la web, y sirven para pagar los costes</span>. Tu correo no se comparte con nadie.</p>
 
         <div class="fform-in">
           <input type="email" id="fmail" placeholder="tu@correo.com" autocomplete="email" aria-label="Tu correo electrónico">
@@ -1227,7 +1233,7 @@
 
     <details>
       <summary>¿De verdad es todo gratis?</summary>
-      <p>Las herramientas, HeavyWork, el juego CaveWork y la guía «Cuándo subir peso» son gratis y sin registro. Lo único de pago son el libro y las fichas en PDF, y existen precisamente para financiar lo demás.</p>
+      <p>Las herramientas, HeavyWork, el juego CaveWork y la guía «Cuándo subir peso» son gratis y sin registro.<span class="solo-web"> Lo único de pago son el libro y las fichas en PDF, y existen precisamente para financiar lo demás.</span></p>
     </details>
 
     <details>
@@ -1255,7 +1261,7 @@
       <p>El proyecto hermano, también gratis, dedicado al Heavy Duty de Mike Mentzer: entrenamientos muy cortos, al fallo y muy espaciados. Está ahí para quien le interese ese camino.</p>
     </details>
 
-    <details>
+    <details class="solo-web">
       <summary>¿Cómo puedo ayudar al proyecto?</summary>
       <p>Comprando el libro o una ficha, <a href="#batido" style="color:var(--amber)">invitando a un batido</a>, o compartiendo la web con tu gente del gimnasio. Las tres cosas ayudan, y la tercera es gratis.</p>
     </details>
@@ -1276,8 +1282,8 @@
       <p>ArnoldWork es un proyecto personal y comunitario de divulgación sobre entrenamiento. Contacto: <a href="mailto:arnoldwork4you@gmail.com">arnoldwork4you@gmail.com</a>.</p>
       <h3>Contenido</h3>
       <p>Todo el contenido es material formativo de entrenamiento y no constituye consejo médico, nutricional clínico ni de ningún otro tipo profesional. Las estimaciones de las herramientas son orientativas. Consulta con un profesional sanitario antes de empezar si tienes una lesión o una condición de salud.</p>
-      <h3>Compras y donaciones</h3>
-      <p>El libro y las fichas se venden y se entregan a través de Ko-fi, con sus propias condiciones. Las donaciones se hacen a través de PayPal, son voluntarias y no dan acceso a ningún contenido ni servicio adicional.</p>
+      <h3 class="solo-web">Compras y donaciones</h3>
+      <p class="solo-web">El libro y las fichas se venden y se entregan a través de Ko-fi, con sus propias condiciones. Las donaciones se hacen a través de PayPal, son voluntarias y no dan acceso a ningún contenido ni servicio adicional.</p>
       <h3>Datos personales</h3>
       <p>Las herramientas guardan lo que escribes solo en tu dispositivo. Si nos envías un mensaje por el chat o tu correo para recibir la guía, usamos esos datos únicamente para responderte o enviarte la guía, una sola vez: no enviamos novedades ni publicidad. Los mensajes del chat se guardan como mucho 12 meses, solo para poder contestarte, y después se borran solos. Puedes pedir que los borremos escribiendo al correo de contacto.</p>
       <p>Para saber qué páginas se visitan usamos Cloudflare Web Analytics, que cuenta visitas de forma agregada sin cookies, sin guardar nada en tu dispositivo y sin identificarte. No usamos publicidad ni herramientas de seguimiento de terceros.</p>
@@ -1299,7 +1305,7 @@
 <section class="final">
   <div class="wrap">
     <h2>Nos vemos en la sala 💪</h2>
-    <p>Abre las herramientas antes de tu próxima sesión. Y si te ayudan, ya sabes dónde está la batidora.</p>
+    <p>Abre las herramientas antes de tu próxima sesión.<span class="solo-web"> Y si te ayudan, ya sabes dónde está la batidora.</span></p>
     <div class="btns">
       <a class="btn" href="/herramientas/">Abrir las herramientas</a>
       <a class="btn btn-ghost" href="#batido">🥤 Invitar a un batido</a>
@@ -1327,6 +1333,7 @@
       <a href="/trabajos/">Nuestros trabajos</a>
       <a href="#faq">Preguntas</a>
       <a href="#aviso">Aviso legal</a>
+      <a href="/privacidad/">Privacidad</a>
     </div>
   </div>
 </footer>
@@ -1540,6 +1547,8 @@ const COPIA_URL='https://vigilante.arnoldwork.workers.dev/contacto';
 // de siempre (#libro, #contacto…) abren la pestaña que toca. En el ordenador, todo sigue en una página.
 (()=>{
   const GRUPOS={inicio:['porque','gratis','negocio-corto','difunde'],ciencia:['ciencia'],tienda:['libro','material','batido','regalo'],mas:['indice-mas','proyectos','quien','reglas','negocios','contacto','faq','aviso']};
+  // En la app de Google Play no hay tienda: la guía gratis pasa a «Más».
+  if(document.documentElement.classList.contains('app-play')){GRUPOS.mas.push('regalo');delete GRUPOS.tienda;}
   const deId={};Object.entries(GRUPOS).forEach(([t,l])=>l.forEach(id=>deId[id]=t));
   const mq=matchMedia('(max-width:820px)'),raiz=document.documentElement;
   const bloques=[...document.querySelectorAll('main > *:not(footer)')];

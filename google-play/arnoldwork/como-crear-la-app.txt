@@ -1,0 +1,40 @@
+CÓMO CREAR LA APP DE ARNOLDWORK PARA GOOGLE PLAY
+================================================
+
+1. CREAR EL PAQUETE CON PWABUILDER (gratis, desde el ordenador)
+   - Entra en https://www.pwabuilder.com
+   - Escribe la dirección:  https://arnoldwork.com/herramientas/?app=play   y pulsa «Start».
+   - Pulsa «Package for stores» → Android → «Generate Package» → «All settings» (todas las opciones) y rellena:
+       Package ID (nombre del paquete):  com.arnoldwork.herramientas
+       App name:                         ArnoldWork
+       Launcher name:                    ArnoldWork
+       Start URL:                        /herramientas/?app=play      ← IMPORTANTE: con ?app=play
+       Theme color y Background color:   #0A0A0A
+       Display mode:                     Standalone
+       Notifications:                    desactivado
+       Signing key:                      «Create new» (crear una nueva)
+   - Descarga el ZIP.
+
+2. GUARDA BIEN EL ZIP
+   - Dentro hay: un .aab (lo que se sube a Google Play), signing.keystore y signing-key-info.txt (la llave y sus contraseñas) y assetlinks.json.
+   - La llave y sus contraseñas: guárdalas en un sitio seguro. NO las mandes por chat ni las subas al repositorio.
+   - El archivo assetlinks.json SÍ mándamelo: lo cuelgo en arnoldwork.com/.well-known/assetlinks.json para que la app se abra a pantalla completa, sin barra de dirección.
+
+3. CREAR LA APP EN PLAY CONSOLE
+   - «Todas las aplicaciones» → «Crear aplicación»: nombre ArnoldWork, idioma español, Aplicación (no juego), Gratis.
+   - Rellena la ficha con ficha-google-play.txt y las imágenes de esta carpeta.
+   - Política de privacidad: https://arnoldwork.com/privacidad/
+   - Contenido de la app: sin anuncios, público 13+, seguridad de los datos (está al final de la ficha), clasificación de contenido (cuestionario: no hay violencia, ni apuestas, ni contenido de usuarios público).
+
+4. PRUEBA CERRADA (14 DÍAS)
+   - Probar y publicar → Prueba cerrada → crear canal → subir el .aab.
+   - Añade los mismos probadores que en CaveWork (la misma lista de correos o el mismo grupo).
+   - Pídeles que acepten la invitación, instalen ArnoldWork y la abran de vez en cuando durante 14 días.
+
+5. PASADOS LOS 14 DÍAS
+   - Panel de control → Producción → «Solicitar acceso a producción», igual que con CaveWork.
+
+POR QUÉ ?app=play
+La app de Google Play no puede vender el libro y las fichas ni pedir donaciones con pagos de fuera (normas de pagos de Google Play).
+Cuando la web se abre desde la app (con ?app=play), se ocultan solas la tienda, los batidos y los enlaces a Ko-fi y PayPal.
+La web normal, arnoldwork.com, sigue exactamente igual.
