@@ -1,0 +1,47 @@
+SOLICITUD DE ACCESO A PRODUCCIÓN · CAVEWORK
+=============================================
+Play Console → CaveWork → Panel → «Solicitar acceso a producción».
+Sale cuando la prueba cerrada lleva 14 días seguidos con 12 probadores o más.
+Respuestas listas para copiar. Lo que va entre [corchetes] revísalo tú: solo tú sabes si es exactamente así.
+Google pide que sean verdaderas: si algo no encaja, cámbialo antes de enviarlo.
+
+------------------------------------------------
+1. ¿Cómo encontraste a los probadores?
+Entre familia, amigos y compañeros de gimnasio [y con la comunidad de probadores Testera]. Les mandamos el enlace de la prueba cerrada y les pedimos que jugaran varias partidas a lo largo de las dos semanas y nos contaran qué les parecía.
+
+2. ¿Fue fácil o difícil conseguirlos?
+Fácil. El juego es corto y gratis, y mucha gente se animó a probarlo: llegamos a 33 probadores, casi el triple de los 12 necesarios.
+
+3. ¿Cómo participaron los probadores?
+Jugaron partidas normales y el reto del día, guardaron sus marcas en el ranking mundial, crearon ligas con amigos y probaron los retos entre ellos. El ranking mundial recogió decenas de marcas durante la prueba, con récords de más de 100.000 puntos.
+
+4. Resumen de los comentarios y cómo los recogiste
+Los recogimos con el botón OPINIÓN del propio juego y hablando directamente con los probadores. Lo más comentado [revisa]: el ranking confundía porque las medallas del podio del mes no coincidían con el puesto; pedían un ranking que no se reiniciara cada mes; querían saber mejor qué hace cada cosa del juego.
+
+5. ¿Qué cambios hiciste a partir de la prueba?
+- Medallas 🥇🥈🥉 por puesto en todas las listas del ranking.
+- Quitamos las temporadas mensuales: el podio mundial es para siempre, hasta que alguien supere la marca.
+- Nuevo personaje «Campeón mundial» para quien entra en el podio.
+- Manual del juego dentro de la app, explicando cada función.
+- Mejoras de rendimiento y comprobación automática de que el juego y sus servidores funcionan.
+
+6. ¿A quién va dirigida la app?
+A personas de 13 años en adelante que buscan un juego arcade rápido y sencillo para ratos libres, en especial gente aficionada al gimnasio y al pixel art.
+
+7. ¿Qué valor aporta a los usuarios?
+Un arcade retro gratis, sin anuncios, sin compras dentro de la app y sin registro, con 8 mundos, jefes, ranking mundial, reto diario igual para todos y ligas con amigos. Funciona sin conexión y está en español e inglés.
+
+8. ¿Cuántas instalaciones esperas el primer año?
+Entre 1.000 y 10.000.
+
+9. ¿Por qué crees que está lista para producción?
+Durante la prueba no detectamos errores graves [revisa en Play Console → Calidad → Android vitals que no haya bloqueos], los probadores la usaron de forma continuada y ya hemos aplicado las mejoras que pidieron. El juego y sus servidores se vigilan automáticamente cada 30 minutos.
+
+------------------------------------------------
+SEGURIDAD DE LOS DATOS (si te la vuelve a pedir)
+- ¿Recoge o comparte datos? Sí, pocos y sin identificar a nadie.
+- Actividad en la app → «Otro contenido generado por el usuario»: iniciales de 3 letras y puntuación del ranking (se muestran públicamente) y el texto del botón OPINIÓN. Recogido, no compartido con terceros, opcional, para la funcionalidad de la app.
+- No se recoge: nombre, correo, ubicación, contactos, identificadores del dispositivo ni de publicidad.
+- Datos cifrados en tránsito: sí (HTTPS).
+- Se pueden borrar: sí, escribiendo a arnoldwork4you@gmail.com.
+- Política de privacidad: https://heavywork.arnoldwork.com/app/privacidad/
