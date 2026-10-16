@@ -31,7 +31,7 @@
 // La memoria (qué está caído, ventas, contactos…) vive en un Durable Object que se crea solo al publicar.
 
 import { DurableObject } from "cloudflare:workers";
-import { recoger, mensajesTelegram, paraWeb, alternar, VERSION_WEB } from "./noticias.js";
+import { recoger, mensajesTelegram, paraWeb, alternar, archivar, VERSION_WEB } from "./noticias.js";
 import { syncApi, calendario, hoyTexto } from "./turnos-sync.js";
 import { pushApi, enviarAvisos } from "./turnos-push.js";
 
@@ -380,6 +380,7 @@ async function noticiasSemana(env, enviar = true, intento = 1) {
   const vistas = (m && await m.leer("noticiasVistas")) || [];
   const { mensajes, nuevas } = mensajesTelegram(datos, vistas);
   if (m) await m.guardar("noticiasWeb", paraWeb(datos, (await m.leer("noticiasWeb")) || {}));
+  if (m) await guardarHemeroteca(m, datos);
   if (enviar && m) {
     if (datos.errores.length && intento < NOTICIAS_INTENTOS) {
       await m.guardar("noticiasPendiente", { intento: intento + 1, desde: Date.now() });
@@ -397,9 +398,20 @@ async function noticiasSemana(env, enviar = true, intento = 1) {
   return mensajes;
 }
 
+// Hemeroteca de las webs: suma todo lo encontrado (sin repetir) a lo que ya había.
+async function guardarHemeroteca(m, datos) {
+  const web = (await m.leer("noticiasWeb")) || {};
+  for (const b of datos.secciones) {
+    const k = "noticiasArchivo:" + b.clave;
+    await m.guardar(k, archivar(b, (await m.leer(k)) || hemerotecaDe(web[b.clave])));
+  }
+}
+// La primera vez, la hemeroteca empieza con lo que ya se enseñaba en la web.
+const hemerotecaDe = (l = []) => ({ estudios: l.filter(x => x.tipo === "estudio"), noticias: l.filter(x => x.tipo !== "estudio") });
+
 // Para las webs. Si aún no hay nada guardado (o tiene más de 8 días, o le falta algo), se busca en el momento,
 // como mucho una vez cada 20 minutos, sin mandar nada a Telegram. Si falla, el motivo sale en «avisos».
-async function noticiasWeb(req, env, seccion) {
+async function noticiasWeb(req, env, seccion, todo = false) {
   const h = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=3600", ...cors(req) };
   if (!["hipertrofia", "heavyduty"].includes(seccion)) return new Response('{"error":"Sección no válida"}', { status: 400, headers: h });
   const m = memoria(env);
@@ -412,13 +424,25 @@ async function noticiasWeb(req, env, seccion) {
     if (vieja || !intento || Date.now() - intento > 20 * 60e3) {
       await m.guardar("noticiasWebIntento", Date.now());
       try {
-        web = paraWeb(await recoger(), web || {});
+        const datos = await recoger();
+        web = paraWeb(datos, web || {});
         await m.guardar("noticiasWeb", web);
+        await guardarHemeroteca(m, datos);
         await m.guardar("noticiasWebFallo", null);
       } catch (e) { await m.guardar("noticiasWebFallo", String(e && e.message || e).slice(0, 200)); }
     }
   }
   const fallo = m ? await m.leer("noticiasWebFallo") : null;
+  // ?todo=1 → la hemeroteca: todos los estudios y todas las noticias, por separado.
+  if (todo) {
+    let arch = m ? await m.leer("noticiasArchivo:" + seccion) : null;
+    if (!arch && m) {   // la primera vez: lo que ya se enseñaba más todo lo de esta semana
+      try { await guardarHemeroteca(m, await recoger()); }
+      catch { await m.guardar("noticiasArchivo:" + seccion, hemerotecaDe(web && web[seccion])); }
+      arch = await m.leer("noticiasArchivo:" + seccion);
+    }
+    return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, estudios: (arch && arch.estudios) || [], noticias: (arch && arch.noticias) || [] }), { headers: h });
+  }
   const avisos = ((web && web.errores) || []).concat(fallo ? ["Actualización: " + fallo] : []);
   return new Response(JSON.stringify({ actualizado: web ? web.actualizado : null, items: alternar((web && web[seccion]) || []), avisos }), { headers: h });
 }
@@ -632,7 +656,7 @@ export default {
     }
     if (req.method === "GET" && url.pathname.startsWith("/hoy/")) return hoyTexto(url.pathname.slice(5).replace(/\.txt$/, ""), memoria(env));
     if (req.method === "GET" && url.pathname.startsWith("/cal/")) return calendario(url.pathname.slice(5).replace(/\.ics$/, ""), memoria(env));
-    if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"));
+    if (req.method === "GET" && url.pathname === "/noticias.json") return noticiasWeb(req, env, url.searchParams.get("seccion"), url.searchParams.get("todo") === "1");
 
     if (url.pathname === "/diagnostico") {
       const tg = env.TELEGRAM_TOKEN ? String(env.TELEGRAM_TOKEN).trim() : "";

@@ -163,6 +163,19 @@ export function mensajesTelegram({ secciones, errores }, vistas = []) {
 // `antes` es lo que ya se enseñaba; lo nuevo entra con la fecha en que se vio por primera vez.
 const EN_WEB = 12;
 export const VERSION_WEB = 2;
+// Hemeroteca: todo lo que ha ido saliendo, por sección y separado en estudios y noticias (lo más nuevo primero).
+// Cada sección se guarda aparte («noticiasArchivo:hipertrofia»…) para que ningún valor crezca demasiado.
+export const ARCHIVO_MAX = 300;
+export function archivar(b, antes) {
+  const ahora = Date.now(), prev = antes || { estudios: [], noticias: [] };
+  const ya = new Set(prev.estudios.concat(prev.noticias).map(x => x.id));
+  const nuevos = (lista, tipo) => (lista || []).filter(x => x && !ya.has(x.id))
+    .map(({ id, titulo, fuente, enlace }) => ({ id, tipo, titulo, fuente, enlace, fecha: ahora }));
+  return {
+    estudios: nuevos(b.estudios, "estudio").concat(prev.estudios).slice(0, ARCHIVO_MAX),
+    noticias: nuevos(b.noticias, "noticia").concat(prev.noticias).slice(0, ARCHIVO_MAX),
+  };
+}
 // Para enseñar: estudios y noticias alternados, lo más reciente primero.
 export function alternar(lista = []) {
   const e = lista.filter(x => x.tipo === "estudio"), n = lista.filter(x => x.tipo !== "estudio"), r = [];
