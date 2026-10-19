@@ -88,6 +88,7 @@ def indice(enlace, sin=None):
 
 V_DIF = corto(lee(SRC, "difunde.js"))
 V_VER = corto(lee(SRC, "version.js"))
+V_ICH = corto(lee(SRC, "ichthys.js"))
 
 
 def difunde(texto, url_, asunto, titulo):
@@ -253,6 +254,7 @@ def portada_web():
     enlaces = "\n".join(f'      <a href="/herramientas/{h["slug"]}/">{h["corto"]}</a>' for h in HERRAMIENTAS)
     s = re.sub(r"/difunde\.js\?v=\w+", "/difunde.js?v=" + V_DIF, s)
     s = re.sub(r"/version\.js\?v=\w+", "/version.js?v=" + V_VER, s)
+    s = re.sub(r"/ichthys\.js\?v=\w+", "/ichthys.js?v=" + V_ICH, s)
     s, k = re.subn(r'(<div class="toolnames"[^>]*>\n).*?(\n    </div>)', lambda m: m.group(1) + enlaces + m.group(2), s, flags=re.S)
     assert k == 1, "No encuentro la lista de herramientas de la portada"
     s = re.sub(r"\b\d+ herramientas\b", f"{n} herramientas", s)
@@ -275,6 +277,8 @@ def generar():
         "../heavywork/web/difunde.js": dif,   # HeavyWork usa el mismo archivo
         "version.js": lee(SRC, "version.js"),
         "../heavywork/web/version.js": lee(SRC, "version.js"),   # y también la versión y «Buscar actualización»
+        "ichthys.js": lee(SRC, "ichthys.js"),                    # el pez escondido con su versículo
+        "../heavywork/web/ichthys.js": lee(SRC, "ichthys.js"),
         "herramientas/estilos.css": css,
         "herramientas/app.js": js,
         "herramientas/index.html": portada(v_css, v_js),
