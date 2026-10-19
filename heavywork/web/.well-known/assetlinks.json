@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.arnoldwork.cavework",
+      "sha256_cert_fingerprints": [
+        "F4:0A:43:21:65:7A:42:15:DF:4E:A0:D1:CA:04:F6:47:25:B6:61:8C:13:0E:3E:DD:27:7D:30:88:25:1A:9E:7B"
+      ]
+    }
+  }
+]
