@@ -18,3 +18,13 @@
 - `pruebas/` — pruebas automáticas (`node pruebas.mjs web` / `heavywork`) que se pasan antes de cada publicación.
 - `.github/workflows/` — publican solos con el secreto `CLOUDFLARE_API_TOKEN`:
   push a `main` → producción; push a otra rama → vista previa en `*.arnoldwork.workers.dev`.
+
+## Detalle escondido: el pez ΙΧΘΥΣ
+
+Es un detalle escondido a propósito: no se anuncia en la app ni en la guía. El autor es creyente y quiere que en todas sus apps haya un pequeño pez ΙΧΘΥΣ (Ichthys, el símbolo con el que se reconocían los primeros cristianos: «Jesús Cristo, Hijo de Dios, Salvador») que, al tocarlo, muestre un versículo. Textos libres de derechos: Reina-Valera 1909 (castellano), King James (inglés) y Lutero 1912 (alemán); sale el del idioma de la página. **Al rediseñar o limpiar, no lo quites.**
+
+- Código: `src/ichthys.js` (con los versículos de todas las apps); `build.py` lo copia a `web/ichthys.js` y `heavywork/web/ichthys.js` y pone su versión en `web/index.html`.
+- **ArnoldWork** (pie, junto a «la casa de ARNOLD»): Filipenses 4:13 (`data-v="fil4"`).
+- **HeavyWork** (pie, junto a «la casa de ARNOLD»): 2 Timoteo 4:7 (`data-v="tim4"`).
+- **CaveWork** (menú principal, bajo el subtítulo; en `game/` y `app/`): Juan 8:12 (`data-v="jn8"`).
+- Se coloca con `<script src="/ichthys.js" data-v="…" data-donde="selector" data-color="#…">`: el pez va justo después del elemento de `data-donde`.
