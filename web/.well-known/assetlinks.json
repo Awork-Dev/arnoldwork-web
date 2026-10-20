@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.arnoldwork.herramientas",
+      "sha256_cert_fingerprints": ["E2:3A:25:62:CA:30:24:16:38:4F:35:4B:89:AA:38:A7:1C:21:27:89:86:60:DA:50:A6:8B:DA:81:B8:8A:4A:50"]
+    }
+  }
+]
