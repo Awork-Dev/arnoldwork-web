@@ -613,3 +613,6 @@
 /* App de Google Play (html.app-play): fuera la tienda, los batidos y los pagos externos. */
 .app-play :is(a[href*="ko-fi.com"],a[href*="paypal.me"],a[href^="solana:"],a[href$="#batido"],a[href$="#libro"],a[href$="#material"],a[href*="t=tienda"],.btn-batido,.btn-cab[href$="#batido"],#libro,#material,#batido,.solo-web),
 .app-play p:has(> a[href$="#batido"],> a[href*="ko-fi.com"]){display:none!important}
+
+/* Selector de idioma (Español / English) */
+.btn-idioma{background:none;color:inherit;border:1.5px solid currentColor;font:700 .78rem/1 inherit;padding:6px 10px;margin-left:8px;border-radius:6px;cursor:pointer;white-space:nowrap}

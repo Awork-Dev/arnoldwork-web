@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/herramientas/estilos.css?v=f311397a0d">
+<link rel="stylesheet" href="/herramientas/estilos.css?v=11ea560369">
 <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Calculadora de calorías y macros","url":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/","description":"Calcula cuántas calorías comer al día y cómo repartir proteína, hidratos y grasa según tu objetivo. Fórmula de Mifflin-St Jeor. Gratis.","applicationCategory":"HealthApplication","operatingSystem":"Cualquiera (funciona en el navegador)","inLanguage":"es","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"publisher":{"@type":"Organization","name":"ArnoldWork","url":"https://arnoldwork.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://arnoldwork.com/"},{"@type":"ListItem","position":2,"name":"Herramientas","item":"https://arnoldwork.com/herramientas/"},{"@type":"ListItem","position":3,"name":"Calorías y macros","item":"https://arnoldwork.com/herramientas/calculadora-calorias-macros/"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cuánta proteína necesito para ganar músculo?","acceptedAnswer":{"@type":"Answer","text":"Entre 1,6 y 2,2 g por kilo de peso al día cubre a casi todo el mundo. La herramienta usa 1,8 g para ganar músculo y más en déficit, para proteger el músculo."}},{"@type":"Question","name":"¿Cuántas calorías para perder grasa sin perder músculo?","acceptedAnswer":{"@type":"Answer","text":"Un déficit moderado, alrededor del 20 % de lo que gastas, con proteína alta y entrenamiento de fuerza. Perder más de un 1 % del peso a la semana suele costar músculo."}}]}]</script>
 </head>
 <body>
@@ -40,7 +40,7 @@
     <a class="ir-inicio" href="/#t=inicio" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span>Inicio</span></a>
     <nav class="nav-links">
       <a href="/#porque">Por qué</a>
-      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/herramientas/" aria-current="page" data-en="Tools">Herramientas</a>
       <a href="/#ciencia">Ciencia</a>
       <a href="/#proyectos">Proyectos</a>
       <a href="/#libro">Libro</a>
@@ -49,6 +49,7 @@
       <a href="/#quien">Quién soy</a>
       <a href="/#contacto">Contacto</a>
     </nav>
+    <button type="button" class="btn-idioma" id="btnIdioma" aria-label="Change language">English</button>
     <a class="btn btn-sm btn-cab" href="/#batido">🥤 <span class="solo-ancho">Invita a un batido</span><span class="solo-movil">Batido</span></a>
   </div>
 </header>
@@ -194,6 +195,30 @@
   </div>
 </footer>
 
+<script>
+/* Idioma: Español / English. Recuerda la elección en este navegador (sin datos personales). */
+(function(){
+  var clave='arnoldwork-idioma', idioma='es';
+  try{idioma=localStorage.getItem(clave)==='en'?'en':'es'}catch(e){}
+  function aplicar(){
+    document.documentElement.lang=idioma;
+    document.querySelectorAll('[data-en]').forEach(function(el){
+      if(!('es' in el.dataset)) el.dataset.es=el.innerHTML;
+      el.innerHTML=idioma==='en'?el.dataset.en:el.dataset.es;
+    });
+    var b=document.getElementById('btnIdioma'); if(b) b.textContent=idioma==='en'?'Español':'English';
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    aplicar();
+    var b=document.getElementById('btnIdioma');
+    if(b) b.addEventListener('click',function(){
+      idioma=idioma==='en'?'es':'en';
+      try{localStorage.setItem(clave,idioma)}catch(e){}
+      aplicar();
+    });
+  });
+})();
+</script>
 <script src="/herramientas/app.js?v=56b26ec6bb"></script>
 <script src="/difunde.js?v=08652011d6" defer></script>
 <script src="/version.js?v=50c4f2f01e" defer></script>
