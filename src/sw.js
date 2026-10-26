@@ -1,7 +1,7 @@
 // ArnoldWork · funciona sin cobertura. Este archivo lo genera build.py a partir de src/sw.js: no lo edites en web/.
 // Páginas, estilos y código: primero la red (así siempre ves la última versión) y, sin conexión, la copia guardada.
 // Imágenes y fuentes: la copia guardada, que casi nunca cambian.
-const VERSION = 'aw-2026-10-26-idioma';
+const VERSION = '{{VERSION}}';
 const CACHE = 'arnoldwork-' + VERSION;
 const PRECACHE = {{PRECACHE}};
 
