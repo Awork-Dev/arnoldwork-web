@@ -241,6 +241,9 @@ p{margin:0 0 1em;max-width:60ch}
 .modo-aviso-voz[hidden]{display:none}
 .modo-top button[aria-pressed="false"]{opacity:.6}
 .copia-caja{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.nube-caja>.estado-msg{width:100%}
+#codigoNube{width:100%;max-width:220px;padding:10px;font:inherit;text-transform:uppercase}
+.btn-idioma{background:none;color:inherit;border:2px solid currentColor;font-weight:700;font-size:.8rem;padding:4px 10px;margin-left:8px;cursor:pointer}
 .copia-msg{width:100%;margin:0;font-weight:700;min-height:1.2em}
 
 /* Secciones */
@@ -448,7 +451,8 @@ main{overflow-x:clip}
   <div class="env">
     <a class="logo" href="#top" aria-label="HeavyWork, inicio"><svg class="logo-a" viewBox="-137 -40 926 926" aria-hidden="true"><rect x="-115" y="-18" width="882" height="882" rx="70" fill="#F3EEE2" stroke="#16181B" stroke-width="44"/><g transform="translate(65,84) scale(.8)"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#16181B"/><polygon points="333,0 333,231 441,439 489,415" fill="#C8901E"/><polygon points="507,462 469,492 650,839" fill="#C8901E"/></g></svg><span>HEAVY<b>WORK</b></span></a>
     <a class="ir-inicio" href="#t=inicio" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span>Inicio</span></a>
-    <nav aria-label="Secciones"><a href="#rotacion">Rutina</a><a href="#metodo">Método</a><a href="#cuaderno">Cuaderno</a><a href="#preguntas">Preguntas</a><a href="#aldia" id="navAldia" hidden>Noticias</a><a href="#juego">Juego</a><a href="https://arnoldwork.com/herramientas/">Herramientas</a></nav>
+    <nav aria-label="Secciones"><a href="#rotacion" data-en="Routine">Rutina</a><a href="#metodo" data-en="Method">Método</a><a href="#cuaderno" data-en="Log">Cuaderno</a><a href="#preguntas" data-en="Questions">Preguntas</a><a href="#aldia" id="navAldia" data-en="News" hidden>Noticias</a><a href="#juego" data-en="Game">Juego</a><a href="https://arnoldwork.com/herramientas/" data-en="Tools">Herramientas</a></nav>
+    <button type="button" class="btn-idioma" id="btnIdioma" aria-label="Change language">English</button>
   </div>
 </header>
 
@@ -569,38 +573,38 @@ main{overflow-x:clip}
   <section class="sec" id="cuaderno">
     <div class="env">
       <div class="sec-cab">
-        <h2>Cuaderno</h2>
-        <p>Tus últimas marcas por ejercicio, tu mejor marca y cómo evoluciona tu fuerza. Se guarda en este móvil, sin cuentas ni registros: haz una copia de seguridad para no perderlo si cambias de móvil.</p>
+        <h2 data-en="Log">Cuaderno</h2>
+        <p data-en="Your latest best lifts for each exercise, your personal best and how your strength changes. It is saved on this phone, with no accounts or sign-ups: make a backup so you don't lose it if you change phones.">Tus últimas marcas por ejercicio, tu mejor marca y cómo evoluciona tu fuerza. Se guarda en este móvil, sin cuentas ni registros: haz una copia de seguridad para no perderlo si cambias de móvil.</p>
       </div>
       <div class="cuaderno" id="hojas"></div>
       <div class="insignias-caja" id="insignias"></div>
       <div class="revision">
         <div>
-          <h3>Tu cuaderno es tuyo</h3>
-          <p>Se guarda solo en este móvil. Descárgalo o pásaselo a quien quieras: a tu compañero de entreno o a tu entrenador.</p>
-          <p class="responsable">HeavyWork es gratis y no hace planes ni revisiones personalizadas. Cada uno entrena bajo su propia responsabilidad.</p>
+          <h3 data-en="Your log is yours">Tu cuaderno es tuyo</h3>
+          <p data-en="It is saved only on this phone. Download it or pass it on to anyone you like: your training partner or your coach.">Se guarda solo en este móvil. Descárgalo o pásaselo a quien quieras: a tu compañero de entreno o a tu entrenador.</p>
+          <p class="responsable" data-en="HeavyWork is free and does not make plans or personal reviews. Everyone trains under their own responsibility.">HeavyWork es gratis y no hace planes ni revisiones personalizadas. Cada uno entrena bajo su propia responsabilidad.</p>
         </div>
         <div class="botones">
-          <button type="button" class="btn btn-claro btn-bloque" id="compartir">Compartir o descargar mi cuaderno</button>
-          <button type="button" class="btn btn-claro btn-bloque" id="aVidaWork">💪 Llevar a VidaWork</button>
-          <p class="estado-msg" style="margin:4px 0 0">Tus sesiones salen en <a href="https://vida.arnoldwork.com/" target="_blank" rel="noopener">VidaWork</a>, el día que las hiciste, junto a tus turnos o tu agenda.</p>
+          <button type="button" class="btn btn-claro btn-bloque" id="compartir" data-en="Share or download my log">Compartir o descargar mi cuaderno</button>
+          <button type="button" class="btn btn-claro btn-bloque" id="aVidaWork" data-en="💪 Send to VidaWork">💪 Llevar a VidaWork</button>
+          <p class="estado-msg" style="margin:4px 0 0" data-en='Your sessions go to <a href="https://vida.arnoldwork.com/" target="_blank" rel="noopener">VidaWork</a>, on the day you did them, next to your shifts or your calendar.'>Tus sesiones salen en <a href="https://vida.arnoldwork.com/" target="_blank" rel="noopener">VidaWork</a>, el día que las hiciste, junto a tus turnos o tu agenda.</p>
           <div class="estado-msg" id="revisionMsg" aria-live="polite"></div>
         </div>
       </div>
       <div class="ajustes">
         <div class="copia-caja">
-          <button type="button" class="btn btn-claro" id="guardarCopia">Guardar copia de seguridad</button>
-          <button type="button" class="btn btn-claro" id="restaurarCopia">Restaurar una copia</button>
+          <button type="button" class="btn btn-claro" id="guardarCopia" data-en="Save backup">Guardar copia de seguridad</button>
+          <button type="button" class="btn btn-claro" id="restaurarCopia" data-en="Restore a backup">Restaurar una copia</button>
           <input type="file" id="archivoCopia" accept=".json,application/json" hidden>
           <p class="copia-msg" id="copiaMsg" aria-live="polite"></p>
         </div>
         <div class="copia-caja nube-caja">
-          <p class="estado-msg" style="margin:0"><b>Copia en la nube (opcional):</b> sin cuenta, sin correo. Te damos un código; con él recuperas tus entrenos en otro móvil. Quien tenga el código puede ver tu cuaderno, así que no lo compartas.</p>
-          <button type="button" class="btn btn-claro" id="crearNube">Activar copia en la nube</button>
-          <button type="button" class="btn btn-claro" id="sincronizarNube" hidden>Sincronizar ahora</button>
+          <p class="estado-msg" style="margin:0" data-en="<b>Cloud copy (optional):</b> no account, no email. We give you a code; with it you get your sessions back on another phone. Anyone with the code can see your log, so don't share it."><b>Copia en la nube (opcional):</b> sin cuenta, sin correo. Te damos un código; con él recuperas tus entrenos en otro móvil. Quien tenga el código puede ver tu cuaderno, así que no lo compartas.</p>
+          <button type="button" class="btn btn-claro" id="crearNube" data-en="Turn on cloud copy">Activar copia en la nube</button>
+          <button type="button" class="btn btn-claro" id="sincronizarNube" data-en="Sync now" hidden>Sincronizar ahora</button>
           <input type="text" id="codigoNube" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de la nube">
-          <button type="button" class="btn btn-claro" id="recuperarNube">Recuperar con código</button>
-          <button type="button" class="btn-texto" id="dejarNube" hidden>Dejar de usar la nube</button>
+          <button type="button" class="btn btn-claro" id="recuperarNube" data-en="Recover with code">Recuperar con código</button>
+          <button type="button" class="btn-texto" id="dejarNube" data-en="Stop using the cloud" hidden>Dejar de usar la nube</button>
           <p class="copia-msg" id="nubeMsg" aria-live="polite"></p>
         </div>
         <button type="button" class="btn-texto" id="borrar">Borrar todo el cuaderno</button>
@@ -1170,12 +1174,12 @@ $('#guardarCopia').addEventListener('click', async () => {
   const nombre = `heavywork-copia-${new Date().toISOString().slice(0,10)}.json`;
   try {
     const f = new File([txt], nombre, {type:'application/json'});
-    if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:'Copia de HeavyWork'}); copiaMsg('Copia lista. Guárdala en tus archivos, tu correo o donde prefieras.'); return; }
+    if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:'Copia de HeavyWork'}); copiaMsg(TX[idioma].copiaLista); return; }
   } catch (e) { if (e && e.name === 'AbortError') return; }
   const a = h('a', {href:URL.createObjectURL(new Blob([txt], {type:'application/json'})), download:nombre});
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1500);
-  copiaMsg('Copia descargada. Guárdala: con ella recuperas todo en otro móvil.');
+  copiaMsg(TX[idioma].copiaDescargada);
 });
 $('#restaurarCopia').addEventListener('click', () => $('#archivoCopia').click());
 $('#archivoCopia').addEventListener('change', async e => {
@@ -1186,23 +1190,77 @@ $('#archivoCopia').addEventListener('change', async e => {
     const d = c && c.app === 'heavywork' && c.datos;
     if (!d || typeof d.cuaderno !== 'object' || !Array.isArray(d.sesiones)) throw new Error('formato');
     const cuando = c.fecha ? new Date(c.fecha).toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'}) : 'sin fecha';
-    if (!confirm(`Esto sustituye el cuaderno de este móvil por la copia del ${cuando} (${d.sesiones.length} entrenos). ¿Seguir?`)) return;
+    if (!confirm(TX[idioma].copiaConfirmar(cuando, d.sesiones.length))) return;
     guardar(Object.assign({ cuaderno:{}, sesiones:[], descanso:4 }, d));
     pintarTodo();
-    copiaMsg(`Copia restaurada: ${d.sesiones.length} entrenos recuperados.`);
-  } catch { copiaMsg('Ese archivo no es una copia de HeavyWork.'); }
+    copiaMsg(TX[idioma].copiaRestaurada(d.sesiones.length));
+  } catch { copiaMsg(TX[idioma].copiaNoValida); }
 });
 
 /* ===== Copia en la nube (opcional): el móvil guarda solo el código; los datos viven en heavywork-api ===== */
 const NUBE_API = 'https://heavywork-api.arnoldwork.workers.dev';
 const CLAVE_NUBE = 'heavywork-nube';
+const IDIOMA_CLAVE = 'heavywork-idioma';
+let idioma = (() => { try { return localStorage.getItem(IDIOMA_CLAVE) === 'en' ? 'en' : 'es'; } catch { return 'es'; } })();
+const TX = {
+    es: {
+        nubeActiva: 'Copia en la nube activa. Tu código: ',
+        nubeSync: 'Sincronizado: la nube tiene tu cuaderno de hoy.',
+        nubeEscribe: 'Escribe el código de la nube (XXXX-XXXX).',
+        nubeFormato: 'Ese código no tiene el formato correcto (XXXX-XXXX).',
+        nubeNoExiste: 'Ese código no existe. Revisa que esté bien escrito.',
+        nubeError: 'No se pudo conectar con la nube. Revisa la conexión e inténtalo de nuevo.',
+        nubeRecuperada: n => `Copia recuperada: ${n} entrenos.`,
+        nubeConfirmar: n => `Esto sustituye el cuaderno de este móvil por la copia de la nube (${n} entrenos). ¿Seguir?`,
+        nubeBorrar: 'Se borrará la copia de la nube. Tu cuaderno de este móvil no cambia. ¿Seguir?',
+        nubeBorrada: 'Copia de la nube borrada. Tu cuaderno sigue en este móvil.',
+        nubeNoValida: 'Esa copia no es válida.',
+        copiaLista: 'Copia lista. Guárdala en tus archivos, tu correo o donde prefieras.',
+        copiaDescargada: 'Copia descargada. Guárdala: con ella recuperas todo en otro móvil.',
+        copiaRestaurada: n => `Copia restaurada: ${n} entrenos recuperados.`,
+        copiaNoValida: 'Ese archivo no es una copia de HeavyWork.',
+        copiaConfirmar: (cuando, n) => `Esto sustituye el cuaderno de este móvil por la copia del ${cuando} (${n} entrenos). ¿Seguir?`,
+    },
+    en: {
+        nubeActiva: 'Cloud copy on. Your code: ',
+        nubeSync: 'Synced: the cloud has your log as of today.',
+        nubeEscribe: 'Type the cloud code (XXXX-XXXX).',
+        nubeFormato: 'That code is not in the right format (XXXX-XXXX).',
+        nubeNoExiste: "That code doesn't exist. Check that it is typed correctly.",
+        nubeError: "Couldn't connect to the cloud. Check your connection and try again.",
+        nubeRecuperada: n => `Copy recovered: ${n} sessions.`,
+        nubeConfirmar: n => `This replaces the log on this phone with the cloud copy (${n} sessions). Continue?`,
+        nubeBorrar: 'The cloud copy will be deleted. Your log on this phone stays the same. Continue?',
+        nubeBorrada: 'Cloud copy deleted. Your log stays on this phone.',
+        nubeNoValida: 'That copy is not valid.',
+        copiaLista: 'Backup ready. Save it in your files, your email or wherever you like.',
+        copiaDescargada: 'Backup downloaded. Keep it: with it you can recover everything on another phone.',
+        copiaRestaurada: n => `Backup restored: ${n} sessions recovered.`,
+        copiaNoValida: 'That file is not a HeavyWork backup.',
+        copiaConfirmar: (cuando, n) => `This replaces the log on this phone with the backup from ${cuando} (${n} sessions). Continue?`,
+    },
+};
 const nubeMsg = t => { $('#nubeMsg').textContent = t; };
+function aplicarIdioma(){
+    document.documentElement.lang = idioma;
+    document.querySelectorAll('[data-en]').forEach(el => {
+        if (!('es' in el.dataset)) el.dataset.es = el.innerHTML;
+        el.innerHTML = idioma === 'en' ? el.dataset.en : el.dataset.es;
+    });
+    $('#btnIdioma').textContent = idioma === 'en' ? 'Español' : 'English';
+    pintarNube();
+}
+$('#btnIdioma').addEventListener('click', () => {
+    idioma = idioma === 'en' ? 'es' : 'en';
+    try { localStorage.setItem(IDIOMA_CLAVE, idioma); } catch {}
+    aplicarIdioma();
+});
 const codigoNube = () => { try { return localStorage.getItem(CLAVE_NUBE) || ''; } catch { return ''; } };
 function ponerCodigoNube(c){ try { c ? localStorage.setItem(CLAVE_NUBE, c) : localStorage.removeItem(CLAVE_NUBE); } catch {} pintarNube(); }
 function pintarNube(){
   const c = codigoNube();
   $('#crearNube').hidden = !!c; $('#sincronizarNube').hidden = !c; $('#dejarNube').hidden = !c;
-  nubeMsg(c ? `Copia en la nube activa. Tu código: ${c}` : '');
+  nubeMsg(c ? TX[idioma].nubeActiva + c : '');
 }
 async function llamarNube(ruta, metodo = 'GET', datos){
   const r = await fetch(NUBE_API + ruta, { method: metodo, headers: {'Content-Type':'application/json'}, body: datos ? JSON.stringify({datos}) : undefined });
@@ -1211,36 +1269,36 @@ async function llamarNube(ruta, metodo = 'GET', datos){
   if (!r.ok) throw Object.assign(new Error(j.error || 'red'), { estado: r.status });
   return j;
 }
-const errorNube = e => nubeMsg(e.estado === 404 ? 'Ese código no existe. Revisa que esté bien escrito.' : e.estado === 400 ? 'Ese código no tiene el formato correcto (XXXX-XXXX).' : 'No se pudo conectar con la nube. Revisa la conexión e inténtalo de nuevo.');
+const errorNube = e => nubeMsg(e.estado === 404 ? TX[idioma].nubeNoExiste : e.estado === 400 ? TX[idioma].nubeFormato : TX[idioma].nubeError);
 $('#crearNube').addEventListener('click', async () => {
   try { const j = await llamarNube('/api/copias', 'POST', leer()); ponerCodigoNube(j.codigo); }
   catch (e) { errorNube(e); }
 });
 $('#sincronizarNube').addEventListener('click', async () => {
-  try { await llamarNube('/api/copias/' + codigoNube(), 'PUT', leer()); nubeMsg('Sincronizado: la nube tiene tu cuaderno de hoy.'); }
+  try { await llamarNube('/api/copias/' + codigoNube(), 'PUT', leer()); nubeMsg(TX[idioma].nubeSync); }
   catch (e) { errorNube(e); }
 });
 $('#recuperarNube').addEventListener('click', async () => {
   const c = $('#codigoNube').value.trim().toUpperCase();
-  if (!c) return nubeMsg('Escribe el código de la nube (XXXX-XXXX).');
+  if (!c) return nubeMsg(TX[idioma].nubeEscribe);
   try {
     const j = await llamarNube('/api/copias/' + encodeURIComponent(c));
     const d = j && j.datos;
     if (!d || typeof d.cuaderno !== 'object' || !Array.isArray(d.sesiones)) throw new Error('formato');
-    if (!confirm(`Esto sustituye el cuaderno de este móvil por la copia de la nube (${d.sesiones.length} entrenos). ¿Seguir?`)) return;
+    if (!confirm(TX[idioma].nubeConfirmar(d.sesiones.length))) return;
     guardar(Object.assign({ cuaderno:{}, sesiones:[], descanso:4 }, d));
     ponerCodigoNube(c);
     $('#codigoNube').value = '';
     pintarTodo();
-    nubeMsg(`Copia recuperada: ${d.sesiones.length} entrenos.`);
-  } catch (e) { e.message === 'formato' ? nubeMsg('Esa copia no es válida.') : errorNube(e); }
+    nubeMsg(TX[idioma].nubeRecuperada(d.sesiones.length));
+  } catch (e) { e.message === 'formato' ? nubeMsg(TX[idioma].nubeNoValida) : errorNube(e); }
 });
 $('#dejarNube').addEventListener('click', async () => {
-  if (!confirm('Se borrará la copia de la nube. Tu cuaderno de este móvil no cambia. ¿Seguir?')) return;
-  try { await llamarNube('/api/copias/' + codigoNube(), 'DELETE'); ponerCodigoNube(''); nubeMsg('Copia de la nube borrada. Tu cuaderno sigue en este móvil.'); }
+  if (!confirm(TX[idioma].nubeBorrar)) return;
+  try { await llamarNube('/api/copias/' + codigoNube(), 'DELETE'); ponerCodigoNube(''); nubeMsg(TX[idioma].nubeBorrada); }
   catch (e) { errorNube(e); }
 });
-pintarNube();
+aplicarIdioma();
 
 /* ===== Revisión del cuaderno: llega directa a Telegram ===== */
 const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';
