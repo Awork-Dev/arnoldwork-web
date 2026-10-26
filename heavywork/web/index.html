@@ -594,6 +594,15 @@ main{overflow-x:clip}
           <input type="file" id="archivoCopia" accept=".json,application/json" hidden>
           <p class="copia-msg" id="copiaMsg" aria-live="polite"></p>
         </div>
+        <div class="copia-caja nube-caja">
+          <p class="estado-msg" style="margin:0"><b>Copia en la nube (opcional):</b> sin cuenta, sin correo. Te damos un código; con él recuperas tus entrenos en otro móvil. Quien tenga el código puede ver tu cuaderno, así que no lo compartas.</p>
+          <button type="button" class="btn btn-claro" id="crearNube">Activar copia en la nube</button>
+          <button type="button" class="btn btn-claro" id="sincronizarNube" hidden>Sincronizar ahora</button>
+          <input type="text" id="codigoNube" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de la nube">
+          <button type="button" class="btn btn-claro" id="recuperarNube">Recuperar con código</button>
+          <button type="button" class="btn-texto" id="dejarNube" hidden>Dejar de usar la nube</button>
+          <p class="copia-msg" id="nubeMsg" aria-live="polite"></p>
+        </div>
         <button type="button" class="btn-texto" id="borrar">Borrar todo el cuaderno</button>
       </div>
     </div>
@@ -1183,6 +1192,55 @@ $('#archivoCopia').addEventListener('change', async e => {
     copiaMsg(`Copia restaurada: ${d.sesiones.length} entrenos recuperados.`);
   } catch { copiaMsg('Ese archivo no es una copia de HeavyWork.'); }
 });
+
+/* ===== Copia en la nube (opcional): el móvil guarda solo el código; los datos viven en heavywork-api ===== */
+const NUBE_API = 'https://heavywork-api.arnoldwork.workers.dev';
+const CLAVE_NUBE = 'heavywork-nube';
+const nubeMsg = t => { $('#nubeMsg').textContent = t; };
+const codigoNube = () => { try { return localStorage.getItem(CLAVE_NUBE) || ''; } catch { return ''; } };
+function ponerCodigoNube(c){ try { c ? localStorage.setItem(CLAVE_NUBE, c) : localStorage.removeItem(CLAVE_NUBE); } catch {} pintarNube(); }
+function pintarNube(){
+  const c = codigoNube();
+  $('#crearNube').hidden = !!c; $('#sincronizarNube').hidden = !c; $('#dejarNube').hidden = !c;
+  nubeMsg(c ? `Copia en la nube activa. Tu código: ${c}` : '');
+}
+async function llamarNube(ruta, metodo = 'GET', datos){
+  const r = await fetch(NUBE_API + ruta, { method: metodo, headers: {'Content-Type':'application/json'}, body: datos ? JSON.stringify({datos}) : undefined });
+  if (metodo === 'DELETE') return;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(j.error || 'red'), { estado: r.status });
+  return j;
+}
+const errorNube = e => nubeMsg(e.estado === 404 ? 'Ese código no existe. Revisa que esté bien escrito.' : e.estado === 400 ? 'Ese código no tiene el formato correcto (XXXX-XXXX).' : 'No se pudo conectar con la nube. Revisa la conexión e inténtalo de nuevo.');
+$('#crearNube').addEventListener('click', async () => {
+  try { const j = await llamarNube('/api/copias', 'POST', leer()); ponerCodigoNube(j.codigo); }
+  catch (e) { errorNube(e); }
+});
+$('#sincronizarNube').addEventListener('click', async () => {
+  try { await llamarNube('/api/copias/' + codigoNube(), 'PUT', leer()); nubeMsg('Sincronizado: la nube tiene tu cuaderno de hoy.'); }
+  catch (e) { errorNube(e); }
+});
+$('#recuperarNube').addEventListener('click', async () => {
+  const c = $('#codigoNube').value.trim().toUpperCase();
+  if (!c) return nubeMsg('Escribe el código de la nube (XXXX-XXXX).');
+  try {
+    const j = await llamarNube('/api/copias/' + encodeURIComponent(c));
+    const d = j && j.datos;
+    if (!d || typeof d.cuaderno !== 'object' || !Array.isArray(d.sesiones)) throw new Error('formato');
+    if (!confirm(`Esto sustituye el cuaderno de este móvil por la copia de la nube (${d.sesiones.length} entrenos). ¿Seguir?`)) return;
+    guardar(Object.assign({ cuaderno:{}, sesiones:[], descanso:4 }, d));
+    ponerCodigoNube(c);
+    $('#codigoNube').value = '';
+    pintarTodo();
+    nubeMsg(`Copia recuperada: ${d.sesiones.length} entrenos.`);
+  } catch (e) { e.message === 'formato' ? nubeMsg('Esa copia no es válida.') : errorNube(e); }
+});
+$('#dejarNube').addEventListener('click', async () => {
+  if (!confirm('Se borrará la copia de la nube. Tu cuaderno de este móvil no cambia. ¿Seguir?')) return;
+  try { await llamarNube('/api/copias/' + codigoNube(), 'DELETE'); ponerCodigoNube(''); nubeMsg('Copia de la nube borrada. Tu cuaderno sigue en este móvil.'); }
+  catch (e) { errorNube(e); }
+});
+pintarNube();
 
 /* ===== Revisión del cuaderno: llega directa a Telegram ===== */
 const VIGILANTE = 'https://vigilante.arnoldwork.workers.dev/contacto';

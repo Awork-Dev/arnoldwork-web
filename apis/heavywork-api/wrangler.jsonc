@@ -1,0 +1,12 @@
+// Worker "heavywork-api": copia en la nube de HeavyWork (ver worker.js y schema.sql).
+// En Cloudflare: crear la base D1 «heavywork-copias», ejecutar schema.sql y pegar su id en database_id.
+{
+  "name": "heavywork-api",
+  "account_id": "53cbf9156847de65986cbfdb2ea9e4b5",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-17",
+  "workers_dev": true,
+  "d1_databases": [
+    { "binding": "DB", "database_id": "PEGAR-ID-DE-LA-BASE-D1" }
+  ]
+}
