@@ -271,10 +271,8 @@
   #chatBtn:hover{background:#B32B2B}
   /* en móvil, botón compacto y por encima del distintivo de Netlify */
   @media (max-width:640px){
-    #chatBtn{font-size:.85rem;padding:11px 16px;gap:7px;bottom:78px;left:14px;
-      box-shadow:0 6px 18px rgba(0,0,0,.45)}
-    #chatBtn svg{width:16px;height:16px}
-    #chatPanel{bottom:78px;left:14px}
+    /* En el móvil el chat se abre desde Más → Contacto: el botón flotante tapaba el texto. */
+    #chatBtn{display:none}
   }
   @media (max-width:380px){
     #chatBtn .btxt{display:none}
