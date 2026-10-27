@@ -102,6 +102,8 @@
     setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
   }
   function tarjeta(o){
+    var T = window.AW_T || function(s){ return s; };
+    o.titulo = T(o.titulo); o.sub = T(o.sub); o.lineas = (o.lineas || []).map(T);
     var c = document.createElement('canvas'); c.width = 1080; c.height = 1080;
     var x = c.getContext('2d');
     function ajusta(txt, max, px, peso, fam){

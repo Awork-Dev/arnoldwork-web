@@ -1188,7 +1188,11 @@
  "Las chanclas en la ducha no son opcionales. Esto no es un consejo, es una advertencia.": "Flip-flops in the shower are not optional. This is not advice, it's a warning.",
  "Quien usa tres máquinas a la vez está haciendo una superserie o conquistando territorio.": "Whoever uses three machines at once is doing a superset or claiming territory.",
  "El pre-entreno no sustituye a dormir. Ni a cenar. Ni a tener ganas.": "Pre-workout doesn't replace sleep. Or dinner. Or motivation.",
- "Los discos de 20 van con los de 20. El de 1,25 no se va a sentir solo.": "The 20s go with the 20s. The 1.25 won't feel lonely."
+ "Los discos de 20 van con los de 20. El de 1,25 no se va a sentir solo.": "The 20s go with the 20s. The 1.25 won't feel lonely.",
+ "Escribe tus datos arriba": "Enter your details above",
+ "Ese es tu máximo real de hoy": "That is your real max today",
+ "Por encima de 12 repeticiones la estimación se dispara. Para saber tu máximo de verdad, prueba con una serie de 3 a 6.": "Above 12 reps the estimate jumps. To know your real max, try a set of 3 to 6.",
+ "Mi máximo estimado (1RM)": "My estimated max (1RM)"
 };
   var R = [
  [
@@ -1238,6 +1242,18 @@
  [
   " · (\\d{1,2}) de diciembre$",
   " · $1 December"
+ ],
+ [
+  "^Máximo estimado a partir de (\\d+) repeticiones$",
+  "Estimated max from $1 reps"
+ ],
+ [
+  "^Con (.+) × (\\d+) repetición$",
+  "With $1 × $2 rep"
+ ],
+ [
+  "^Con (.+) × (\\d+) repeticiones$",
+  "With $1 × $2 reps"
  ]
 ];
   var RR = R.map(function(r){ return [new RegExp(r[0]), r[1]]; });
@@ -1268,6 +1284,9 @@
       if (n.textContent !== nuevo) n.textContent = nuevo;
     }
   }
+
+  // Para los textos que se dibujan en un lienzo (tarjetas para compartir): devuelve el texto en el idioma elegido.
+  window.AW_T = function(s){ return idioma === 'en' ? (traducir(s) || s) : s; };
 
   var mo = new MutationObserver(function(){
     if (idioma !== 'en') return;

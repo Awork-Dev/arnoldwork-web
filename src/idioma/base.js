@@ -32,6 +32,9 @@
     }
   }
 
+  // Para los textos que se dibujan en un lienzo (tarjetas para compartir): devuelve el texto en el idioma elegido.
+  window.AW_T = function(s){ return idioma === 'en' ? (traducir(s) || s) : s; };
+
   var mo = new MutationObserver(function(){
     if (idioma !== 'en') return;
     mo.disconnect();
