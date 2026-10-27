@@ -1190,7 +1190,21 @@
   "Escribe tus datos arriba": "Enter your details above",
   "Ese es tu máximo real de hoy": "That is your real max today",
   "Por encima de 12 repeticiones la estimación se dispara. Para saber tu máximo de verdad, prueba con una serie de 3 a 6.": "Above 12 reps the estimate jumps. To know your real max, try a set of 3 to 6.",
-  "Mi máximo estimado (1RM)": "My estimated max (1RM)"
+  "Mi máximo estimado (1RM)": "My estimated max (1RM)",
+  "SUBE": "UP",
+  "BAJA": "DOWN",
+  "ESTANCADO": "STALLED",
+  "Has hecho": "You did",
+  "Tres sesiones sin sumar ni una repetición. Antes de tocar el peso, repasa lo básico:": "Three sessions without adding a single rep. Before touching the weight, review the basics:",
+  "duermes 7 horas o más, comes proteína suficiente y descansas entre sesiones": "you sleep 7 hours or more, eat enough protein and rest between sessions",
+  "Vas bien: una repetición más que la sesión anterior. Estás dentro de tu rango. Mismo peso y busca": "You're on track: one more rep than last session. You're within your range. Same weight and aim for",
+  "Mismo peso": "Same weight",
+  "Dos sesiones seguidas por debajo de 8 repeticiones: ese peso todavía te queda grande. Baja un 10 %, vuelve a construir hasta 12 repeticiones y sube de nuevo. No es retroceder, es tomar carrerilla.": "Two sessions in a row below 8 reps: that weight is still too heavy for you. Drop 10 %, build back up to 12 reps and go up again. It's not going backwards, it's taking a run-up.",
+  "sin datos": "no data",
+  "Nivel élite. Muy poca gente llega aquí sin años de trabajo.": "Elite level. Very few people get here without years of work.",
+  "Mi nivel de fuerza": "My strength level",
+  "Según mis básicos": "Based on my main lifts",
+  "Empezando": "Just starting"
  },
  "reglas": [
   [
@@ -1252,6 +1266,118 @@
   [
    "^Con (.+) × (\\d+) repeticiones$",
    "With $1 × $2 reps"
+  ],
+  [
+   "^(\\d+) repeticiones$",
+   "$1 reps"
+  ],
+  [
+   "^(.+) kg por mancuerna$",
+   "$1 kg per dumbbell"
+  ],
+  [
+   "^, el techo de tu rango de (\\d+) a (\\d+)\\. Con el peso nuevo espera hacer unas (\\d+) o (\\d+): es normal bajar de repeticiones\\. Cuando vuelvas a llegar a (\\d+), subes otra vez\\.$",
+   ", the top of your range of $1 to $2. With the new weight expect about $3 or $4 reps: it's normal to drop reps. When you reach $5 again, go up."
+  ],
+  [
+   "^\\. Si todo eso está en orden, baja un 10 % \\((.+)\\) y vuelve a subir desde ahí\\.$",
+   ". If all that is in order, drop 10 % ($1) and build back up from there."
+  ],
+  [
+   "^Vas bien: (\\d+) repeticiones más que la sesión anterior\\. Estás dentro de tu rango\\. Mismo peso y busca$",
+   "You're on track: $1 more reps than last session. You're within your range. Same weight and aim for"
+  ],
+  [
+   "^\\((.+) × tu peso\\)$",
+   "($1 × your bodyweight)"
+  ],
+  [
+   "^Total de los tres básicos: (.+)$",
+   "Total of the three main lifts: $1"
+  ],
+  [
+   "^Sentadilla: (.+) · Empezando$",
+   "Squat: $1 · Just starting"
+  ],
+  [
+   "^Sentadilla: (.+) · Principiante$",
+   "Squat: $1 · Beginner"
+  ],
+  [
+   "^Sentadilla: (.+) · Novato$",
+   "Squat: $1 · Novice"
+  ],
+  [
+   "^Sentadilla: (.+) · Intermedio$",
+   "Squat: $1 · Intermediate"
+  ],
+  [
+   "^Sentadilla: (.+) · Avanzado$",
+   "Squat: $1 · Advanced"
+  ],
+  [
+   "^Sentadilla: (.+) · Élite$",
+   "Squat: $1 · Elite"
+  ],
+  [
+   "^Press banca: (.+) · Empezando$",
+   "Bench press: $1 · Just starting"
+  ],
+  [
+   "^Press banca: (.+) · Principiante$",
+   "Bench press: $1 · Beginner"
+  ],
+  [
+   "^Press banca: (.+) · Novato$",
+   "Bench press: $1 · Novice"
+  ],
+  [
+   "^Press banca: (.+) · Intermedio$",
+   "Bench press: $1 · Intermediate"
+  ],
+  [
+   "^Press banca: (.+) · Avanzado$",
+   "Bench press: $1 · Advanced"
+  ],
+  [
+   "^Press banca: (.+) · Élite$",
+   "Bench press: $1 · Elite"
+  ],
+  [
+   "^Peso muerto: (.+) · Empezando$",
+   "Deadlift: $1 · Just starting"
+  ],
+  [
+   "^Peso muerto: (.+) · Principiante$",
+   "Deadlift: $1 · Beginner"
+  ],
+  [
+   "^Peso muerto: (.+) · Novato$",
+   "Deadlift: $1 · Novice"
+  ],
+  [
+   "^Peso muerto: (.+) · Intermedio$",
+   "Deadlift: $1 · Intermediate"
+  ],
+  [
+   "^Peso muerto: (.+) · Avanzado$",
+   "Deadlift: $1 · Advanced"
+  ],
+  [
+   "^Peso muerto: (.+) · Élite$",
+   "Deadlift: $1 · Elite"
+  ],
+  [
+   "^Peso muerto · (.+)$",
+   "Deadlift · $1"
+  ],
+  [
+   "^Sentadilla · (.+)$",
+   "Squat · $1"
+  ],
+  [
+   "^Press banca · (.+)$",
+   "Bench press · $1"
   ]
  ]
 }
