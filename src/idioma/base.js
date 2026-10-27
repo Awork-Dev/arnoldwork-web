@@ -12,7 +12,7 @@
   function traducir(s){
     var k = limpio(s);
     if (T[k]) return T[k];
-    for (var i = 0; i < RR.length; i++) if (RR[i][0].test(k)) return k.replace(RR[i][0], RR[i][1]);
+    for (var i = 0; i < RR.length; i++) if (RR[i][0].test(k)) return k.replace(RR[i][0], RR[i][1]).replace(/(\d),(\d)/g, '$1.$2');
     return null;
   }
   var ocultos = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1, INPUT: 1 };

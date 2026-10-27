@@ -1204,7 +1204,14 @@
   "Nivel élite. Muy poca gente llega aquí sin años de trabajo.": "Elite level. Very few people get here without years of work.",
   "Mi nivel de fuerza": "My strength level",
   "Según mis básicos": "Based on my main lifts",
-  "Empezando": "Just starting"
+  "Empezando": "Just starting",
+  "He subido las calorías a un mínimo razonable: por debajo de esto no te lo recomiendo sin alguien que te siga de cerca.": "I have raised the calories to a reasonable minimum: below this I don't recommend it without someone following you closely.",
+  "Estás construyendo la base: aquí se sube rápido.": "You're building the base: here you go up fast.",
+  "Con tantas repeticiones y tanto margen la estimación pierde precisión. Para calcular bien, usa una serie de 3 a 8 repeticiones a RPE 8 o más.": "With so many reps and so much margin the estimate loses accuracy. To calculate well, use a set of 3 to 8 reps at RPE 8 or more.",
+  "Tu peso de hoy y el objetivo son prácticamente iguales": "Today's weight and the target are practically the same",
+  "Es un cambio grande: ve por etapas. Marca un objetivo intermedio y revisa cómo te encuentras antes de seguir.": "It's a big change: take it in stages. Set an intermediate goal and check how you feel before going on.",
+  "Con esas medidas no sale un resultado creíble. Revisa que el cuello y la cintura estén bien medidos.": "These measurements don't give a believable result. Check that your neck and waist are measured correctly.",
+  "de máximo para Novato.": "more max to reach Novice."
  },
  "reglas": [
   [
@@ -1378,6 +1385,54 @@
   [
    "^Press banca · (.+)$",
    "Bench press · $1"
+  ],
+  [
+   "^Al día · tu mantenimiento son unas (.+) kcal$",
+   "Per day · your maintenance is about $1 kcal"
+  ],
+  [
+   "^(\\d+) % de las calorías$",
+   "$1 % of calories"
+  ],
+  [
+   "^([+\\-]?\\d+(?:,\\d+)?) kg por semana$",
+   "$1 kg per week"
+  ],
+  [
+   "^de proteína para ganar músculo · (.+) a (.+) g por kilo$",
+   "of protein to gain muscle · $1 to $2 g per kilo"
+  ],
+  [
+   "^(\\d+) g de proteína$",
+   "$1 g of protein"
+  ],
+  [
+   "^(\\d+) a (\\d+) g al día$",
+   "$1 to $2 g a day"
+  ],
+  [
+   "^([\\d,]+) g al día$",
+   "$1 g a day"
+  ],
+  [
+   "^Puntos DOTS con (.+) kg de total pesando (.+) kg$",
+   "DOTS points with a $1 kg total at $2 kg bodyweight"
+  ],
+  [
+   "^(\\d+) repeticiones a RPE 8 \\(que te sobren 2\\) · tu máximo estimado: (.+)$",
+   "$1 reps at RPE 8 (2 left) · your estimated max: $2"
+  ],
+  [
+   "^(\\d+) kg de masa magra$",
+   "$1 kg of lean mass"
+  ],
+  [
+   "^Semana (\\d+)$",
+   "Week $1"
+  ],
+  [
+   "^(.+) · por encima de 25 es rarísimo sin ayudas$",
+   "$1 · above 25 is very rare without aids"
   ]
  ]
 }

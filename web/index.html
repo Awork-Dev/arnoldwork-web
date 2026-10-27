@@ -1691,6 +1691,6 @@ if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWo
 // En la app instalada no hay botón de recargar: al volver a abrirla tras un rato, se recarga sola para ver lo último.
 (()=>{const t0=Date.now(),app=matchMedia('(display-mode: standalone)').matches||navigator.standalone;document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;if(navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{});if(app&&Date.now()-t0>20*60e3)location.reload()})})();
 </script>
-<script src="/idioma-en.js?v=62b9beec5a" defer></script>
+<script src="/idioma-en.js?v=530add9a4e" defer></script>
 </body>
 </html>
