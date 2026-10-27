@@ -6,7 +6,10 @@
   var RR = R.map(function(r){ return [new RegExp(r[0]), r[1]]; });
   var CLAVE = 'arnoldwork-idioma';
   var idioma = 'es';
-  try { idioma = localStorage.getItem(CLAVE) === 'en' ? 'en' : 'es'; } catch (e) {}
+  var guardado = null;
+  try { guardado = localStorage.getItem(CLAVE); } catch (e) {}
+  // En la app de Google Play se abre en inglés; quien quiera español lo cambia con el botón ES.
+  idioma = guardado ? (guardado === 'en' ? 'en' : 'es') : (document.documentElement.classList.contains('app-play') ? 'en' : 'es');
 
   function limpio(s){ return s.replace(/\s+/g, ' ').trim(); }
   function traducir(s){
