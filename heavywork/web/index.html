@@ -1215,6 +1215,7 @@ const TX = {
         nubeBorrar: 'Se borrará la copia de la nube. Tu cuaderno de este móvil no cambia. ¿Seguir?',
         nubeBorrada: 'Copia de la nube borrada. Tu cuaderno sigue en este móvil.',
         nubeNoValida: 'Esa copia no es válida.',
+        nubeConectando: 'Conectando con la nube…',
         copiaLista: 'Copia lista. Guárdala en tus archivos, tu correo o donde prefieras.',
         copiaDescargada: 'Copia descargada. Guárdala: con ella recuperas todo en otro móvil.',
         copiaRestaurada: n => `Copia restaurada: ${n} entrenos recuperados.`,
@@ -1233,6 +1234,7 @@ const TX = {
         nubeBorrar: 'The cloud copy will be deleted. Your log on this phone stays the same. Continue?',
         nubeBorrada: 'Cloud copy deleted. Your log stays on this phone.',
         nubeNoValida: 'That copy is not valid.',
+        nubeConectando: 'Connecting to the cloud…',
         copiaLista: 'Backup ready. Save it in your files, your email or wherever you like.',
         copiaDescargada: 'Backup downloaded. Keep it: with it you can recover everything on another phone.',
         copiaRestaurada: n => `Backup restored: ${n} sessions recovered.`,
@@ -1271,16 +1273,21 @@ async function llamarNube(ruta, metodo = 'GET', datos){
 }
 const errorNube = e => nubeMsg(e.estado === 404 ? TX[idioma].nubeNoExiste : e.estado === 400 ? TX[idioma].nubeFormato : TX[idioma].nubeError);
 $('#crearNube').addEventListener('click', async () => {
+  const b = $('#crearNube'); b.disabled = true; nubeMsg(TX[idioma].nubeConectando);
   try { const j = await llamarNube('/api/copias', 'POST', leer()); ponerCodigoNube(j.codigo); }
   catch (e) { errorNube(e); }
+  finally { b.disabled = false; }
 });
 $('#sincronizarNube').addEventListener('click', async () => {
+  const b = $('#sincronizarNube'); b.disabled = true; nubeMsg(TX[idioma].nubeConectando);
   try { await llamarNube('/api/copias/' + codigoNube(), 'PUT', leer()); nubeMsg(TX[idioma].nubeSync); }
   catch (e) { errorNube(e); }
+  finally { b.disabled = false; }
 });
 $('#recuperarNube').addEventListener('click', async () => {
   const c = $('#codigoNube').value.trim().toUpperCase();
   if (!c) return nubeMsg(TX[idioma].nubeEscribe);
+  const b = $('#recuperarNube'); b.disabled = true; nubeMsg(TX[idioma].nubeConectando);
   try {
     const j = await llamarNube('/api/copias/' + encodeURIComponent(c));
     const d = j && j.datos;
@@ -1292,11 +1299,14 @@ $('#recuperarNube').addEventListener('click', async () => {
     pintarTodo();
     nubeMsg(TX[idioma].nubeRecuperada(d.sesiones.length));
   } catch (e) { e.message === 'formato' ? nubeMsg(TX[idioma].nubeNoValida) : errorNube(e); }
+  finally { b.disabled = false; }
 });
 $('#dejarNube').addEventListener('click', async () => {
   if (!confirm(TX[idioma].nubeBorrar)) return;
+  const b = $('#dejarNube'); b.disabled = true; nubeMsg(TX[idioma].nubeConectando);
   try { await llamarNube('/api/copias/' + codigoNube(), 'DELETE'); ponerCodigoNube(''); nubeMsg(TX[idioma].nubeBorrada); }
   catch (e) { errorNube(e); }
+  finally { b.disabled = false; }
 });
 aplicarIdioma();
 
