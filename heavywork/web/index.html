@@ -243,7 +243,9 @@ p{margin:0 0 1em;max-width:60ch}
 .copia-caja{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .nube-caja>.estado-msg{width:100%}
 #codigoNube{width:100%;max-width:220px;padding:10px;font:inherit;text-transform:uppercase}
-.btn-idioma{background:none;color:inherit;border:2px solid currentColor;font-weight:700;font-size:.8rem;padding:4px 10px;margin-left:8px;cursor:pointer}
+.idiomas{display:inline-flex;margin-left:8px;border:2px solid currentColor}
+.btn-idioma{background:none;color:inherit;border:0;font:700 .8rem/1 inherit;padding:7px 10px;cursor:pointer}
+.btn-idioma[aria-pressed="true"]{background:#16181B;color:#F3EEE2}
 .copia-msg{width:100%;margin:0;font-weight:700;min-height:1.2em}
 
 /* Secciones */
@@ -452,7 +454,10 @@ main{overflow-x:clip}
     <a class="logo" href="#top" aria-label="HeavyWork, inicio"><svg class="logo-a" viewBox="-137 -40 926 926" aria-hidden="true"><rect x="-115" y="-18" width="882" height="882" rx="70" fill="#F3EEE2" stroke="#16181B" stroke-width="44"/><g transform="translate(65,84) scale(.8)"><polygon points="319,0 0,845 649,341 198,579 319,238" fill="#16181B"/><polygon points="333,0 333,231 441,439 489,415" fill="#C8901E"/><polygon points="507,462 469,492 650,839" fill="#C8901E"/></g></svg><span>HEAVY<b>WORK</b></span></a>
     <a class="ir-inicio" href="#t=inicio" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span>Inicio</span></a>
     <nav aria-label="Secciones"><a href="#rotacion" data-en="Routine">Rutina</a><a href="#metodo" data-en="Method">Método</a><a href="#cuaderno" data-en="Log">Cuaderno</a><a href="#preguntas" data-en="Questions">Preguntas</a><a href="#aldia" id="navAldia" data-en="News" hidden>Noticias</a><a href="#juego" data-en="Game">Juego</a><a href="https://arnoldwork.com/herramientas/" data-en="Tools">Herramientas</a></nav>
-    <button type="button" class="btn-idioma" id="btnIdioma" aria-label="Change language">English</button>
+    <div class="idiomas" role="group" aria-label="Idioma / Language">
+      <button type="button" class="btn-idioma" data-idioma="es" aria-pressed="true">ES</button>
+      <button type="button" class="btn-idioma" data-idioma="en" aria-pressed="false">EN</button>
+    </div>
   </div>
 </header>
 
@@ -1251,14 +1256,14 @@ function aplicarIdioma(){
         el.innerHTML = idioma === 'en' ? el.dataset.en : el.dataset.es;
     });
     if (window.HW_EN) HW_EN.aplicar(idioma);
-    $('#btnIdioma').textContent = idioma === 'en' ? 'Español' : 'English';
+    document.querySelectorAll('.btn-idioma').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.idioma === idioma)));
     pintarNube();
 }
-$('#btnIdioma').addEventListener('click', () => {
-    idioma = idioma === 'en' ? 'es' : 'en';
+document.querySelectorAll('.btn-idioma').forEach(b => b.addEventListener('click', () => {
+    idioma = b.dataset.idioma;
     try { localStorage.setItem(IDIOMA_CLAVE, idioma); } catch {}
     aplicarIdioma();
-});
+}));
 const codigoNube = () => { try { return localStorage.getItem(CLAVE_NUBE) || ''; } catch { return ''; } };
 function ponerCodigoNube(c){ try { c ? localStorage.setItem(CLAVE_NUBE, c) : localStorage.removeItem(CLAVE_NUBE); } catch {} pintarNube(); }
 function pintarNube(){
