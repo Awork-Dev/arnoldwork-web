@@ -555,7 +555,8 @@
     trozos.push('un yogur proteico');
     if(batido) trozos.push(batido === 1 ? 'un batido de proteína' : batido + ' batidos de proteína');
     if(atun) trozos.push(atun === 1 ? 'una lata de atún' : atun + ' latas de atún');
-    var lista = trozos.slice(0, -1).join(', ') + ' y ' + trozos[trozos.length - 1];
+    /* Cada trozo en su <span>: así el traductor lo reconoce aunque cambien las cantidades. */
+    var lista = trozos.slice(0, -1).map(function(t){ return '<span>' + t + '</span>'; }).join(', ') + ' y <span>' + trozos[trozos.length - 1] + '</span>';
     dia.innerHTML = ritmo + '<br><br>¿Cómo se ve la proteína en el plato? Un día que llega a unos ' + pr + ' g sería, por ejemplo: ' + lista +
       ', más lo que aportan el pan, el arroz y las legumbres del resto de comidas.';
 
@@ -937,7 +938,7 @@
     sem[0].forEach(function(k, n){
       var dia = DIAS[k], box = document.createElement('div'); box.className = 'dia';
       var rep = vistos[k] ? ' (repite)' : ''; vistos[k] = true;
-      var h = document.createElement('p'); h.className = 'dia-h'; h.textContent = 'Día ' + (n + 1) + ' · ' + dia[0] + rep; box.appendChild(h);
+      var h = document.createElement('p'); h.className = 'dia-h'; h.innerHTML = '<span>Día ' + (n + 1) + '</span> · <span>' + dia[0] + '</span>' + rep; box.appendChild(h);
       var ul = document.createElement('ul');
       texto.push('Día ' + (n + 1) + ' · ' + dia[0]);
       dia[1].forEach(function(e, i){
@@ -1152,7 +1153,7 @@
     if(!$('cuResumen')) return;
     var x = datosExport(true), w = $('cuResumen');
     ['cuPdf', 'cuTxt', 'cuCsv', 'cuShare', 'cuIcs', 'cuGcal'].forEach(function(id){ $(id).disabled = !x; });
-    w.textContent = x ? (x.desde === hoyISO() ? 'Hoy' : fechaTxt(x.desde)) + ' · ' + x.series + ' series · ' + x.grupos.map(function(g){ return g.g; }).join(', ')
+    w.innerHTML = x ? (x.desde === hoyISO() ? 'Hoy' : fechaTxt(x.desde)) + ' · ' + x.series + ' series · ' + x.grupos.map(function(g){ return '<span>' + g.g + '</span>'; }).join(', ')
       : (cuad.length ? 'Ese día no hay nada apuntado en esos grupos.' : 'Cuando apuntes tus series, podrás exportarlas aquí.');
   }
   // Con 0 kg es un ejercicio con el propio cuerpo (dominadas, fondos, plancha…).
@@ -1359,7 +1360,9 @@
       if($('cuSeries').disabled) $('cuSeries').value = 1;
       $('cuReps').value = ''; $('cuTopW').value = ''; $('cuTopR').value = ''; $('cuSeries').disabled = false;
       pintaCuad(); resumenExport(); pintaSugs();
-      $('cuOk').textContent = '✓ Apuntado: ' + reg.e + ' · ' + serieTxt(reg) + ' · ' + fechaTxt(reg.d);
+      var ok = $('cuOk'), nom = document.createElement('span');
+      ok.textContent = '✓ Apuntado: '; nom.textContent = reg.e; ok.appendChild(nom);
+      ok.appendChild(document.createTextNode(' · ' + serieTxt(reg) + ' · ' + fechaTxt(reg.d)));
       var b = $('cuAdd'); b.textContent = 'Apuntado ✓'; setTimeout(function(){ b.textContent = 'Apuntar'; }, 1500);
     });
     on('cuPdf', 'click', function(){ var x = datosExport(); if(x) descargar(new Blob([pdfCuaderno(x)], { type: 'application/pdf' }), x.nombre + '.pdf'); });
@@ -1637,11 +1640,11 @@
     } else {
       var tipo = dias <= 2 ? 'Cuerpo completo, 2 días' : dias === 3 ? 'Cuerpo completo, 3 días' : dias === 4 ? 'Torso y pierna, 4 días' : 'Empuje, tirón y pierna';
       r = ['Rutina a medida: ' + tipo.toLowerCase(), exp === 0 ? 'Básicos bien aprendidos y subir poco a poco' : 'Volumen bien repartido y progresión semanal',
-        (casa ? 'Con mancuernas en casa: ' : '') + 'el generador te monta los ejercicios, series y repeticiones para ' + dias + ' días' + (t <= 30 ? ', en sesiones cortas' : '') + '. ' + (exp === 0 ? 'Empieza lejos del fallo y céntrate en la técnica las primeras semanas.' : 'Apunta cada entreno para saber cuándo subir peso.'),
+        (casa ? '<span>Con mancuernas en casa:</span> ' : '') + 'el generador te monta los ejercicios, series y repeticiones para <span>' + dias + ' días</span>' + (t <= 30 ? '<span>, en sesiones cortas</span>' : '') + '. <span>' + (exp === 0 ? 'Empieza lejos del fallo y céntrate en la técnica las primeras semanas.' : 'Apunta cada entreno para saber cuándo subir peso.') + '</span>',
         '/herramientas/generador-de-rutina/', 'Generar mi rutina'];
     }
     out.textContent = r[0]; out.appendChild(sub); sub.textContent = r[1];
-    txt.textContent = r[2];
+    txt.innerHTML = r[2];
     acts.innerHTML = '';
     var a = document.createElement('a'); a.className = 'btn btn-sm'; a.href = r[3]; a.textContent = r[4] + ' →'; acts.appendChild(a);
     var b2 = document.createElement('a'); b2.className = 'btn btn-ghost btn-sm'; b2.href = '/herramientas/cuaderno-de-entreno/'; b2.textContent = 'Cuaderno de entreno'; acts.appendChild(b2);

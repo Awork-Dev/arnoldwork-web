@@ -1253,7 +1253,259 @@
  "¿Máquina ocupada o entrenas en casa? Elige el ejercicio y lo que tienes (máquinas, mancuernas, gomas o nada) y te doy alternativas equivalentes.": "Machine busy or training at home? Choose the exercise and what you have (machines, dumbbells, bands or nothing) and I'll give you equivalent alternatives.",
  "Apunta tus series efectivas por músculo y comprueba si estás dentro del rango de 10 a 20 series semanales para hipertrofia.": "Log your working sets per muscle and check whether you are within the 10 to 20 weekly sets range for hypertrophy.",
  "Temporizador de descanso entre series con aviso sonoro: 1, 1:30, 2, 3 o 5 minutos. Mantiene la pantalla encendida. Gratis y sin descargar nada.": "Rest timer between sets with a sound alert: 1, 1:30, 2, 3 or 5 minutes. Keeps the screen on. Free, nothing to download.",
- "Marca el ritmo de cada repetición con pitidos: segundos al bajar, pausa y subir. Para que cada serie sea controlada y comparable de una sesión a otra.": "Sets the pace of each rep with beeps: seconds lowering, pause and lifting. So every set is controlled and comparable from one session to the next."
+ "Marca el ritmo de cada repetición con pitidos: segundos al bajar, pausa y subir. Para que cada serie sea controlada y comparable de una sesión a otra.": "Sets the pace of each rep with beeps: seconds lowering, pause and lifting. So every set is controlled and comparable from one session to the next.",
+ "3 huevos": "3 eggs",
+ "un yogur proteico": "a protein yoghurt",
+ "un batido de proteína": "a protein shake",
+ "una lata de atún": "a can of tuna",
+ "1 filete de pollo de 150 g": "1 chicken fillet of 150 g",
+ "y": "and",
+ ", más lo que aportan el pan, el arroz y las legumbres del resto de comidas.": ", plus what bread, rice and pulses provide at the other meals.",
+ "Con esto deberías mantener el peso.": "With this you should maintain your weight.",
+ ". Si pierdes más de un 1 % de tu peso a la semana, come un poco más: estarías perdiendo músculo también.": ". If you lose more than 1 % of your weight a week, eat a little more: you would be losing muscle too.",
+ "Con menos de 18 años no te propongo comer por debajo de lo que gastas: estás creciendo y lo necesitas para entrenar. Te enseño las calorías para mantener. Si te preocupa tu peso, háblalo con tu médico.": "Under 18, I don't suggest eating below what you burn: you are still growing and need it to train. I show you the calories to maintain. If your weight worries you, talk to your doctor.",
+ "Rellena edad, peso y altura": "Fill in age, weight and height",
+ "Mis calorías y macros": "My calories and macros",
+ "Al día · objetivo: perder grasa": "Per day · goal: lose fat",
+ "Al día · objetivo: recomposición": "Per day · goal: recomposition",
+ "Al día · objetivo: ganar músculo": "Per day · goal: gain muscle",
+ "Al día · objetivo: mantener": "Per day · goal: maintain",
+ "en una comida? Por ejemplo: 3 huevos y un yogur proteico, o 100 g de pechuga de pollo.": "in one meal? For example: 3 eggs and a protein yoghurt, or 100 g of chicken breast.",
+ "en una comida? Por ejemplo: 150 g de pechuga de pollo, o una lata de atún con 2 huevos.": "in one meal? For example: 150 g of chicken breast, or a can of tuna with 2 eggs.",
+ "en una comida? Por ejemplo: 250 g de pollo o de pescado, o un batido de proteína con 3 huevos y un yogur proteico.": "in one meal? For example: 250 g of chicken or fish, or a protein shake with 3 eggs and a protein yoghurt.",
+ "Repartirla en varias comidas ayuda a aprovecharla mejor que meterla toda de golpe. Si te cuesta llegar, un batido de proteína es la forma más fácil de sumar 25 g. Como tienes más de 50 años, te he subido un poco la cantidad: el músculo necesita algo más de proteína para responder igual.": "Spreading it over several meals helps you use it better than taking it all at once. If you struggle to reach it, a protein shake is the easiest way to add 25 g. As you're over 50, I've raised the amount a little: muscle needs a bit more protein to respond the same way.",
+ "Mete tu peso": "Enter your weight",
+ "Mi proteína diaria": "My daily protein",
+ "Al día, para ganar músculo": "Per day, to gain muscle",
+ "Al día, para perder grasa sin perder músculo": "Per day, to lose fat without losing muscle",
+ "Al día, para mantenerte entrenando": "Per day, to keep training",
+ "Al día, sin entrenar con pesas": "Per day, without lifting weights",
+ "Repartida en varias comidas.": "Spread over several meals.",
+ "Sentadilla goblet con mancuerna": "Dumbbell goblet squat",
+ "Sentadilla goblet con talones elevados": "Goblet squat with heels raised",
+ "Sentadilla con talones elevados": "Squat with heels raised",
+ "Sentadilla sissy": "Sissy squat",
+ "Sentadilla sissy agarrado a una puerta": "Sissy squat holding a door",
+ "Sentadilla hack": "Hack squat",
+ "Sentadilla en multipower": "Smith machine squat",
+ "Sentadilla pisando la goma con los extremos en los hombros": "Band squat, stepping on the band with the ends over your shoulders",
+ "Sentadilla con pausa de 3 segundos abajo": "Squat with a 3-second pause at the bottom",
+ "Sentadilla con goma": "Band squat",
+ "Sentadilla búlgara": "Bulgarian split squat",
+ "Sentadilla búlgara con mancuernas": "Dumbbell Bulgarian split squat",
+ "Sentadilla búlgara con el pie de atrás en una silla": "Bulgarian split squat with the back foot on a chair",
+ "Peso muerto rumano con mancuernas": "Dumbbell Romanian deadlift",
+ "Peso muerto rumano pisando la goma": "Band Romanian deadlift",
+ "Peso muerto con barra hexagonal": "Trap bar deadlift",
+ "Peso muerto a una pierna": "One-leg deadlift",
+ "Peso muerto a una pierna con mancuerna": "One-leg dumbbell deadlift",
+ "Peso muerto pisando la goma": "Band deadlift (stepping on the band)",
+ "Rack pull (desde las rodillas)": "Rack pull (from the knees)",
+ "Buenos días con barra": "Barbell good morning",
+ "Hiperextensiones": "Back extensions",
+ "Remo con mancuerna": "Dumbbell row",
+ "Remo con mancuerna a una mano": "One-arm dumbbell row",
+ "Remo con dos mancuernas en banco inclinado": "Two-dumbbell row on an incline bench",
+ "Remo en polea baja": "Seated cable row",
+ "Remo en máquina con apoyo en el pecho": "Chest-supported machine row",
+ "Remo sentado con goma alrededor de los pies": "Seated band row with the band around your feet",
+ "Remo con una mochila cargada": "Row with a loaded backpack",
+ "Remo invertido bajo una mesa firme": "Inverted row under a sturdy table",
+ "Remo invertido con agarre supino (palmas hacia ti)": "Inverted row with underhand grip (palms facing you)",
+ "Jalón a una mano en polea": "One-arm cable pulldown",
+ "Jalón con goma anclada arriba": "Band pulldown anchored above",
+ "Jalón con goma anclada arriba (en una puerta)": "Band pulldown anchored above (on a door)",
+ "Dominadas (o pullover con mancuerna si no tienes barra)": "Pull-ups (or dumbbell pullover if you have no bar)",
+ "Dominadas o dominadas asistidas": "Pull-ups or assisted pull-ups",
+ "Dominadas asistidas en máquina o con goma": "Assisted pull-ups on the machine or with a band",
+ "Dominadas negativas": "Negative pull-ups",
+ "Dominadas negativas: sube saltando y baja en 5 segundos": "Negative pull-ups: jump up and lower over 5 seconds",
+ "Pullover con mancuerna": "Dumbbell pullover",
+ "Pullover en polea": "Cable pullover",
+ "Pull-through con goma": "Band pull-through",
+ "Pull-through con goma anclada abajo": "Band pull-through anchored low",
+ "Prensa a una pierna": "One-leg leg press",
+ "Prensa con los pies bajos": "Leg press with feet low",
+ "Gemelos en prensa": "Leg press calf raise",
+ "Zancadas caminando": "Walking lunges",
+ "Zancada atrás pisando la goma": "Reverse lunge stepping on the band",
+ "Step-up a una silla firme": "Step-up onto a sturdy chair",
+ "Step-up al cajón": "Box step-up",
+ "Step-up al banco con mancuernas": "Dumbbell step-up onto a bench",
+ "Hip thrust con barra": "Barbell hip thrust",
+ "Hip thrust con mancuerna apoyado en el banco": "Dumbbell hip thrust with your back on the bench",
+ "Hip thrust en máquina": "Machine hip thrust",
+ "Hip thrust a una pierna": "One-leg hip thrust",
+ "Hip thrust a una pierna con la espalda en el sofá": "One-leg hip thrust with your back on the sofa",
+ "Hip thrust con goma sobre la cadera": "Band hip thrust over the hips",
+ "Puente de glúteo": "Glute bridge",
+ "Puente de glúteo a una pierna": "One-leg glute bridge",
+ "Puente de glúteo con barra en el suelo": "Glute bridge with a barbell on the floor",
+ "Puente de glúteo con pausa arriba": "Glute bridge with a pause at the top",
+ "Puente de isquios con los talones en el banco": "Hamstring bridge with heels on the bench",
+ "Patada de glúteo en polea": "Cable glute kickback",
+ "Abducción en máquina": "Hip abduction machine",
+ "Cuádriceps y glúteo": "Quads and glutes",
+ "Cuádriceps y glúteo, una pierna cada vez": "Quads and glutes, one leg at a time",
+ "Extensión de rodilla sentado con goma anclada": "Seated knee extension with an anchored band",
+ "Isquios": "Hamstrings",
+ "Isquios y glúteo": "Hamstrings and glutes",
+ "Glúteo, isquios y toda la espalda": "Glutes, hamstrings and the whole back",
+ "Curl femoral sentado o tumbado (la otra máquina)": "Seated or lying leg curl (the other machine)",
+ "Curl femoral tumbado con mancuerna entre los pies": "Lying leg curl with a dumbbell between your feet",
+ "Curl femoral tumbado con goma anclada": "Lying leg curl with an anchored band",
+ "Curl femoral deslizando los talones con una toalla en el suelo": "Leg curl sliding your heels on a towel on the floor",
+ "Curl nórdico": "Nordic curl",
+ "Curl nórdico asistido": "Assisted Nordic curl",
+ "Curl nórdico asistido (pies sujetos bajo un sofá)": "Assisted Nordic curl (feet held under a sofa)",
+ "Press banca agarre cerrado": "Close-grip bench press",
+ "Press banca con agarre cerrado": "Close-grip bench press",
+ "Press banca con mancuernas y agarre neutro": "Dumbbell bench press with neutral grip",
+ "Press de pecho con goma anclada a la espalda": "Band chest press with the band anchored behind your back",
+ "Press de pecho con goma hacia abajo": "Band chest press pulling down",
+ "Press en el suelo con mancuernas si no tienes banco": "Dumbbell floor press if you have no bench",
+ "Press con mancuernas en el suelo con agarre neutro": "Dumbbell floor press with neutral grip",
+ "Press con goma desde abajo, empujando hacia arriba y delante": "Band press from below, pushing up and forward",
+ "Press inclinado con mancuernas": "Dumbbell incline press",
+ "Press inclinado con barra": "Barbell incline press",
+ "Press inclinado en máquina o multipower": "Incline machine or Smith press",
+ "Press declinado": "Decline press",
+ "Press militar con mancuernas, sentado": "Seated dumbbell overhead press",
+ "Press militar con mancuernas sentado": "Seated dumbbell overhead press",
+ "Press de hombro con mancuernas": "Dumbbell shoulder press",
+ "Press de hombro en máquina": "Machine shoulder press",
+ "Press de hombro de pie pisando la goma": "Standing band shoulder press (stepping on the band)",
+ "Press Arnold": "Arnold press",
+ "Press francés": "French press",
+ "Press francés con mancuernas": "Dumbbell French press",
+ "Press francés con barra Z": "Barbell EZ-bar French press",
+ "Aperturas con mancuernas": "Dumbbell flyes",
+ "Cruce de poleas": "Cable crossover",
+ "Pájaros": "Rear delt flyes",
+ "Flexiones con las manos juntas": "Push-ups with hands together",
+ "Flexiones con goma por la espalda para añadir resistencia": "Push-ups with a band across your back for extra resistance",
+ "Flexiones (sube los pies a una silla para hacerlas más duras)": "Push-ups (raise your feet on a chair to make them harder)",
+ "Flexiones con los pies elevados en una silla": "Push-ups with feet raised on a chair",
+ "Flexiones con pausa de 2 segundos abajo": "Push-ups with a 2-second pause at the bottom",
+ "Flexiones pica": "Pike push-ups",
+ "Flexiones pica (cadera alta)": "Pike push-ups (high hips)",
+ "Flexiones en pino con apoyo en la pared (avanzado)": "Wall-supported handstand push-ups (advanced)",
+ "Fondos en banco": "Bench dips",
+ "Fondos entre dos sillas": "Dips between two chairs",
+ "Fondos asistidos en máquina": "Assisted dips on the machine",
+ "Pecho bajo y tríceps": "Lower chest and triceps",
+ "Parte alta del pecho y hombro delantero": "Upper chest and front shoulder",
+ "Hombro lateral": "Side delts",
+ "Elevación lateral en polea": "Cable lateral raise",
+ "Elevación lateral en máquina": "Machine lateral raise",
+ "Elevaciones laterales tumbado de lado en el banco inclinado": "Side-lying lateral raises on an incline bench",
+ "Elevaciones laterales pisando la goma": "Lateral raises stepping on the band",
+ "Elevaciones laterales con botellas o garrafas de agua": "Lateral raises with water bottles or jugs",
+ "Hombros y tríceps": "Shoulders and triceps",
+ "Dorsal y bíceps": "Lats and biceps",
+ "Espalda media, dorsal y bíceps": "Mid-back, lats and biceps",
+ "Curl de bíceps con mancuernas": "Dumbbell biceps curl",
+ "Curl con barra": "Barbell curl",
+ "Curl con mancuernas": "Dumbbell curl",
+ "Curl en polea": "Cable curl",
+ "Curl martillo": "Hammer curl",
+ "Curl en banco Scott": "Scott bench curl",
+ "Curl inclinado en el banco": "Incline bench curl",
+ "Curl pisando la goma": "Curl stepping on the band",
+ "Curl con una mochila cargada": "Curl with a loaded backpack",
+ "Extensión de tríceps con goma anclada arriba": "Triceps extension with an anchored band above",
+ "Extensión por encima de la cabeza en polea": "Cable overhead extension",
+ "Extensión por encima de la cabeza con una mancuerna": "Dumbbell overhead extension",
+ "Elevación de gemelos de pie": "Standing calf raise",
+ "Elevación de gemelos sentado": "Seated calf raise",
+ "Gemelos sentado en máquina": "Seated calf machine",
+ "Gemelos a una pierna con mancuerna": "One-leg dumbbell calf raise",
+ "Gemelos a una pierna con mancuerna en un escalón": "One-leg dumbbell calf raise on a step",
+ "Gemelos a una pierna en un escalón, con pausa arriba": "One-leg calf raise on a step, with a pause at the top",
+ "Gemelos en el suelo empujando la goma con la punta del pie": "Calves on the floor pushing the band with the tip of your foot",
+ "Plancha": "Plank",
+ "Crunch en polea": "Cable crunch",
+ "Elevación de piernas colgado": "Hanging leg raise",
+ "Rueda abdominal": "Ab wheel",
+ "Pierna A": "Legs A",
+ "Pierna B": "Legs B",
+ "Pierna": "Legs",
+ "Empuje": "Push",
+ "Tirón": "Pull",
+ "Torso A": "Upper A",
+ "Torso B": "Upper B",
+ "Cuerpo completo A": "Full body A",
+ "Cuerpo completo B": "Full body B",
+ "(repite)": "(repeat)",
+ "Cuerpo completo · en casa": "Full body · at home",
+ "Torso y pierna · en casa": "Upper and lower · at home",
+ "Torso y pierna · en el gimnasio": "Upper and lower · in the gym",
+ "Torso, pierna, empuje y tirón · en casa": "Upper, lower, push and pull · at home",
+ "Torso, pierna, empuje y tirón · en el gimnasio": "Upper, lower, push and pull · in the gym",
+ "Empuje, tirón y pierna · en casa": "Push, pull and legs · at home",
+ "Empuje, tirón y pierna · en el gimnasio": "Push, pull and legs · in the gym",
+ "Cuerpo completo dos veces: lunes y jueves, por ejemplo. Deja al menos dos días entre sesiones. Acaba cada serie dejando": "Full body twice: Monday and Thursday, for example. Leave at least two days between sessions. Finish each set leaving",
+ "Torso y pierna, dos veces cada uno: por ejemplo lunes, martes, jueves y viernes. Acaba cada serie dejando": "Upper and lower, twice each: for example Monday, Tuesday, Thursday and Friday. Finish each set leaving",
+ "Torso y pierna al principio de la semana, y empuje, tirón y pierna al final. Acaba cada serie dejando": "Upper and lower at the start of the week, then push, pull and legs at the end. Finish each set leaving",
+ "Empuje, tirón y pierna, dos vueltas por semana, con un día de descanso. Acaba cada serie dejando": "Push, pull and legs, two rounds a week, with one rest day. Finish each set leaving",
+ "1 o 2 repeticiones en la recámara": "1 or 2 reps in reserve",
+ "; en los ejercicios pequeños puedes llegar al fallo. Cuando llegues al máximo de repeticiones en todas las series, sube el peso (": "; on small exercises you can go to failure. When you reach the top of the rep range on every set, add weight (",
+ "Si empiezas, con 3 días a la semana progresas igual y te recuperas mejor. Usa 5 o 6 solo si te sobra tiempo y duermes bien.": "If you're starting out, 3 days a week gets you the same progress and better recovery. Use 5 or 6 only if you have spare time and sleep well.",
+ "Rutina enviada a VidaWork. Si la usas instalada en el móvil, ábrela y pulsa «📋 Pegar entrenos»: el enlace ya está copiado.": "Routine sent to VidaWork. If you use the app installed on your phone, open it and tap «📋 Paste workouts»: the link is already copied.",
+ "Copiada ✓": "Copied ✓",
+ "Copia la rutina:": "Copy the routine:",
+ "Empezar en HeavyWork": "Start in HeavyWork",
+ "Heavy Duty: la rutina ideal de Mentzer": "Heavy Duty: Mentzer's ideal routine",
+ "Una serie al fallo por ejercicio, cuatro entrenos en rueda": "One set to failure per exercise, four workouts in rotation",
+ "Pocas series, todas al fallo y descanso de verdad. Entrenos de 20 a 40 minutos con modo serie guiado y cuaderno que te dice si progresas.": "Few sets, all to failure, and real rest. Workouts of 20 to 40 minutes with guided set mode and a log that tells you if you are progressing.",
+ "Llevas tiempo entrenando y quieres el máximo resultado con el mínimo tiempo: la versión más radical de Mentzer, con peso muerto, fondos, sentadilla y jalón.": "You've been training for a while and want the best results in the least time: the most radical version of Mentzer, with deadlift, dips, squat and pulldown.",
+ "Dos ejercicios por entreno, una vez por semana, a muerte": "Two exercises per workout, once a week, to failure",
+ "Cuerpo completo, 2 días": "Full body, 2 days",
+ "Cuerpo completo, 3 días": "Full body, 3 days",
+ "Torso y pierna, 4 días": "Upper and lower, 4 days",
+ "Volumen bien repartido y progresión semanal": "Well-spread volume and weekly progression",
+ "Con mancuernas en casa:": "With dumbbells at home:",
+ "el generador te monta los ejercicios, series y repeticiones para": "the generator sets the exercises, sets and reps for",
+ ", en sesiones cortas": ", in short sessions",
+ "Empieza lejos del fallo y céntrate en la técnica las primeras semanas.": "Start well short of failure and focus on technique for the first few weeks.",
+ "Apunta cada entreno para saber cuándo subir peso.": "Log every workout so you know when to add weight.",
+ "✓ Apuntado: ": "✓ Logged: ",
+ "Apuntado ✓": "Logged ✓",
+ "Solo la barra.": "Just the bar.",
+ "Pausa": "Pause",
+ "Por lado": "Per side",
+ "Peso máximo:": "Top weight:",
+ "Serie máxima (kg)": "Top set (kg)",
+ "Serie máxima (reps)": "Top set (reps)",
+ "Con peso corporal · Máximo de repeticiones:": "Bodyweight · Max reps:",
+ "Falta el peso en kg (pon 0 si es sin peso, como dominadas o fondos).": "Weight in kg is missing (enter 0 if there is no weight, as with pull-ups or dips).",
+ "Ese día no hay nada apuntado en esos grupos.": "Nothing is logged for those muscle groups on that day.",
+ "Hoy no hay nada apuntado.": "Nothing logged today.",
+ "Todavía no has apuntado nada.": "You haven't logged anything yet.",
+ "Todavía no has apuntado nada en el cuaderno.": "You haven't logged anything in the log yet.",
+ "El cuaderno ya está vacío.": "The log is already empty.",
+ "¿Borrar todo lo apuntado en el cuaderno? No se puede deshacer. Si quieres guardarlo antes, expórtalo.": "Delete everything logged in the log? This cannot be undone. If you want to keep it, export it first.",
+ "¿Borrar esta serie?": "Delete this set?",
+ "Entreno de hoy": "Today's workout",
+ "Entreno del día": "The day's workout",
+ "Mi cuaderno de entreno": "My training log",
+ "Hecho con el cuaderno gratis de arnoldwork.com": "Made with the free arnoldwork.com log",
+ "Rellena todas las medidas": "Fill in all the measurements",
+ "Cintura, en la parte más estrecha (cm)": "Waist, at the narrowest point (cm)",
+ "Días 1 a 7 (carga)": "Days 1 to 7 (loading)",
+ "Desde el día 8": "From day 8",
+ "¡Ya estás!": "You're there!",
+ "Constancia: pésate, anota y sigue.": "Consistency: weigh in, log it and keep going.",
+ "Músculo que puedo ganar este año": "Muscle I can gain this year",
+ "Sin ayudas, entrenando y comiendo bien": "Natural, training and eating well",
+ "Lo demás es grasa o promesas.": "The rest is fat or promises.",
+ "Mete tu peso y tu total": "Enter your weight and your total",
+ "Mete tu altura": "Enter your height",
+ "Heavy Duty: rutina consolidada": "Heavy Duty: established routine",
+ "Rutina a medida: cuerpo completo, 2 días": "Custom routine: full body, 2 days",
+ "Rutina a medida: torso y pierna, 4 días": "Custom routine: upper and lower, 4 days",
+ "Rutina a medida: empuje, tirón y pierna": "Custom routine: push, pull and legs",
+ "Empezar en HeavyWork →": "Start in HeavyWork →"
 };
   var R = [
  [
@@ -1437,7 +1689,7 @@
   "$1 % of calories"
  ],
  [
-  "^([+\\-]?\\d+(?:,\\d+)?) kg por semana$",
+  "^([+\\-−]?\\d+(?:,\\d+)?) kg por semana$",
   "$1 kg per week"
  ],
  [
@@ -1475,6 +1727,230 @@
  [
   "^(.+) · por encima de 25 es rarísimo sin ayudas$",
   "$1 · above 25 is very rare without aids"
+ ],
+ [
+  "^¿Cómo se ve la proteína en el plato\\? Un día que llega a unos (\\d+) g sería, por ejemplo:$",
+  "What does protein look like on the plate? A day that reaches about $1 g would be, for example:"
+ ],
+ [
+  "^Al día · tu mantenimiento son unas ([\\d.]+) kcal$",
+  "Per day · your maintenance is about $1 kcal"
+ ],
+ [
+  "^Proteína: (\\d+) g$",
+  "Protein: $1 g"
+ ],
+ [
+  "^Hidratos: (\\d+) g$",
+  "Carbs: $1 g"
+ ],
+ [
+  "^Grasa: (\\d+) g$",
+  "Fat: $1 g"
+ ],
+ [
+  "^(\\d+) filetes de pollo de 150 g$",
+  "$1 chicken fillets of 150 g"
+ ],
+ [
+  "^(\\d+) batidos de proteína$",
+  "$1 protein shakes"
+ ],
+ [
+  "^(\\d+) latas de atún$",
+  "$1 cans of tuna"
+ ],
+ [
+  "^de proteína para perder grasa sin perder músculo · (.+) a (.+) g por kilo$",
+  "of protein to lose fat without losing muscle · $1 to $2 g per kilo"
+ ],
+ [
+  "^de proteína para mantenerte entrenando · (.+) a (.+) g por kilo$",
+  "of protein to keep training · $1 to $2 g per kilo"
+ ],
+ [
+  "^de proteína sin entrenar con pesas · (.+) a (.+) g por kilo$",
+  "of protein without lifting weights · $1 to $2 g per kilo"
+ ],
+ [
+  "^([\\d,]+) g por kg$",
+  "$1 g per kg"
+ ],
+ [
+  "^(\\d+) comidas al día$",
+  "$1 meals a day"
+ ],
+ [
+  "^(\\d{1,2}) de enero de (\\d{4})$",
+  "January $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de febrero de (\\d{4})$",
+  "February $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de marzo de (\\d{4})$",
+  "March $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de abril de (\\d{4})$",
+  "April $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de mayo de (\\d{4})$",
+  "May $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de junio de (\\d{4})$",
+  "June $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de julio de (\\d{4})$",
+  "July $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de agosto de (\\d{4})$",
+  "August $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de septiembre de (\\d{4})$",
+  "September $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de octubre de (\\d{4})$",
+  "October $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de noviembre de (\\d{4})$",
+  "November $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) de diciembre de (\\d{4})$",
+  "December $1, $2"
+ ],
+ [
+  "^(\\d{1,2}) ene$",
+  "$1 Jan"
+ ],
+ [
+  "^(\\d{1,2}) feb$",
+  "$1 Feb"
+ ],
+ [
+  "^(\\d{1,2}) mar$",
+  "$1 Mar"
+ ],
+ [
+  "^(\\d{1,2}) abr$",
+  "$1 Apr"
+ ],
+ [
+  "^(\\d{1,2}) may$",
+  "$1 May"
+ ],
+ [
+  "^(\\d{1,2}) jun$",
+  "$1 Jun"
+ ],
+ [
+  "^(\\d{1,2}) jul$",
+  "$1 Jul"
+ ],
+ [
+  "^(\\d{1,2}) ago$",
+  "$1 Aug"
+ ],
+ [
+  "^(\\d{1,2}) sept$",
+  "$1 Sep"
+ ],
+ [
+  "^(\\d{1,2}) oct$",
+  "$1 Oct"
+ ],
+ [
+  "^(\\d{1,2}) nov$",
+  "$1 Nov"
+ ],
+ [
+  "^(\\d{1,2}) dic$",
+  "$1 Dec"
+ ],
+ [
+  "^en unas (\\d+) semanas \\(unos (\\d+) días\\) · perdiendo ([\\d,]+) kg$",
+  "in about $1 weeks (about $2 days) · losing $3 kg"
+ ],
+ [
+  "^en unas (\\d+) semanas \\(unos (\\d+) días\\) · ganando ([\\d,]+) kg$",
+  "in about $1 weeks (about $2 days) · gaining $3 kg"
+ ],
+ [
+  "^en unas (\\d+) semanas \\(unos (\\d+) meses\\) · perdiendo ([\\d,]+) kg$",
+  "in about $1 weeks (about $2 months) · losing $3 kg"
+ ],
+ [
+  "^en unas (\\d+) semanas \\(unos (\\d+) meses\\) · ganando ([\\d,]+) kg$",
+  "in about $1 weeks (about $2 months) · gaining $3 kg"
+ ],
+ [
+  "^(\\d[\\d.]*) kcal menos al día$",
+  "$1 kcal less per day"
+ ],
+ [
+  "^(\\d[\\d.]*) kcal más al día$",
+  "$1 kcal more per day"
+ ],
+ [
+  "^Hoy · (\\d+) series ·$",
+  "Today · $1 sets ·"
+ ],
+ [
+  "^Tu mejor marca: (.+) \\(1RM estimado\\)$",
+  "Your best: $1 (estimated 1RM)"
+ ],
+ [
+  "^Tu mejor marca: (.+) \\(1RM estimado\\) · \\+(\\d+) % desde el (.+)$",
+  "Your best: $1 (estimated 1RM) · +$2 % since $3"
+ ],
+ [
+  "^([\\d,.]+ kg × [\\d-]+) · (\\d+) series · máx\\. ([\\d,.]+ kg × \\d+)$",
+  "$1 · $2 sets · max. $3"
+ ],
+ [
+  "^([\\d,.]+ kg × [\\d-]+) · (\\d+) series$",
+  "$1 · $2 sets"
+ ],
+ [
+  "^([\\d,.]+ kg × [\\d-]+) · máx\\. ([\\d,.]+ kg × \\d+)$",
+  "$1 · max. $2"
+ ],
+ [
+  "^(\\d+) días de entreno enviados\\. Si usas VidaWork instalada en el móvil, ábrela y pulsa «📋 Pegar entrenos»: el enlace ya está copiado\\.$",
+  "$1 training day(s) sent. If you use the VidaWork app installed on your phone, open it and tap «📋 Paste workouts»: the link is already copied."
+ ],
+ [
+  "^Día (\\d+)$",
+  "Day $1"
+ ],
+ [
+  "^(\\d+) × (\\d+-\\d+) por pierna$",
+  "$1 × $2 per leg"
+ ],
+ [
+  "^La barra sola ya pesa (.+)\\. Sube el peso total\\.$",
+  "The bar alone already weighs $1. Add weight to the total."
+ ],
+ [
+  "^Llegaré a (.+) kg$",
+  "I'll reach $1 kg"
+ ],
+ [
+  "^En unas (\\d+) semanas, sin prisas y sin pausa$",
+  "In about $1 weeks, no rush and no pause"
+ ],
+ [
+  "^(\\d+) días$",
+  "$1 days"
  ]
 ];
   var RR = R.map(function(r){ return [new RegExp(r[0]), r[1]]; });
