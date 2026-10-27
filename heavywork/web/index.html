@@ -720,6 +720,7 @@ main{overflow-x:clip}
   <div class="modo-acciones" id="modoAcciones"></div>
 </div>
 
+<script src="/idioma-en.js"></script>
 <script>
 /* ===== Rutinas (edita aquí) =====
    rango: repeticiones objetivo [mín, máx]
@@ -1249,6 +1250,7 @@ function aplicarIdioma(){
         if (!('es' in el.dataset)) el.dataset.es = el.innerHTML;
         el.innerHTML = idioma === 'en' ? el.dataset.en : el.dataset.es;
     });
+    if (window.HW_EN) HW_EN.aplicar(idioma);
     $('#btnIdioma').textContent = idioma === 'en' ? 'Español' : 'English';
     pintarNube();
 }
