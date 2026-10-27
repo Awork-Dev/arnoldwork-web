@@ -718,6 +718,7 @@
       <a href="#negocios">Para tu negocio</a>
       <a href="#contacto">Contacto</a>
     </nav>
+    <div class="idiomas" role="group" aria-label="Idioma"><button type="button" data-idioma="es" aria-pressed="true">ES</button><button type="button" data-idioma="en" aria-pressed="false">EN</button></div>
     <a class="btn btn-sm btn-batido btn-cab" href="#batido">🥤 <span class="solo-ancho">Invita a un batido</span><span class="solo-movil">Batido</span></a>
   </div>
 </header>
@@ -1690,5 +1691,6 @@ if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWo
 // En la app instalada no hay botón de recargar: al volver a abrirla tras un rato, se recarga sola para ver lo último.
 (()=>{const t0=Date.now(),app=matchMedia('(display-mode: standalone)').matches||navigator.standalone;document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;if(navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).catch(()=>{});if(app&&Date.now()-t0>20*60e3)location.reload()})})();
 </script>
+<script src="/idioma-en.js?v=2ba920a6c0" defer></script>
 </body>
 </html>

@@ -18,11 +18,12 @@ h2{font-size:1.1rem;margin:28px 0 6px;color:var(--acento)}
 a{color:var(--acento)}
 nav{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 18px}
 section{border-top:1px solid #2a2a2a;padding-top:6px}
+html[lang="en"] section[lang="es"],html[lang="es"] section[lang="en"]{display:none}
 </style>
 </head>
 <body>
 <main>
-  <nav><a href="/herramientas/">← Volver a las herramientas / Back to the tools</a><a href="#en">English</a></nav>
+  <nav><a href="/herramientas/">← Volver a las herramientas / Back to the tools</a><div class="idiomas" role="group" aria-label="Idioma"><button type="button" data-idioma="es" aria-pressed="true">ES</button><button type="button" data-idioma="en" aria-pressed="false">EN</button></div></nav>
 
   <section lang="es">
     <h1>Política de privacidad de ArnoldWork</h1>
@@ -82,5 +83,6 @@ section{border-top:1px solid #2a2a2a;padding-top:6px}
     <p>If you want us to delete a message you sent us, or you have any question, write to <a href="mailto:arnoldwork4you@gmail.com">arnoldwork4you@gmail.com</a>. Controller: Carlos Díaz Segura (ArnoldWork), Mallorca, Spain.</p>
   </section>
 </main>
+<script src="/idioma-en.js?v=2ba920a6c0" defer></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ No toques esos archivos en web/: edita src/ y vuelve a ejecutar build.py.
 import hashlib
 import html
 import json
+import re
 import os
 import sys
 from datetime import date
@@ -111,6 +112,7 @@ def pagina(titulo, descripcion, direccion, og, og_alt, contenido, jsonld, v_css,
         "V_JS": v_js,
         "V_DIF": V_DIF,
         "V_VER": V_VER,
+        "V_IDIOMA": corto(construir_idioma()),
         "CONTENIDO": contenido.strip("\n"),
     }.items():
         p = p.replace("{{" + k + "}}", v)
@@ -255,6 +257,7 @@ def portada_web():
     s = re.sub(r"/difunde\.js\?v=\w+", "/difunde.js?v=" + V_DIF, s)
     s = re.sub(r"/version\.js\?v=\w+", "/version.js?v=" + V_VER, s)
     s = re.sub(r"/ichthys\.js\?v=\w+", "/ichthys.js?v=" + V_ICH, s)
+    s = re.sub(r"/idioma-en\.js\?v=[\w{}]+", "/idioma-en.js?v=" + corto(construir_idioma()), s)
     s, k = re.subn(r'(<div class="toolnames"[^>]*>\n).*?(\n    </div>)', lambda m: m.group(1) + enlaces + m.group(2), s, flags=re.S)
     assert k == 1, "No encuentro la lista de herramientas de la portada"
     s = re.sub(r"\b\d+ herramientas\b", f"{n} herramientas", s)
@@ -263,6 +266,15 @@ def portada_web():
     palabra = NUMEROS.get(n, str(n)).capitalize()
     s = re.sub(r"\b(Once|Doce|Trece|Catorce|Quince|Dieciséis|Diecisiete|Dieciocho|Diecinueve|Veinte) herramientas\b", palabra + " herramientas", s)
     return s
+
+
+def construir_idioma():
+    """web/idioma-en.js: la lógica (src/idioma/base.js) con los textos de src/idioma/en.json."""
+    datos = json.loads(lee(SRC, "idioma", "en.json"))
+    textos = json.dumps(datos["textos"], ensure_ascii=False, indent=1)
+    reglas = json.dumps([[r[0], r[1]] for r in datos["reglas"]], ensure_ascii=False, indent=1)
+    base = lee(SRC, "idioma", "base.js")
+    return base.replace("/*TEXTOS*/{}", textos).replace("/*REGLAS*/[]", reglas)
 
 
 def generar():
@@ -310,6 +322,9 @@ def generar():
                                      f"    <changefreq>{c}</changefreq>\n    <priority>{p}</priority>\n  </url>\n"
                                      for u, c, p in urls) +
                              "</urlset>\n")
+    salida["idioma-en.js"] = construir_idioma()
+    priv = lee(WEB, "privacidad", "index.html")
+    salida["privacidad/index.html"] = re.sub(r"/idioma-en\.js\?v=[\w{}]+", "/idioma-en.js?v=" + corto(construir_idioma()), priv)
     return salida
 
 

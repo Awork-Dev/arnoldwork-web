@@ -49,7 +49,7 @@
       <a href="/#quien">Quién soy</a>
       <a href="/#contacto">Contacto</a>
     </nav>
-    <button type="button" class="btn-idioma" id="btnIdioma" aria-label="Change language">English</button>
+    <div class="idiomas" role="group" aria-label="Idioma"><button type="button" data-idioma="es" aria-pressed="true">ES</button><button type="button" data-idioma="en" aria-pressed="false">EN</button></div>
     <a class="btn btn-sm btn-cab" href="/#batido">🥤 <span class="solo-ancho">Invita a un batido</span><span class="solo-movil">Batido</span></a>
   </div>
 </header>
@@ -84,30 +84,7 @@
   </div>
 </footer>
 
-<script>
-/* Idioma: Español / English. Recuerda la elección en este navegador (sin datos personales). */
-(function(){
-  var clave='arnoldwork-idioma', idioma='es';
-  try{idioma=localStorage.getItem(clave)==='en'?'en':'es'}catch(e){}
-  function aplicar(){
-    document.documentElement.lang=idioma;
-    document.querySelectorAll('[data-en]').forEach(function(el){
-      if(!('es' in el.dataset)) el.dataset.es=el.innerHTML;
-      el.innerHTML=idioma==='en'?el.dataset.en:el.dataset.es;
-    });
-    var b=document.getElementById('btnIdioma'); if(b) b.textContent=idioma==='en'?'Español':'English';
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    aplicar();
-    var b=document.getElementById('btnIdioma');
-    if(b) b.addEventListener('click',function(){
-      idioma=idioma==='en'?'es':'en';
-      try{localStorage.setItem(clave,idioma)}catch(e){}
-      aplicar();
-    });
-  });
-})();
-</script>
+<script src="/idioma-en.js?v={{V_IDIOMA}}" defer></script>
 <script src="/herramientas/app.js?v={{V_JS}}"></script>
 <script src="/difunde.js?v={{V_DIF}}" defer></script>
 <script src="/version.js?v={{V_VER}}" defer></script>
