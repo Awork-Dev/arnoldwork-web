@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Nombre de la vista previa
         id: alias
@@ -30,7 +30,7 @@ jobs:
 
       - name: Publicar en calas.arnoldwork.workers.dev
         if: github.ref == 'refs/heads/main'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "4"
@@ -39,7 +39,7 @@ jobs:
 
       - name: Subir vista previa
         if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           wranglerVersion: "4"
