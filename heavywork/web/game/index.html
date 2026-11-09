@@ -1516,15 +1516,16 @@ function drawCaveman(x, y, o){
   if (ejec){
     R(x - 7, Y - 22, 3, 10, '#f4efe6'); R(x + 4, Y - 22, 3, 10, '#f4efe6');
     R(x - 2, Y - 20, 1, 2, SKIN2); R(x + 1, Y - 20, 1, 2, SKIN2); R(x - 2, Y - 16, 1, 2, SKIN2); R(x + 1, Y - 16, 1, 2, SKIN2);
+    R(x - 1, Y - 21, 2, 8, RED); R(x - 2, Y - 14, 4, 2, RED);   // corbata
   }
   R(x - 2, Y - 16, 1, 1, SKIN2); R(x + 1, Y - 16, 1, 1, SKIN2); R(x - 2, Y - 14, 1, 1, SKIN2); R(x + 1, Y - 14, 1, 1, SKIN2);
   for (let i = 0; i < 10; i++) R(x - 6 + i, Y - 22 + i, 2, 1, i % 3 === 0 ? FUR2 : FUR);
   if (o.belt){ R(x - 6, Y - 14, 12, 3, '#6b3a16'); R(x - 1, Y - 15, 4, 5, '#ffd23c'); R(x, Y - 14, 2, 3, '#6b3a16'); }
   R(x - 3, Y - 30, 7, 7, SKIN);
   R(x - 4, Y - 33, 8, 3, HAIR); R(x - 5, Y - 31, 3, 6, HAIR); R(x - 3, Y - 34, 5, 1, HAIR);
-  R(x - 4, Y - 30, 8, 1, o.pre ? '#ff3cac' : RED);
+  if (!ejec) R(x - 4, Y - 30, 8, 1, o.pre ? '#ff3cac' : RED);   // cinta solo en el cavernícola
   if (pj[6]){ R(x - 4, Y - 36, 8, 2, '#ffd23c'); R(x - 4, Y - 38, 2, 2, '#ffd23c'); R(x - 1, Y - 39, 2, 3, '#ffd23c'); R(x + 2, Y - 38, 2, 2, '#ffd23c'); R(x - 1, Y - 36, 2, 1, '#DE3A3A'); }
-  R(x - 2, Y - 25, 7, 3, HAIR); R(x - 1, Y - 22, 5, 1, HAIR);
+  if (!ejec) R(x - 2, Y - 25, 7, 3, HAIR), R(x - 1, Y - 22, 5, 1, HAIR);   // barba solo en el cavernícola
   R(x + 2, Y - 28, 2, 1, '#fff'); R(x + 3, Y - 28, 1, 1, '#000');
   R(x + 1, Y - 29, 3, 1, HAIR);
   R(x + 4, Y - 27, 1, 2, SKIN2);
