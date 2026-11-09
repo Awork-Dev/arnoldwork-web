@@ -91,8 +91,9 @@ button,input,a{font:inherit;color:inherit}
 #controles small{display:block;font-size:.6em;color:var(--gris);margin-top:4px}
 @media (orientation:landscape) and (max-height:520px){
   /* Botones pequeños y sólidos en los bordes: el pulgar llega y no tapan al cavernícola */
-  #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:space-between;align-items:flex-end;gap:6px;padding:6px max(10px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));pointer-events:none}
+  #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:flex-start;align-items:flex-end;gap:6px;padding:6px max(10px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));pointer-events:none}
   #controles button{flex:0 0 auto;width:min(9vw,76px);height:min(20vh,64px);background:rgba(20,14,12,.92);font-size:clamp(8px,1.3vw,11px);pointer-events:auto}
+  #btnSalto{margin-right:auto}   /* salto a la izquierda; lanzar y golpe juntos a la derecha */
   #controles small{display:none}
 }
 
