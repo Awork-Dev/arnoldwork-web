@@ -514,7 +514,7 @@ const GAME_URL = 'heavywork.arnoldwork.com/game';
 
 /* ================= BÁSICOS ================= */
 const W = 320, H = 180, GROUND = 154;
-const PAN_LEN = 900, HACHA_MAX = 6, ERA_COUNT = 6, ERA_KEYS = ['era1', 'era2', 'era3', 'era4', 'era5', 'era6'];
+const ERA_SEG = 45, HACHA_MAX = 6, ERA_COUNT = 6, ERA_KEYS = ['era1', 'era2', 'era3', 'era4', 'era5', 'era6'];
 const ERA_CIELO = [0, 3, 1, 2, 0, 1];   // cielo de cada época (índice de CIELOS)
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -1787,7 +1787,7 @@ const G = {
   state:'menu', t:0, scroll:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1,
   inv:0, shake:0, spawnT:1.2, entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0,
   plates:0, junk:0, bosses:0, boss:null, bossIn:0, fx:{magnet:0, shield:false, pre:0, makina:0},
-  freeze:0, flash:0, puT:12, tut:null, slow:false, huesos:0, hacha:0, shots:[], pan:1
+  freeze:0, flash:0, puT:12, tut:null, slow:false, huesos:0, hacha:0, shots:[], pan:1, epT:0
 };
 const input = { jump:false, jumpQueued:0, smashQueued:0, throwQueued:0 };
 
@@ -1796,7 +1796,7 @@ function resetGame(){
   Object.assign(G, { t:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1, inv:0, shake:0, spawnT:1.4,
     entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0, plates:0, junk:0, bosses:0, boss:null, bossIn:0,
     fx:{magnet:0, shield:false, pre:0, makina:0}, freeze:0, flash:0, puT:0,
-    tut:store.tut ? null : {n:0, e:null}, slow:false, retoAvisado:false, huesos:0, hacha:0, shots:[], pan:1 });
+    tut:store.tut ? null : {n:0, e:null}, slow:false, retoAvisado:false, huesos:0, hacha:0, shots:[], pan:1, epT:0 });
   rng = G.modo === 'diario' ? seeded(hashTexto(G.dia || hoyMadrid())) : Math.random;
   G.puT = rr(14, 20);
   Music.level = 1; Music.mode = 'normal'; Music.boss = false;
@@ -2168,7 +2168,8 @@ function update(dt){
   const mv = G.speed * dt;
   G.scroll += mv; G.dist += mv;
   G.score += mv / 10;
-  if (G.pan < ERA_COUNT && G.dist >= G.pan * PAN_LEN) nuevaPantalla();
+  G.epT += dt;   // tiempo de juego en la época actual
+  if (G.pan < ERA_COUNT && G.epT >= G.pan * ERA_SEG) nuevaPantalla();
 
   G.meter -= (2.3 + G.level * 0.35) * dt * (G.tut ? 0.5 : 1) * (cond('ayuno') ? 1.4 : 1);
   G.hungryCD -= dt;
