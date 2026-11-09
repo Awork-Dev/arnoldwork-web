@@ -83,15 +83,16 @@ button,input,a{font:inherit;color:inherit}
 @keyframes entra{from{transform:translate(-50%,-30px)}to{transform:translate(-50%,0)}}
 
 /* Controles táctiles */
-#controles{display:flex;gap:10px;padding:10px;width:100%;max-width:640px}
-#controles button{flex:1;height:clamp(84px,14vh,120px);border:4px solid var(--tiza);background:#1c1512;font-size:clamp(12px,4vw,18px);cursor:pointer;touch-action:none;box-shadow:0 5px 0 #000}
-#controles button.pulsado{transform:translateY(4px);box-shadow:0 1px 0 #000;background:#2a1f1a}
+#controles{display:flex;gap:8px;padding:6px;width:100%;max-width:440px}
+#controles button{flex:1;height:clamp(44px,8vh,56px);border:3px solid var(--tiza);background:#1c1512;font-size:clamp(9px,2.8vw,12px);cursor:pointer;touch-action:none;box-shadow:0 3px 0 #000}
+#controles button.pulsado{transform:translateY(2px);box-shadow:0 1px 0 #000;background:#2a1f1a}
+#btnLanzar{border-color:var(--oro)!important;color:var(--oro)}
 #btnGolpe{border-color:var(--rojo)!important;color:#fff}
-#controles small{display:block;font-size:.55em;color:var(--gris);margin-top:6px}
+#controles small{display:block;font-size:.6em;color:var(--gris);margin-top:4px}
 @media (orientation:landscape) and (max-height:520px){
-  /* Botones altos y estrechos en los bordes: el pulgar llega bien y no tapan al cavernícola */
-  #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:space-between;align-items:flex-end;padding:10px max(12px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));pointer-events:none}
-  #controles button{flex:0 0 auto;width:min(11vw,110px);height:min(48vh,170px);background:rgba(0,0,0,.16);font-size:clamp(9px,1.5vw,13px);pointer-events:auto}
+  /* Botones pequeños y sólidos en los bordes: el pulgar llega y no tapan al cavernícola */
+  #controles{position:fixed;left:0;right:0;bottom:0;max-width:none;justify-content:space-between;align-items:flex-end;gap:6px;padding:6px max(10px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));pointer-events:none}
+  #controles button{flex:0 0 auto;width:min(9vw,76px);height:min(20vh,64px);background:rgba(20,14,12,.92);font-size:clamp(8px,1.3vw,11px);pointer-events:auto}
   #controles small{display:none}
 }
 
@@ -248,6 +249,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
         <span class="etiqueta" data-t="proteina">PROTEINA</span>
         <div class="medidor" id="medidor"><i id="medidorBarra"></i></div>
         <span id="combo"></span>
+        <span id="recursos" class="etiqueta"></span>
       </div>
       <div class="hud-der">
         <span id="marcador">0</span>
@@ -264,6 +266,7 @@ textarea.comentario{width:100%;min-height:110px;resize:vertical;background:#000;
   </div>
   <div id="controles">
     <button type="button" id="btnSalto"><span data-t="saltar">SALTAR</span><small>ESPACIO / ↑</small></button>
+    <button type="button" id="btnLanzar"><span data-t="lanzar">LANZAR</span><small>Z / B</small></button>
     <button type="button" id="btnGolpe"><span data-t="golpear">GOLPE</span><small>X / J</small></button>
   </div>
 </main>
@@ -511,6 +514,7 @@ const GAME_URL = 'heavywork.arnoldwork.com/game';
 
 /* ================= BÁSICOS ================= */
 const W = 320, H = 180, GROUND = 154;
+const PAN_LEN = 900, HACHA_MAX = 6, PAN_KEYS = ['pan1', 'pan2', 'pan3', 'pan4', 'pan5'];
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -537,12 +541,14 @@ const TXT = {
   es: {
     aCanvas:'Pantalla del juego CaveWork', aVidas:'Vidas', aPausa:'Pausa', aIniciales:'Tus iniciales, 3 letras',
     proteina:'PROTEÍNA', saltar:'SALTAR', golpear:'GOLPE',
+    lanzar:'LANZAR', huesosLbl:'HUESOS', hachaLbl:'HACHA', pantalla:'PANTALLA', hachaFin:'¡HACHA ROTA!', sinHuesos:'SIN HUESOS', gigante:'¡GIGANTE!',
+    pan1:'LA SELVA', pan2:'EL VOLCÁN', pan3:'LA CUEVA DE HIELO', pan4:'EL PANTANO', pan5:'LA SABANA',
     subtitulo:'El juego gratis de HeavyWork', compartirJuego:'COMPÁRTELO CON TU GENTE DEL GIMNASIO', manual:'MANUAL', manualTit:'MANUAL DE CAVEWORK',
     deudaTit:'LOS JUGADORES LE DEBEN AL DESARROLLADOR', deudaNota:'Deuda simbólica: cada partida suma 0,10 $. Nadie tiene que pagarla.',
     pagarDeuda:'PAGAR LA DEUDA (DONAR)', jugar:'JUGAR', logros:'LOGROS', opinion:'OPINIÓN', idioma:'ENGLISH',
     musicaSi:'MÚSICA SÍ', musicaNo:'MÚSICA NO', sfxSi:'EFECTOS SÍ', sfxNo:'EFECTOS NO',
     ayuda1:'<b>CÓMO SE JUEGA.</b> Aplasta dinos con tu mancuerna y cómete la proteína que sueltan. Llena la barra de PROTEÍNA para levantar MÁS PESO. La proteína baja mientras corres: no dejes de comer.',
-    ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen: sáltalas.',
+    ayuda2:'<b>EVITA</b> la comida basura, las rocas y los troncos. Las rocas no se rompen a golpes: sáltalas, o rómpelas con la HACHA. Con <b>LANZAR</b> tiras huesos a los dinos de lejos. Los dinos GIGANTES aguantan varios golpes.',
     ayuda3:'<b>NUEVO.</b> 8 personajes que se desbloquean jugando y medallas 🥇🥈🥉 para el podio mundial: son tuyas hasta que alguien te machaque. Además, reto del día, ligas con tus amigos y el MAMUT después del T-Rex.',
     ayuda4:'<b>TECLAS.</b> ESPACIO o ↑ salta. X o J golpea. P pausa. En el móvil, mejor en horizontal.',
     volverHW:'← Volver a HeavyWork', pausa:'PAUSA', pausaTxt:'Descansa entre series. Pero no mucho.', seguir:'SEGUIR', salirMenu:'SALIR AL MENÚ',
@@ -617,12 +623,14 @@ const TXT = {
   en: {
     aCanvas:'CaveWork game screen', aVidas:'Lives', aPausa:'Pause', aIniciales:'Your initials, 3 letters',
     proteina:'PROTEIN', saltar:'JUMP', golpear:'SMASH',
+    lanzar:'THROW', huesosLbl:'BONES', hachaLbl:'AXE', pantalla:'SCREEN', hachaFin:'AXE BROKEN!', sinHuesos:'NO BONES', gigante:'GIANT!',
+    pan1:'THE JUNGLE', pan2:'THE VOLCANO', pan3:'THE ICE CAVE', pan4:'THE SWAMP', pan5:'THE SAVANNA',
     subtitulo:'The free HeavyWork game', compartirJuego:'SHARE IT WITH YOUR GYM CREW', manual:'MANUAL', manualTit:'CAVEWORK MANUAL',
     deudaTit:'PLAYERS OWE THE DEVELOPER', deudaNota:'Symbolic debt: every game adds $0.10. Nobody has to pay it.',
     pagarDeuda:'PAY THE DEBT (DONATE)', jugar:'PLAY', logros:'ACHIEVEMENTS', opinion:'FEEDBACK', idioma:'Español',
     musicaSi:'MUSIC ON', musicaNo:'MUSIC OFF', sfxSi:'SFX ON', sfxNo:'SFX OFF',
     ayuda1:'<b>HOW TO PLAY.</b> Smash dinos with your dumbbell and eat the protein they drop. Fill the PROTEIN bar to lift MORE WEIGHT. Your protein drains while you run, so keep eating.',
-    ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed: jump them.',
+    ayuda2:'<b>AVOID</b> junk food, boulders and logs. Boulders can\'t be smashed with your fist: jump them, or break them with an AXE. <b>THROW</b> bones at dinos from afar. GIANT dinos take several hits.',
     ayuda3:'<b>NEW.</b> 8 characters you unlock by playing and 🥇🥈🥉 medals for the world podium: they\'re yours until someone crushes your score. Plus the daily challenge, leagues with your friends and the MAMMOTH after the T-Rex.',
     ayuda4:'<b>KEYS.</b> SPACE or ↑ jump. X or J smash. P pause. On a phone, better in landscape.',
     volverHW:'← Back to HeavyWork', pausa:'PAUSED', pausaTxt:'Rest between sets. Not too long.', seguir:'RESUME', salirMenu:'QUIT TO MENU',
@@ -1279,6 +1287,7 @@ const CIELOS = [
 ];
 const TINTES = [null, 'rgba(255,240,200,.06)', 'rgba(10,6,40,.38)', 'rgba(90,10,0,.18)'];
 const fase = L => L <= 2 ? 0 : L <= 4 ? 1 : L <= 6 ? 2 : 3;
+function faseActual(){ return (fase(G.level) + G.pan - 1) % 4; }
 
 const FAR = capa(x => {
   x.fillStyle = '#4a2748';
@@ -1668,6 +1677,10 @@ function drawItem(it){
       R(x - 2, Y - h, 4, h, col); R(x - 2, Y - h, 1, h, '#0003'); R(x - 1, Y - h / 2 - 1, 2, 2, '#1a1a1a');
       R(x + 2, Y - h + 2, 1, h - 4, col); break;
     }
+    case 'hueso':
+      R(x - 4, Y - 2, 8, 2, '#f3ead8'); R(x - 5, Y - 3, 2, 4, '#f3ead8'); R(x + 3, Y - 3, 2, 4, '#f3ead8'); break;
+    case 'hacha':
+      R(x - 1, Y - 12, 2, 12, '#8a5a36'); R(x - 4, Y - 13, 7, 5, '#9a938a'); R(x - 4, Y - 13, 7, 1, '#c9c2b4'); break;
     case 'shaker':
       R(x - 3, Y - 12, 6, 11, '#f4efe6'); R(x - 3, Y - 14, 6, 2, RED); R(x - 1, Y - 16, 2, 2, RED);
       R(x - 2, Y - 8, 4, 4, '#6cc04a'); R(x - 3, Y - 2, 6, 1, '#cfc7b8'); break;
@@ -1724,21 +1737,21 @@ function pista(t){
 }
 
 /* ================= ESTADO DE LA PARTIDA ================= */
-const P = { x:58, y:GROUND, vy:0, ground:true, swing:-1, cd:0, swingId:0 };
+const P = { x:58, y:GROUND, vy:0, ground:true, swing:-1, cd:0, swingId:0, throwCd:0 };
 const G = {
   state:'menu', t:0, scroll:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1,
   inv:0, shake:0, spawnT:1.2, entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0,
   plates:0, junk:0, bosses:0, boss:null, bossIn:0, fx:{magnet:0, shield:false, pre:0, makina:0},
-  freeze:0, flash:0, puT:12, tut:null, slow:false
+  freeze:0, flash:0, puT:12, tut:null, slow:false, huesos:0, hacha:0, shots:[], pan:1
 };
-const input = { jump:false, jumpQueued:0, smashQueued:0 };
+const input = { jump:false, jumpQueued:0, smashQueued:0, throwQueued:0 };
 
 function resetGame(){
-  Object.assign(P, { y:GROUND, vy:0, ground:true, swing:-1, cd:0 });
+  Object.assign(P, { y:GROUND, vy:0, ground:true, swing:-1, cd:0, throwCd:0 });
   Object.assign(G, { t:0, dist:0, speed:95, level:1, meter:50, hearts:3, score:0, combo:1, inv:0, shake:0, spawnT:1.4,
     entities:[], items:[], parts:[], texts:[], kills:0, hungryCD:0, plates:0, junk:0, bosses:0, boss:null, bossIn:0,
     fx:{magnet:0, shield:false, pre:0, makina:0}, freeze:0, flash:0, puT:0,
-    tut:store.tut ? null : {n:0, e:null}, slow:false, retoAvisado:false });
+    tut:store.tut ? null : {n:0, e:null}, slow:false, retoAvisado:false, huesos:0, hacha:0, shots:[], pan:1 });
   rng = G.modo === 'diario' ? seeded(hashTexto(G.dia || hoyMadrid())) : Math.random;
   G.puT = rr(14, 20);
   Music.level = 1; Music.mode = 'normal'; Music.boss = false;
@@ -1789,13 +1802,21 @@ function levelUp(){
   say('level', true);
   G.shake = 4;
   checkLogrosPeso();
-  const f = fase(G.level);
+  const f = faseActual();
   if (f !== cieloActual){ cieloAnterior = cieloActual; cieloActual = f; cieloMezcla = 0; }
   if ((cond('jefe') ? (G.level + 1) % 3 === 0 : G.level % 3 === 0) && !G.boss) G.bossIn = 2.6;
 }
 
 function eat(it){
   if (it.pu){ powerUp(it.kind); burst(it.x, it.y - 6, '#ffd23c', 14); return; }
+  if (it.kind === 'hueso'){
+    G.huesos = Math.min(9, G.huesos + 3); addScore(40 * mult(), it.x, it.y - 10, '#f3ead8');
+    SFX.play('food'); burst(it.x, it.y - 4, '#f3ead8', 8); floatText('+3 ' + T('huesosLbl'), P.x + 10, P.y - 40, '#f3ead8'); return;
+  }
+  if (it.kind === 'hacha'){
+    G.hacha = HACHA_MAX; SFX.play('power'); burst(it.x, it.y - 6, '#c9a24a', 12);
+    floatText(T('hachaLbl') + ' ×' + HACHA_MAX, P.x + 10, P.y - 40, '#c9a24a'); return;
+  }
   if (it.kind === 'plate'){
     G.plates++; store.plates = (store.plates || 0) + 1;
     addScore(25 * mult(), it.x, it.y - 12, '#9ad0ff'); SFX.play('plate');
@@ -1848,7 +1869,7 @@ function matar(e){
   if (e.type === 'nieve'){ SFX.play('crack'); addScore(50 * mult(), e.x, e.y - 8); burst(e.x, e.y, '#eef6ff', 8); burst(e.x, e.y, '#a8c8e8', 4); return; }
   if (e.type === 'wave') return;
   SFX.play('bonk'); vibra(15);
-  const base = {raptor:100, ptero:150, trike:250}[e.type];
+  const base = {raptor:100, ptero:150, trike:250}[e.type] * (e.big ? 3 : 1);
   addScore(base * G.combo * mult(), e.x, e.y - 24);
   G.kills++; logro('dino');
   burst(e.x, e.y - 10, '#fff', 10);
@@ -1866,6 +1887,10 @@ function smashTargets(){
     const b = box(e);
     if (b.x2 < x1 || b.x1 > x2 || b.y2 < y1 || b.y1 > y2) continue;
     e.hitBy = P.swingId;
+    if (G.hacha > 0 && (e.type === 'boulder' || e.type === 'log')){
+      G.hacha--; matar(e); if (G.hacha === 0) floatText(T('hachaFin'), P.x + 10, P.y - 40, '#c9a24a');
+      continue;
+    }
     if (e.type === 'boulder' || e.type === 'wave'){ SFX.play('clank'); if (e.type === 'boulder') say('boulder'); burst(e.x - 6, e.y - 8, '#fff', 4); continue; }
     e.hp--; e.flash = .12; G.shake = Math.max(G.shake, 2);
     if (e.hp > 0){ SFX.play('hit'); e.x += 6; burst(e.x - 10, e.y - 12, '#fff', 5); continue; }
@@ -1890,7 +1915,7 @@ function smashTargets(){
   }
 }
 
-function box(e){
+function cajaBase(e){
   switch (e.type){
     case 'raptor':  return {x1:e.x - 12, x2:e.x + 10, y1:e.y - 21, y2:e.y};
     case 'trike':   return {x1:e.x - 21, x2:e.x + 16, y1:e.y - 22, y2:e.y};
@@ -1901,6 +1926,11 @@ function box(e){
     case 'nieve':   return {x1:e.x - 4,  x2:e.x + 4,  y1:e.y - 4,  y2:e.y + 3};
     case 'wave':    return {x1:e.x - 7,  x2:e.x + 6,  y1:e.y - 8,  y2:e.y};
   }
+}
+function box(e){
+  const b = cajaBase(e);
+  if (!e.big) return b;
+  return {x1:e.x + (b.x1 - e.x) * 2, x2:e.x + (b.x2 - e.x) * 2, y1:e.y + (b.y1 - e.y) * 2, y2:e.y + (b.y2 - e.y) * 2};
 }
 const HAZARDS = ['raptor','trike','boulder','log'];
 
@@ -2011,7 +2041,7 @@ function spawn(){
   const weights = [
     ['raptor', 5], ['log', 2.6], ['junk', 1.6 + L * 0.35], ['food', 1.1], ['plates', cond('hierro') ? 3.2 : 1.3],
     ['boulder', cond('pierna') ? 3 + L * 0.15 : L >= 2 ? 1.8 + L * 0.15 : 0], ['ptero', cond('pteros') ? 4 : L >= 2 ? 2.4 : 0],
-    ['trike', L >= 3 ? 1.6 + L * 0.2 : 0]
+    ['trike', L >= 3 ? 1.6 + L * 0.2 : 0], ['hueso', 1.3], ['hacha', L >= 2 ? 0.7 : 0]
   ];
   const total = weights.reduce((a, w) => a + w[1], 0);
   let r = rng() * total, type = 'raptor';
@@ -2020,7 +2050,11 @@ function spawn(){
   if (HAZARDS.includes(type) && lastX > W + 30 - minGap){ G.spawnT = 0.15; return; }
   const X = W + 30;
   switch (type){
-    case 'raptor': G.entities.push({type, x:X, y:GROUND, vx:28 + L * 3, hp:1, t:0, flash:0}); break;
+    case 'raptor': {
+      const gigante = L >= 2 && rng() < .18;
+      if (gigante) bigText(T('gigante'));
+      G.entities.push({type, x:X, y:GROUND, vx:(gigante ? 18 : 28) + L * (gigante ? 2 : 3), hp:gigante ? 3 : 1, big:gigante, t:0, flash:0}); break;
+    }
     case 'log':    G.entities.push({type, x:X, y:GROUND, vx:0, hp:1, t:0, flash:0}); break;
     case 'boulder':G.entities.push({type, x:X, y:GROUND, vx:48 + L * 4, hp:99, t:0, flash:0, rot:0}); break;
     case 'trike':  G.entities.push({type, x:X, y:GROUND, vx:10, hp:2, t:0, flash:0, charging:false}); break;
@@ -2028,6 +2062,8 @@ function spawn(){
     case 'junk':   G.items.push({kind:rpk(['donut','burger','soda']), x:X, y:GROUND - rr(38, 66), vy:0, grounded:true, junk:true, t:0}); break;
     case 'food':   G.items.push({kind:rng() < .25 ? 'steak' : 'drumstick', x:X, y:rng() < .5 ? GROUND : GROUND - rr(24, 50), vy:0, grounded:true, junk:false, t:0}); break;
     case 'plates': { const n = 2 + Math.floor(rng() * 3); for (let i = 0; i < n; i++) G.items.push({kind:'plate', s:Math.floor(rng() * 3), x:X + i * 14, y:GROUND, vy:0, grounded:true, junk:false, t:0}); break; }
+    case 'hueso': G.items.push({kind:'hueso', x:X, y:GROUND - rr(16, 40), vy:0, grounded:true, junk:false, t:0}); break;
+    case 'hacha': G.items.push({kind:'hacha', x:X, y:GROUND - rr(10, 30), vy:0, grounded:true, junk:false, t:0}); break;
   }
   G.spawnT = rr(0.85, 1.6) * Math.max(0.42, 1 - (L - 1) * 0.06);
 }
@@ -2057,6 +2093,12 @@ function tutorial(){
   }
 }
 
+function nuevaPantalla(){
+  G.pan++; G.flash = .3; G.shake = 6; SFX.play('levelup');
+  cieloAnterior = cieloActual; cieloActual = faseActual(); cieloMezcla = 0;
+  bigText(T('pantalla') + ' ' + G.pan);
+}
+
 function update(dt){
   if (G.freeze > 0){ G.freeze -= dt; return; }
   if (G.slow) dt *= 0.3;
@@ -2080,6 +2122,7 @@ function update(dt){
   const mv = G.speed * dt;
   G.scroll += mv; G.dist += mv;
   G.score += mv / 10;
+  if (G.dist >= G.pan * PAN_LEN) nuevaPantalla();
 
   G.meter -= (2.3 + G.level * 0.35) * dt * (G.tut ? 0.5 : 1) * (cond('ayuno') ? 1.4 : 1);
   G.hungryCD -= dt;
@@ -2107,6 +2150,16 @@ function update(dt){
     if (P.swing > 0.3) P.swing = -1;
   }
 
+  P.throwCd -= dt;
+  if (input.throwQueued > 0) input.throwQueued -= dt;
+  if (input.throwQueued > 0 && P.throwCd <= 0){
+    input.throwQueued = 0;
+    if (G.huesos > 0){
+      G.huesos--; P.throwCd = 0.36; SFX.play('swing');
+      G.shots.push({x:P.x + 8, y:P.y - 18, vx:240, vy:-60, t:0, hit:false});
+    } else floatText(T('sinHuesos'), P.x + 10, P.y - 40, '#a79c92');
+  }
+
   if (G.bossIn > 0){
     G.bossIn -= dt;
     if (G.bossIn <= 0 && !G.entities.some(e => HAZARDS.includes(e.type) && e.x > P.x)) bossStart();
@@ -2118,6 +2171,7 @@ function update(dt){
   for (const e of G.entities){
     e.t += dt; if (e.flash > 0) e.flash -= dt;
     let extra = e.vx;
+    if (e.big) extra = -G.speed * 0.6;   // el gigante avanza despacio: da tiempo a sus tres golpes
     if (e.type === 'trike'){
       if (!e.charging && e.x - P.x < 130){ e.charging = true; }
       if (e.charging) extra = 70 + G.level * 3;
@@ -2141,6 +2195,23 @@ function update(dt){
     }
   }
   G.entities = G.entities.filter(e => !e.dead && e.x > -40);
+
+  for (const s of G.shots){
+    s.t += dt; s.x += s.vx * dt; s.vy += 300 * dt; s.y += s.vy * dt;
+    if (s.y > GROUND + 2) s.hit = true;
+    for (const e of G.entities){
+      if (s.hit || e.dead) continue;
+      const b = box(e);
+      if (s.x + 4 < b.x1 || s.x - 4 > b.x2 || s.y + 3 < b.y1 || s.y - 3 > b.y2) continue;
+      s.hit = true;
+      if (e.type === 'boulder' || e.type === 'wave'){ SFX.play('clank'); burst(s.x, s.y, '#fff', 4); break; }
+      e.hp = (e.hp || 1) - 1; e.flash = .12;
+      if (e.hp > 0){ SFX.play('hit'); e.x += 4; }
+      else { matar(e); if (G.tut && G.tut.e === e){ G.tut.e = null; pista(''); } }
+      burst(s.x, s.y, '#f3ead8', 6); break;
+    }
+  }
+  G.shots = G.shots.filter(s => !s.hit && s.x < W + 20);
 
   for (const it of G.items){
     it.t += dt;
@@ -2209,7 +2280,13 @@ function render(){
   drawBackground(G.scroll);
   for (const it of G.items) drawItem(it);
   for (const e of G.entities){
-    if (e.type === 'raptor') drawRaptor(e);
+    if (e.type === 'raptor'){
+      if (!e.big) drawRaptor(e);
+      else {
+        ctx.save(); ctx.translate(e.x, e.y); ctx.scale(2, 2); ctx.translate(-e.x, -e.y); drawRaptor(e); ctx.restore();
+        for (let i = 0; i < e.hp; i++) R(e.x - 8 + i * 5, e.y - 44, 3, 2, '#ffd23c');
+      }
+    }
     else if (e.type === 'trike') drawTrike(e);
     else if (e.type === 'ptero') drawPtero(e);
     else if (e.type === 'boulder') drawBoulder(e);
@@ -2218,11 +2295,16 @@ function render(){
     else if (e.type === 'wave') drawWave(e);
     else drawLog(e);
   }
+  for (const s of G.shots){
+    const f = Math.floor(s.t * 14) % 2;
+    R(s.x - 4, s.y - 1, 8, 2, '#f3ead8'); R(s.x - 5, s.y - 2 + f, 2, 4, '#f3ead8'); R(s.x + 3, s.y - 1 - f, 2, 4, '#f3ead8');
+  }
   if (G.boss) (G.boss.tipo === 'mamut' ? drawMamut : drawTRex)(G.boss);
   const sh = Math.max(4, 10 - Math.round((GROUND - P.y) / 8));
   R(P.x - sh / 2, GROUND, sh, 1, 'rgba(0,0,0,.35)');
   drawCaveman(P.x, P.y, { run:G.dist, air:!P.ground, swing:P.swing, level:G.level, hurt:G.inv > 0 ? G.inv : 0,
     belt:G.fx.shield, pre:G.fx.pre > 0 && Math.floor(G.t * 10) % 2 === 0, baile:G.fx.makina > 0 ? G.t : 0 });
+  if (G.hacha > 0){ R(P.x + 9, P.y - 22, 2, 14, '#8a5a36'); R(P.x + 7, P.y - 26, 6, 5, '#9a938a'); R(P.x + 7, P.y - 26, 6, 1, '#c9c2b4'); }
   for (const p of G.parts) R(p.x, p.y, 2, 2, p.color);
   ctx.font = '8px "Press Start 2P", monospace';
   ctx.textAlign = 'center';
@@ -2243,7 +2325,7 @@ function render(){
 const hud = $('#hud');
 let lastHud = '';
 function updateHud(){
-  const key = [G.hearts, Math.floor(G.score), G.level, Math.round(G.meter), G.combo, G.fx.makina > 0].join('|');
+  const key = [G.hearts, Math.floor(G.score), G.level, Math.round(G.meter), G.combo, G.fx.makina > 0, G.huesos, G.hacha, G.pan].join('|');
   if (key === lastHud) return;
   lastHud = key;
   $('#vidas').textContent = '♥'.repeat(Math.max(0, G.hearts));
@@ -2253,6 +2335,8 @@ function updateHud(){
   $('#medidorBarra').style.width = m + '%';
   $('#medidor').classList.toggle('bajo', m < 25);
   $('#combo').textContent = (G.combo > 1 ? 'COMBO x' + G.combo : '') + (G.fx.makina > 0 ? ' ×2' : '');
+  const nomPan = T(PAN_KEYS[(G.pan - 1) % PAN_KEYS.length]);
+  $('#recursos').textContent = [G.pan + ' · ' + nomPan, G.huesos ? T('huesosLbl') + ' ×' + G.huesos : '', G.hacha ? T('hachaLbl') + ' ×' + G.hacha : ''].filter(Boolean).join('  ');
   if (RETO){
     const h = $('#hudReto'), ok = G.score > RETO.puntos;
     h.hidden = false; h.classList.toggle('ok', ok); h.textContent = ok ? '✓ ' + RETO.nombre : T('retoHud')(NUM(RETO.puntos));
@@ -2608,6 +2692,7 @@ try { document.fonts && document.fonts.load && document.fonts.load('30px "Press 
 function pressJump(){ Audio.init(); input.jump = true; input.jumpQueued = 0.13; }
 function releaseJump(){ input.jump = false; }
 function pressSmash(){ Audio.init(); input.smashQueued = 0.12; }
+function pressThrow(){ Audio.init(); input.throwQueued = 0.12; }
 
 function bindHold(btn, down, up){
   btn.addEventListener('pointerdown', e => { e.preventDefault(); btn.setPointerCapture?.(e.pointerId); btn.classList.add('pulsado'); down(); });
@@ -2617,6 +2702,7 @@ function bindHold(btn, down, up){
 }
 bindHold($('#btnSalto'), pressJump, releaseJump);
 bindHold($('#btnGolpe'), pressSmash);
+bindHold($('#btnLanzar'), pressThrow);
 
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -2624,6 +2710,7 @@ document.addEventListener('keydown', e => {
   if (G.state === 'play'){
     if (k === ' ' || k === 'arrowup' || k === 'w'){ e.preventDefault(); if (!e.repeat) pressJump(); }
     else if (k === 'x' || k === 'j' || k === 'k'){ e.preventDefault(); if (!e.repeat) pressSmash(); }
+    else if (k === 'z' || k === 'b'){ e.preventDefault(); if (!e.repeat) pressThrow(); }
     else if (k === 'p' || k === 'escape'){ pause(); }
   } else if (G.state === 'paused' && (k === 'p' || k === 'escape')) resume();
 });
